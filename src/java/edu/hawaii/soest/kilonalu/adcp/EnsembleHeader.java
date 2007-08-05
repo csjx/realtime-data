@@ -101,7 +101,8 @@ public class EnsembleHeader {
     byte[] oneByte  = new byte[1];
     byte[] twoBytes = new byte[2];
     
-    // set each of the header fields from the binary byte stream
+    // set each of the Ensemble Header fields n the order that they are 
+    // read from the byte stream
     ensembleBuffer.get(oneByte);
     setHeaderID(oneByte);
     
