@@ -65,7 +65,6 @@ public class EnsembleHeader {
    *  A field that stores the Ensemble Header ID (2-bytes) in a ByteBuffer
    */
   private ByteBuffer headerID = DEFAULT_HEADER_ID;
-  //headerID.order(ByteOrder.LITTLE_ENDIAN);
   
   /**
    *  A field that stores the Ensemble Header Spare (one byte) in a ByteBuffer
@@ -79,7 +78,6 @@ public class EnsembleHeader {
    *  ByteBuffer that has Little Endian order (same as the data stream)
    */
   private ByteBuffer numberOfBytesInEnsemble = ByteBuffer.allocate(2);
-  //numberOfBytesInEnsemble.order(ByteOrder.LITTLE_ENDIAN);
 
   /**
    *  A field that stores the number of data types selected for collection.
