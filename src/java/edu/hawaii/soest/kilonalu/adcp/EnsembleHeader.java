@@ -58,7 +58,7 @@ public class EnsembleHeader {
   /**
    *  A field that stores the default Ensemble Header ID ( 0x7F7F)
    */
-   private static ByteBuffer DEFAULT_HEADER_ID = 
+   private static final ByteBuffer DEFAULT_HEADER_ID = 
      ByteBuffer.wrap( new byte[]{0x7F,0x7F} );
 
   /**
