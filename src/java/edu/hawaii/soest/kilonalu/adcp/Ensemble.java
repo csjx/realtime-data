@@ -304,7 +304,7 @@ public class Ensemble {
     * as a int.
     */
    public int getChecksum(){
-     return this.checksum.getInt();
+     return this.checksum.order(ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
    /**
@@ -312,7 +312,8 @@ public class Ensemble {
     * as a int.
     */
    public int getHeaderID(){
-     return ensembleHeader.getHeaderID();
+     return ensembleHeader.getHeaderID().order(
+       ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
    /**
@@ -320,7 +321,8 @@ public class Ensemble {
     * as a int.
     */
    public int getHeaderSpare(){
-     return ensembleHeader.getHeaderSpare();
+     return ensembleHeader.getHeaderSpare().order(
+       ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
    /**
@@ -377,7 +379,8 @@ public class Ensemble {
     * @param dataTypeNumber  the number of the Data Type desired (as an int)
     */
     public int getDataTypeOffset (int dataTypeNumber) {
-     return ensembleHeader.getDataTypeOffset(dataTypeNumber);
+     return ensembleHeader.getDataTypeOffset(dataTypeNumber).order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
    /**
@@ -385,7 +388,8 @@ public class Ensemble {
     * as a int.
     */
    public int getNumberOfBytesInEnsemble() {   
-     return ensembleHeader.getNumberOfBytesInEnsemble();
+     return ensembleHeader.getNumberOfBytesInEnsemble().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
    /**
@@ -393,7 +397,8 @@ public class Ensemble {
     * as a int.
     */
    public int getNumberOfDataTypes() {
-     return ensembleHeader.getNumberOfDataTypes();
+     return ensembleHeader.getNumberOfDataTypes().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
    /**
@@ -401,7 +406,7 @@ public class Ensemble {
     * as a int.  This is really just for RDI internal use.
     */
    public int getReservedBIT(){
-     return this.reservedBIT.getInt();
+     return this.reservedBIT.order(ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
 
