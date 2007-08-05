@@ -53,7 +53,7 @@ public class EnsembleHeader {
    * Data Type #2 (VariableLeader), Data Type #3 (VelocityProfile), etc... 
    */
   private ByteBuffer dataTypeOffsets = 
-    ByteBuffer.allocate( (getNumberOfDataTypes() * 2 ) );
+    ByteBuffer.allocate( (getNumberOfDataTypes().getInt() * 2 ) );
 
   /**
    *  A field that stores the default Ensemble Header ID ( 0x7F7F)
@@ -96,42 +96,43 @@ public class EnsembleHeader {
     
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
-    // set each of the header fields
-    byte[] headerBytes = new byte[2];
-    ensembleBuffer.get(headerBytes);
-    setHeaderID(headerBytes);
     
-    byte[] numberOfBytes = new byte[2];
-    ensembleBuffer.get(numberOfBytes);
-    setNumberOfBytesInEnsemble(numberOfBytes);
+    // define the temporary arrays for passing bytes
+    byte[] oneByte  = new byte[1];
+    byte[] twoBytes = new byte[2];
     
-    byte[] spareByte = new byte[1];
-    ensembleBuffer.get(spareByte);
-    setHeaderSpare(spareByte);
+    // set each of the header fields from the binary byte stream
+    ensembleBuffer.get(oneByte);
+    setHeaderID(oneByte);
     
-    byte[] numberOfTypes = new byte[1];
-    ensembleBuffer.get(numberOfTypes); 
-    setNumberOfDataTypes(numberOfTypes);
+    ensembleBuffer.get(twoBytes);
+    setNumberOfBytesInEnsemble(twoBytes);
     
-    byte[] offsetBytes = new byte[( getNumberOfDataTypes() * 2 ) ];
+    ensembleBuffer.get(oneByte);
+    setHeaderSpare(oneByte);
+    
+    ensembleBuffer.get(oneByte); 
+    setNumberOfDataTypes(oneByte);
+    
+    byte[] offsetBytes = new byte[( getNumberOfDataTypes().getInt() * 2 ) ];
     ensembleBuffer.get(offsetBytes);
     setDataTypeOffsets(offsetBytes);
   }
 
   /**
    * A method that returns the Ensemble headerID field contents 
-   * as a int.
+   * as a ByteBuffer.
    */
-  protected int getHeaderID(){
-    return this.headerID.getInt();
+  protected ByteBuffer getHeaderID(){
+    return this.headerID;
   }
 
   /**
    * A method that returns the Ensemble headerSpare field contents 
-   * as a int.
+   * as a ByteBuffer.
    */
-  protected int getHeaderSpare(){
-    return this.headerSpare.getInt();
+  protected ByteBuffer getHeaderSpare(){
+    return this.headerSpare;
   }
 
   /**
@@ -139,9 +140,9 @@ public class EnsembleHeader {
    *  For instance, The offset for Data Type #1 (FixedLeader) will be returned
    *  by calling this method with a dataTypeNumber argument of 1.
    *
-   * @param dataTypeNumber  the number of the Data Type desired (as an int)
+   * @param dataTypeNumber  the number of the Data Type desired (as a ByteBuffer)
    */
-   protected int getDataTypeOffset (int dataTypeNumber) {
+   protected ByteBuffer getDataTypeOffset (int dataTypeNumber) {
      
      // prepare the ByteBuffer for reading
      dataTypeOffsets.flip();
@@ -149,25 +150,23 @@ public class EnsembleHeader {
      // read the offset by setting the position based on the desired type
      dataTypeOffsets.position( ( (dataTypeNumber * 2 ) - 2 ) );
      ByteBuffer dataTypeOffset = dataTypeOffsets.get( new byte[2]);
-     dataTypeOffset.order(ByteOrder.LITTLE_ENDIAN);
-     return dataTypeOffset.getInt();       
-     
+     return dataTypeOffset;       
    }
    
   /**
    * A method that returns the numberOfBytesInEnsemble field contents 
-   * as a int.
+   * as a ByteBuffer.
    */
-  protected int getNumberOfBytesInEnsemble(){   
-    return this.numberOfBytesInEnsemble.getInt();
+  protected ByteBuffer getNumberOfBytesInEnsemble(){   
+    return this.numberOfBytesInEnsemble;
   }
 
   /**
    * A method that returns the numberOfDataTypes field contents 
-   * as a int.
+   * as a ByteBuffer.
    */
-  protected int getNumberOfDataTypes(){   
-    return this.numberOfDataTypes.getInt();
+  protected ByteBuffer getNumberOfDataTypes(){   
+    return this.numberOfDataTypes;
   }
 
   /**
