@@ -1,0 +1,18 @@
+#!/bin/bash
+export CLASSPATH=/home/cjones/development/bbl/build/classes/:/home/cjones/development/bbl/lib/rbnb.jar:/home/cjones/development/bbl/lib/commons-codec-1.3.jar:/home/cjones/development/bbl/lib/commons-cli-1.0.jar:/home/cjones/development/bbl/lib/commons-logging-1.0.4.jar:/home/cjones/development/bbl/lib/turbine-3.7.0.jar:/home/cjones/development/bbl/lib/log4j-1.2.8.jar:/home/cjones/development/bbl/lib/log4j.properties
+
+# run the ADCPSource driver, connecting to the ADCP @ 192.168.1.101:2104
+# and to the RBNB server @ 192.168.1.103:3333, defining the source name as
+# 'KN0101_010ADCP010R00' and the data channel as 'BinaryPD0EnsembleData'.  The 
+# client is also requesting a cache size of 10000 frames, and an archive size
+# of 100000 frames.  In this case, each frame is 1 ensemble transmitted by the
+# ADCP instrument, which equates to about 512 bytes to 1024 bytes of 
+# data per frame.
+java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
+ -H 192.168.1.101\
+ -P 2104\
+ -S KN0101_010ADCP010R00 -C BinaryPD0EnsembleData\
+ -s localhost\
+ -p 3334\
+ -z 10000\
+ -Z 100000

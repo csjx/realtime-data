@@ -1,0 +1,11 @@
+# This example connects to the RBNB server via its WebDAV interface and
+# requests the BinaryADCPChannel data channel from the KN0101_010ADCP010R00
+# source instrument, using a start reference of the oldest record in the ring
+# buffer, and requests a duration of 3 units of data (which equates to 3
+# seconds).  The result is sent to STDOUT and piped to hexdump, which decodes
+# the binary stream into zero-padded, twobyte, uppercase hex numbers, and on
+# every 514th iteration, inserts a double line ending (since the test data
+# streams ensembles that are 514 bytes long. 
+
+wget -O - "http://192.168.1.103/RBNB/KN0101_010ADCP010R00/BinaryADCPChannel@r=oldest&d=3"\
+ | hexdump -v -e '514/1 "%02X" "\n\n"' 
