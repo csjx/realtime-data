@@ -356,4 +356,60 @@ public final class EnsembleFixedLeader {
     return this.cpuBoardSerialNumber;
   }
   
+  /**
+   * A method that returns the Ensemble depthCellLength field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getDepthCellLength() {
+    return this.depthCellLength;
+  }
+  
+  /**
+   * A method that returns the Ensemble errorVelocityThreshold field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getErrorVelocityThreshold() {
+    return this.errorVelocityThreshold;
+  }
+  
+  /**
+   * A method that returns the Ensemble falseTargetThreshold field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getFalseTargetThreshold() {
+    return this.falseTargetThreshold;
+  }
+  
+  /**
+   * A method that returns the Ensemble fixedLeaderID field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getFixedLeaderID() {
+    return this.fixedLeaderID;
+  }
+  
+  /**
+   * A method that returns the Ensemble fixedLeaderSpare field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getFixedLeaderSpare() {
+    return this.fixedLeaderSpare;
+  }
+  
+  /**
+   * A method that returns the Ensemble headingAlignment field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getHeadingAlignment() {
+    return this.headingAlignment;
+  }
+  
+  /**
+   * A method that returns the Ensemble headingBias field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getHeadingBias() {
+    return this.headingBias;
+  }
+  
 }
