@@ -180,9 +180,9 @@ public class Ensemble {
     // create the components of the ensemble based on the metadata content
     // of the EnsembleHeader
     this.ensembleFixedLeader = 
-      new EnsembleFixedLeader(ensembleBuffer, ensembleHeader);     
+      new EnsembleFixedLeader(ensembleBuffer, this);     
     this.ensembleVariableLeader = 
-      new EnsembleVariableLeader(ensembleBuffer, ensembleHeader);     
+      new EnsembleVariableLeader(ensembleBuffer, this);     
     
     // build each of the collected data types
     if ( getNumberOfDataTypes() > 2 ) {
@@ -191,39 +191,41 @@ public class Ensemble {
       // on the Data Type ID
       findDataTypes(ensembleBuffer);
       
+      
+      // build 'em if we got 'em
       if ( hasVelocityProfile ){
         this.ensembleVelocityProfile = 
-          new EnsembleVelocityProfile(ensembleBuffer, ensembleHeader);
+          new EnsembleVelocityProfile(ensembleBuffer, this);
       }
       
       if ( hasCorrelationProfile ) {
         this.ensembleCorrelationProfile = 
-          new EnsembleCorrelationProfile(ensembleBuffer, ensembleHeader);
+          new EnsembleCorrelationProfile(ensembleBuffer, this);
       }
       
       if ( hasEchoIntensityProfile ) {
         this.ensembleEchoIntensityProfile = 
-          new EnsembleEchoIntensityProfile(ensembleBuffer, ensembleHeader);
+          new EnsembleEchoIntensityProfile(ensembleBuffer, this);
       }
 
       if ( hasPercentGoodProfile ) {
         this.ensemblePercentGoodProfile = 
-          new EnsemblePercentGoodProfile(ensembleBuffer, ensembleHeader);
+          new EnsemblePercentGoodProfile(ensembleBuffer, this);
       }
 
       if ( hasStatusProfile ) {
         this.ensembleStatusProfile = 
-          new EnsembleStatusProfile(ensembleBuffer, ensembleHeader);
+          new EnsembleStatusProfile(ensembleBuffer, this);
       }
 
       if ( hasBottomTrackData ) {
         this.ensembleBottomTrack = 
-          new EnsembleBottomTrack(ensembleBuffer, ensembleHeader);
+          new EnsembleBottomTrack(ensembleBuffer, this);
       }
 
       if ( hasMicroCATData ) {
         this.ensembleMicroCAT = 
-          new EnsembleMicroCAT(ensembleBuffer, ensembleHeader);
+          new EnsembleMicroCAT(ensembleBuffer, this);
       }
     }
     
