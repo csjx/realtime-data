@@ -727,4 +727,64 @@ public final class EnsembleFixedLeader {
     this.fixedLeaderSpare.put(byteArray);
   }
   
+  /**
+   * A method that sets the headingAlignment field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setHeadingAlignment(byte[] byteArray) {
+    this.headingAlignment.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the headingBias field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setHeadingBias(byte[] byteArray) {
+    this.headingBias.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the lagLength field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setLagLength(byte[] byteArray) {
+    this.lagLength.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the lowCorrelationThreshold field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setLowCorrelationThreshold(byte[] byteArray) {
+    this.lowCorrelationThreshold.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the numberOfBeams field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setNumberOfBeams(byte[] byteArray) {
+    this.numberOfBeams.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the numberOfCells field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setNumberOfCells(byte[] byteArray) {
+    this.numberOfCells.put(byteArray);
+  }
+  
 }
