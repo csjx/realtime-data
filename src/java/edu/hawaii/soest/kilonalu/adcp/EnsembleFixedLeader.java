@@ -292,4 +292,12 @@ public final class EnsembleFixedLeader {
     
   }
   
+  /**
+   * A method that returns the Ensemble baseFrequencyIndex field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getBaseFrequencyIndex() {
+    return this.baseFrequencyIndex;
+  }
+  
 }
