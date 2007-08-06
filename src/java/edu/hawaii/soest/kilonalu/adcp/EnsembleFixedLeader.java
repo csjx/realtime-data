@@ -657,4 +657,74 @@ public final class EnsembleFixedLeader {
     this.cpuBoardSerialNumber.put(byteArray);
   }
   
+  /**
+   * A method that sets the cpuFirmwareRevision field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setCpuFirmwareRevision(byte[] byteArray) {
+    this.cpuFirmwareRevision.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the cpuFirmwareVersion field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setCpuFirmwareVersion(byte[] byteArray) {
+    this.cpuFirmwareVersion.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the depthCellLength field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setDepthCellLength(byte[] byteArray) {
+    this.depthCellLength.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the errorVelocityThreshold field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setErrorVelocityThreshold(byte[] byteArray) {
+    this.errorVelocityThreshold.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the falseTargetThreshold field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setFalseTargetThreshold(byte[] byteArray) {
+    this.falseTargetThreshold.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the fixedLeaderID field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setFixedLeaderID(byte[] byteArray) {
+    this.fixedLeaderID.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the fixedLeaderSpare field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setFixedLeaderSpare(byte[] byteArray) {
+    this.fixedLeaderSpare.put(byteArray);
+  }
+  
 }
