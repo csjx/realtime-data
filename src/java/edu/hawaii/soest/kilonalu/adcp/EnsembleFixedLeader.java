@@ -444,6 +444,7 @@ public final class EnsembleFixedLeader {
     return this.numberOfCells;
   }
   
+  
   /**
    * A method that returns the Ensemble numberOfCodeRepetitions field contents 
    * as a ByteBuffer.
@@ -490,6 +491,54 @@ public final class EnsembleFixedLeader {
    */
   protected ByteBuffer getPingSeconds() {
     return this.pingSeconds;
+  }
+  
+  /**
+   * A method that returns the Ensemble pingsPerEnsemble field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPingsPerEnsemble() {
+    return this.pingsPerEnsemble;
+  }
+  
+  /**
+   * A method that returns the Ensemble profilingMode field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getProfilingMode() {
+    return this.profilingMode;
+  }
+  
+  /**
+   * A method that returns the Ensemble referenceLayerEnd field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getReferenceLayerEnd() {
+    return this.referenceLayerEnd;
+  }
+  
+  /**
+   * A method that returns the Ensemble referenceLayerStart field contents 
+   * as a ByteBuffer.
+   */
+   protected ByteBuffer getReferenceLayerStart() {
+     return this.referenceLayerStart;
+   }
+  
+  /**
+   * A method that returns the Ensemble sensorAvailability field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSensorAvailability() {
+    return this.sensorAvailability;
+  }
+  
+  /**
+   * A method that returns the Ensemble sensorSource field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSensorSource() {
+    return this.sensorSource;
   }
   
 }
