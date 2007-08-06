@@ -541,4 +541,60 @@ public final class EnsembleFixedLeader {
     return this.sensorSource;
   }
   
+  /**
+   * A method that returns the Ensemble serialNumber field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSerialNumber() {
+    return this.serialNumber;
+  }
+  
+  /**
+   * A method that returns the Ensemble signalProcessingMode field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSignalProcessingMode() {
+    return this.signalProcessingMode;
+  }
+  
+  /**
+   * A method that returns the Ensemble systemBandwidth field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSystemBandwidth() {
+    return this.systemBandwidth;
+  }
+  
+  /**
+   * A method that returns the Ensemble systemConfiguration field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSystemConfiguration() {
+    return this.systemConfiguration;
+  }
+  
+  /**
+   * A method that returns the Ensemble systemPower field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSystemPower() {
+    return this.systemPower;
+  }
+  
+  /**
+   * A method that returns the Ensemble transmitLagDistance field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getTransmitLagDistance() {
+    return this.transmitLagDistance;
+  }
+  
+  /**
+   * A method that returns the Ensemble transmitPulseLength field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getTransmitPulseLength() {
+    return this.transmitPulseLength;
+  }
+  
 }
