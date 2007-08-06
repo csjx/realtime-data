@@ -412,4 +412,37 @@ public final class EnsembleFixedLeader {
     return this.headingBias;
   }
   
+  /**
+   * A method that returns the Ensemble lagLength field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getLagLength() {
+    return this.lagLength;
+  }
+  
+  /**
+   * A method that returns the Ensemble lowCorrelationThreshold field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getLowCorrelationThreshold() {
+    return this.lowCorrelationThreshold;
+  }
+  
+  /**
+   * A method that returns the Ensemble numberOfBeams field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getNumberOfBeams() {
+    return this.numberOfBeams;
+  }
+  
+  /**
+   * A method that returns the Ensemble numberOfCells field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getNumberOfCells() {
+    return this.numberOfCells;
+  }
+  
+  
 }
