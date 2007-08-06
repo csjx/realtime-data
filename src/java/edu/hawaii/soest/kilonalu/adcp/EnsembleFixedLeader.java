@@ -300,4 +300,12 @@ public final class EnsembleFixedLeader {
     return this.baseFrequencyIndex;
   }
   
+  /**
+   * A method that returns the Ensemble beamAngle field contents 
+   * as a ByteBuffer.
+   */
+   protected ByteBuffer getBeamAngle() {
+    return this.beamAngle;
+  }
+  
 }
