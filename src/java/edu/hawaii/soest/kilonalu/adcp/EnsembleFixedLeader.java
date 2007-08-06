@@ -332,4 +332,28 @@ public final class EnsembleFixedLeader {
     return this.coordinateTransformParams;
   }
   
+  /**
+   * A method that returns the Ensemble cpuFirmwareRevision field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getCpuFirmwareRevision() {
+    return this.cpuFirmwareRevision;
+  }
+  
+  /**
+   * A method that returns the Ensemble headerID field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getCpuFirmwareVersion() {
+    return this.cpuFirmwareVersion;
+  }
+  
+  /**
+   * A method that returns the Ensemble cpuFirmwareVersion field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getCpuBoardSerialNumber() {
+    return this.cpuBoardSerialNumber;
+  }
+  
 }
