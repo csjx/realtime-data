@@ -29,10 +29,13 @@
  */ 
 package edu.hawaii.soest.kilonalu.adcp;
 
-import edu.hawaii.soest.kilonalu.adcp.EnsembleHeader;
+import edu.hawaii.soest.kilonalu.adcp.EnsembleDataType;
+import edu.hawaii.soest.kilonalu.adcp.Ensemble;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+
 /**
  *  A class that represents the Fixed Leader of data produced by
  *  an RDI 1200kHz Workhorse Acoustic Doppler Current Profiler in the
@@ -204,11 +207,22 @@ public final class EnsembleFixedLeader {
   private ByteBuffer pingsPerEnsemble           = ByteBuffer.allocate(2);
   
   /**
-   * A field that contains the starting depth cell and the ending derpth
-   * cell used for water reference layer averaging.  See the manual for details.
+   * A field that contains the profiling mode of the ADCP
    */
-  private ByteBuffer referenceLayerAverage      = ByteBuffer.allocate(2);
+  private ByteBuffer profilingMode              = ByteBuffer.allocate(1);
   
+  /**
+   * A field that contains the ending depth cell used for water 
+   * reference layer averaging.  See the manual for details.
+   */
+  private ByteBuffer referenceLayerEnd          = ByteBuffer.allocate(1);
+  
+  /**
+   * A field that contains the starting depth cell used for water 
+   * reference layer averaging.  See the manual for details.
+   */
+  private ByteBuffer referenceLayerStart        = ByteBuffer.allocate(1);
+
   /**
    * A field that reflects which sensors are available.  The bit pattern 
    * is the same as listed for the sensorSource field.
@@ -268,10 +282,14 @@ public final class EnsembleFixedLeader {
    *  found in the EnsembleHeader.
    *
    * @param ensembleBuffer the ByteBuffer that contains the binary ensemble data
-   * @param ensembleHeader the ensembleHeader that contains the ensemble header data
+   * @param ensemble  the parent ensemble for this fixed leader
    */
   public EnsembleFixedLeader( ByteBuffer ensembleBuffer, 
-                              EnsembleHeader ensembleHeader ) {
+                              Ensemble ensemble ) {
+    
+    // prepare the ensemble buffer for reading
+    ensembleBuffer.flip();
     
   }
+  
 }
