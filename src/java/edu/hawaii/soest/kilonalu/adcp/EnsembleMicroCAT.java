@@ -29,7 +29,7 @@
  */ 
 package edu.hawaii.soest.kilonalu.adcp;
 
-import edu.hawaii.soest.kilonalu.adcp.EnsembleHeader;
+import edu.hawaii.soest.kilonalu.adcp.Ensemble;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -49,7 +49,7 @@ public final class EnsembleMicroCAT {
    * @param ensembleHeader the ensembleHeader that contains the ensemble header data
    */
   public EnsembleMicroCAT( ByteBuffer ensembleBuffer, 
-                           EnsembleHeader ensembleHeader ) {
+                           Ensemble ensemble ) {
     
   }
 }
