@@ -374,6 +374,8 @@ public class Ensemble {
     *  A method that returns the Data Type Number from the order of data types
     *  in the ensemble as they have been indexed in the dataTypeMap.  The map
     *  contains the sequential location of each data type.
+    *
+    * @param ensembleDataType  the enumerated type from the EnsembleDataType enum
     */
     public int getDataTypeNumber( EnsembleDataType ensembleDataType ) {
       return this.dataTypeMap.get(ensembleDataType);
