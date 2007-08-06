@@ -917,4 +917,63 @@ public final class EnsembleFixedLeader {
     this.serialNumber.put(byteArray);
   }
   
+  /**
+   * A method that sets the signalProcessingMode field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setSignalProcessingMode(byte[] byteArray) {
+    this.signalProcessingMode.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the systemBandwidth field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setSystemBandwidth(byte[] byteArray) {
+    this.systemBandwidth.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the systemConfiguration field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setSystemConfiguration(byte[] byteArray) {
+    this.systemConfiguration.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the systemPower field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setSystemPower(byte[] byteArray) {
+    this.systemPower.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the transmitLagDistance field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setTransmitLagDistance(byte[] byteArray) {
+    this.transmitLagDistance.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the transmitPulseLength field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setTransmitPulseLength(byte[] byteArray) {
+    this.transmitPulseLength.put(byteArray);
+  }
 }
