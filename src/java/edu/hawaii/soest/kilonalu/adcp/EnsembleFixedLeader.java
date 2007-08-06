@@ -444,5 +444,52 @@ public final class EnsembleFixedLeader {
     return this.numberOfCells;
   }
   
+  /**
+   * A method that returns the Ensemble numberOfCodeRepetitions field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getNumberOfCodeRepetitions() {
+    return this.numberOfCodeRepetitions;
+  }
+  
+  /**
+   * A method that returns the Ensemble pdRealOrSimulatedFlag field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPdRealOrSimulatedFlag() {
+    return this.pdRealOrSimulatedFlag;
+  }
+  
+  /**
+   * A method that returns the Ensemble percentGoodMinimum field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPercentGoodMinimum() {
+    return this.percentGoodMinimum;
+  }
+  
+  /**
+   * A method that returns the Ensemble pingHundredths field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPingHundredths() {
+    return this.pingHundredths;
+  }
+  
+  /**
+   * A method that returns the Ensemble pingMinutes field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPingMinutes() {
+    return this.pingMinutes;
+  }
+  
+  /**
+   * A method that returns the Ensemble pingSeconds field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPingSeconds() {
+    return this.pingSeconds;
+  }
   
 }
