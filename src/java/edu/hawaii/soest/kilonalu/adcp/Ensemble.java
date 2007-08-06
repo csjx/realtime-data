@@ -162,8 +162,8 @@ public class Ensemble {
    *  would indicate that Data Type #1 == Fixed Leader, Data Type #2 ==
    *  Variable Leader, Data Type #3 = Velocity Profile, etc.
    */
-   private HashMap<Integer, EnsembleDataType> dataTypeMap = 
-     new HashMap<Integer, EnsembleDataType>();
+   private HashMap<EnsembleDataType, Integer> dataTypeMap = 
+     new HashMap<EnsembleDataType, Integer>();
 
 
   /**
@@ -257,41 +257,41 @@ public class Ensemble {
          switch ( dataType ) {
            
            case HEADER:
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case FIXED_LEADER:
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case VARIABLE_LEADER:
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case VELOCITY_PROFILE:
              hasVelocityProfile = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case CORRELATION_PROFILE:
              hasCorrelationProfile = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case ECHOINTENSITY_PROFILE:
              hasEchoIntensityProfile = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case PERCENTGOOD_PROFILE:
              hasPercentGoodProfile = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case STATUS_PROFILE:
              hasStatusProfile = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case BOTTOMTRACK_DATA:
              hasBottomTrackData = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
            case MICROCAT_DATA:
              hasMicroCATData = true;
-             dataTypeMap.put(new Integer(i), dataType);
+             dataTypeMap.put(dataType, new Integer(i));
              break;
          }
          // prepare the buffer for rereading of the next dataType
@@ -370,7 +370,14 @@ public class Ensemble {
       return returnType;
     }
 
-
+   /**
+    *  A method that returns the Data Type Number from the order of data types
+    *  in the ensemble as they have been indexed in the dataTypeMap.  The map
+    *  contains the sequential location of each data type.
+    */
+    public int getDataTypeNumber( EnsembleDataType ensembleDataType ) {
+      return this.dataTypeMap.get(ensembleDataType);
+    }
    /**
     *  A method that returns the offset for the given Data Type number.  
     *  For instance, The offset for Data Type #1 (FixedLeader) will be returned
