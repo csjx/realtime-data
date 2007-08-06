@@ -597,4 +597,64 @@ public final class EnsembleFixedLeader {
     return this.transmitPulseLength;
   }
   
+  /**
+   * A method that sets the baseFrequencyIndex field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setBaseFrequencyIndex(byte[] byteArray) {
+    this.baseFrequencyIndex.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the beamAngle field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setBeamAngle(byte[] byteArray) {
+    this.beamAngle.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the binOneDistance field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setBinOneDistance(byte[] byteArray) {
+    this.binOneDistance.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the blankAfterTransmit field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setBlankAfterTransmit(byte[] byteArray) {
+    this.blankAfterTransmit.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the coordinateTransformParams field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setCoordinateTransformParams(byte[] byteArray) {
+    this.coordinateTransformParams.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the cpuBoardSerialNumber field from the given
+   * byte array. The byteArray argument must be 8-bytes in size.
+   *
+   * @param byteArray  the 8-byte array that contains the fixed leader bytes
+   */
+  private void setCpuBoardSerialNumber(byte[] byteArray) {
+    this.cpuBoardSerialNumber.put(byteArray);
+  }
+  
 }
