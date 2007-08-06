@@ -787,4 +787,64 @@ public final class EnsembleFixedLeader {
     this.numberOfCells.put(byteArray);
   }
   
+  /**
+   * A method that sets the numberOfCodeRepetitions field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setNumberOfCodeRepetitions(byte[] byteArray) {
+    this.numberOfCodeRepetitions.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the pdRealOrSimulatedFlag field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setPdRealOrSimulatedFlag(byte[] byteArray) {
+    this.pdRealOrSimulatedFlag.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the percentGoodMinimum field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setPercentGoodMinimum(byte[] byteArray) {
+    this.percentGoodMinimum.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the pingHundredths field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setPingHundredths(byte[] byteArray) {
+    this.pingHundredths.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the pingMinutes field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setPingMinutes(byte[] byteArray) {
+    this.pingMinutes.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the pingSeconds field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setPingSeconds(byte[] byteArray) {
+    this.pingSeconds.put(byteArray);
+  }
+  
 }
