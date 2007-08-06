@@ -847,4 +847,74 @@ public final class EnsembleFixedLeader {
     this.pingSeconds.put(byteArray);
   }
   
+  /**
+   * A method that sets the pingsPerEnsemble field from the given
+   * byte array. The byteArray argument must be 2-bytes in size.
+   *
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
+   */
+  private void setPingsPerEnsemble(byte[] byteArray) {
+    this.pingsPerEnsemble.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the profilingMode field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setProfilingMode(byte[] byteArray) {
+    this.profilingMode.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the referenceLayerEnd field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setReferenceLayerEnd(byte[] byteArray) {
+    this.referenceLayerEnd.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the referenceLayerStart field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setReferenceLayerStart(byte[] byteArray) {
+    this.referenceLayerStart.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the sensorAvailability field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setSensorAvailability(byte[] byteArray) {
+    this.sensorAvailability.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the sensorSource field from the given
+   * byte array. The byteArray argument must be 1-byte in size.
+   *
+   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   */
+  private void setSensorSource(byte[] byteArray) {
+    this.sensorSource.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the setSerialNumber field from the given
+   * byte array. The byteArray argument must be 4-bytes in size.
+   *
+   * @param byteArray  the 4-byte array that contains the fixed leader bytes
+   */
+  private void setSerialNumber(byte[] byteArray) {
+    this.serialNumber.put(byteArray);
+  }
+  
 }
