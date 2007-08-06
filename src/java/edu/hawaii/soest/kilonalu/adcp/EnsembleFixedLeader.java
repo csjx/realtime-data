@@ -290,6 +290,96 @@ public final class EnsembleFixedLeader {
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
     
+    // position the cursor at the correct offset given the sequential location
+    // of the fixed leader in the data stream.
+    int typeNumber = 
+      ensemble.getDataTypeNumber( EnsembleDataType.FIXED_LEADER );
+    int offset = ensemble.getDataTypeOffset( typeNumber );
+    ensembleBuffer.position( offset + 1 );
+    
+    // define the temporary arrays for passing bytes
+    byte[] oneByte  = new byte[1];
+    byte[] twoBytes = new byte[2];
+    
+    // set all of the FixedLeader fields in the order that they are read from 
+    // the byte stream
+    ensembleBuffer.get(twoBytes);
+    setFixedLeaderID(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setCpuFirmwareVersion(oneByte);
+    ensembleBuffer.get(oneByte);
+    setCpuFirmwareRevision(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setSystemConfiguration(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setPdRealOrSimulatedFlag(oneByte);
+    ensembleBuffer.get(oneByte);
+    setLagLength(oneByte);
+    ensembleBuffer.get(oneByte);
+    setNumberOfBeams(oneByte);
+    ensembleBuffer.get(oneByte);
+    setNumberOfCells(oneByte);
+    ensembleBuffer.get(oneByte);
+    setPingsPerEnsemble(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setDepthCellLength(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setBlankAfterTransmit(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setProfilingMode(oneByte);
+    ensembleBuffer.get(oneByte);
+    setLowCorrelationThreshold(oneByte);
+    ensembleBuffer.get(oneByte);
+    setNumberOfCodeRepetitions(oneByte);
+    ensembleBuffer.get(oneByte);
+    setPercentGoodMinimum(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setErrorVelocityThreshold(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setPingMinutes(oneByte);
+    ensembleBuffer.get(oneByte);
+    setPingSeconds(oneByte);
+    ensembleBuffer.get(oneByte);
+    setPingHundredths(oneByte);
+    ensembleBuffer.get(oneByte);
+    setCoordinateTransformParams(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setHeadingAlignment(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setHeadingBias(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setSensorSource(oneByte);
+    ensembleBuffer.get(oneByte);
+    setSensorAvailability(oneByte);
+    ensembleBuffer.get(oneByte);
+    setBinOneDistance(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setTransmitPulseLength(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setReferenceLayerStart(oneByte);
+    ensembleBuffer.get(oneByte);
+    setReferenceLayerEnd(oneByte);
+    ensembleBuffer.get(oneByte);
+    setFalseTargetThreshold(oneByte);
+    ensembleBuffer.get(oneByte);
+    setFixedLeaderSpare(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setTransmitLagDistance(twoBytes);
+    byte[] boardSerialNumber = new byte[8];
+    ensembleBuffer.get(boardSerialNumber);  // read 8 bytes
+    setCpuBoardSerialNumber(boardSerialNumber);
+    ensembleBuffer.get(twoBytes);
+    setSystemBandwidth(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setSystemPower(oneByte);
+    ensembleBuffer.get(oneByte);
+    setBaseFrequencyIndex(oneByte);
+    byte[] instrumentSerialNumber = new byte[4];
+    ensembleBuffer.get(instrumentSerialNumber);  // read 4 bytes
+    setSerialNumber(instrumentSerialNumber);
+    ensembleBuffer.get(oneByte);
+    setBeamAngle(oneByte);
+    
   }
   
   /**
