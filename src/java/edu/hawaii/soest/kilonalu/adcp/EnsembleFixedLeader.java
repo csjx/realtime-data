@@ -308,4 +308,28 @@ public final class EnsembleFixedLeader {
     return this.beamAngle;
   }
   
+  /**
+   * A method that returns the Ensemble binOneDistance field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getBinOneDistance() {
+    return this.binOneDistance;
+  }
+  
+  /**
+   * A method that returns the Ensemble blankAfterTransmit field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getBlankAfterTransmit() {
+    return this.blankAfterTransmit;
+  }
+  
+  /**
+   * A method that returns the Ensemble coordinateTransformParams field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getCoordinateTransformParams() {
+    return this.coordinateTransformParams;
+  }
+  
 }
