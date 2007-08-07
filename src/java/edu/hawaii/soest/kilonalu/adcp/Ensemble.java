@@ -456,4 +456,185 @@ public class Ensemble {
           ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
+   /**
+    * A method that returns the Ensemble coordinate transform methods used
+    * as an int.  The following show the return values and their meaning:
+    * 1 - none, beam coordinates used.
+    * 2 - instrument coordinates used.
+    * 3 - ship coordinates used.
+    * 4 - earth coordinates used.
+    */
+   public int getCoordinateTransformParams() {
+     int coordTransform = 
+       ensembleFixedLeader.getCoordinateTransformParams().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     coordTransform = (coordTransform >> 3) << 3; // clear the first 7 bits
+     coordTransform = (coordTransform << 27) >> 27; // clear all but bits 4,5
+     
+     int returnValue = 0;
+                                
+     // define the coordinate transformations from the manual
+     final int BEAM = 0;        // ---00--- = NO TRANSFORMATION (BEAM COORDS) 
+     final int INSTRUMENT = 8;  // ---01--- = INSTRUMENT COORDINATES 
+     final int SHIP = 16;       // ---10--- = SHIP COORDINATES 
+     final int EARTH = 24;      // ---11--- = EARTH COORDINATES 
+     
+     //find the coordinate transformation setting
+     switch ( coordTransform ) {
+       case BEAM:
+         returnValue = 0;
+         break;
+       case INSTRUMENT:
+         returnValue = 1;
+         break;
+       case SHIP:
+         returnValue = 3;
+         break;
+       case EARTH:
+         returnValue = 4;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns whether or not tilts (pitch and roll) are used in 
+    * coordinate transforms, as an int.  A return of 0 indicates tilts are not
+    * used, and a return of 1 indicates that tilts are used. 
+
+    */
+   public int getTransformTiltsSetting() {
+     int coordTransform = 
+       ensembleFixedLeader.getCoordinateTransformParams().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     coordTransform = (coordTransform >> 2) << 2; // clear the first 2 bits
+     coordTransform = (coordTransform << 29) >> 29; // clear all but bit 3
+     
+     int returnValue = 0;
+                                
+     // define the tilt settings from the manual
+     final int TILTS_NOT_USED = 0;  // -----0-- = TILTS (PITCH AND ROLL) USED 
+     final int TILTS_USED     = 4;  // -----1-- = TILTS (PITCH AND ROLL) USED 
+     
+     //find the coordinate transformation setting
+     switch ( coordTransform ) {
+       case TILTS_NOT_USED:
+         returnValue = 0;
+         break;
+       case TILTS_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns whether or not 3-beam solutions are used in 
+    * coordinate transforms, as an int.  A return of 0 indicates 3-beams solutions
+    * are not used, and a return of 1 indicates that 3-beam solutions are used. 
+
+    */
+   public int getTransformThreeBeamSetting() {
+     int coordTransform = 
+       ensembleFixedLeader.getCoordinateTransformParams().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     coordTransform = (coordTransform >> 1) << 1;   // clear bit 1
+     coordTransform = (coordTransform << 30) >> 30; // clear all but bit 2
+     
+     int returnValue = 0;
+                                
+     // define the tilt settings from the manual
+     final int THREE_NOT_USED = 0;  // ------0- = 3-BEAM SOLUTION NOT USED 
+     final int THREE_USED     = 2;  // ------1- = 3-BEAM SOLUTION USED 
+     
+     //find the coordinate transformation setting
+     switch ( coordTransform ) {
+       case THREE_NOT_USED:
+         returnValue = 0;
+         break;
+       case THREE_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns whether or not 3-beam solutions are used in 
+    * coordinate transforms, as an int.  A return of 0 indicates 3-beams solutions
+    * are not used, and a return of 1 indicates that 3-beam solutions are used. 
+
+    */
+   public int getTransformBinMappingSetting() {
+     int coordTransform = 
+       ensembleFixedLeader.getCoordinateTransformParams().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     coordTransform = (coordTransform << 31) >> 31; // clear all but bit 1
+     
+     int returnValue = 0;
+                                
+     // define the tilt settings from the manual
+     final int BIN_MAP_NOT_USED = 0;  // -------0 = BIN MAPPING NOT USED 
+     final int BIN_MAP_USED     = 1;  // -------1 = BIN MAPPING USED 
+     
+     //find the coordinate transformation setting
+     switch ( coordTransform ) {
+       case BIN_MAP_NOT_USED:
+         returnValue = 0;
+         break;
+       case BIN_MAP_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the Ensemble cpuFirmwareRevision field contents 
+    * as an int.
+    */
+   public int getCpuFirmwareRevision() {
+     return ensembleFixedLeader.getCpuFirmwareRevision().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble headerID field contents 
+    * as an int.
+    */
+   public int getCpuFirmwareVersion() {
+     return ensembleFixedLeader.getCpuFirmwareVersion().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble cpuFirmwareVersion field contents 
+    * as an double.
+    */
+   public double getCpuBoardSerialNumber() {
+     return ensembleFixedLeader.getCpuBoardSerialNumber().order(
+          ByteOrder.LITTLE_ENDIAN).getDouble();
+   }
+
+   /**
+    * A method that returns the Ensemble depthCellLength field contents 
+    * as an int.
+    */
+   public int getDepthCellLength() {
+     return ensembleFixedLeader.getDepthCellLength().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
 }
