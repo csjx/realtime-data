@@ -728,4 +728,94 @@ public class Ensemble {
    }
 
 
+   /**
+    * A method that returns the Ensemble numberOfCodeRepetitions field contents 
+    * as an int.
+    */
+   public int getNumberOfCodeRepetitions() {
+     return ensembleFixedLeader.getNumberOfCodeRepetitions().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble pdRealOrSimulatedFlag field contents 
+    * as an int.
+    */
+   public int getPdRealOrSimulatedFlag() {
+     return ensembleFixedLeader.getPdRealOrSimulatedFlag().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble percentGoodMinimum field contents 
+    * as an int.
+    */
+   public int getPercentGoodMinimum() {
+     return ensembleFixedLeader.getPercentGoodMinimum().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble pingHundredths field contents 
+    * as an int.
+    */
+   public int getPingHundredths() {
+     return ensembleFixedLeader.getPingHundredths().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble pingMinutes field contents 
+    * as an int.
+    */
+   public int getPingMinutes() {
+     return ensembleFixedLeader.getPingMinutes().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble pingSeconds field contents 
+    * as an int.
+    */
+   public int getPingSeconds() {
+     return ensembleFixedLeader.getPingSeconds().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble pingsPerEnsemble field contents 
+    * as an int.
+    */
+   public int getPingsPerEnsemble() {
+     return ensembleFixedLeader.getPingsPerEnsemble().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble profilingMode field contents 
+    * as an int.
+    */
+   public int getProfilingMode() {
+     return ensembleFixedLeader.getProfilingMode().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble referenceLayerEnd field contents 
+    * as an int.
+    */
+   public int getReferenceLayerEnd() {
+     return ensembleFixedLeader.getReferenceLayerEnd().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble referenceLayerStart field contents 
+    * as an int.
+    */
+    public int getReferenceLayerStart() {
+      return ensembleFixedLeader.getReferenceLayerStart().order(
+           ByteOrder.LITTLE_ENDIAN).getInt();
+    }
+
 }
