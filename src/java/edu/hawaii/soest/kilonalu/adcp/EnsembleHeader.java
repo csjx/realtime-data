@@ -92,7 +92,7 @@ public class EnsembleHeader {
    *
    * @param ensembleBuffer the ByteBuffer that contains the binary ensemble data
    */
-  public EnsembleHeader( ByteBuffer ensembleBuffer ) {
+  public EnsembleHeader( ByteBuffer ensembleBuffer, Ensemble ensemble ) {
     
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
@@ -103,21 +103,26 @@ public class EnsembleHeader {
     
     // set each of the Ensemble Header fields n the order that they are 
     // read from the byte stream
-    ensembleBuffer.get(oneByte);
-    setHeaderID(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setHeaderID(twoBytes);
+    ensemble.addToByteSum(twoBytes);
     
     ensembleBuffer.get(twoBytes);
     setNumberOfBytesInEnsemble(twoBytes);
+    ensemble.addToByteSum(twoBytes);
     
     ensembleBuffer.get(oneByte);
     setHeaderSpare(oneByte);
+    ensemble.addToByteSum(oneByte);
     
     ensembleBuffer.get(oneByte); 
     setNumberOfDataTypes(oneByte);
+    ensemble.addToByteSum(oneByte);
     
     byte[] offsetBytes = new byte[( getNumberOfDataTypes().getInt() * 2 ) ];
     ensembleBuffer.get(offsetBytes);
     setDataTypeOffsets(offsetBytes);
+    ensemble.addToByteSum(offsetBytes);
   }
 
   /**
