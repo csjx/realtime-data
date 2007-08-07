@@ -818,4 +818,293 @@ public class Ensemble {
            ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
+   /**
+    * A method that returns the Ensemble sensorAvailability field contents 
+    * as an int.
+    */
+   public int getSensorAvailability() {
+     return ensembleFixedLeader.getSensorAvailability().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble sensorSource field contents 
+    * as an int.
+    */
+   public int getSensorSource() {
+     return ensembleFixedLeader.getSensorSource().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - depth sensor is not available
+    * 1 - depth sensor is available
+    */
+   public int getSensorDepthAvailability() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 5) << 5; // clear the first 5 bits
+     sensorSetting = (sensorSetting << 26) >> 26; // clear all but bit 6
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int DEPTH_NOT_AVAIL = 0; // --0----- = DEPTH IS NOT AVAILABLE
+     final int DEPTH_AVAIL    = 32; // --1----- = DEPTH IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case DEPTH_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case DEPTH_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - heading is not available from transducer heading sensor
+    * 1 - heading is available from transducer heading sensor
+    */
+   public int getSensorHeadingAvailability() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 4) << 4; // clear the first 4 bits
+     sensorSetting = (sensorSetting << 27) >> 27; // clear all but bit 5
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int HEADING_NOT_AVAIL = 0; // ---0---- = HEADING IS NOT AVAILABLE
+     final int HEADING_AVAIL    = 16; // ---1---- = HEADING IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case HEADING_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case HEADING_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - pitch is not available from transducer pitch sensor
+    * 1 - pitch is available from transducer pitch sensor
+    */
+   public int getSensorPitchAvailability() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 3) << 3; // clear the first 3 bits
+     sensorSetting = (sensorSetting << 28) >> 28; // clear all but bit 4
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int PITCH_NOT_AVAIL = 0; // ----0--- = PITCH SENSOR IS NOT AVAILABLE
+     final int PITCH_AVAIL     = 8; // ----1--- = PITCH SENSOR IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case PITCH_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case PITCH_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - roll is not available from transducer roll sensor
+    * 1 - roll is available from transducer roll sensor
+    */
+   public int getSensorRollAvailability() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 2) << 2; // clear the first 2 bits
+     sensorSetting = (sensorSetting << 29) >> 29; // clear all but bit 3
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int ROLL_NOT_AVAIL = 0; // -----0-- = ROLL SENSOR IS NOT AVAILABLE
+     final int ROLL_AVAIL     = 4; // -----1-- = ROLL SENSOR IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case ROLL_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case ROLL_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - salinity is not available from conductivity sensor
+    * 1 - salinity is available from conductivity sensor
+    */
+   public int getSensorSalinityAvailibility() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 1) << 1; // clear the first bit
+     sensorSetting = (sensorSetting << 30) >> 30; // clear all but bit 2
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int SALINITY_NOT_AVAIL = 0; // ------0- = SALINITY IS NOT AVAILABLE
+     final int SALINITY_AVAIL     = 2; // ------1- = SALINITY IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case SALINITY_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case SALINITY_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the availability of environmental sensors.  In this
+    * case, the return values are as follows:
+    * 0 - temperature is not available from transducer sensor
+    * 1 - temperature is available from transducer sensor
+    */
+   public int getSensorTemperatureAvailability() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorAvailability().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting << 31) >> 31; // clear all but bit 1
+
+     int returnValue = 0;
+
+     // define the sensor source settings from the manual
+     final int TEMPERATURE_NOT_AVAIL = 0; // ------0- = TEMPERATURE IS NOT AVAILABLE
+     final int TEMPERATURE_AVAIL     = 2; // ------1- = TEMPERATURE IS AVAILABLE
+
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case TEMPERATURE_NOT_AVAIL:
+         returnValue = 0;
+         break;
+       case TEMPERATURE_AVAIL:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorAvailability().rewind();
+
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - speed of sound is not calculated from depth, salinity, and temperature
+    * 1 - speed of sound is calculated from depth, salinity, and temperature
+    */
+   public int getSensorSpeedOfSoundSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 6) << 6; // clear the first 6 bits
+     sensorSetting = (sensorSetting << 25) >> 25; // clear all but bit 7
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int NO_SOS_CALC = 0; // -0------ = DOES NOT CALCULATE SPEED OF SOUND 
+     final int SOS_CALC    = 64;// -1------ = CALCULATES SPEED OF SOUND 
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case NO_SOS_CALC:
+         returnValue = 0;
+         break;
+       case SOS_CALC:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - depth sensor is not used for calculations
+    * 1 - depth sensor is used for calculations
+    */
+   public int getSensorDepthSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 5) << 5; // clear the first 5 bits
+     sensorSetting = (sensorSetting << 26) >> 26; // clear all but bit 6
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int DEPTH_NOT_USED = 0; // --0----- = DOES NOT USE DEPTH TO CALCULATE
+     final int DEPTH_USED    = 32; // --1----- = USES DEPTH TO CALCULATE
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case DEPTH_NOT_USED:
+         returnValue = 0;
+         break;
+       case DEPTH_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
 }
