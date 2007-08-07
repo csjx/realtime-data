@@ -1209,8 +1209,9 @@ public class Ensemble {
    }
 
    /**
-    * A method that returns the frquency component of the Ensemble 
-    * systemConfiguration field contents as an int.
+    * A method that returns the frequency component of the Ensemble 
+    * systemConfiguration field contents as an int.  The return values
+    * are in kHz, e.g. 1200 kHz.
     */
    public int getSystemFrequency() {
      int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
