@@ -1285,8 +1285,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{5078, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{5078, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1359,8 +1359,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{4610, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{4610, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1433,8 +1433,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{4142, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{4142, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1507,8 +1507,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{3674, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{3674, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1581,8 +1581,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{3206, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{3206, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1655,8 +1655,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{398, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{398, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1729,8 +1729,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{866, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{866, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1803,8 +1803,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{1334, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{1334, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1877,8 +1877,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{1802, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{1802, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1951,8 +1951,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{2270, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{2270, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2025,8 +2025,8 @@
 			<real>-1</real>
 			<key>Points</key>
 			<array>
-				<string>{2738, 2280}</string>
-				<string>{2738, 1518}</string>
+				<string>{2738, 1980}</string>
+				<string>{2738, 1812}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2339,7 +2339,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4862, 2280}, {432, 14}}</string>
+					<string>{{4862, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2391,7 +2391,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4862, 2294}, {432, 12}}</string>
+					<string>{{4862, 1994}, {432, 12}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2445,7 +2445,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4862, 2306}, {432, 14}}</string>
+					<string>{{4862, 2006}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2540,7 +2540,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4394, 2280}, {432, 14}}</string>
+					<string>{{4394, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2592,7 +2592,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4394, 2294}, {432, 56}}</string>
+					<string>{{4394, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2649,7 +2649,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{4394, 2350}, {432, 28}}</string>
+					<string>{{4394, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2745,7 +2745,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3926, 2280}, {432, 14}}</string>
+					<string>{{3926, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2797,7 +2797,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3926, 2294}, {432, 56}}</string>
+					<string>{{3926, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2854,7 +2854,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3926, 2350}, {432, 28}}</string>
+					<string>{{3926, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -2950,7 +2950,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3458, 2280}, {432, 14}}</string>
+					<string>{{3458, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3002,7 +3002,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3458, 2294}, {432, 56}}</string>
+					<string>{{3458, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3059,7 +3059,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{3458, 2350}, {432, 28}}</string>
+					<string>{{3458, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3155,7 +3155,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2990, 2280}, {432, 14}}</string>
+					<string>{{2990, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3207,7 +3207,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2990, 2294}, {432, 56}}</string>
+					<string>{{2990, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3264,7 +3264,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2990, 2350}, {432, 28}}</string>
+					<string>{{2990, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3360,7 +3360,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2522, 2280}, {432, 14}}</string>
+					<string>{{2522, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3412,7 +3412,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2522, 2294}, {432, 56}}</string>
+					<string>{{2522, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3469,7 +3469,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2522, 2350}, {432, 28}}</string>
+					<string>{{2522, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3565,7 +3565,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2054, 2280}, {432, 14}}</string>
+					<string>{{2054, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3617,7 +3617,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2054, 2294}, {432, 56}}</string>
+					<string>{{2054, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3674,7 +3674,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2054, 2350}, {432, 28}}</string>
+					<string>{{2054, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3770,7 +3770,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1586, 2280}, {432, 14}}</string>
+					<string>{{1586, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3822,7 +3822,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1586, 2294}, {432, 56}}</string>
+					<string>{{1586, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3879,7 +3879,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1586, 2350}, {432, 28}}</string>
+					<string>{{1586, 2050}, {432, 28}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -3975,7 +3975,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1118, 2280}, {432, 14}}</string>
+					<string>{{1118, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4027,7 +4027,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1118, 2294}, {432, 56}}</string>
+					<string>{{1118, 1994}, {432, 56}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4084,7 +4084,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{1118, 2350}, {432, 42}}</string>
+					<string>{{1118, 2050}, {432, 42}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4181,7 +4181,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{650, 2280}, {432, 14}}</string>
+					<string>{{650, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4233,7 +4233,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{650, 2294}, {432, 532}}</string>
+					<string>{{650, 1994}, {432, 532}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4324,7 +4324,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{650, 2826}, {432, 1092}}</string>
+					<string>{{650, 2526}, {432, 1092}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4496,7 +4496,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{182, 2280}, {432, 14}}</string>
+					<string>{{182, 1980}, {432, 14}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4548,7 +4548,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{182, 2294}, {432, 98}}</string>
+					<string>{{182, 1994}, {432, 98}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -4608,7 +4608,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{182, 2392}, {432, 154}}</string>
+					<string>{{182, 2092}, {432, 154}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -6554,7 +6554,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2469, 846}, {538, 672}}</string>
+					<string>{{2469, 846}, {538, 966}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -6605,6 +6605,8 @@
 -findDataTypes(ensembleBuffer : ByteBuffer)                     : boolean\
 +getBaseFrequencyIndex()                                               	: int\
 +getBeamAngle()                                                                	: int\
++getBeamDirection()                                                          	: int\
++getBeamPattern()                                                            	: int\
 +getBinOneDistance()                                                        	: int\
 +getBlankAfterTransmit()                                                   	: int\
 +getCoordinateTransformParams()                                    	: int\
@@ -6613,7 +6615,7 @@
 +getDataTypeOffset(dataTypeNumber : int)                       	: int\
 +getCpuFirmwareRevision()                                              	: int\
 +getCpuFirmwareVersion()                                                	: int\
-+getCpuBoardSerialNumber()                                           	: int\
++getCpuBoardSerialNumber()                                           	: double\
 +getDepthCellLength()                                                       	: int\
 +getErrorVelocityThreshold()                                              	: int\
 +getFalseTargetThreshold()                                               	: int\
@@ -6621,8 +6623,8 @@
 +getFixedLeaderSpare()                                                    	: int\
 +getHeaderID()                                                                 	: int\
 +getHeaderSpare()                                                             	: int\
-+getHeadingAlignment()                                                     	: int\
-+getHeadingBias()                                                       	: int\
++getHeadingAlignment()                                                     	: float\
++getHeadingBias()                                                       	: float\
 +getLagLength()                                                          	: int\
 +getLowCorrelationThreshold()                                          	: int\
 +getNumberOfBeams()                                                       	: int\
@@ -6641,12 +6643,31 @@
 +getReferenceLayerStart()                                           	: int\
 +getRReservedBIT()                                                   	: int\
 +getSensorAvailability()                                                      	: int\
++getSensorConfiguration()                                                 	: int\
++getSensorDepthAvailability()                                           	: int\
++getSensorDepthSetting()                                                 	: int\
++getSensorHeadingAvailability()                                        	: int\
++getSensorHeadingSetting()                                             	: int\
++getSensorPitchAvailability()                                             	: int\
++getSensorPitchSetting()                                             	: int\
++getSensorRollAvailability()                                               	: int\
++getSensorRollSetting()                                               	: int\
++getSensorSalinityAvailability()                                         	: int\
++getSensorSalinitySetting()                                               	: int\
 +getSensorSource()                                                           	: int\
++getSensorSpeedOfSoundSetting()                                   	: int\
++getSensorTemperatureAvailability()                                 	: int\
++getSensorTemperatureSetting()                                   	: int\
 +getSerialNumber()                                                           	: int\
 +getSignalProcessingMode()                                              	: int\
 +getSystemBandwidth()                                                 	: int\
 +getSystemConfiguration()                                                 	: int\
++getSystemFrequency()                                                 	: int\
 +getSystemPower()                                                        	: int\
++getTransducerAttachment()                                             	: int\
++getTranformBinMappingSetting()                                     	: int\
++getTranformThreeBeamSetting()                                     	: int\
++getTranformTiltsSetting()                                             	: int\
 +getTransmitLagDistance()                                                 	: int\
 +getTransmitPulseLength()                                         	: int}</string>
 					</dict>
@@ -7001,7 +7022,7 @@
 		</dict>
 	</array>
 	<key>ModificationDate</key>
-	<string>2007-08-06 10:51:31 -0600</string>
+	<string>2007-08-06 22:52:41 -0600</string>
 	<key>Modifier</key>
 	<string>Christopher Jones</string>
 	<key>NotesVisible</key>
@@ -7078,9 +7099,9 @@
 		<key>ShowRuler</key>
 		<true/>
 		<key>VisibleRegion</key>
-		<string>{{4049, 256}, {935, 413.5}}</string>
+		<string>{{-176, 0}, {7480, 3308}}</string>
 		<key>Zoom</key>
-		<real>8</real>
+		<real>1</real>
 	</dict>
 </dict>
 </plist>
