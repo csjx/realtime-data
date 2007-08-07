@@ -1107,4 +1107,242 @@ public class Ensemble {
      return returnValue;
    }
 
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - heading is not used from transducer heading sensor
+    * 1 - heading is used from transducer heading sensor
+    */
+   public int getSensorHeadingSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 4) << 4; // clear the first 4 bits
+     sensorSetting = (sensorSetting << 27) >> 27; // clear all but bit 5
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int HEADING_NOT_USED = 0; // ---0---- = DOES NOT USE HEADING SENSOR
+     final int HEADING_USED    = 16; // ---1---- = USES HEADING SENSOR
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case HEADING_NOT_USED:
+         returnValue = 0;
+         break;
+       case HEADING_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - pitch is not used from transducer pitch sensor
+    * 1 - pitch is used from transducer pitch sensor
+    */
+   public int getSensorPitchSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 3) << 3; // clear the first 3 bits
+     sensorSetting = (sensorSetting << 28) >> 28; // clear all but bit 4
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int PITCH_NOT_USED = 0; // ----0--- = DOES NOT USE PITCH SENSOR
+     final int PITCH_USED     = 8; // ----1--- = USES PITCH SENSOR
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case PITCH_NOT_USED:
+         returnValue = 0;
+         break;
+       case PITCH_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - roll is not used from transducer roll sensor
+    * 1 - roll is used from transducer roll sensor
+    */
+   public int getSensorRollSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 2) << 2; // clear the first 2 bits
+     sensorSetting = (sensorSetting << 29) >> 29; // clear all but bit 3
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int ROLL_NOT_USED = 0; // -----0-- = DOES NOT USE ROLL SENSOR
+     final int ROLL_USED     = 4; // -----1-- = USES ROLL SENSOR
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case ROLL_NOT_USED:
+         returnValue = 0;
+         break;
+       case ROLL_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - salinity is not used from conductivity sensor
+    * 1 - salinity is used from conductivity sensor
+    */
+   public int getSensorSalinitySetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting >> 1) << 1; // clear the first bit
+     sensorSetting = (sensorSetting << 30) >> 30; // clear all but bit 2
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int SALINITY_NOT_USED = 0; // ------0- = DOES NOT USE SALINITY
+     final int SALINITY_USED     = 2; // ------1- = USES SALINITY
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case SALINITY_NOT_USED:
+         returnValue = 0;
+         break;
+       case SALINITY_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the source of environmental sensor data.  In this
+    * case, the return values are as follows:
+    * 0 - temperature is not used from transducer sensor
+    * 1 - temperature is used from transducer sensor
+    */
+   public int getSensorTemperatureSetting() {
+     int sensorSetting = 
+       ensembleFixedLeader.getSensorSource().order(
+         ByteOrder.LITTLE_ENDIAN).getInt();
+     sensorSetting = (sensorSetting << 31) >> 31; // clear all but bit 1
+     
+     int returnValue = 0;
+                                
+     // define the sensor source settings from the manual
+     final int TEMPERATURE_NOT_USED = 0; // ------0- = DOES NOT USE TEMPERATURE
+     final int TEMPERATURE_USED     = 2; // ------1- = USES TEMPERATURE
+     
+     //find the sensor source setting
+     switch ( sensorSetting ) {
+       case TEMPERATURE_NOT_USED:
+         returnValue = 0;
+         break;
+       case TEMPERATURE_USED:
+         returnValue = 1;
+         break;
+     }
+     // reset the sensorSource ByteBuffer for other get methods
+     ensembleFixedLeader.getSensorSource().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the Ensemble serialNumber field contents 
+    * as an int.
+    */
+   public int getSerialNumber() {
+     return ensembleFixedLeader.getSerialNumber().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble signalProcessingMode field contents 
+    * as an int.
+    */
+   public int getSignalProcessingMode() {
+     return ensembleFixedLeader.getSignalProcessingMode().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble systemBandwidth field contents 
+    * as an int.
+    */
+   public int getSystemBandwidth() {
+     return ensembleFixedLeader.getSystemBandwidth().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble systemConfiguration field contents 
+    * as an int.
+    */
+   public int getSystemConfiguration() {
+     return ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the beam pattern component of the Ensemble 
+    * systemConfiguration field contents as an int.  A return value of 0
+    * indicates a concave beam pattern, while a return value of 1 indicates
+    * a convex beam pattern.
+    */
+   public int getBeamPattern() {
+     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+     int returnValue = 0;
+     
+     systemConfig = (systemConfig >> 3) << 3; // clear the first 3 bits
+     systemConfig = (systemConfig << 28) >> 28; // clear all but bit 4
+     
+     // define the patterns from the manual
+     final int CONCAVE = 0;  //  - - - - 0 - - -  CONCAVE BEAM PATTERN
+     final int CONVEX  = 8;  //  - - - - 1 - - -  CONVEX BEAM PATTERN 
+     
+     //find the beam pattern
+     switch ( systemConfig ) {
+       case CONCAVE:
+         returnValue = 0;
+         break;
+       case CONVEX:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
 }
