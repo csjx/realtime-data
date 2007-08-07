@@ -185,7 +185,7 @@ public class Ensemble {
   public Ensemble(ByteBuffer ensembleBuffer) {
     
     // first, build the EnsembleHeader to be used in subsequent parsing
-    this.ensembleHeader = new EnsembleHeader(ensembleBuffer);     
+    this.ensembleHeader = new EnsembleHeader(ensembleBuffer, this);     
     
     // create the components of the ensemble based on the metadata content
     // of the EnsembleHeader
@@ -243,8 +243,10 @@ public class Ensemble {
     byte[] twoBytes = new byte[2];
     ensembleBuffer.get(twoBytes);
     setReservedBIT(twoBytes);
+    addToByteSum(twoBytes);
     ensembleBuffer.get(twoBytes);
     setChecksum(twoBytes);
+    addToByteSum(twoBytes);
   
   }
 
