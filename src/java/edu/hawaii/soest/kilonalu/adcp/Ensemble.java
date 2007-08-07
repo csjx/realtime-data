@@ -1334,6 +1334,20 @@ public class Ensemble {
    }
 
    /**
+    * A method that determines whether or not the Ensemble is valid by
+    * comparing the cumulative byte sum value with the stated checksum
+    * value in the ensemble byte stream.  Returns true if it is valid.
+    */
+   private boolean isValid() {
+     boolean isValid = false;
+     
+     if (  ensembleByteSum % 65535 == checksum ) {
+       isValid = true;
+     }
+     return isValid;
+   }
+
+   /**
     * A method that sets the checksum field from the given
     * byte array. The byteArray argument must be 2-bytes in size.
     *
@@ -1353,17 +1367,4 @@ public class Ensemble {
      this.reservedBIT.put(byteArray);
    }
 
-   /**
-    * A method that determines whether or not the Ensemble is valid by
-    * comparing the cumulative byte sum value with the stated checksum
-    * value in the ensemble byte stream.  Returns true if it is valid.
-    */
-   private boolean isValid() {
-     boolean isValid = false;
-     
-     if (  ensembleByteSum % 65535 == checksum ) {
-       isValid = true;
-     }
-     return isValid;
-   }
 }
