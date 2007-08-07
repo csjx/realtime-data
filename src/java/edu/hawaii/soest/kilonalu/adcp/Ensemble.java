@@ -1353,7 +1353,8 @@ public class Ensemble {
    private boolean isValid() {
      boolean isValid = false;
      
-     if (  ensembleByteSum % 65535 == checksum ) {
+     if (  ensembleByteSum % 65535 == 
+          (checksum.order(ByteOrder.LITTLE_ENDIAN).getDouble()) ) {
        isValid = true;
      }
      return isValid;
@@ -1375,7 +1376,7 @@ public class Ensemble {
     *
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
-   private void setResevedBIT(byte[] byteArray) {
+   private void setReservedBIT(byte[] byteArray) {
      this.reservedBIT.put(byteArray);
    }
 
