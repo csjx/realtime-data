@@ -420,5 +420,40 @@ public class Ensemble {
      return this.reservedBIT.order(ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
+   /**
+    * A method that returns the Ensemble baseFrequencyIndex field contents 
+    * as an int.
+    */
+   public int getBaseFrequencyIndex() {
+     return ensembleFixedLeader.getBaseFrequencyIndex().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble beamAngle field contents 
+    * as an int.
+    */
+    public int getBeamAngle() {
+      return ensembleFixedLeader.getBeamAngle().order(
+           ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble binOneDistance field contents 
+    * as an int.
+    */
+   public int getBinOneDistance() {
+     return ensembleFixedLeader.getBinOneDistance().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble blankAfterTransmit field contents 
+    * as an int.
+    */
+   public int getBlankAfterTransmit() {
+     return ensembleFixedLeader.getBlankAfterTransmit().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
 
 }
