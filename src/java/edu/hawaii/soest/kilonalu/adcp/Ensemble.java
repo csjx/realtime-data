@@ -1316,5 +1316,14 @@ public class Ensemble {
           ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
+   /**
+    * A method that sets the checksum field from the given
+    * byte array. The byteArray argument must be 2-bytes in size.
+    *
+    * @param byteArray  the 2-byte array that contains the checksum bytes
+    */
+   private void setChecksum(byte[] byteArray) {
+     this.checksum.put(byteArray);
+   }
 
 }
