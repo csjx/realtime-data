@@ -1286,7 +1286,7 @@
 			<key>Points</key>
 			<array>
 				<string>{5078, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1360,7 +1360,7 @@
 			<key>Points</key>
 			<array>
 				<string>{4610, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1434,7 +1434,7 @@
 			<key>Points</key>
 			<array>
 				<string>{4142, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1508,7 +1508,7 @@
 			<key>Points</key>
 			<array>
 				<string>{3674, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1582,7 +1582,7 @@
 			<key>Points</key>
 			<array>
 				<string>{3206, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1656,7 +1656,7 @@
 			<key>Points</key>
 			<array>
 				<string>{398, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1730,7 +1730,7 @@
 			<key>Points</key>
 			<array>
 				<string>{866, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1804,7 +1804,7 @@
 			<key>Points</key>
 			<array>
 				<string>{1334, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1878,7 +1878,7 @@
 			<key>Points</key>
 			<array>
 				<string>{1802, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1952,7 +1952,7 @@
 			<key>Points</key>
 			<array>
 				<string>{2270, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2026,7 +2026,7 @@
 			<key>Points</key>
 			<array>
 				<string>{2738, 1980}</string>
-				<string>{2738, 1812}</string>
+				<string>{2738, 1882}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -6481,7 +6481,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2469, 566}, {538, 280}}</string>
+					<string>{{2469, 566}, {538, 294}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -6540,6 +6540,7 @@
 -ensembleStatusProfile                                               	: EnsembleStatusProfile\
 -ensembleBottomTrack                                                	: EnsembleBottomTrack\
 -ensembleMicroCAT                                                    	: EnsembleMicroCAT\
+-ensembleByteSum                                                       	: double\
 -hasVelocityProfile                                                       	: boolean\
 -hasCorrelationProfile                                                       	: boolean\
 -hasEchoIntensityProfile                                                    	: boolean\
@@ -6554,7 +6555,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{2469, 846}, {538, 966}}</string>
+					<string>{{2469, 860}, {538, 1022}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -6602,7 +6603,9 @@
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\fs24 \cf0 +Ensemble(ensembleBuffer : byteBuffer)                           	: void\
+-addToByteSum(byteArray : byte)                                       : void\
 -findDataTypes(ensembleBuffer : ByteBuffer)                     : boolean\
++isValid()                                                                      	: boolean\
 +getBaseFrequencyIndex()                                               	: int\
 +getBeamAngle()                                                                	: int\
 +getBeamDirection()                                                          	: int\
@@ -6641,7 +6644,7 @@
 +getProfilingMode()                                                     	: int\
 +getReferenceLayerEnd()                                            	: int\
 +getReferenceLayerStart()                                           	: int\
-+getRReservedBIT()                                                   	: int\
++getReservedBIT()                                                      	: int\
 +getSensorAvailability()                                                      	: int\
 +getSensorConfiguration()                                                 	: int\
 +getSensorDepthAvailability()                                           	: int\
@@ -6669,7 +6672,9 @@
 +getTranformThreeBeamSetting()                                     	: int\
 +getTranformTiltsSetting()                                             	: int\
 +getTransmitLagDistance()                                                 	: int\
-+getTransmitPulseLength()                                         	: int}</string>
++getTransmitPulseLength()                                         	: int\
+-setChecksum(byteArray : byte)                                         	: void\
+-setReservedBIT(byteArray : byte)                                     	: void}</string>
 					</dict>
 					<key>TextPlacement</key>
 					<integer>0</integer>
@@ -7022,7 +7027,7 @@
 		</dict>
 	</array>
 	<key>ModificationDate</key>
-	<string>2007-08-06 22:52:41 -0600</string>
+	<string>2007-08-07 10:18:27 -0600</string>
 	<key>Modifier</key>
 	<string>Christopher Jones</string>
 	<key>NotesVisible</key>
@@ -7099,9 +7104,9 @@
 		<key>ShowRuler</key>
 		<true/>
 		<key>VisibleRegion</key>
-		<string>{{-176, 0}, {7480, 3308}}</string>
+		<string>{{1939, 212}, {1870, 827}}</string>
 		<key>Zoom</key>
-		<real>1</real>
+		<real>4</real>
 	</dict>
 </dict>
 </plist>
