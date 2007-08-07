@@ -504,7 +504,6 @@ public class Ensemble {
     * A method that returns whether or not tilts (pitch and roll) are used in 
     * coordinate transforms, as an int.  A return of 0 indicates tilts are not
     * used, and a return of 1 indicates that tilts are used. 
-
     */
    public int getTransformTiltsSetting() {
      int coordTransform = 
@@ -538,7 +537,6 @@ public class Ensemble {
     * A method that returns whether or not 3-beam solutions are used in 
     * coordinate transforms, as an int.  A return of 0 indicates 3-beams solutions
     * are not used, and a return of 1 indicates that 3-beam solutions are used. 
-
     */
    public int getTransformThreeBeamSetting() {
      int coordTransform = 
@@ -572,7 +570,6 @@ public class Ensemble {
     * A method that returns whether or not 3-beam solutions are used in 
     * coordinate transforms, as an int.  A return of 0 indicates 3-beams solutions
     * are not used, and a return of 1 indicates that 3-beam solutions are used. 
-
     */
    public int getTransformBinMappingSetting() {
      int coordTransform = 
