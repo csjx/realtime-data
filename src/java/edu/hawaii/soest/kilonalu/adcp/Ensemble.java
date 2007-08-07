@@ -249,6 +249,18 @@ public class Ensemble {
   }
 
   /**
+   * A method that adds the given values of the given byte array to the
+   * ensembleByteSum field.  Each byte is added individually in order for the 
+   * ensembleByteSum to eventually be compared to the checksum stated in the
+   * data stream.
+   */
+   protected void addToByteSum(byte[] byteArray) {
+     
+     // iterate through the bytes and add them to ensembleByteSum
+     for ( int i : byteArray ) ensembleByteSum += byteArray[i];
+   }
+  
+  /**
    *  A method that identifies the types of data that are collected in the
    *  given ensemble ByteBuffer.  This method sets the has<DataType> boolean
    *  fields to true if it finds the Data Type ID at one of the Data Type 
