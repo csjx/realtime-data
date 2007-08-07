@@ -115,6 +115,16 @@ public class Ensemble {
   private EnsembleMicroCAT ensembleMicroCAT;
 
   /*
+   *  A byte sum variable used to hold the cumulative sum of the bytes read from
+   *  the byte stream for this ensemble.  As each byte of the ensemble is read,
+   *  the byte value should be added to this variable.  Once all of the bytes
+   *  are read, this byte sum should be compared with the checksum found at the
+   *  end of the stream, and the checksum should equal the modulo 65535 value
+   *  of this byte sum.
+   */
+  private double ensembleByteSum;
+
+  /*
    *  A boolean value indicating whether or not this Ensemble contains
    *  Velocity Profile Data.  The default is false.
    */
@@ -229,6 +239,13 @@ public class Ensemble {
       }
     }
     
+    // Finally, set the last two fields of the Ensemble
+    byte[] twoBytes = new byte[2];
+    ensembleBuffer.get(twoBytes);
+    setReservedBIT(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setChecksum(twoBytes);
+  
   }
 
   /**
