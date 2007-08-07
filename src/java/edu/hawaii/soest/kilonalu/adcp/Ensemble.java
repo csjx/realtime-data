@@ -837,209 +837,6 @@ public class Ensemble {
    }
 
    /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - depth sensor is not available
-    * 1 - depth sensor is available
-    */
-   public int getSensorDepthAvailability() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting >> 5) << 5; // clear the first 5 bits
-     sensorSetting = (sensorSetting << 26) >> 26; // clear all but bit 6
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int DEPTH_NOT_AVAIL = 0; // --0----- = DEPTH IS NOT AVAILABLE
-     final int DEPTH_AVAIL    = 32; // --1----- = DEPTH IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case DEPTH_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case DEPTH_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - heading is not available from transducer heading sensor
-    * 1 - heading is available from transducer heading sensor
-    */
-   public int getSensorHeadingAvailability() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting >> 4) << 4; // clear the first 4 bits
-     sensorSetting = (sensorSetting << 27) >> 27; // clear all but bit 5
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int HEADING_NOT_AVAIL = 0; // ---0---- = HEADING IS NOT AVAILABLE
-     final int HEADING_AVAIL    = 16; // ---1---- = HEADING IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case HEADING_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case HEADING_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - pitch is not available from transducer pitch sensor
-    * 1 - pitch is available from transducer pitch sensor
-    */
-   public int getSensorPitchAvailability() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting >> 3) << 3; // clear the first 3 bits
-     sensorSetting = (sensorSetting << 28) >> 28; // clear all but bit 4
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int PITCH_NOT_AVAIL = 0; // ----0--- = PITCH SENSOR IS NOT AVAILABLE
-     final int PITCH_AVAIL     = 8; // ----1--- = PITCH SENSOR IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case PITCH_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case PITCH_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - roll is not available from transducer roll sensor
-    * 1 - roll is available from transducer roll sensor
-    */
-   public int getSensorRollAvailability() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting >> 2) << 2; // clear the first 2 bits
-     sensorSetting = (sensorSetting << 29) >> 29; // clear all but bit 3
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int ROLL_NOT_AVAIL = 0; // -----0-- = ROLL SENSOR IS NOT AVAILABLE
-     final int ROLL_AVAIL     = 4; // -----1-- = ROLL SENSOR IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case ROLL_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case ROLL_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - salinity is not available from conductivity sensor
-    * 1 - salinity is available from conductivity sensor
-    */
-   public int getSensorSalinityAvailibility() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting >> 1) << 1; // clear the first bit
-     sensorSetting = (sensorSetting << 30) >> 30; // clear all but bit 2
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int SALINITY_NOT_AVAIL = 0; // ------0- = SALINITY IS NOT AVAILABLE
-     final int SALINITY_AVAIL     = 2; // ------1- = SALINITY IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case SALINITY_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case SALINITY_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
-    * A method that returns the availability of environmental sensors.  In this
-    * case, the return values are as follows:
-    * 0 - temperature is not available from transducer sensor
-    * 1 - temperature is available from transducer sensor
-    */
-   public int getSensorTemperatureAvailability() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorAvailability().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
-     sensorSetting = (sensorSetting << 31) >> 31; // clear all but bit 1
-
-     int returnValue = 0;
-
-     // define the sensor source settings from the manual
-     final int TEMPERATURE_NOT_AVAIL = 0; // ------0- = TEMPERATURE IS NOT AVAILABLE
-     final int TEMPERATURE_AVAIL     = 2; // ------1- = TEMPERATURE IS AVAILABLE
-
-     //find the sensor source setting
-     switch ( sensorSetting ) {
-       case TEMPERATURE_NOT_AVAIL:
-         returnValue = 0;
-         break;
-       case TEMPERATURE_AVAIL:
-         returnValue = 1;
-         break;
-     }
-     // reset the sensorSource ByteBuffer for other get methods
-     ensembleFixedLeader.getSensorAvailability().rewind();
-
-     return returnValue;
-   }
-
-   /**
     * A method that returns the source of environmental sensor data.  In this
     * case, the return values are as follows:
     * 0 - speed of sound is not calculated from depth, salinity, and temperature
@@ -1344,5 +1141,182 @@ public class Ensemble {
      
      return returnValue;
    }
+
+   /**
+    * A method that returns the direction of the beam from the 
+    * systemConfiguration field contents as an int.  A return value of 0
+    * indicates a down facing beam, while a return value of 1 
+    * indicates an up facing beam.
+    */
+   public int getBeamDirection() {
+     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+     int returnValue = 0;
+     
+     systemConfig = (systemConfig >> 7) << 7; // clear the first 7 bits
+     systemConfig = (systemConfig << 24) >> 24; // clear all but bit 8
+     
+     // define the directions from the manual
+     final int DOWN = 0;  //  0 - - - - - - -  DOWN FACING BEAM
+     final int UP   = 128; //  1 - - - - - - -  UP-FACING BEAM 
+     
+     //find the beam direction
+     switch ( systemConfig ) {
+       case DOWN:
+         returnValue = 0;
+         break;
+       case UP:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the attachement of the transducer from the 
+    * systemConfiguration field contents as an int.  A return value of 0
+    * indicates the transducer is not attached, while a return value of 1 
+    * indicates the transducer is attached.
+    */
+   public int getTransducerAttachment() {
+     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+     int returnValue = 0;
+     
+     systemConfig = (systemConfig >> 6) << 6; // clear the first 6 bits
+     systemConfig = (systemConfig << 25) >> 25; // clear all but bit 7
+     
+     // define the attachemnt from the manual
+     final int NOT_ATTACHED = 0;  //  - 0 - - - - - -  XDCR HD NOT ATTACHED
+     final int ATTACHED     = 64; //  - 1 - - - - - -  XDCR HD ATTACHED 
+     
+     //find the beam pattern
+     switch ( systemConfig ) {
+       case NOT_ATTACHED:
+         returnValue = 0;
+         break;
+       case ATTACHED:
+         returnValue = 1;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the frquency component of the Ensemble 
+    * systemConfiguration field contents as an int.
+    */
+   public int getSystemFrequency() {
+     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+     int returnValue = 0;
+     
+     systemConfig = (systemConfig << 29) >> 29; // clear all but first 3 bits
+     
+     // define the frequencies from the manual
+     final int SEVENTY_FIVE   = 0;  //  - - - - - 0 0 0   75-kHz SYSTEM
+     final int ONE_H_FIFTY    = 1;  //  - - - - - 0 0 1  150-kHz SYSTEM
+     final int THREE_HUNDRED  = 2;  //  - - - - - 0 1 0  300-kHz SYSTEM
+     final int SIX_HUNDRED    = 3;  //  - - - - - 0 1 1  600-kHz SYSTEM
+     final int TWELVE_HUNDRED = 4;  //  - - - - - 1 0 0 1200-kHz SYSTEM
+     final int TWENTY_FOUR_H  = 5;  //  - - - - - 1 0 1 2400-kHz SYSTEM
+     
+     //find the frequency
+     switch ( systemConfig ) {
+       case SEVENTY_FIVE   :
+         returnValue = 75;
+         break;
+       case ONE_H_FIFTY    :
+         returnValue = 150;
+         break;
+       case THREE_HUNDRED  :
+         returnValue = 300;
+         break;
+       case SIX_HUNDRED    :
+         returnValue = 600;
+         break;
+       case TWELVE_HUNDRED :
+         returnValue = 1200;
+         break;
+       case TWENTY_FOUR_H  :
+         returnValue = 2400;       
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+   
+   /**
+    * A method that returns the sensor configuration component of the Ensemble 
+    * systemConfiguration field contents as an int.  A return value of 1
+    * indicates sensor config #1, a return value of 2 indicates sensor 
+    * config #2, and a return value of 3 indicates sensor config 3.
+    */
+   public int getSensorConfiguration() {
+     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+     int returnValue = 0;
+     
+     systemConfig = (systemConfig >> 4) << 4; // clear the first 4 bits
+     systemConfig = (systemConfig << 26) >> 26; // clear all but bits 5,6
+     
+     // define the configs from the manual
+     final int SENSOR_CONFIG_1 = 0;    //  - - 0 0 - - - -  SENSOR CONFIG #1
+     final int SENSOR_CONFIG_2 = 16;   //  - - 0 1 - - - -  SENSOR CONFIG #2 
+     final int SENSOR_CONFIG_3 = 32;   //  - - 1 0 - - - -  SENSOR CONFIG #3 
+     
+     //find the beam pattern
+     switch ( systemConfig ) {
+       case SENSOR_CONFIG_1:
+         returnValue = 1;
+         break;
+       case SENSOR_CONFIG_2:
+         returnValue = 2;
+         break;
+       case SENSOR_CONFIG_3:
+         returnValue = 3;
+         break;
+     }
+     // reset the systemConfiguration ByteBuffer for other get methods
+     ensembleFixedLeader.getSystemConfiguration().rewind();
+     
+     return returnValue;
+   }
+
+   /**
+    * A method that returns the Ensemble systemPower field contents 
+    * as an int.
+    */
+   public int getSystemPower() {
+     return ensembleFixedLeader.getSystemPower().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble transmitLagDistance field contents 
+    * as an int.
+    */
+   public int getTransmitLagDistance() {
+     return ensembleFixedLeader.getTransmitLagDistance().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble transmitPulseLength field contents 
+    * as an int.
+    */
+   public int getTransmitPulseLength() {
+     return ensembleFixedLeader.getTransmitPulseLength().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
 
 }
