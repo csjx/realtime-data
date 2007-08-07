@@ -1326,4 +1326,14 @@ public class Ensemble {
      this.checksum.put(byteArray);
    }
 
+   /**
+    * A method that sets the reservedBIT field from the given
+    * byte array. The byteArray argument must be 2-bytes in size.
+    *
+    * @param byteArray  the 2-byte array that contains the checksum bytes
+    */
+   private void setResevedBIT(byte[] byteArray) {
+     this.reservedBIT.put(byteArray);
+   }
+
 }
