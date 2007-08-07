@@ -637,4 +637,95 @@ public class Ensemble {
           ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
+   /**
+    * A method that returns the Ensemble errorVelocityThreshold field contents 
+    * as an int.
+    */
+   public int getErrorVelocityThreshold() {
+     return ensembleFixedLeader.getErrorVelocityThreshold().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble falseTargetThreshold field contents 
+    * as an int.
+    */
+   public int getFalseTargetThreshold() {
+     return ensembleFixedLeader.getFalseTargetThreshold().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble fixedLeaderID field contents 
+    * as an int.
+    */
+   public int getFixedLeaderID() {
+     return ensembleFixedLeader.getFixedLeaderID().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble fixedLeaderSpare field contents 
+    * as an int.
+    */
+   public int getFixedLeaderSpare() {
+     return ensembleFixedLeader.getFixedLeaderSpare().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble headingAlignment field contents 
+    * as an float.
+    */
+   public float getHeadingAlignment() {
+     return ensembleFixedLeader.getHeadingAlignment().order(
+          ByteOrder.LITTLE_ENDIAN).getFloat();
+   }
+
+   /**
+    * A method that returns the Ensemble headingBias field contents 
+    * as an float.
+    */
+   public float getHeadingBias() {
+     return ensembleFixedLeader.getHeadingBias().order(
+          ByteOrder.LITTLE_ENDIAN).getFloat();
+   }
+
+   /**
+    * A method that returns the Ensemble lagLength field contents 
+    * as an int.
+    */
+   public int getLagLength() {
+     return ensembleFixedLeader.getLagLength().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble lowCorrelationThreshold field contents 
+    * as an int.
+    */
+   public int getLowCorrelationThreshold() {
+     return ensembleFixedLeader.getLowCorrelationThreshold().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble numberOfBeams field contents 
+    * as an int.
+    */
+   public int getNumberOfBeams() {
+     return ensembleFixedLeader.getNumberOfBeams().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble numberOfCells field contents 
+    * as an int.
+    */
+   public int getNumberOfCells() {
+     return ensembleFixedLeader.getNumberOfCells().order(
+          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+
 }
