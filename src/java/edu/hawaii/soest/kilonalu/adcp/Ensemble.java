@@ -1352,7 +1352,7 @@ public class Ensemble {
     * comparing the cumulative byte sum value with the stated checksum
     * value in the ensemble byte stream.  Returns true if it is valid.
     */
-   private boolean isValid() {
+   public boolean isValid() {
      boolean isValid = false;
      
      if (  ensembleByteSum % 65535 == 
