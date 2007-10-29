@@ -286,31 +286,31 @@ public class ADCPSource extends RBNBSource {
                 logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
                 logger.info(
-                  state                                + ":\tb1\t" + 
-                  Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                   ensembleBytes                       + "\t"      + 
+                  state                                              + ":\tb1\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                   ensembleBytes                                     + "\t"      + 
                    ensembleChecksum                   
                 );                                    
                 logger.info(                         
-                  state                                + ":\tb2\t" + 
-                  Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb2\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );                  
                 logger.info(                         
-                  state                                + ":\tb3\t" + 
-                  Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb3\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
                 logger.info(
-                  state                                + ":\tb4\t" + 
-                  Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb4\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
     
@@ -322,31 +322,31 @@ public class ADCPSource extends RBNBSource {
                 logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
                 logger.info(
-                  state                                + ":\tb1\t" + 
-                  Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                   ensembleBytes                       + "\t"      + 
+                  state                                              + ":\tb1\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                   ensembleBytes                                     + "\t"      + 
                    ensembleChecksum                   
                 );                                    
                 logger.info(                         
-                  state                                + ":\tb2\t" + 
-                  Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb2\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );                  
                 logger.info(                         
-                  state                                + ":\tb3\t" + 
-                  Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb3\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
                 logger.info(
-                  state                                + ":\tb4\t" + 
-                  Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb4\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
     
@@ -360,31 +360,31 @@ public class ADCPSource extends RBNBSource {
               logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
               logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
               logger.info(
-                state                                + ":\tb1\t" + 
-                Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                 ensembleBytes                       + "\t"      + 
+                state                                              + ":\tb1\t" + 
+                new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                 ensembleBytes                                     + "\t"      + 
                  ensembleChecksum                   
               );                                    
               logger.info(                         
-                state                                + ":\tb2\t" + 
-                Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb2\t" + 
+                new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );                  
               logger.info(                         
-                state                                + ":\tb3\t" + 
-                Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb3\t" + 
+                new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );
               logger.info(
-                state                                + ":\tb4\t" + 
-                Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb4\t" + 
+                new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );
   
@@ -398,31 +398,31 @@ public class ADCPSource extends RBNBSource {
               logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
               logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
               logger.info(
-                state                                + ":\tb1\t" + 
-                Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                 ensembleBytes                       + "\t"      + 
+                state                                              + ":\tb1\t" + 
+                new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                 ensembleBytes                                     + "\t"      + 
                  ensembleChecksum                   
               );                                    
               logger.info(                         
-                state                                + ":\tb2\t" + 
-                Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb2\t" + 
+                new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );                  
               logger.info(                         
-                state                                + ":\tb3\t" + 
-                Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb3\t" + 
+                new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );
               logger.info(
-                state                                + ":\tb4\t" + 
-                Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                ensembleByteCount                    + "\t"      + 
-                ensembleBytes                        + "\t"      + 
+                state                                              + ":\tb4\t" + 
+                new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                ensembleByteCount                                  + "\t"      + 
+                ensembleBytes                                      + "\t"      + 
                 ensembleChecksum
               );
   
@@ -468,31 +468,31 @@ public class ADCPSource extends RBNBSource {
                 logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
                 logger.info(
-                  state                                + ":\tb1\t" + 
-                  Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                   ensembleBytes                       + "\t"      + 
+                  state                                              + ":\tb1\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                   ensembleBytes                                     + "\t"      + 
                    ensembleChecksum                   
                 );                                    
                 logger.info(                         
-                  state                                + ":\tb2\t" + 
-                  Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb2\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );                  
                 logger.info(                         
-                  state                                + ":\tb3\t" + 
-                  Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb3\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
                 logger.info(
-                  state                                + ":\tb4\t" + 
-                  Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb4\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
     
@@ -596,31 +596,31 @@ public class ADCPSource extends RBNBSource {
     
                 logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
                 logger.info(
-                  state                                + ":\tb1\t" + 
-                  Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                   ensembleBytes                       + "\t"      + 
+                  state                                              + ":\tb1\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                   ensembleBytes                                     + "\t"      + 
                    ensembleChecksum                   
                 );                                    
                 logger.info(                         
-                  state                                + ":\tb2\t" + 
-                  Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb2\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );                  
                 logger.info(                         
-                  state                                + ":\tb3\t" + 
-                  Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb3\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
                 logger.info(
-                  state                                + ":\tb4\t" + 
-                  Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
-                  ensembleByteCount                    + "\t"      + 
-                  ensembleBytes                        + "\t"      + 
+                  state                                              + ":\tb4\t" + 
+                  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
+                  ensembleByteCount                                  + "\t"      + 
+                  ensembleBytes                                      + "\t"      + 
                   ensembleChecksum
                 );
                 logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
