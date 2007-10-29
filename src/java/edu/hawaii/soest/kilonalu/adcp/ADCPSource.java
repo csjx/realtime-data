@@ -263,7 +263,7 @@ public class ADCPSource extends RBNBSource {
     
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
-          logger.debug("Bytes remaining between position & limit: " +
+          logger.info("Bytes remaining between position & limit: " +
           buffer.remaining());
           byteOne = buffer.get();
     
@@ -283,30 +283,30 @@ public class ADCPSource extends RBNBSource {
                 ensembleByteCount++; // add Data Source ID
                 ensembleChecksum += (byteOne & 0xFF);
     
-                logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                logger.debug(
+                logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+                logger.info(
                   state                                + ":\tb1\t" + 
                   Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                    ensembleBytes                       + "\t"      + 
                    ensembleChecksum                   
                 );                                    
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb2\t" + 
                   Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );                  
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb3\t" + 
                   Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );
-                logger.debug(
+                logger.info(
                   state                                + ":\tb4\t" + 
                   Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
@@ -319,30 +319,30 @@ public class ADCPSource extends RBNBSource {
     
               }else {
     
-                logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                logger.debug(
+                logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+                logger.info(
                   state                                + ":\tb1\t" + 
                   Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                    ensembleBytes                       + "\t"      + 
                    ensembleChecksum                   
                 );                                    
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb2\t" + 
                   Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );                  
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb3\t" + 
                   Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );
-                logger.debug(
+                logger.info(
                   state                                + ":\tb4\t" + 
                   Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
@@ -357,30 +357,30 @@ public class ADCPSource extends RBNBSource {
               ensembleByteCount++; // add Ensemble Byte Count (LSB)
               ensembleChecksum += (byteOne & 0xFF);
     
-              logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-              logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-              logger.debug(
+              logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+              logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+              logger.info(
                 state                                + ":\tb1\t" + 
                 Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                  ensembleBytes                       + "\t"      + 
                  ensembleChecksum                   
               );                                    
-              logger.debug(                         
+              logger.info(                         
                 state                                + ":\tb2\t" + 
                 Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                 ensembleBytes                        + "\t"      + 
                 ensembleChecksum
               );                  
-              logger.debug(                         
+              logger.info(                         
                 state                                + ":\tb3\t" + 
                 Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                 ensembleBytes                        + "\t"      + 
                 ensembleChecksum
               );
-              logger.debug(
+              logger.info(
                 state                                + ":\tb4\t" + 
                 Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
@@ -395,30 +395,30 @@ public class ADCPSource extends RBNBSource {
               ensembleByteCount++; // add Ensemble Byte Count (MSB)
               ensembleChecksum += (byteOne & 0xFF);
     
-              logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-              logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-              logger.debug(
+              logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+              logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+              logger.info(
                 state                                + ":\tb1\t" + 
                 Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                  ensembleBytes                       + "\t"      + 
                  ensembleChecksum                   
               );                                    
-              logger.debug(                         
+              logger.info(                         
                 state                                + ":\tb2\t" + 
                 Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                 ensembleBytes                        + "\t"      + 
                 ensembleChecksum
               );                  
-              logger.debug(                         
+              logger.info(                         
                 state                                + ":\tb3\t" + 
                 Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
                 ensembleBytes                        + "\t"      + 
                 ensembleChecksum
               );
-              logger.debug(
+              logger.info(
                 state                                + ":\tb4\t" + 
                 Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                 ensembleByteCount                    + "\t"      + 
@@ -429,7 +429,7 @@ public class ADCPSource extends RBNBSource {
               int upperEnsembleByte = (byteOne & 0xFF) << 8;
               int lowerEnsembleByte = (byteTwo  & 0xFF);
               ensembleBytes = upperEnsembleByte + lowerEnsembleByte;
-              logger.debug("Number of Bytes in the Ensemble: " +
+              logger.info("Number of Bytes in the Ensemble: " +
                            ensembleBytes);
     
               ensembleBuffer.put(byteFour);
@@ -462,33 +462,33 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum -= (byteThree & 0xFF);
                 ensembleChecksum -= (byteFour  & 0xFF);
     
-                logger.debug("The buffer contains: " + buffer.toString());
+                logger.info("The buffer contains: " + buffer.toString());
     
                 // byteThree and byteFour contain the ensemble checksum
-                logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                logger.debug(
+                logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+                logger.info(
                   state                                + ":\tb1\t" + 
                   Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                    ensembleBytes                       + "\t"      + 
                    ensembleChecksum                   
                 );                                    
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb2\t" + 
                   Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );                  
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb3\t" + 
                   Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );
-                logger.debug(
+                logger.info(
                   state                                + ":\tb4\t" + 
                   Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
@@ -520,7 +520,7 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  logger.debug("Flushed " + ensembleByteCount + 
+                  logger.info("Flushed " + ensembleByteCount + 
                                " bytes of data with a checksum of " +
                                ensembleChecksum + " bytes.");
     
@@ -532,7 +532,7 @@ public class ADCPSource extends RBNBSource {
                        buffer.position() == 0) {
                     byteThree = 0x00;
                     byteFour = 0x00;
-                    logger.debug("Cleared ONLY b3, b4.");
+                    logger.info("Cleared ONLY b3, b4.");
                   } else if ( byteOne == 0x7f && 
                               ensembleByteCount > ensembleBytes &&
                               buffer.position() == 1 ) {
@@ -540,20 +540,20 @@ public class ADCPSource extends RBNBSource {
                       byteTwo = 0x00;
                       byteThree = 0x00;
                       byteFour = 0x00;
-                      logger.debug("Cleared ONLY b2, b3, b4.");
+                      logger.info("Cleared ONLY b2, b3, b4.");
     
                   } else {
                     byteOne = 0x00;
                     byteTwo = 0x00;
                     byteThree = 0x00;
                     byteFour = 0x00;                      
-                    logger.debug("Cleared ALL b1, b2, b3, b4.");
+                    logger.info("Cleared ALL b1, b2, b3, b4.");
                   }
     
                   //rewind the position to before the next ensemble's header id
                   if ( buffer.position() >= 2 ) {
                     buffer.position(buffer.position() - 2);
-                    logger.debug("Moved position back two, now: " +
+                    logger.info("Moved position back two, now: " +
                                  buffer.position());
                   }
     
@@ -568,17 +568,17 @@ public class ADCPSource extends RBNBSource {
                 } else {
     
                   // The checksums don't match, move on 
-                  logger.debug("+++++++++++++++++++++++++++++++++++++++++++");
-                  logger.debug("\nChecksums are not equal:\n" +
+                  logger.info("+++++++++++++++++++++++++++++++++++++++++++");
+                  logger.info("\nChecksums are not equal:\n" +
                                "calculated checksum: " + 
                                (ensembleChecksum % 65535) +
                                "\n recorded checksum: " + 
                                trueChecksum +
                                "\n");
-                  logger.debug("pos: " + buffer.position() + 
+                  logger.info("pos: " + buffer.position() + 
                                "\t\trem: " + buffer.remaining() +
                                "\t\tstate: " + state + "\n");
-                  logger.debug("+++++++++++++++++++++++++++++++++++++++++++");
+                  logger.info("+++++++++++++++++++++++++++++++++++++++++++");
     
                   rbnbChannelMap.Clear();
                   channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
@@ -594,36 +594,36 @@ public class ADCPSource extends RBNBSource {
                 ensembleByteCount++; // add each byte found
                 ensembleChecksum += (byteOne & 0xFF);
     
-                logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                logger.debug(
+                logger.info("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
+                logger.info(
                   state                                + ":\tb1\t" + 
                   Hex.encodeHex(new byte[]{byteOne})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                    ensembleBytes                       + "\t"      + 
                    ensembleChecksum                   
                 );                                    
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb2\t" + 
                   Hex.encodeHex(new byte[]{byteTwo})   + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );                  
-                logger.debug(                         
+                logger.info(                         
                   state                                + ":\tb3\t" + 
                   Hex.encodeHex(new byte[]{byteThree}) + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );
-                logger.debug(
+                logger.info(
                   state                                + ":\tb4\t" + 
                   Hex.encodeHex(new byte[]{byteFour})  + "\t"      + 
                   ensembleByteCount                    + "\t"      + 
                   ensembleBytes                        + "\t"      + 
                   ensembleChecksum
                 );
-                logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 
                 ensembleBuffer.put(byteOne);
                 // rbnbChannelMap.PutDataAsInt8(channelIndex, new byte[]{byteOne});
