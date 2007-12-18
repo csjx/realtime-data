@@ -580,6 +580,7 @@ public class ADCPSource extends RBNBSource {
     
                   rbnbChannelMap.Clear();
                   channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+                  ensembleBuffer.clear();
                   ensembleByteCount = 0;
                   ensembleChecksum = 0;
                   state = 0;
