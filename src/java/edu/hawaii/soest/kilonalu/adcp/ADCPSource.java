@@ -460,6 +460,9 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum -= (byteTwo   & 0xFF);
                 ensembleChecksum -= (byteThree & 0xFF);
                 ensembleChecksum -= (byteFour  & 0xFF);
+                // We are consistently 1 byte over in the checksum.  Trim it.  We need to
+                // troubleshoot why this is. CSJ 12/18/2007
+                ensembleChecksum = ensembleChecksum - 1;
     
                 //logger.debug("The buffer contains: " + buffer.toString());
     
@@ -567,12 +570,11 @@ public class ADCPSource extends RBNBSource {
     
                   // The checksums don't match, move on 
                   logger.info("+++++++++++++++++++++++++++++++++++++++++++");
-                  logger.info("\nChecksums are not equal:\n" +
+                  logger.info("\nChecksums are not equal:" +
                                "calculated checksum: " + 
                                (ensembleChecksum % 65535) +
-                               "\n recorded checksum: " + 
-                               trueChecksum +
-                               "\n");
+                               ", recorded checksum: " + 
+                               trueChecksum);
                   logger.info("pos: " + buffer.position() + 
                                "\t\trem: " + buffer.remaining() +
                                "\t\tstate: " + state + "\n");
@@ -583,6 +585,7 @@ public class ADCPSource extends RBNBSource {
                   ensembleBuffer.clear();
                   ensembleByteCount = 0;
                   ensembleChecksum = 0;
+                  ensembleBuffer.clear();
                   state = 0;
                   break;
                 }                  
