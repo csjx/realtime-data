@@ -592,14 +592,14 @@ public class ADCPSource extends RBNBSource {
     
                   // The checksums don't match, move on 
                   logger.info("+++++++++++++++++++++++++++++++++++++++++++");
-                  logger.info("\nChecksums are not equal:" +
+                  logger.info("Checksums are not equal:" +
                                "calculated checksum: " + 
                                (ensembleChecksum % 65535) +
                                ", recorded checksum: " + 
                                trueChecksum);
                   logger.info("pos: " + buffer.position() + 
                                "\t\trem: " + buffer.remaining() +
-                               "\t\tstate: " + state + "\n");
+                               "\t\tstate: " + state);
                   logger.info("+++++++++++++++++++++++++++++++++++++++++++");
     
                   rbnbChannelMap.Clear();
