@@ -537,14 +537,15 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  logger.info("Flushed: "  + ensembleByteCount          + "\t" +
-                              "ens csum: " + ensembleChecksum           + "\t" +
-                              "ens pos: "  + ensembleBuffer.position()  + "\t" +
-                              "ens rem: "  + ensembleBuffer.remaining() + "\t" +
-                              "buf pos: "  + buffer.position()          + "\t" +
-                              "buf rem: "  + buffer.remaining()         + "\t" +
-                              "state: "    + state
-                              );
+                  logger.info(
+                    "Flushed: "   + ensembleByteCount          + " "    +
+                    "ens cksum: " + ensembleChecksum           + "\t\t" +
+                    "ens pos: "   + ensembleBuffer.position()  + "\t"   +
+                    "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
+                    "buf pos: "   + buffer.position()          + "\t"   +
+                    "buf rem: "   + buffer.remaining()         + "\t"   +
+                    "state: "     + state
+                  );
     
                   // only clear all four bytes if we are not one or two bytes 
                   // from the end of the byte buffer (i.e. the header id 
