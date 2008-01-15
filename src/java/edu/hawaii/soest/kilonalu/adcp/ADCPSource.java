@@ -430,11 +430,21 @@ public class ADCPSource extends RBNBSource {
               ensembleBytes = upperEnsembleByte + lowerEnsembleByte;
               //logger.debug("Number of Bytes in the Ensemble: " +
               //             ensembleBytes);
-    
-              ensembleBuffer.put(byteFour);
-              ensembleBuffer.put(byteThree);
-              ensembleBuffer.put(byteTwo);
-              ensembleBuffer.put(byteOne);
+
+              if ( ensembleBuffer.remaining() > 0 ) {
+                
+                ensembleBuffer.put(byteFour);
+                ensembleBuffer.put(byteThree);
+                ensembleBuffer.put(byteTwo);
+                ensembleBuffer.put(byteOne);
+              } else {
+                
+                ensembleBuffer.compact();
+                ensembleBuffer.put(byteFour);
+                ensembleBuffer.put(byteThree);
+                ensembleBuffer.put(byteTwo);
+                ensembleBuffer.put(byteOne);
+              }
     
               state = 3;
               break;
@@ -503,8 +513,14 @@ public class ADCPSource extends RBNBSource {
                 int lowerChecksumByte = (byteFour & 0xFF);
                 int trueChecksum = upperChecksumByte + lowerChecksumByte;
     
-                ensembleBuffer.put((byte)lowerChecksumByte);
-                ensembleBuffer.put((byte)(upperChecksumByte >> 8));
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put((byte)lowerChecksumByte);
+                  ensembleBuffer.put((byte)(upperChecksumByte >> 8));
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put((byte)lowerChecksumByte);
+                  ensembleBuffer.put((byte)(upperChecksumByte >> 8));
+                }
     
                 // check if the calculated checksum (modulo 65535) is equal
                 // to the true checksum; if so, flush to the data turbine
@@ -521,9 +537,14 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  logger.info("Flushed " + ensembleByteCount + 
-                               " bytes of data with a checksum of " +
-                               ensembleChecksum + " bytes.");
+                  logger.info("Flushed: "  + ensembleByteCount          + "\t" +
+                              "ens csum: " + ensembleChecksum           + "\t" +
+                              "ens pos: "  + ensembleBuffer.position()  + "\t" +
+                              "ens rem: "  + ensembleBuffer.remaining() + "\t" +
+                              "buf pos: "  + buffer.position()          + "\t" +
+                              "buf rem: "  + buffer.remaining()         + "\t" +
+                              "state: "    + state
+                              );
     
                   // only clear all four bytes if we are not one or two bytes 
                   // from the end of the byte buffer (i.e. the header id 
@@ -627,7 +648,14 @@ public class ADCPSource extends RBNBSource {
                 //);
                 //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 
-                ensembleBuffer.put(byteOne);
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put(byteOne);
+                  
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put(byteOne);
+                  
+                }
                 // rbnbChannelMap.PutDataAsInt8(channelIndex, new byte[]{byteOne});
                 break;
               }                
