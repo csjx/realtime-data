@@ -128,12 +128,12 @@ public class ADCPSource extends RBNBSource {
   /*
    *  A default source TCP port for the given source instrument
    */  
-  private final String DEFAULT_SOURCE_HOST_PORT  = "2104";
+  private final int DEFAULT_SOURCE_HOST_PORT  = 2104;
 
   /**
    * The TCP port to connect to on the Source host machine 
    */
-  private String sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
+  private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
 
   /**
    * The Logger instance used to log system messages 
@@ -178,9 +178,9 @@ public class ADCPSource extends RBNBSource {
                     String serverName, String serverPort) {
     
     setHostName(sourceHostName);
-    setHostPort(sourceHostPort);
+    setHostPort(Integer.parseInt(sourceHostPort));
     setServerName(serverName);
-    setServerPort(serverPort);
+    setServerPort(Integer.parseInt(serverPort));
   }
 
   /**
@@ -206,9 +206,9 @@ public class ADCPSource extends RBNBSource {
                     int cacheFrameSize, String rbnbClientName) {
     
     setHostName(sourceHostName);
-    setHostPort(sourceHostPort);
+    setHostPort(Integer.parseInt(sourceHostPort));
     setServerName(serverName);
-    setServerPort(serverPort);
+    setServerPort(Integer.parseInt(serverPort));
     setArchiveMode(archiveMode);
     setArchiveSize(archiveFrameSize);
     setCacheSize(cacheFrameSize);
@@ -453,7 +453,7 @@ public class ADCPSource extends RBNBSource {
     
               // if we've made it to the next ensemble's header id, prepare to
               // flush the data.  Also check that the calculated byte count 
-              // equals 1 + the recorded byte count in case of finding an
+              // is greater than the recorded byte count in case of finding an
               // arbitrary 0x7f 0x7f sequence in the data stream
               if ( byteOne == 0x7f && byteTwo == byteOne &&
                     ensembleByteCount > ensembleBytes ) {
@@ -760,7 +760,7 @@ public class ADCPSource extends RBNBSource {
    * A method that returns the TCP port of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
    */
-  public String getHostPort(){
+  public int getHostPort(){
     return this.sourceHostPort;
   }
 
@@ -887,8 +887,7 @@ public class ADCPSource extends RBNBSource {
       String hostPort = command.getOptionValue("P");
       if ( hostPort != null ) {
         try {
-          Integer i = new Integer(hostPort);
-          setHostPort(hostPort);
+          setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
           logger.info("Error: Enter a numeric value for the host port. " +
@@ -945,7 +944,7 @@ public class ADCPSource extends RBNBSource {
    *
    * @param hostPort  the TCP port of the source instrument
    */
-  public void setHostPort(String hostPort) {
+  public void setHostPort(int hostPort) {
     this.sourceHostPort = hostPort;
   }
 
