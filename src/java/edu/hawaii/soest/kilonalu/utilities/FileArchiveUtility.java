@@ -103,7 +103,6 @@ public class FileArchiveUtility {
     logger.debug("FileArchiveUtility.makePathFromTime() called.");
     Date t = new Date(time);
     String path;
-    FileArchiveUtility.extension = extension;
     
     if ( format.toPattern().equals(YEAR.toPattern()) ) {
       path =
