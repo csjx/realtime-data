@@ -60,7 +60,7 @@
         <not><available file="lib/commons-codec-1.3.jar"/></not>
         <not><available file="lib/log4j-1.2.8.jar"/></not>
         <not><available file="lib/rbnb.jar"/></not>
-        <not><available file="lib/turbine-3.7.0.jar"/></not>
+        <not><available file="lib/turbine-3.9.0.jar"/></not>
         <not><available file="lib/commons-cli-1.0.jar"/></not>
         <not><available file="lib/commons-logging-1.0.4.jar"/></not>
         <not><available file="lib/RXTXcomm.jar"/></not>
@@ -72,7 +72,7 @@
     <property name="httpjar"  value="${libdir}/httpclient.jar" />
     <property name="codecjar"  value="${libdir}/commons-codec-1.3.jar" />
     <property name="rbnbjar"  value="${libdir}/rbnb.jar" />
-    <property name="turbinejar"  value="${libdir}/turbine-3.7.0.jar" />
+    <property name="turbinejar"  value="${libdir}/turbine-3.9.0.jar" />
     <property name="clijar"  value="${libdir}/commons-cli-1.0.jar" />
     <property name="loggingjar"  value="${libdir}/commons-logging-1.0.4.jar" />
     <property name="rxtxjar"  value="${libdir}/RXTXcomm.jar" />
