@@ -59,7 +59,7 @@ public class FileArchiveUtility {
   /** The date format for the command **/
   private static final SimpleDateFormat COMMAND = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
   /** The date format for the file being created **/
-  private static final SimpleDateFormat FILE = new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS'Z'");
+  private static final SimpleDateFormat FILE = new SimpleDateFormat("yyyyMMddHHmmss");
   /** The date format for the year of the data **/
   private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy");
   /** The date format for the month of the data **/
