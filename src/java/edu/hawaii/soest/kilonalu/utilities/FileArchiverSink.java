@@ -293,6 +293,24 @@ public class FileArchiverSink extends RBNBBase {
   }
 
   /**
+   * A method that sets the prefix string to be used in the archived file name
+   * 
+   * @param filePrefix  the prefix string to be used in the file name
+   */
+  public void setFilePrefix(String filePrefix) {
+    this.filePrefix = filePrefix;
+  }
+  
+  /**
+   * A method that sets the extension string to be used in the archived file name
+   * 
+   * @param fileExtension  the extension string to be used in the file name
+   */
+  public void setFileExtension(String fileExtension) {
+    this.fileExtension = fileExtension;
+  }
+
+  /**
    * This method overrides the setArgs() method in RBNBBase and sets the values
    * of the various command line arguments
    */
