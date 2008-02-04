@@ -1,5 +1,14 @@
 #!/bin/bash
-export CLASSPATH=/home/cjones/development/bbl/build/classes/:/home/cjones/development/bbl/lib/rbnb.jar:/home/cjones/development/bbl/lib/commons-codec-1.3.jar:/home/cjones/development/bbl/lib/commons-cli-1.0.jar:/home/cjones/development/bbl/lib/commons-logging-1.0.4.jar:/home/cjones/development/bbl/lib/turbine-3.7.0.jar:/home/cjones/development/bbl/lib/log4j-1.2.8.jar:/home/cjones/development/bbl/lib/log4j.properties
+export BBL_HOME=/home/cjones/development/bbl/trunk;
+export CLASSPATH=\
+$BBL_HOME/build/classes/:\
+$BBL_HOME/lib/rbnb.jar:\
+$BBL_HOME/lib/commons-codec-1.3.jar:\
+$BBL_HOME/lib/commons-cli-1.0.jar:\
+$BBL_HOME/lib/commons-logging-1.0.4.jar:\
+$BBL_HOME/lib/turbine-3.9.0.jar:\
+$BBL_HOME/lib/log4j-1.2.8.jar:\
+$BBL_HOME/lib/log4j.properties
 
 # run the ADCPSource driver, connecting to the ADCP @ 192.168.1.101:2104
 # and to the RBNB server @ 192.168.1.103:3333, defining the source name as
