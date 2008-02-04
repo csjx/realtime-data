@@ -45,6 +45,9 @@ import java.util.TimerTask;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
 
 import org.nees.rbnb.MarkerUtilities;
 import org.nees.rbnb.RBNBBase;
@@ -60,8 +63,8 @@ import com.rbnb.sapi.ChannelTree.Node;
 /**
  * This class grabs data from an RBNB data source and saves it to a
  * directory structure where the data for the time stamp
- * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file yyyyMMddhhmmssnnn.dat on the
- * directory path base-dir/yyyy/MM/dd/hh/mm/. The spliting of files to directory
+ * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file prefix_yyyyMMddhhmmssnnn.dat on the
+ * directory path base-dir/yyyy/MM/dd/[hh/mm/]. The spliting of files to directory
  * structures is done to assure that no directory overflows its index table.
  * 
  * @author Terry E. Weymouth
@@ -71,6 +74,9 @@ import com.rbnb.sapi.ChannelTree.Node;
  */
 public class FileArchiverSink extends RBNBBase {
 
+  /** The Logger instance used to log system messages */
+  private static Logger logger = Logger.getLogger(FileArchiverSink.class);
+  
   /** the default RBNB sink name */
   private static final String DEFAULT_SINK_NAME = "FileArchiver";
 
@@ -180,7 +186,7 @@ public class FileArchiverSink extends RBNBBase {
       
       TimerTask archiveData = new TimerTask() {
         public void run() {
-          System.out.println("TimerTask.run() called.");
+          logger.debug("TimerTask.run() called.");
 
           if ( fileArchiverSink.validateSetup() ) {          
             fileArchiverSink.export();      
@@ -196,10 +202,14 @@ public class FileArchiverSink extends RBNBBase {
   }
   
   /**
-   * Initializes time variables.
+   * A method that initializes time variables for the File Archiver class.  For 
+   * now, it overides the start and end times provided on the command line
+   * and sets the rolls the end time forward to be on the hour, and sets the 
+   * start time to be one hour prior.  This results in hourly data files written
+   * on the hour.
    */
   private void setupArchiveTime(final FileArchiverSink fileArchiverSink) {
-    System.out.println("FileArchiverSink.setupArchiveTime() called.");
+    logger.debug("FileArchiverSink.setupArchiveTime() called.");
     
     // remove the time ranges assumed from the command line args
     timeRanges.clear();
@@ -230,7 +240,7 @@ public class FileArchiverSink extends RBNBBase {
    * @param fileArchiverSink  the FileArchiverSink to stop
    */
   private static void setupShutdownHook(final FileArchiverSink fileArchiverSink) {
-    System.out.println("FileArchiverSink.setupShutdownHook() called.");
+    logger.debug("FileArchiverSink.setupShutdownHook() called.");
     final Thread workerThread = Thread.currentThread();
     
     Runtime.getRuntime ().addShutdownHook (new Thread () {
@@ -247,7 +257,7 @@ public class FileArchiverSink extends RBNBBase {
    * @param fileArchiverSink  the FileArchiverSink to monitor
    */
   private static void setupProgressListener(FileArchiverSink fileArchiverSink) {
-    System.out.println("FileArchiverSink.setupProgressListener() called.");
+    logger.debug("FileArchiverSink.setupProgressListener() called.");
     fileArchiverSink.addTimeProgressListener(new TimeProgressListener() {
       public void progressUpdate(double estimatedDuration, double consumedTime) {
         if (estimatedDuration == Double.MAX_VALUE) {
@@ -258,14 +268,11 @@ public class FileArchiverSink extends RBNBBase {
       }          
     });
   }
-    
-  protected String getCVSVersionString() {
-    return ("$LastChangedDate: 2007-10-30 17:57:07 -0600 (Tue, 30 Oct 2007) $\n"
-        + "$LastChangedRevision: 9457 $"
-        + "$LastChangedBy: msoltani $"
-        + "$HeadURL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/FileArchiverSink.java $"); 
-  }
 
+  /**
+   * This method overrides the setOptions() method in RBNBBase and adds in 
+   * options for the various command line flags.
+   */
   protected Options setOptions() {
     Options opt = setBaseOptions(new Options()); // uses h, s, p
     opt.addOption("k", true, "Sink Name *" + DEFAULT_SINK_NAME);
@@ -285,8 +292,12 @@ public class FileArchiverSink extends RBNBBase {
     return opt;
   }
 
+  /**
+   * This method overrides the setArgs() method in RBNBBase and sets the values
+   * of the various command line arguments
+   */
   protected boolean setArgs(CommandLine cmd) {
-    System.out.println("FileArchiverSink.setArgs() called.");
+    logger.debug("FileArchiverSink.setArgs() called.");
 
     if (!setBaseArgs(cmd))
       return false;
@@ -323,7 +334,7 @@ public class FileArchiverSink extends RBNBBase {
           long t = d.getTime();
           startTime = ((double) t) / 1000.0;
         } catch (Exception e) {
-          writeMessage("Parse of start time failed " + a + e.getMessage());
+          logger.debug("Parse of start time failed " + a + e.getMessage());
           printUsage();
           return false;
         }
@@ -340,7 +351,7 @@ public class FileArchiverSink extends RBNBBase {
           long t = d.getTime();
           endTime = ((double) t) / 1000.0;
         } catch (Exception e) {
-          writeMessage("Parse of end time failed " + a);
+          logger.debug("Parse of end time failed " + a);
           printUsage();
           return false;
         }
@@ -355,13 +366,13 @@ public class FileArchiverSink extends RBNBBase {
           startTime = System.currentTimeMillis()/1000d - secondsResetStart;
           endTime = System.currentTimeMillis()/1000d;
         } catch (NumberFormatException nf) {
-          writeMessage("Please enter a number for seconds to reset the start to.");
+          logger.debug("Please enter a number for seconds to reset the start to.");
           return false;
         }
       }
     }
     if (startTime >= endTime) {
-      writeMessage("The start time must come before the end time.");
+      logger.debug("The start time must come before the end time.");
       return false;
     }
 
@@ -398,7 +409,7 @@ public class FileArchiverSink extends RBNBBase {
                        double endTime, String eventMarkerFilter) {
 
     if (startTime >= endTime) {
-      writeMessage("The start time must come before the end time.");
+      logger.debug("The start time must come before the end time.");
       return false;
     }
 
@@ -416,12 +427,13 @@ public class FileArchiverSink extends RBNBBase {
   }
 
   /** 
-   * Valid the setup.
+   * Validates the setup.  This method prepares the RBNB connection, sets up the
+   * time ranges for data archival, and then chacks the time ranges for validity.
    * 
    * @return  true if the setup is valid, false otherwise
    */
   private boolean validateSetup() {
-    System.out.println("FileArchiverSink.validateSetup() called.");
+    logger.debug("FileArchiverSink.validateSetup() called.");
     printSetup();
     
     if (!connect()) {
@@ -443,21 +455,21 @@ public class FileArchiverSink extends RBNBBase {
    * Prints the setup parameters.
    */
   private void printSetup() {
-    System.out.println("FileArchiverSink.printSetup() called.");
-    writeMessage("Starting FileArchiverSink on " + getServer() +
+    logger.debug("FileArchiverSink.printSetup() called.");
+    logger.debug("Starting FileArchiverSink on " + getServer() +
                  " as " + sinkName);
-    writeMessage("  Archiving channel " + channelPath);
-    writeMessage("  to directory " + archiveDirectory);
+    logger.debug("  Archiving channel " + channelPath);
+    logger.debug("  to directory " + archiveDirectory);
     
     if (endTime != Double.MAX_VALUE) {
-      writeMessage("  from " + RBNBUtilities.secondsToISO8601(startTime) +
+      logger.debug("  from " + RBNBUtilities.secondsToISO8601(startTime) +
           " to " + RBNBUtilities.secondsToISO8601(endTime));
     } else if (startTime != 0) {
-      writeMessage("  from " + RBNBUtilities.secondsToISO8601(startTime));
+      logger.debug("  from " + RBNBUtilities.secondsToISO8601(startTime));
     }
     
     if (eventMarkerFilter != null) {
-      writeMessage("  using event marker filter " + eventMarkerFilter);
+      logger.debug("  using event marker filter " + eventMarkerFilter);
     }
   }
 
@@ -468,7 +480,7 @@ public class FileArchiverSink extends RBNBBase {
    * @return  true if the time ranges are setup
    */
   private boolean setupTimeRanges() {
-    System.out.println("FileArchiverSink.setupTimeRanges() called.");
+    logger.debug("FileArchiverSink.setupTimeRanges() called.");
     if (eventMarkerFilter == null) {
       timeRanges = new ArrayList<TimeRange>();
       timeRanges.add(new TimeRange(startTime, endTime));
@@ -476,10 +488,10 @@ public class FileArchiverSink extends RBNBBase {
       try {
         timeRanges = MarkerUtilities.getTimeRanges(sink, eventMarkerFilter, startTime, endTime);
       } catch (SAPIException e) {
-        writeMessage("Error retreiving event markers from server.");
+        logger.debug("Error retreiving event markers from server.");
         return false;
       } catch (IllegalArgumentException e) {
-        writeMessage("Error: The event marker filter format is invalid.");
+        logger.debug("Error: The event marker filter format is invalid.");
         return false;
       }
     }
@@ -493,17 +505,17 @@ public class FileArchiverSink extends RBNBBase {
    * @return  true if the time ranges are valid
    */
   private boolean checkTimeRanges() {
-    System.out.println("FileArchiverSink.checkTimeRanges() called.");
+    logger.debug("FileArchiverSink.checkTimeRanges() called.");
     Node channelMetadata;
     try {
       channelMetadata = RBNBUtilities.getMetadata(getServer(), channelPath);
     } catch (SAPIException e) {
-      writeMessage("Error retreiving channel metadata from the server.");
+      logger.debug("Error retreiving channel metadata from the server.");
       return false;
     }
     
     if (channelMetadata == null) {
-      writeMessage("Error: Channel " + channelPath + " not found.");
+      logger.debug("Error: Channel " + channelPath + " not found.");
       return false;      
     }
     
@@ -523,7 +535,7 @@ public class FileArchiverSink extends RBNBBase {
       
       // skip time ranges in the past where there is no data
       if (!timeRange.intersects(channelTimeRange)) {
-        writeMessage("Warning: Skipping the time range from " +
+        logger.debug("Warning: Skipping the time range from " +
                      RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                      " to " +
                      RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
@@ -533,8 +545,8 @@ public class FileArchiverSink extends RBNBBase {
     }
     
     if (timeRanges.size() == 0) {
-      writeMessage("Error: There are no data for the specified time ranges.");
-      writeMessage("There is data from " +
+      logger.debug("Error: There are no data for the specified time ranges.");
+      logger.debug("There is data from " +
                    RBNBUtilities.secondsToISO8601(channelStartTime) +
                    " to " +
                    RBNBUtilities.secondsToISO8601(channelEndTime) +
@@ -546,7 +558,7 @@ public class FileArchiverSink extends RBNBBase {
     // move up start time to first data point
     TimeRange firstTimeRange = timeRanges.get(0);
     if (firstTimeRange.getStartTime() < channelTimeRange.getStartTime()) {
-      writeMessage("Warning: Setting start time to " + 
+      logger.debug("Warning: Setting start time to " + 
                    RBNBUtilities.secondsToISO8601(channelTimeRange.getStartTime()) +
                    " since there is no data before it.");
       firstTimeRange.setStartTime(channelTimeRange.getStartTime());
@@ -586,7 +598,7 @@ public class FileArchiverSink extends RBNBBase {
    * Export data to disk.
    */
   public boolean export() {
-    System.out.println("FileArchiverSink.export() called.");
+    logger.debug("FileArchiverSink.export() called.");
     doExport = true;
     
     if (!runWork()) {
@@ -602,7 +614,7 @@ public class FileArchiverSink extends RBNBBase {
    * Stop exporting data to disk. This will return immediately.
    */
   public void stopExport() {
-    System.out.println("FileArchiverSink.stopExport() called.");
+    logger.debug("FileArchiverSink.stopExport() called.");
     doExport = false;
   }
   
@@ -619,7 +631,7 @@ public class FileArchiverSink extends RBNBBase {
    * Exports the data.
    */
   private boolean runWork() {
-    System.out.println("FileArchiverSink.runWork() called.");
+    logger.debug("FileArchiverSink.runWork() called.");
     int dataFramesExported = 0;
 
     try {
@@ -640,13 +652,13 @@ public class FileArchiverSink extends RBNBBase {
       double elapsedTime = 0;
       for (TimeRange timeRange : timeRanges) {
         if (timeRange.getEndTime() != Double.MAX_VALUE) {
-          writeMessage("Exporting data from " +
+          logger.debug("Exporting data from " +
                         RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                         " to " +
                         RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
                         ".");
         } else {
-          writeMessage("Exporting data from " +
+          logger.debug("Exporting data from " +
                        RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                        ".");
         }
@@ -671,19 +683,19 @@ public class FileArchiverSink extends RBNBBase {
         }
       }
     } catch (SAPIException e) {
-      writeMessage("Error getting data from server: " + e.getMessage() + ".");
+      logger.debug("Error getting data from server: " + e.getMessage() + ".");
       return false;
     } catch (IOException e) {
-      writeMessage("Error writing data to file: " + e.getMessage() + ".");
+      logger.debug("Error writing data to file: " + e.getMessage() + ".");
       return false;
     } finally {
       disconnect();
     }
     
     if (doExport) {
-      writeMessage("Export complete. Wrote " + dataFramesExported + " data frames.              ");
+      logger.debug("Export complete. Wrote " + dataFramesExported + " data frames.              ");
     } else {
-      writeMessage("Export stopped. Wrote " + dataFramesExported + " data frames.               ");
+      logger.debug("Export stopped. Wrote " + dataFramesExported + " data frames.               ");
     }
     
     return true;
@@ -703,7 +715,7 @@ public class FileArchiverSink extends RBNBBase {
    */
   private int exportData(ChannelMap map, double startTime, double endTime, 
     double duration, double baseTime) throws SAPIException, IOException {
-    System.out.println("FileArchiverSink.exportData() called.");
+    logger.debug("FileArchiverSink.exportData() called.");
 
     //sink.Subscribe(map, startTime, 0.0, "absolute");
     sink.Subscribe(map, startTime, duration, "absolute");
@@ -716,10 +728,10 @@ public class FileArchiverSink extends RBNBBase {
       
       if (m.GetIfFetchTimedOut()) {
         if (++fetchRetryCount < 10) {
-          writeMessage("Warning: Request for data timed out, retrying.");
+          logger.debug("Warning: Request for data timed out, retrying.");
           continue;
         } else {
-          writeMessage("Error: Unable to get data from server.");
+          logger.debug("Error: Unable to get data from server.");
           break;
         }
       } else {
@@ -772,7 +784,7 @@ public class FileArchiverSink extends RBNBBase {
    * @return  true if connected, false otherwise
    */
   private boolean connect() {
-    System.out.println("FileArchiverSink.connect() called.");
+    logger.debug("FileArchiverSink.connect() called.");
     if (isConnected()) {
       return true;
     }
@@ -780,7 +792,7 @@ public class FileArchiverSink extends RBNBBase {
     try {
       sink.OpenRBNBConnection(getServer(), sinkName);
     } catch (SAPIException e) {
-      writeMessage("Error: Unable to connect to server.");
+      logger.debug("Error: Unable to connect to server.");
       disconnect();
       return false;
     }
@@ -794,7 +806,7 @@ public class FileArchiverSink extends RBNBBase {
    * Disconnects from the RBNB server.
    */
   private void disconnect() {
-    System.out.println("FileArchiverSink.disconnect() called.");
+    logger.debug("FileArchiverSink.disconnect() called.");
     if (!isConnected()) {
       return;
     }
@@ -841,4 +853,13 @@ public class FileArchiverSink extends RBNBBase {
       listener.progressUpdate(duration, time);
     }
   }
+
+  /** A method that returns the CVS version string */
+  protected String getCVSVersionString() {
+    return ("$LastChangedDate: 2007-10-30 17:57:07 -0600 (Tue, 30 Oct 2007) $\n"
+        + "$LastChangedRevision: 9457 $"
+        + "$LastChangedBy: msoltani $"
+        + "$HeadURL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/JpgSaverSink.java $"); 
+  }
+
 }
