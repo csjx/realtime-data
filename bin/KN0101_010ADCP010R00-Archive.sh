@@ -24,5 +24,5 @@ java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
  -p 3333\
  -n KN0101_010ADCP010R00\
  -c BinaryPD0EnsembleData\
- -k KN0101_0101ADCP010R00_BinaryPD0EnsembleData_FileArchiver\
- -d /data1/rbnb/KN0101_0101ADCP010R00/BinaryPD0EnsembleData
+ -k KN0101_010ADCP010R00_BinaryPD0EnsembleData_FileArchiver\
+ -d /data1/rbnb/KN0101_010ADCP010R00/BinaryPD0EnsembleData
