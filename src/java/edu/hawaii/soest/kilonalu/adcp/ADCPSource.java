@@ -96,7 +96,7 @@ public class ADCPSource extends RBNBSource {
    * The default size of the ByteBuffer used to beffer the TCP stream from the
    * source instrument.
    */  
-  private int DEFAULT_BUFFER_SIZE = 8192;
+  private int DEFAULT_BUFFER_SIZE = 1048576; // 1 MB
 
   /**
    * The size of the ByteBuffer used to beffer the TCP stream from the 
