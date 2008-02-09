@@ -247,13 +247,13 @@ public final class EnsembleVariableLeader {
    */
   private ByteBuffer adcChannelOne                = ByteBuffer.allocate(1);
   
-/**
- *  A field that stores the Analog to Digital Converter Channel 2 output
- *  values in a ByteBuffer.
- *
- * @see adcChannelZero
- */
-private ByteBuffer adcChannelTwo                  = ByteBuffer.allocate(1);
+  /**
+   *  A field that stores the Analog to Digital Converter Channel 2 output
+   *  values in a ByteBuffer.
+   *
+   * @see adcChannelZero
+   */
+  private ByteBuffer adcChannelTwo                  = ByteBuffer.allocate(1);
   
   /**
    *  A field that stores the Analog to Digital Converter Channel 3 output
@@ -437,4 +437,365 @@ private ByteBuffer adcChannelTwo                  = ByteBuffer.allocate(1);
                                  Ensemble ensemble ) {
     
   }
+  
+  /**
+   * A method that returns the Ensemble Variable Leader ID field contents 
+   * as a ShortBuffer.
+   */
+  protected ShortBuffer getVariableLeaderID(){
+    return this.variableLeaderID;
+  }
+  
+  /**
+   * A method that returns the Ensemble Number field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getEnsembleNumber(){
+    return this.ensembleNumber;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Year field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockYear(){
+    return this.realTimeClockYear;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Month field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockMonth(){
+    return this.realTimeClockMonth;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Day field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockDay(){
+    return this.realTimeClockDay;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Hour field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockHour(){
+    return this.realTimeClockHour;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Minute field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockMinute(){
+    return this.realTimeClockMinute;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Second field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockSecond(){
+    return this.realTimeClockSecond;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Clock Hundredths field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeClockHundredths(){
+    return this.realTimeClockHundredths;
+  }
+    
+  /**
+   * A method that returns the Ensemble Number Increment field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getEnsembleNumberIncrement(){
+    return this.ensembleNumberIncrement;
+  }
+    
+  /**
+   * A method that returns the Ensemble Built In Test Result field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getBuiltInTestResult(){
+    return this.builtInTestResult;
+  }
+    
+  /**
+   * A method that returns the Ensemble Speed of Sound field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSpeedOfSound(){
+    return this.speedOfSound;
+  }
+    
+  /**
+   * A method that returns the Ensemble Depth of Transducer field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getDepthOfTransducer(){
+    return this.depthOfTransducer;
+  }
+    
+  /**
+   * A method that returns the Ensemble Heading field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getHeading(){
+    return this.heading;
+  }
+    
+  /**
+   * A method that returns the Ensemble Pitch field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getPitch(){
+    return this.pitch;
+  }
+    
+  /**
+   * A method that returns the Ensemble Heading field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getRoll(){
+    return this.roll;
+  }
+    
+  /**
+   * A method that returns the Ensemble Salinity field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getSalinity(){
+    return this.salinity;
+  }
+    
+  /**
+   * A method that returns the Ensemble Temperature field contents 
+   * as a ByteBuffer.
+   */
+  protected ByteBuffer getTemperature(){
+    return this.temperature;
+  }
+    
+  /**
+   * A method that returns the Ensemble Minimum Pre-ping Wait Minutes field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getMinPrePingWaitMinutes(){
+    return this.minPrePingWaitMinutes;
+  }
+    
+  /**
+   * A method that returns the Ensemble Minimum Pre-ping Wait Seconds field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getMinPrePingWaitSeconds(){
+    return this.minPrePingWaitSeconds;
+  }
+    
+  /**
+   * A method that returns the Ensemble Minimum Pre-ping Wait Hundredths field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getMinPrePingWaitHundredths(){
+    return this.minPrePingWaitHundredths;
+  }
+    
+  /**
+   * A method that returns the Ensemble Heading Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getHeadingStandardDeviation(){
+    return this.headingStandardDeviation;
+  }
+    
+  /**
+   * A method that returns the Ensemble Pitch Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getPitchStandardDeviation(){
+    return this.pitchStandardDeviation;
+  }
+    
+  /**
+   * A method that returns the Ensemble Roll Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getRollStandardDeviation(){
+    return this.rollStandardDeviation;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Zero field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelZero(){
+    return this.adcChannelZero;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel One field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelOne(){
+    return this.adcChannelOne;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Two field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelTwo(){
+    return this.adcChannelTwo;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Three field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelThree(){
+    return this.adcChannelThree;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Four field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelFour(){
+    return this.adcChannelFour;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Five field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelFive(){
+    return this.adcChannelFive;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Six field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelSix(){
+    return this.adcChannelSix;
+  }
+    
+  /**
+   * A method that returns the Ensemble ADC Channel Seven field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getADCChannelSeven(){
+    return this.adcChannelSeven;
+  }
+    
+  /**
+   * A method that returns the Ensemble Error Status Word field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getErrorStatusWord(){
+    return this.errorStatusWord;
+  }
+    
+  /**
+   * A method that returns the Ensemble Spare Field One field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getSpareFieldOne(){
+    return this.spareFieldOne;
+  }
+    
+  /**
+   * A method that returns the Ensemble Pressure field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getPressure(){
+    return this.pressure;
+  }
+    
+  /**
+   * A method that returns the Ensemble Pressure Variance field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getPressureVariance(){
+    return this.pressureVariance;
+  }
+    
+  /**
+   * A method that returns the Ensemble Spare Field TWo field 
+   * contents as a ByteBuffer.
+   */
+  protected ByteBuffer getSpareFieldTwo(){
+    return this.spareFieldTwo;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Century 
+   * field contents as a ByteBuffer.
+   */
+  protected ByteBuffer getRealTimeY2KClockCentury(){
+    return this.realTimeY2KClockCentury;
+  }
+  
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Year 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockYear(){
+    return this.realTimeY2KClockYear;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Month 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockMonth(){
+    return this.realTimeY2KClockMonth;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Day 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockDay(){
+    return this.realTimeY2KClockDay;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Hour 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockHour(){
+    return this.realTimeY2KClockHour;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Minute 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockMinute(){
+    return this.realTimeY2KClockMinute;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Second 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockSecond(){
+    return this.realTimeY2KClockSecond;
+  }
+    
+  /**
+   * A method that returns the Ensemble Real Time Y2K-compliant Clock Hundredths 
+   * field contents as a ByteBuffer.
+   */
+    protected ByteBuffer getRealTimeY2KClockHundredths(){
+    return this.realTimeY2KClockHundredths;
+  }
+  
 }
