@@ -1361,7 +1361,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Number field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getEnsembleNumber(){
      return ensembleVariableLeader.getEnsembleNumber().order(
@@ -1370,7 +1370,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Year field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockYear(){
      return ensembleVariableLeader.getRealTimeClockYear().order(
@@ -1379,7 +1379,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Month field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockMonth(){
      return ensembleVariableLeader.getRealTimeClockMonth().order(
@@ -1388,7 +1388,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Day field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockDay(){
      return ensembleVariableLeader.getRealTimeClockDay().order(
@@ -1397,7 +1397,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Hour field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockHour(){
      return ensembleVariableLeader.getRealTimeClockHour().order(
@@ -1406,7 +1406,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Minute field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockMinute(){
      return ensembleVariableLeader.getRealTimeClockMinute().order(
@@ -1415,7 +1415,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Second field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockSecond(){
      return ensembleVariableLeader.getRealTimeClockSecond().order(
@@ -1424,7 +1424,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Clock Hundredths field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRealTimeClockHundredths(){
      return ensembleVariableLeader.getRealTimeClockHundredths().order(
@@ -1433,7 +1433,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Number Increment field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getEnsembleNumberIncrement(){
      return ensembleVariableLeader.getEnsembleNumberIncrement().order(
@@ -1442,7 +1442,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Built In Test Result field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getBuiltInTestResult(){
      return ensembleVariableLeader.getBuiltInTestResult().order(
@@ -1451,7 +1451,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Speed of Sound field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getSpeedOfSound(){
      return ensembleVariableLeader.getSpeedOfSound().order(
@@ -1460,7 +1460,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Depth of Transducer field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getDepthOfTransducer(){
      return ensembleVariableLeader.getDepthOfTransducer().order(
@@ -1469,7 +1469,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Heading field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getHeading(){
      return ensembleVariableLeader.getHeading().order(
@@ -1478,7 +1478,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Pitch field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getPitch(){
      return ensembleVariableLeader.getPitch().order(
@@ -1487,7 +1487,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Heading field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getRoll(){
      return ensembleVariableLeader.getRoll().order(
@@ -1496,7 +1496,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Salinity field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getSalinity(){
      return ensembleVariableLeader.getSalinity().order(
@@ -1505,7 +1505,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Temperature field contents 
-    * as a ByteBuffer.
+    * as an int.
     */
    public int getTemperature(){
      return ensembleVariableLeader.getTemperature().order(
@@ -1514,7 +1514,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Minimum Pre-ping Wait Minutes field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getMinPrePingWaitMinutes(){
      return ensembleVariableLeader.getMinPrePingWaitMinutes().order(
@@ -1523,7 +1523,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Minimum Pre-ping Wait Seconds field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getMinPrePingWaitSeconds(){
      return ensembleVariableLeader.getMinPrePingWaitSeconds().order(
@@ -1532,7 +1532,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Minimum Pre-ping Wait Hundredths field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getMinPrePingWaitHundredths(){
      return ensembleVariableLeader.getMinPrePingWaitHundredths().order(
@@ -1541,7 +1541,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Heading Standard Deviation field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getHeadingStandardDeviation(){
      return ensembleVariableLeader.getHeadingStandardDeviation().order(
@@ -1550,7 +1550,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Pitch Standard Deviation field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getPitchStandardDeviation(){
      return ensembleVariableLeader.getPitchStandardDeviation().order(
@@ -1559,7 +1559,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Roll Standard Deviation field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getRollStandardDeviation(){
      return ensembleVariableLeader.getRollStandardDeviation().order(
@@ -1568,7 +1568,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Zero field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelZero(){
      return ensembleVariableLeader.getADCChannelZero().order(
@@ -1577,7 +1577,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel One field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelOne(){
      return ensembleVariableLeader.getADCChannelOne().order(
@@ -1586,7 +1586,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Two field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelTwo(){
      return ensembleVariableLeader.getADCChannelTwo().order(
@@ -1595,7 +1595,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Three field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelThree(){
      return ensembleVariableLeader.getADCChannelThree().order(
@@ -1604,7 +1604,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Four field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelFour(){
      return ensembleVariableLeader.getADCChannelFour().order(
@@ -1613,7 +1613,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Five field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelFive(){
      return ensembleVariableLeader.getADCChannelFive().order(
@@ -1622,7 +1622,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Six field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelSix(){
      return ensembleVariableLeader.getADCChannelSix().order(
@@ -1631,7 +1631,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble ADC Channel Seven field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getADCChannelSeven(){
      return ensembleVariableLeader.getADCChannelSeven().order(
@@ -1640,7 +1640,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Error Status Word field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getErrorStatusWord(){
      return ensembleVariableLeader.getErrorStatusWord().order(
@@ -1649,7 +1649,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Spare Field One field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getSpareFieldOne(){
      return ensembleVariableLeader.getSpareFieldOne().order(
@@ -1658,7 +1658,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Pressure field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getPressure(){
      return ensembleVariableLeader.getPressure().order(
@@ -1667,7 +1667,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Pressure Variance field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getPressureVariance(){
      return ensembleVariableLeader.getPressureVariance().order(
@@ -1676,7 +1676,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Spare Field TWo field 
-    * contents as a ByteBuffer.
+    * contents as an int.
     */
    public int getSpareFieldTwo(){
      return ensembleVariableLeader.getSpareFieldTwo().order(
@@ -1685,7 +1685,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Century 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
    public int getRealTimeY2KClockCentury(){
      return ensembleVariableLeader.getRealTimeY2KClockCentury().order(
@@ -1694,7 +1694,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Year 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockYear(){
        return ensembleVariableLeader.getRealTimeY2KClockYear().order(
@@ -1703,7 +1703,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Month 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockMonth(){
        return ensembleVariableLeader.getRealTimeY2KClockMonth().order(
@@ -1712,7 +1712,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Day 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockDay(){
        return ensembleVariableLeader.getRealTimeY2KClockDay().order(
@@ -1721,7 +1721,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Hour 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockHour(){
        return ensembleVariableLeader.getRealTimeY2KClockHour().order(
@@ -1730,7 +1730,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Minute 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockMinute(){
        return ensembleVariableLeader.getRealTimeY2KClockMinute().order(
@@ -1739,7 +1739,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Second 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockSecond(){
        return ensembleVariableLeader.getRealTimeY2KClockSecond().order(
@@ -1748,7 +1748,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Hundredths 
-    * field contents as a ByteBuffer.
+    * field contents as an int.
     */
      public int getRealTimeY2KClockHundredths(){
        return ensembleVariableLeader.getRealTimeY2KClockHundredths().order(
