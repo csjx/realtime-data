@@ -42,15 +42,9 @@ import java.nio.ShortBuffer;
 public final class EnsembleVariableLeader {
 
   /**
-   *  A field that stores the default Variable Leader ID (0x8000)
-   */
-  private static final ShortBuffer DEFAULT_FIXED_LEADER_ID = 
-    ShortBuffer.wrap( new short[]{0x80,0x00} );
-
-  /**
    *  A field that stores the Variable Leader ID (2-bytes) in a ByteBuffer
    */
-  private ShortBuffer variableLeaderID              = ShortBuffer.allocate(1);
+  private ByteBuffer variableLeaderID              = ByteBuffer.allocate(2);
   
   /**
    *  A field that stores the Ensemble Number in a ByteBuffer
@@ -440,9 +434,9 @@ public final class EnsembleVariableLeader {
   
   /**
    * A method that returns the Ensemble Variable Leader ID field contents 
-   * as a ShortBuffer.
+   * as a ByteBuffer.
    */
-  protected ShortBuffer getVariableLeaderID(){
+  protected ByteBuffer getVariableLeaderID(){
     return this.variableLeaderID;
   }
   
