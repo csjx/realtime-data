@@ -37,12 +37,12 @@ public enum EnsembleDataType {
     
     HEADER               , //represents data type ID 0x7F7F
     FIXED_LEADER         , //represents data type ID 0x0000
-    VARIABLE_LEADER      , //represents data type ID 0x0080
-    VELOCITY_PROFILE     , //represents data type ID 0x0100
-    CORRELATION_PROFILE  , //represents data type ID 0x0200
-    ECHOINTENSITY_PROFILE, //represents data type ID 0x0300
-    PERCENTGOOD_PROFILE  , //represents data type ID 0x0400
-    STATUS_PROFILE       , //represents data type ID 0x0500
-    BOTTOMTRACK_DATA     , //represents data type ID 0x0600
-    MICROCAT_DATA          //represents data type ID 0x0800
+    VARIABLE_LEADER      , //represents data type ID 0x8000
+    VELOCITY_PROFILE     , //represents data type ID 0x0001
+    CORRELATION_PROFILE  , //represents data type ID 0x0002
+    ECHOINTENSITY_PROFILE, //represents data type ID 0x0003
+    PERCENTGOOD_PROFILE  , //represents data type ID 0x0004
+    STATUS_PROFILE       , //represents data type ID 0x0005
+    BOTTOMTRACK_DATA     , //represents data type ID 0x0006
+    MICROCAT_DATA          //represents data type ID 0x0008
 }
