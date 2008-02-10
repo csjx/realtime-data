@@ -792,4 +792,364 @@ public final class EnsembleVariableLeader {
     return this.realTimeY2KClockHundredths;
   }
   
+  /**
+   * A method that sets the Ensemble Variable Leader ID field contents 
+   * with the given byte array.
+   */
+  private void setVariableLeaderID(byte[] byteArray){
+    this.variableLeaderID.put(variableLeaderID);
+  }
+  
+  /**
+   * A method that sets the Ensemble Number field contents 
+   * with the given byte array.
+   */
+  private void setEnsembleNumber(byte[] byteArray){
+    this.ensembleNumber.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Year field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockYear(byte[] byteArray){
+    this.realTimeClockYear.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Month field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockMonth(byte[] byteArray){
+    this.realTimeClockMonth.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Day field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockDay(byte[] byteArray){
+    this.realTimeClockDay.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Hour field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockHour(byte[] byteArray){
+    this.realTimeClockHour.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Minute field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockMinute(byte[] byteArray){
+    this.realTimeClockMinute.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Second field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockSecond(byte[] byteArray){
+    this.realTimeClockSecond.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Clock Hundredths field contents 
+   * with the given byte array.
+   */
+  private void setRealTimeClockHundredths(byte[] byteArray){
+    this.realTimeClockHundredths.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Number Increment field contents 
+   * with the given byte array.
+   */
+  private void setEnsembleNumberIncrement(byte[] byteArray){
+    this.ensembleNumberIncrement.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Built In Test Result field contents 
+   * with the given byte array.
+   */
+  private void setBuiltInTestResult(byte[] byteArray){
+    this.builtInTestResult.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Speed of Sound field contents 
+   * with the given byte array.
+   */
+  private void setSpeedOfSound(byte[] byteArray){
+    this.speedOfSound.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Depth of Transducer field contents 
+   * with the given byte array.
+   */
+  private void setDepthOfTransducer(byte[] byteArray){
+    this.depthOfTransducer.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Heading field contents 
+   * with the given byte array.
+   */
+  private void setHeading(byte[] byteArray){
+    this.heading.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Pitch field contents 
+   * with the given byte array.
+   */
+  private void setPitch(byte[] byteArray){
+    this.pitch.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Heading field contents 
+   * with the given byte array.
+   */
+  private void setRoll(byte[] byteArray){
+    this.roll.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Salinity field contents 
+   * with the given byte array.
+   */
+  private void setSalinity(byte[] byteArray){
+    this.salinity.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Temperature field contents 
+   * with the given byte array.
+   */
+  private void setTemperature(byte[] byteArray){
+    this.temperature.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Minimum Pre-ping Wait Minutes field 
+   * contents as a ByteBuffer.
+   */
+  private void setMinPrePingWaitMinutes(byte[] byteArray){
+    this.minPrePingWaitMinutes.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Minimum Pre-ping Wait Seconds field 
+   * contents as a ByteBuffer.
+   */
+  private void setMinPrePingWaitSeconds(byte[] byteArray){
+    this.minPrePingWaitSeconds.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Minimum Pre-ping Wait Hundredths field 
+   * contents as a ByteBuffer.
+   */
+  private void setMinPrePingWaitHundredths(byte[] byteArray){
+    this.minPrePingWaitHundredths.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Heading Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  private void setHeadingStandardDeviation(byte[] byteArray){
+    this.headingStandardDeviation.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Pitch Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  private void setPitchStandardDeviation(byte[] byteArray){
+    this.pitchStandardDeviation.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Roll Standard Deviation field 
+   * contents as a ByteBuffer.
+   */
+  private void setRollStandardDeviation(byte[] byteArray){
+    this.rollStandardDeviation.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Zero field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelZero(byte[] byteArray){
+    this.adcChannelZero.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel One field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelOne(byte[] byteArray){
+    this.adcChannelOne.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Two field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelTwo(byte[] byteArray){
+    this.adcChannelTwo.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Three field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelThree(byte[] byteArray){
+    this.adcChannelThree.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Four field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelFour(byte[] byteArray){
+    this.adcChannelFour.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Five field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelFive(byte[] byteArray){
+    this.adcChannelFive.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Six field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelSix(byte[] byteArray){
+    this.adcChannelSix.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble ADC Channel Seven field 
+   * contents as a ByteBuffer.
+   */
+  private void setADCChannelSeven(byte[] byteArray){
+    this.adcChannelSeven.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Error Status Word field 
+   * contents as a ByteBuffer.
+   */
+  private void setErrorStatusWord(byte[] byteArray){
+    this.errorStatusWord.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Spare Field One field 
+   * contents as a ByteBuffer.
+   */
+  private void setSpareFieldOne(byte[] byteArray){
+    this.spareFieldOne.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Pressure field 
+   * contents as a ByteBuffer.
+   */
+  private void setPressure(byte[] byteArray){
+    this.pressure.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Pressure Variance field 
+   * contents as a ByteBuffer.
+   */
+  private void setPressureVariance(byte[] byteArray){
+    this.pressureVariance.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Spare Field TWo field 
+   * contents as a ByteBuffer.
+   */
+  private void setSpareFieldTwo(byte[] byteArray){
+    this.spareFieldTwo.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Century 
+   * field contents as a ByteBuffer.
+   */
+  private void setRealTimeY2KClockCentury(byte[] byteArray){
+    this.realTimeY2KClockCentury.put(byteArray);
+  }
+  
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Year 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockYear(byte[] byteArray){
+    this.realTimeY2KClockYear.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Month 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockMonth(byte[] byteArray){
+    this.realTimeY2KClockMonth.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Day 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockDay(byte[] byteArray){
+    this.realTimeY2KClockDay.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Hour 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockHour(byte[] byteArray){
+    this.realTimeY2KClockHour.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Minute 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockMinute(byte[] byteArray){
+    this.realTimeY2KClockMinute.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Second 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockSecond(byte[] byteArray){
+    this.realTimeY2KClockSecond.put(byteArray);
+  }
+    
+  /**
+   * A method that sets the Ensemble Real Time Y2K-compliant Clock Hundredths 
+   * field contents as a ByteBuffer.
+   */
+    private void setRealTimeY2KClockHundredths(byte[] byteArray){
+    this.realTimeY2KClockHundredths.put(byteArray);
+  }
+  
 }
