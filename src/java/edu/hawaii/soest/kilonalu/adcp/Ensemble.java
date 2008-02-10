@@ -376,28 +376,28 @@ public class Ensemble {
       if ( dataTypeID == 0x0000 ) {
         returnType = EnsembleDataType.FIXED_LEADER;
       }
-      if ( dataTypeID == 0x0080 ) {
+      if ( dataTypeID == 0x8000 ) {
         returnType = EnsembleDataType.VARIABLE_LEADER;
       }
-      if ( dataTypeID == 0x0100 ) {
+      if ( dataTypeID == 0x0001 ) {
         returnType = EnsembleDataType.VELOCITY_PROFILE;
       }
-      if ( dataTypeID == 0x0200 ) {
+      if ( dataTypeID == 0x0002 ) {
         returnType = EnsembleDataType.CORRELATION_PROFILE;
       }
-      if ( dataTypeID == 0x0300 ) {
+      if ( dataTypeID == 0x0003 ) {
         returnType = EnsembleDataType.ECHOINTENSITY_PROFILE;
       }
-      if ( dataTypeID ==0x0400 ) {
+      if ( dataTypeID ==0x0004 ) {
         returnType = EnsembleDataType.PERCENTGOOD_PROFILE;
       }
-      if ( dataTypeID ==0x0500 ) {
+      if ( dataTypeID ==0x0005 ) {
         returnType = EnsembleDataType.STATUS_PROFILE;
       }
-      if ( dataTypeID ==0x0600 ) {
+      if ( dataTypeID ==0x0006 ) {
         returnType = EnsembleDataType.BOTTOMTRACK_DATA;
       }
-      if ( dataTypeID == 0x0800 ) {
+      if ( dataTypeID == 0x0008 ) {
         returnType = EnsembleDataType.MICROCAT_DATA;
       }
       return returnType;
@@ -1347,6 +1347,414 @@ public class Ensemble {
           ByteOrder.LITTLE_ENDIAN).getInt();
    }
 
+   // CSJ review the getShort() call below !!!!!!!
+   
+   /**
+    * A method that returns the Ensemble Variable Leader ID field contents 
+    * as a short.
+    */
+   protected int getVariableLeaderID(){
+     return ensembleVariableLeader.getVariableLeaderID().order(
+           ByteOrder.LITTLE_ENDIAN).getInt();
+     
+   }
+
+   /**
+    * A method that returns the Ensemble Number field contents 
+    * as a ByteBuffer.
+    */
+   public int getEnsembleNumber(){
+     return ensembleVariableLeader.getEnsembleNumber().order(
+            ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Year field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockYear(){
+     return ensembleVariableLeader.getRealTimeClockYear().order(
+             ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Month field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockMonth(){
+     return ensembleVariableLeader.getRealTimeClockMonth().order(
+              ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Day field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockDay(){
+     return ensembleVariableLeader.getRealTimeClockDay().order(
+               ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Hour field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockHour(){
+     return ensembleVariableLeader.getRealTimeClockHour().order(
+                ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Minute field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockMinute(){
+     return ensembleVariableLeader.getRealTimeClockMinute().order(
+                 ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Second field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockSecond(){
+     return ensembleVariableLeader.getRealTimeClockSecond().order(
+                  ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Clock Hundredths field contents 
+    * as a ByteBuffer.
+    */
+   public int getRealTimeClockHundredths(){
+     return ensembleVariableLeader.getRealTimeClockHundredths().order(
+                   ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Number Increment field contents 
+    * as a ByteBuffer.
+    */
+   public int getEnsembleNumberIncrement(){
+     return ensembleVariableLeader.getEnsembleNumberIncrement().order(
+                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Built In Test Result field contents 
+    * as a ByteBuffer.
+    */
+   public int getBuiltInTestResult(){
+     return ensembleVariableLeader.getBuiltInTestResult().order(
+                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Speed of Sound field contents 
+    * as a ByteBuffer.
+    */
+   public int getSpeedOfSound(){
+     return ensembleVariableLeader.getSpeedOfSound().order(
+                      ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Depth of Transducer field contents 
+    * as a ByteBuffer.
+    */
+   public int getDepthOfTransducer(){
+     return ensembleVariableLeader.getDepthOfTransducer().order(
+                       ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Heading field contents 
+    * as a ByteBuffer.
+    */
+   public int getHeading(){
+     return ensembleVariableLeader.getHeading().order(
+                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Pitch field contents 
+    * as a ByteBuffer.
+    */
+   public int getPitch(){
+     return ensembleVariableLeader.getPitch().order(
+                         ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Heading field contents 
+    * as a ByteBuffer.
+    */
+   public int getRoll(){
+     return ensembleVariableLeader.getRoll().order(
+                          ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Salinity field contents 
+    * as a ByteBuffer.
+    */
+   public int getSalinity(){
+     return ensembleVariableLeader.getSalinity().order(
+                           ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Temperature field contents 
+    * as a ByteBuffer.
+    */
+   public int getTemperature(){
+     return ensembleVariableLeader.getTemperature().order(
+                            ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Minimum Pre-ping Wait Minutes field 
+    * contents as a ByteBuffer.
+    */
+   public int getMinPrePingWaitMinutes(){
+     return ensembleVariableLeader.getMinPrePingWaitMinutes().order(
+                             ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Minimum Pre-ping Wait Seconds field 
+    * contents as a ByteBuffer.
+    */
+   public int getMinPrePingWaitSeconds(){
+     return ensembleVariableLeader.getMinPrePingWaitSeconds().order(
+                              ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Minimum Pre-ping Wait Hundredths field 
+    * contents as a ByteBuffer.
+    */
+   public int getMinPrePingWaitHundredths(){
+     return ensembleVariableLeader.getMinPrePingWaitHundredths().order(
+                               ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Heading Standard Deviation field 
+    * contents as a ByteBuffer.
+    */
+   public int getHeadingStandardDeviation(){
+     return ensembleVariableLeader.getHeadingStandardDeviation().order(
+                                ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Pitch Standard Deviation field 
+    * contents as a ByteBuffer.
+    */
+   public int getPitchStandardDeviation(){
+     return ensembleVariableLeader.getPitchStandardDeviation().order(
+                                 ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Roll Standard Deviation field 
+    * contents as a ByteBuffer.
+    */
+   public int getRollStandardDeviation(){
+     return ensembleVariableLeader.getRollStandardDeviation().order(
+                                  ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Zero field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelZero(){
+     return ensembleVariableLeader.getADCChannelZero().order(
+                                   ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel One field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelOne(){
+     return ensembleVariableLeader.getADCChannelOne().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Two field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelTwo(){
+     return ensembleVariableLeader.getADCChannelTwo().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Three field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelThree(){
+     return ensembleVariableLeader.getADCChannelThree().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Four field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelFour(){
+     return ensembleVariableLeader.getADCChannelFour().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Five field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelFive(){
+     return ensembleVariableLeader.getADCChannelFive().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Six field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelSix(){
+     return ensembleVariableLeader.getADCChannelSix().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble ADC Channel Seven field 
+    * contents as a ByteBuffer.
+    */
+   public int getADCChannelSeven(){
+     return ensembleVariableLeader.getADCChannelSeven().order(
+                                    ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Error Status Word field 
+    * contents as a ByteBuffer.
+    */
+   public int getErrorStatusWord(){
+     return ensembleVariableLeader.getErrorStatusWord().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Spare Field One field 
+    * contents as a ByteBuffer.
+    */
+   public int getSpareFieldOne(){
+     return ensembleVariableLeader.getSpareFieldOne().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Pressure field 
+    * contents as a ByteBuffer.
+    */
+   public int getPressure(){
+     return ensembleVariableLeader.getPressure().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Pressure Variance field 
+    * contents as a ByteBuffer.
+    */
+   public int getPressureVariance(){
+     return ensembleVariableLeader.getPressureVariance().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Spare Field TWo field 
+    * contents as a ByteBuffer.
+    */
+   public int getSpareFieldTwo(){
+     return ensembleVariableLeader.getSpareFieldTwo().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Century 
+    * field contents as a ByteBuffer.
+    */
+   public int getRealTimeY2KClockCentury(){
+     return ensembleVariableLeader.getRealTimeY2KClockCentury().order(
+                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Year 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockYear(){
+       return ensembleVariableLeader.getRealTimeY2KClockYear().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Month 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockMonth(){
+       return ensembleVariableLeader.getRealTimeY2KClockMonth().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Day 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockDay(){
+       return ensembleVariableLeader.getRealTimeY2KClockDay().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Hour 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockHour(){
+       return ensembleVariableLeader.getRealTimeY2KClockHour().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Minute 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockMinute(){
+       return ensembleVariableLeader.getRealTimeY2KClockMinute().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Second 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockSecond(){
+       return ensembleVariableLeader.getRealTimeY2KClockSecond().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+
+   /**
+    * A method that returns the Ensemble Real Time Y2K-compliant Clock Hundredths 
+    * field contents as a ByteBuffer.
+    */
+     public int getRealTimeY2KClockHundredths(){
+       return ensembleVariableLeader.getRealTimeY2KClockHundredths().order(
+                                        ByteOrder.LITTLE_ENDIAN).getInt();
+   }
+   
    /**
     * A method that determines whether or not the Ensemble is valid by
     * comparing the cumulative byte sum value with the stated checksum
