@@ -429,7 +429,160 @@ public final class EnsembleVariableLeader {
    */
   public EnsembleVariableLeader( ByteBuffer ensembleBuffer, 
                                  Ensemble ensemble ) {
+    // prepare the ensemble buffer for reading
+    ensembleBuffer.flip();
     
+    // position the cursor at the correct offset given the sequential location
+    // of the fixed leader in the data stream.
+    int typeNumber = 
+      ensemble.getDataTypeNumber( EnsembleDataType.VARIABLE_LEADER );
+    int offset = ensemble.getDataTypeOffset( typeNumber );
+    ensembleBuffer.position( offset + 1 );
+    
+    // define the temporary arrays for passing bytes
+    byte[] oneByte  = new byte[1];
+    byte[] twoBytes = new byte[2];
+    
+    // set all of the FixedLeader fields in the order that they are read from 
+    // the byte stream
+    ensembleBuffer.get(twoBytes);
+    setVariableLeaderID(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setEnsembleNumber(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockYear(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockMonth(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockDay(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockHour(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockMinute(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockSecond(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeClockHundredths(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setEnsembleNumberIncrement(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setBuiltInTestResult(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setSpeedOfSound(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setDepthOfTransducer(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setHeading(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setPitch(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setRoll(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setSalinity(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(twoBytes);
+    setTemperature(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    ensembleBuffer.get(oneByte);
+    setMinPrePingWaitMinutes(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setMinPrePingWaitSeconds(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setMinPrePingWaitHundredths(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setHeadingStandardDeviation(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setPitchStandardDeviation(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRollStandardDeviation(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelZero(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelOne(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelTwo(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelThree(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelFour(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelFive(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelSix(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setADCChannelSeven(oneByte);
+    ensemble.addToByteSum(oneByte);
+    byte[] errorStatusWord = new byte[4];
+    ensembleBuffer.get(errorStatusWord);
+    setErrorStatusWord(errorStatusWord);
+    ensemble.addToByteSum(errorStatusWord);
+    ensembleBuffer.get(twoBytes);
+    setSpareFieldOne(twoBytes);
+    ensemble.addToByteSum(twoBytes);
+    byte[] pressureArray = new byte[4];
+    ensembleBuffer.get(pressureArray);
+    setPressure(pressureArray);
+    ensemble.addToByteSum(pressureArray);
+    byte[] pressureVarianceArray = new byte[4];
+    ensembleBuffer.get(pressureVarianceArray);
+    setPressureVariance(pressureVarianceArray);
+    ensemble.addToByteSum(pressureVarianceArray);
+    ensembleBuffer.get(oneByte);
+    setSpareFieldTwo(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockCentury(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockYear(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockMonth(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockDay(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockHour(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockMinute(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockSecond(oneByte);
+    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(oneByte);
+    setRealTimeY2KClockHundredths(oneByte);
+    ensemble.addToByteSum(oneByte);    
   }
   
   /**
