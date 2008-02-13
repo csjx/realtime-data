@@ -30,6 +30,7 @@ package edu.hawaii.soest.kilonalu.adcp;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
 /**
  *  A class that represents the ensemble header of data produced by
  *  an RDI 1200kHz Workhorse Acoustic Doppler Current Profiler in the
@@ -102,25 +103,30 @@ public class EnsembleHeader {
     
     // set each of the Ensemble Header fields n the order that they are 
     // read from the byte stream
-    ensembleBuffer.get(twoBytes);
+    ensembleBuffer.get(twoBytes);    
     setHeaderID(twoBytes);
+    headerID.flip();
     ensemble.addToByteSum(twoBytes);
     
     ensembleBuffer.get(twoBytes);
     setNumberOfBytesInEnsemble(twoBytes);
+    numberOfBytesInEnsemble.flip();
     ensemble.addToByteSum(twoBytes);
     
     ensembleBuffer.get(oneByte);
     setHeaderSpare(oneByte);
+    headerSpare.flip();
     ensemble.addToByteSum(oneByte);
     
     ensembleBuffer.get(oneByte); 
     setNumberOfDataTypes(oneByte);
+    numberOfDataTypes.flip();
     ensemble.addToByteSum(oneByte);
     
-    byte[] offsetBytes = new byte[( getNumberOfDataTypes().getInt() * 2 ) ];
+    byte[] offsetBytes = new byte[ (getNumberOfDataTypes().get() * 2)  ];
     ensembleBuffer.get(offsetBytes);
     setDataTypeOffsets(offsetBytes);
+    dataTypeOffsets.flip();
     ensemble.addToByteSum(offsetBytes);
     
     // set the dataTypeOffsets ByteBuffer size
@@ -185,7 +191,7 @@ public class EnsembleHeader {
    * @param byteArray  the 2-byte array that contains the header ID
    */
   private void setDataTypeOffsets( byte[] byteArray ) {
-    this.numberOfBytesInEnsemble.put(byteArray);
+    this.dataTypeOffsets.put(byteArray);
   }
 
   /**
@@ -195,7 +201,7 @@ public class EnsembleHeader {
    * @param byteArray  the 2-byte array that contains the header ID
    */
   private void setHeaderID( byte[] byteArray ) {
-    this.numberOfBytesInEnsemble.put(byteArray);
+    this.headerID.put(byteArray);
   }
 
   /**
