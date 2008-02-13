@@ -124,9 +124,8 @@ public class EnsembleHeader {
     ensemble.addToByteSum(oneByte);
     
     // set the dataTypeOffsets ByteBuffer size
-    dataTypeOffsets = ByteBuffer.allocate( (getNumberOfDataTypes().get() * 2 ) );
+    dataTypeOffsets = ByteBuffer.allocate( ((int) getNumberOfDataTypes().get()) * 2 );
     numberOfDataTypes.flip();
-    
     byte[] offsetBytes = new byte[ (getNumberOfDataTypes().get() * 2)  ];
     numberOfDataTypes.flip();
     ensembleBuffer.get(offsetBytes);
@@ -141,6 +140,8 @@ public class EnsembleHeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getHeaderID(){
+    this.headerID.limit(this.headerID.capacity());
+    this.headerID.position(0);
     return this.headerID;
   }
 
@@ -149,6 +150,8 @@ public class EnsembleHeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getHeaderSpare(){
+    this.headerSpare.limit(this.headerSpare.capacity());
+    this.headerSpare.position(0);
     return this.headerSpare;
   }
 
@@ -162,11 +165,14 @@ public class EnsembleHeader {
    protected ByteBuffer getDataTypeOffset (int dataTypeNumber) {
      
      // prepare the ByteBuffer for reading
-     dataTypeOffsets.flip();
+     this.dataTypeOffsets.limit(this.dataTypeOffsets.capacity());
+     //this.dataTypeOffsets.position(0);
      
      // read the offset by setting the position based on the desired type
      dataTypeOffsets.position( ( (dataTypeNumber * 2 ) - 2 ) );
      ByteBuffer dataTypeOffset = dataTypeOffsets.get( new byte[2]);
+     dataTypeOffset.limit(dataTypeOffset.capacity());
+     dataTypeOffset.position(0);
      return dataTypeOffset;       
    }
    
@@ -175,6 +181,8 @@ public class EnsembleHeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getNumberOfBytesInEnsemble(){   
+    this.numberOfBytesInEnsemble.limit(this.numberOfBytesInEnsemble.capacity());
+    this.numberOfBytesInEnsemble.position(0);
     return this.numberOfBytesInEnsemble;
   }
 
@@ -183,6 +191,8 @@ public class EnsembleHeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getNumberOfDataTypes(){   
+    this.numberOfDataTypes.limit(this.numberOfDataTypes.capacity());
+    this.numberOfDataTypes.position(0);
     return this.numberOfDataTypes;
   }
 
