@@ -346,9 +346,9 @@ public class Ensemble {
     * A method that returns the Ensemble headerID field contents 
     * as a int.
     */
-   public int getHeaderID(){
+   public short getHeaderID(){
      return ensembleHeader.getHeaderID().order(
-       ByteOrder.LITTLE_ENDIAN).getInt();
+       ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
