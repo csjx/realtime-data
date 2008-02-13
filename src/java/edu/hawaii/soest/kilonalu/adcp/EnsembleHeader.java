@@ -52,8 +52,7 @@ public class EnsembleHeader {
    * beginning of Data Type #1 (FixedLeader). Repeat this to read 
    * Data Type #2 (VariableLeader), Data Type #3 (VelocityProfile), etc... 
    */
-  private ByteBuffer dataTypeOffsets = 
-    ByteBuffer.allocate( (getNumberOfDataTypes().getInt() * 2 ) );
+  private ByteBuffer dataTypeOffsets;
 
   /**
    *  A field that stores the default Ensemble Header ID ( 0x7F7F)
@@ -123,6 +122,9 @@ public class EnsembleHeader {
     ensembleBuffer.get(offsetBytes);
     setDataTypeOffsets(offsetBytes);
     ensemble.addToByteSum(offsetBytes);
+    
+    // set the dataTypeOffsets ByteBuffer size
+    dataTypeOffsets = ByteBuffer.allocate( (getNumberOfDataTypes().getInt() * 2 ) );
   }
 
   /**
