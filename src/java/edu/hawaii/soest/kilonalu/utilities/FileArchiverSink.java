@@ -173,6 +173,10 @@ public class FileArchiverSink extends RBNBBase {
    * @param args  the command line arguments
    */
   public static void main(String[] args) {
+    
+    // Set up a simple logger that logs to the console
+    BasicConfigurator.configure();
+    
     final FileArchiverSink fileArchiverSink = new FileArchiverSink();
         
     if ( fileArchiverSink.parseArgs(args) ) {

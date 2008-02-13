@@ -145,6 +145,10 @@ public class TextOutputPlugin extends RBNBBase {
    * @param args  the command line arguments
    */
   public static void main(String[] args) {
+    
+    // Set up a simple logger that logs to the console
+    BasicConfigurator.configure();
+    
     final TextOutputPlugin textOutputPlugin = new TextOutputPlugin();
     if ( textOutputPlugin.parseArgs(args) ) {
       
