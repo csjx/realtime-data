@@ -257,9 +257,10 @@ public class Ensemble {
    * data stream.
    */
    protected void addToByteSum(byte[] byteArray) {
+     System.out.println("Ensemble.addToByteSum() called.");
      
      // iterate through the bytes and add them to ensembleByteSum
-     for ( int i : byteArray ) ensembleByteSum += byteArray[i];
+     for ( byte i : byteArray ) ensembleByteSum += i;
    }
   
   /**
@@ -271,6 +272,7 @@ public class Ensemble {
    *  instance, the Velocity Profile data type is Data Type #3 in the ensemble.
    */
    private void findDataTypes(ByteBuffer ensembleBuffer ) {
+     System.out.println("Ensemble.findDataTypes() called.");
      
        // search the ensemble byte buffer for the above IDs at each of the 
        // data type offset locations, and mark them present or not present
@@ -1777,6 +1779,7 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setChecksum(byte[] byteArray) {
+     System.out.println("Ensemble.setChecksum() called.");
      this.checksum.put(byteArray);
    }
 
@@ -1787,6 +1790,7 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setReservedBIT(byte[] byteArray) {
+     System.out.println("Ensemble.setReservedBIT() called.");
      this.reservedBIT.put(byteArray);
    }
 
