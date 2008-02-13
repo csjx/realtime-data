@@ -123,14 +123,17 @@ public class EnsembleHeader {
     numberOfDataTypes.flip();
     ensemble.addToByteSum(oneByte);
     
+    // set the dataTypeOffsets ByteBuffer size
+    dataTypeOffsets = ByteBuffer.allocate( (getNumberOfDataTypes().get() * 2 ) );
+    numberOfDataTypes.flip();
+    
     byte[] offsetBytes = new byte[ (getNumberOfDataTypes().get() * 2)  ];
+    numberOfDataTypes.flip();
     ensembleBuffer.get(offsetBytes);
     setDataTypeOffsets(offsetBytes);
     dataTypeOffsets.flip();
     ensemble.addToByteSum(offsetBytes);
     
-    // set the dataTypeOffsets ByteBuffer size
-    dataTypeOffsets = ByteBuffer.allocate( (getNumberOfDataTypes().getInt() * 2 ) );
   }
 
   /**
