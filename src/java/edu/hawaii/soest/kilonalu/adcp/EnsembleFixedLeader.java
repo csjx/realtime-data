@@ -289,13 +289,14 @@ public final class EnsembleFixedLeader {
     
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
+    ensembleBuffer.limit(ensembleBuffer.capacity());
     
     // position the cursor at the correct offset given the sequential location
     // of the fixed leader in the data stream.
     int typeNumber = 
       ensemble.getDataTypeNumber( EnsembleDataType.FIXED_LEADER );
     int offset = ensemble.getDataTypeOffset( typeNumber );
-    ensembleBuffer.position( offset + 1 );
+    ensembleBuffer.position( (int) offset + 1 );
     
     // define the temporary arrays for passing bytes
     byte[] oneByte  = new byte[1];
@@ -424,6 +425,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getBaseFrequencyIndex() {
+    this.baseFrequencyIndex.limit(this.baseFrequencyIndex.capacity());
+    this.baseFrequencyIndex.position(0);
     return this.baseFrequencyIndex;
   }
   
@@ -432,7 +435,9 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
    protected ByteBuffer getBeamAngle() {
-    return this.beamAngle;
+     this.beamAngle.limit(this.beamAngle.capacity());
+     this.beamAngle.position(0);
+     return this.beamAngle;
   }
   
   /**
@@ -440,6 +445,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getBinOneDistance() {
+    this.binOneDistance.limit(this.binOneDistance.capacity());
+    this.binOneDistance.position(0);
     return this.binOneDistance;
   }
   
@@ -448,6 +455,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getBlankAfterTransmit() {
+    this.blankAfterTransmit.limit(this.blankAfterTransmit.capacity());
+    this.blankAfterTransmit.position(0);
     return this.blankAfterTransmit;
   }
   
@@ -456,6 +465,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getCoordinateTransformParams() {
+    this.coordinateTransformParams.limit(this.coordinateTransformParams.capacity());
+    this.coordinateTransformParams.position(0);
     return this.coordinateTransformParams;
   }
   
@@ -464,6 +475,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getCpuFirmwareRevision() {
+    this.cpuFirmwareRevision.limit(this.cpuFirmwareRevision.capacity());
+    this.cpuFirmwareRevision.position(0);
     return this.cpuFirmwareRevision;
   }
   
@@ -472,6 +485,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getCpuFirmwareVersion() {
+    this.cpuFirmwareVersion.limit(this.cpuFirmwareVersion.capacity());
+    this.cpuFirmwareVersion.position(0);
     return this.cpuFirmwareVersion;
   }
   
@@ -480,6 +495,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getCpuBoardSerialNumber() {
+    this.cpuBoardSerialNumber.limit(this.cpuBoardSerialNumber.capacity());
+    this.cpuBoardSerialNumber.position(0);
     return this.cpuBoardSerialNumber;
   }
   
@@ -488,6 +505,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getDepthCellLength() {
+    this.depthCellLength.limit(this.depthCellLength.capacity());
+    this.depthCellLength.position(0);
     return this.depthCellLength;
   }
   
@@ -496,6 +515,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getErrorVelocityThreshold() {
+    this.errorVelocityThreshold.limit(this.errorVelocityThreshold.capacity());
+    this.errorVelocityThreshold.position(0);
     return this.errorVelocityThreshold;
   }
   
@@ -504,6 +525,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getFalseTargetThreshold() {
+    this.falseTargetThreshold.limit(this.falseTargetThreshold.capacity());
+    this.falseTargetThreshold.position(0);
     return this.falseTargetThreshold;
   }
   
@@ -512,6 +535,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getFixedLeaderID() {
+    this.fixedLeaderID.limit(this.fixedLeaderID.capacity());
+    this.fixedLeaderID.position(0);
     return this.fixedLeaderID;
   }
   
@@ -520,6 +545,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getFixedLeaderSpare() {
+    this.fixedLeaderSpare.limit(this.fixedLeaderSpare.capacity());
+    this.fixedLeaderSpare.position(0);
     return this.fixedLeaderSpare;
   }
   
@@ -528,6 +555,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getHeadingAlignment() {
+    this.headingAlignment.limit(this.headingAlignment.capacity());
+    this.headingAlignment.position(0);
     return this.headingAlignment;
   }
   
@@ -536,6 +565,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getHeadingBias() {
+    this.headingBias.limit(this.headingBias.capacity());
+    this.headingBias.position(0);
     return this.headingBias;
   }
   
@@ -544,6 +575,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getLagLength() {
+    this.lagLength.limit(this.lagLength.capacity());
+    this.lagLength.position(0);
     return this.lagLength;
   }
   
@@ -552,6 +585,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getLowCorrelationThreshold() {
+    this.lowCorrelationThreshold.limit(this.lowCorrelationThreshold.capacity());
+    this.lowCorrelationThreshold.position(0);
     return this.lowCorrelationThreshold;
   }
   
@@ -560,6 +595,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getNumberOfBeams() {
+    this.numberOfBeams.limit(this.numberOfBeams.capacity());
+    this.numberOfBeams.position(0);
     return this.numberOfBeams;
   }
   
@@ -568,6 +605,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getNumberOfCells() {
+    this.numberOfCells.limit(this.numberOfCells.capacity());
+    this.numberOfCells.position(0);
     return this.numberOfCells;
   }
   
@@ -577,6 +616,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getNumberOfCodeRepetitions() {
+    this.numberOfCodeRepetitions.limit(this.numberOfCodeRepetitions.capacity());
+    this.numberOfCodeRepetitions.position(0);
     return this.numberOfCodeRepetitions;
   }
   
@@ -585,6 +626,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPdRealOrSimulatedFlag() {
+    this.pdRealOrSimulatedFlag.limit(this.pdRealOrSimulatedFlag.capacity());
+    this.pdRealOrSimulatedFlag.position(0);
     return this.pdRealOrSimulatedFlag;
   }
   
@@ -593,6 +636,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPercentGoodMinimum() {
+    this.percentGoodMinimum.limit(this.percentGoodMinimum.capacity());
+    this.percentGoodMinimum.position(0);
     return this.percentGoodMinimum;
   }
   
@@ -601,6 +646,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPingHundredths() {
+    this.pingHundredths.limit(this.pingHundredths.capacity());
+    this.pingHundredths.position(0);
     return this.pingHundredths;
   }
   
@@ -609,6 +656,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPingMinutes() {
+    this.pingMinutes.limit(this.pingMinutes.capacity());
+    this.pingMinutes.position(0);
     return this.pingMinutes;
   }
   
@@ -617,6 +666,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPingSeconds() {
+    this.pingSeconds.limit(this.pingSeconds.capacity());
+    this.pingSeconds.position(0);
     return this.pingSeconds;
   }
   
@@ -625,6 +676,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPingsPerEnsemble() {
+    this.pingsPerEnsemble.limit(this.pingsPerEnsemble.capacity());
+    this.pingsPerEnsemble.position(0);
     return this.pingsPerEnsemble;
   }
   
@@ -633,6 +686,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getProfilingMode() {
+    this.profilingMode.limit(this.profilingMode.capacity());
+    this.profilingMode.position(0);
     return this.profilingMode;
   }
   
@@ -641,6 +696,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getReferenceLayerEnd() {
+    this.referenceLayerEnd.limit(this.referenceLayerEnd.capacity());
+    this.referenceLayerEnd.position(0);
     return this.referenceLayerEnd;
   }
   
@@ -649,6 +706,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
    protected ByteBuffer getReferenceLayerStart() {
+     this.referenceLayerStart.limit(this.referenceLayerStart.capacity());
+     this.referenceLayerStart.position(0);
      return this.referenceLayerStart;
    }
   
@@ -657,6 +716,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSensorAvailability() {
+    this.sensorAvailability.limit(this.sensorAvailability.capacity());
+    this.sensorAvailability.position(0);
     return this.sensorAvailability;
   }
   
@@ -665,6 +726,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSensorSource() {
+    this.sensorSource.limit(this.sensorSource.capacity());
+    this.sensorSource.position(0);
     return this.sensorSource;
   }
   
@@ -673,6 +736,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSerialNumber() {
+    this.serialNumber.limit(this.serialNumber.capacity());
+    this.serialNumber.position(0);
     return this.serialNumber;
   }
   
@@ -681,6 +746,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSignalProcessingMode() {
+    this.signalProcessingMode.limit(this.signalProcessingMode.capacity());
+    this.signalProcessingMode.position(0);
     return this.signalProcessingMode;
   }
   
@@ -689,6 +756,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSystemBandwidth() {
+    this.systemBandwidth.limit(this.systemBandwidth.capacity());
+    this.systemBandwidth.position(0);
     return this.systemBandwidth;
   }
   
@@ -697,6 +766,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSystemConfiguration() {
+    this.reservedBIT.limit(this.reservedBIT.capacity());
+    this.reservedBIT.position(0);
     return this.systemConfiguration;
   }
   
@@ -705,6 +776,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSystemPower() {
+    this.systemPower.limit(this.systemPower.capacity());
+    this.systemPower.position(0);
     return this.systemPower;
   }
   
@@ -713,6 +786,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getTransmitLagDistance() {
+    this.transmitLagDistance.limit(this.transmitLagDistance.capacity());
+    this.transmitLagDistance.position(0);
     return this.transmitLagDistance;
   }
   
@@ -721,6 +796,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getTransmitPulseLength() {
+    this.transmitPulseLength.limit(this.transmitPulseLength.capacity());
+    this.transmitPulseLength.position(0);
     return this.transmitPulseLength;
   }
   
