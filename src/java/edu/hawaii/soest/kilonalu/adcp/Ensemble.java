@@ -268,7 +268,8 @@ public class Ensemble {
      logger.debug("Ensemble.addToByteSum() called.");
      
      // iterate through the bytes and add them to ensembleByteSum
-     for ( byte i : byteArray ) ensembleByteSum += i;
+     for ( byte i : byteArray ) ensembleByteSum += (i & 0xFF);
+     logger.debug("Ensemble.ensembleByteSum = " + ensembleByteSum);
    }
   
   /**
@@ -349,7 +350,8 @@ public class Ensemble {
     * as a int.
     */
    public int getChecksum(){
-     this.checksum.flip();
+     this.checksum.limit(this.checksum.capacity());
+     this.checksum.position(0);
      return (int) this.checksum.order(ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
@@ -462,7 +464,8 @@ public class Ensemble {
     * as a int.  This is really just for RDI internal use.
     */
    public int getReservedBIT(){
-     this.reservedBIT.flip();
+     this.reservedBIT.limit(this.reservedBIT.capacity());
+     this.reservedBIT.position(0);
      return (int) this.reservedBIT.order(ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
@@ -1778,9 +1781,8 @@ public class Ensemble {
     */
    public boolean isValid() {
      boolean isValid = false;
-     
-     if (  ensembleByteSum % 65535 == 
-          (checksum.order(ByteOrder.LITTLE_ENDIAN).getDouble()) ) {
+     logger.debug("Ensemble bytesum remainder: " + (ensembleByteSum % 65535)); 
+     if (  ensembleByteSum % 65535 == getChecksum() ) {
        isValid = true;
      }
      return isValid;
