@@ -187,7 +187,7 @@ public class TextOutputPlugin extends RBNBBase {
     //endArchiveCal.clear(Calendar.SECOND);
     //endArchiveCal.clear(Calendar.MINUTE);
     //endArchiveCal.add(Calendar.HOUR_OF_DAY, 1);
-    //endArchiveCal.add(Calendar.MINUTE, 2);
+    endArchiveCal.add(Calendar.SECOND, -1);
     long eTime = (endArchiveCal.getTime()).getTime();
     endTime = ((double) eTime) / 1000.0;
     
@@ -700,11 +700,11 @@ public class TextOutputPlugin extends RBNBBase {
       if (index < 0) {
         break;
       }
-      ByteBuffer ensembleBuffer = ByteBuffer.allocate(4096); //CSJ fix hard coded size
             
       byte[][] data = m.GetDataAsByteArray(index); // uses local byte order??
       for ( int i = 0; i < data.length; i++ ) {
-        System.out.println("Ensemble is:\n" + new String(Hex.encodeHex(data[i])));
+        ByteBuffer ensembleBuffer = ByteBuffer.allocate(data[i].length);
+        logger.debug("Ensemble is:\n" + new String(Hex.encodeHex(data[i])));
         // create an Ensemble
         ensembleBuffer.put(data[i]);
         Ensemble ensemble = new Ensemble(ensembleBuffer);
