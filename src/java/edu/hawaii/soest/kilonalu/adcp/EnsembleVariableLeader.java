@@ -431,6 +431,7 @@ public final class EnsembleVariableLeader {
                                  Ensemble ensemble ) {
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
+    ensembleBuffer.limit(ensembleBuffer.capacity());
     
     // position the cursor at the correct offset given the sequential location
     // of the fixed leader in the data stream.
@@ -590,6 +591,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getVariableLeaderID(){
+    this.variableLeaderID.limit(this.variableLeaderID.capacity());
+    this.variableLeaderID.position(0);
     return this.variableLeaderID;
   }
   
@@ -598,6 +601,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getEnsembleNumber(){
+    this.ensembleNumber.limit(this.ensembleNumber.capacity());
+    this.ensembleNumber.position(0);
     return this.ensembleNumber;
   }
     
@@ -606,6 +611,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockYear(){
+    this.realTimeClockYear.limit(this.realTimeClockYear.capacity());
+    this.realTimeClockYear.position(0);
     return this.realTimeClockYear;
   }
     
@@ -614,6 +621,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockMonth(){
+    this.realTimeClockMonth.limit(this.realTimeClockMonth.capacity());
+    this.realTimeClockMonth.position(0);
     return this.realTimeClockMonth;
   }
     
@@ -622,6 +631,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockDay(){
+    this.realTimeClockDay.limit(this.realTimeClockDay.capacity());
+    this.realTimeClockDay.position(0);
     return this.realTimeClockDay;
   }
     
@@ -630,6 +641,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockHour(){
+    this.realTimeClockHour.limit(this.realTimeClockHour.capacity());
+    this.realTimeClockHour.position(0);
     return this.realTimeClockHour;
   }
     
@@ -638,6 +651,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockMinute(){
+    this.realTimeClockMinute.limit(this.realTimeClockMinute.capacity());
+    this.realTimeClockMinute.position(0);
     return this.realTimeClockMinute;
   }
     
@@ -646,6 +661,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockSecond(){
+    this.realTimeClockSecond.limit(this.realTimeClockSecond.capacity());
+    this.realTimeClockSecond.position(0);
     return this.realTimeClockSecond;
   }
     
@@ -654,6 +671,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeClockHundredths(){
+    this.realTimeClockHundredths.limit(this.realTimeClockHundredths.capacity());
+    this.realTimeClockHundredths.position(0);
     return this.realTimeClockHundredths;
   }
     
@@ -662,6 +681,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getEnsembleNumberIncrement(){
+    this.ensembleNumberIncrement.limit(this.ensembleNumberIncrement.capacity());
+    this.ensembleNumberIncrement.position(0);
     return this.ensembleNumberIncrement;
   }
     
@@ -670,6 +691,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getBuiltInTestResult(){
+    this.builtInTestResult.limit(this.builtInTestResult.capacity());
+    this.builtInTestResult.position(0);
     return this.builtInTestResult;
   }
     
@@ -678,6 +701,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSpeedOfSound(){
+    this.speedOfSound.limit(this.speedOfSound.capacity());
+    this.speedOfSound.position(0);
     return this.speedOfSound;
   }
     
@@ -686,6 +711,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getDepthOfTransducer(){
+    this.depthOfTransducer.limit(this.depthOfTransducer.capacity());
+    this.depthOfTransducer.position(0);
     return this.depthOfTransducer;
   }
     
@@ -694,6 +721,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getHeading(){
+    this.heading.limit(this.heading.capacity());
+    this.heading.position(0);
     return this.heading;
   }
     
@@ -702,6 +731,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getPitch(){
+    this.pitch.limit(this.pitch.capacity());
+    this.pitch.position(0);
     return this.pitch;
   }
     
@@ -710,6 +741,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getRoll(){
+    this.roll.limit(this.roll.capacity());
+    this.roll.position(0);
     return this.roll;
   }
     
@@ -718,6 +751,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSalinity(){
+    this.salinity.limit(this.salinity.capacity());
+    this.salinity.position(0);
     return this.salinity;
   }
     
@@ -726,6 +761,8 @@ public final class EnsembleVariableLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getTemperature(){
+    this.temperature.limit(this.temperature.capacity());
+    this.temperature.position(0);
     return this.temperature;
   }
     
@@ -734,6 +771,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getMinPrePingWaitMinutes(){
+    this.minPrePingWaitMinutes.limit(this.minPrePingWaitMinutes.capacity());
+    this.minPrePingWaitMinutes.position(0);
     return this.minPrePingWaitMinutes;
   }
     
@@ -742,6 +781,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getMinPrePingWaitSeconds(){
+    this.minPrePingWaitSeconds.limit(this.minPrePingWaitSeconds.capacity());
+    this.minPrePingWaitSeconds.position(0);
     return this.minPrePingWaitSeconds;
   }
     
@@ -750,6 +791,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getMinPrePingWaitHundredths(){
+    this.minPrePingWaitHundredths.limit(this.minPrePingWaitHundredths.capacity());
+    this.minPrePingWaitHundredths.position(0);
     return this.minPrePingWaitHundredths;
   }
     
@@ -758,6 +801,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getHeadingStandardDeviation(){
+    this.headingStandardDeviation.limit(this.headingStandardDeviation.capacity());
+    this.headingStandardDeviation.position(0);
     return this.headingStandardDeviation;
   }
     
@@ -766,6 +811,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getPitchStandardDeviation(){
+    this.pitchStandardDeviation.limit(this.pitchStandardDeviation.capacity());
+    this.pitchStandardDeviation.position(0);
     return this.pitchStandardDeviation;
   }
     
@@ -774,6 +821,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getRollStandardDeviation(){
+    this.rollStandardDeviation.limit(this.rollStandardDeviation.capacity());
+    this.rollStandardDeviation.position(0);
     return this.rollStandardDeviation;
   }
     
@@ -782,6 +831,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelZero(){
+    this.adcChannelZero.limit(this.adcChannelZero.capacity());
+    this.adcChannelZero.position(0);
     return this.adcChannelZero;
   }
     
@@ -790,6 +841,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelOne(){
+    this.adcChannelOne.limit(this.adcChannelOne.capacity());
+    this.adcChannelOne.position(0);
     return this.adcChannelOne;
   }
     
@@ -798,6 +851,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelTwo(){
+    this.adcChannelTwo.limit(this.adcChannelTwo.capacity());
+    this.adcChannelTwo.position(0);
     return this.adcChannelTwo;
   }
     
@@ -806,6 +861,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelThree(){
+    this.adcChannelThree.limit(this.adcChannelThree.capacity());
+    this.adcChannelThree.position(0);
     return this.adcChannelThree;
   }
     
@@ -814,6 +871,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelFour(){
+    this.adcChannelFour.limit(this.adcChannelFour.capacity());
+    this.adcChannelFour.position(0);
     return this.adcChannelFour;
   }
     
@@ -822,6 +881,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelFive(){
+    this.adcChannelFive.limit(this.adcChannelFive.capacity());
+    this.adcChannelFive.position(0);
     return this.adcChannelFive;
   }
     
@@ -830,6 +891,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelSix(){
+    this.adcChannelSix.limit(this.adcChannelSix.capacity());
+    this.adcChannelSix.position(0);
     return this.adcChannelSix;
   }
     
@@ -838,6 +901,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getADCChannelSeven(){
+    this.adcChannelSeven.limit(this.adcChannelSeven.capacity());
+    this.adcChannelSeven.position(0);
     return this.adcChannelSeven;
   }
     
@@ -846,6 +911,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getErrorStatusWord(){
+    this.errorStatusWord.limit(this.errorStatusWord.capacity());
+    this.errorStatusWord.position(0);
     return this.errorStatusWord;
   }
     
@@ -854,6 +921,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getSpareFieldOne(){
+    this.spareFieldOne.limit(this.spareFieldOne.capacity());
+    this.spareFieldOne.position(0);
     return this.spareFieldOne;
   }
     
@@ -862,6 +931,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getPressure(){
+    this.pressure.limit(this.pressure.capacity());
+    this.pressure.position(0);
     return this.pressure;
   }
     
@@ -870,6 +941,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getPressureVariance(){
+    this.pressureVariance.limit(this.pressureVariance.capacity());
+    this.pressureVariance.position(0);
     return this.pressureVariance;
   }
     
@@ -878,6 +951,8 @@ public final class EnsembleVariableLeader {
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getSpareFieldTwo(){
+    this.spareFieldTwo.limit(this.spareFieldTwo.capacity());
+    this.spareFieldTwo.position(0);
     return this.spareFieldTwo;
   }
     
@@ -886,6 +961,8 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
   protected ByteBuffer getRealTimeY2KClockCentury(){
+    this.realTimeY2KClockCentury.limit(this.realTimeY2KClockCentury.capacity());
+    this.realTimeY2KClockCentury.position(0);
     return this.realTimeY2KClockCentury;
   }
   
@@ -894,7 +971,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockYear(){
-    return this.realTimeY2KClockYear;
+      this.realTimeY2KClockYear.limit(this.realTimeY2KClockYear.capacity());
+      this.realTimeY2KClockYear.position(0);
+      return this.realTimeY2KClockYear;
   }
     
   /**
@@ -902,7 +981,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockMonth(){
-    return this.realTimeY2KClockMonth;
+      this.realTimeY2KClockMonth.limit(this.realTimeY2KClockMonth.capacity());
+      this.realTimeY2KClockMonth.position(0);
+      return this.realTimeY2KClockMonth;
   }
     
   /**
@@ -910,7 +991,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockDay(){
-    return this.realTimeY2KClockDay;
+      this.realTimeY2KClockDay.limit(this.realTimeY2KClockDay.capacity());
+      this.realTimeY2KClockDay.position(0);
+      return this.realTimeY2KClockDay;
   }
     
   /**
@@ -918,7 +1001,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockHour(){
-    return this.realTimeY2KClockHour;
+      this.realTimeY2KClockHour.limit(this.realTimeY2KClockHour.capacity());
+      this.realTimeY2KClockHour.position(0);
+      return this.realTimeY2KClockHour;
   }
     
   /**
@@ -926,7 +1011,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockMinute(){
-    return this.realTimeY2KClockMinute;
+      this.realTimeY2KClockMinute.limit(this.realTimeY2KClockMinute.capacity());
+      this.realTimeY2KClockMinute.position(0);
+      return this.realTimeY2KClockMinute;
   }
     
   /**
@@ -934,7 +1021,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockSecond(){
-    return this.realTimeY2KClockSecond;
+      this.realTimeY2KClockSecond.limit(this.realTimeY2KClockSecond.capacity());
+      this.realTimeY2KClockSecond.position(0);
+      return this.realTimeY2KClockSecond;
   }
     
   /**
@@ -942,7 +1031,9 @@ public final class EnsembleVariableLeader {
    * field contents as a ByteBuffer.
    */
     protected ByteBuffer getRealTimeY2KClockHundredths(){
-    return this.realTimeY2KClockHundredths;
+      this.realTimeY2KClockHundredths.limit(this.realTimeY2KClockHundredths.capacity());
+      this.realTimeY2KClockHundredths.position(0);
+      return this.realTimeY2KClockHundredths;
   }
   
   /**
