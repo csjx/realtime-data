@@ -30,6 +30,7 @@ package edu.hawaii.soest.kilonalu.adcp;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *  A class that represents the ensemble header of data produced by
@@ -166,13 +167,11 @@ public class EnsembleHeader {
      
      // prepare the ByteBuffer for reading
      this.dataTypeOffsets.limit(this.dataTypeOffsets.capacity());
-     //this.dataTypeOffsets.position(0);
-     
      // read the offset by setting the position based on the desired type
      dataTypeOffsets.position( ( (dataTypeNumber * 2 ) - 2 ) );
-     ByteBuffer dataTypeOffset = dataTypeOffsets.get( new byte[2]);
-     dataTypeOffset.limit(dataTypeOffset.capacity());
-     dataTypeOffset.position(0);
+     byte[] offsetBytes = new byte[2];
+     ByteBuffer dataTypeOffset = dataTypeOffsets.get( offsetBytes );
+     dataTypeOffset.position(dataTypeOffset.position() - 2);
      return dataTypeOffset;       
    }
    
