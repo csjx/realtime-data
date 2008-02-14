@@ -20,7 +20,7 @@ FIND_OPTIONS="-mtime +14 -type f -print";
 for i in `$FIND_COMMAND $FIND_DIR $FIND_OPTIONS`;
 do
   # test if the file is listed on the mirror server
-  result=$(sudo su - $MIRROR_USER -c "$SSH_COMMAND $MIRROR_SERVER '($MIRROR_COMMAND $i)'");
+  result=$(su - $MIRROR_USER -c "$SSH_COMMAND $MIRROR_SERVER '($MIRROR_COMMAND $i)'");
   # if the mirror result and the local result are an exact match, delete the file locally
   if [ $result == $i ]; then
     rm -f $i;
