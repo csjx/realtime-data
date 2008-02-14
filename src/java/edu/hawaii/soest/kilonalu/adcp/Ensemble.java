@@ -44,6 +44,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.codec.binary.Hex;
+
 /**
  *  A class that represents a single ensemble of data produced by
  *  an RDI 1200kHz Workhorse Acoustic Doppler Current Profiler in the
@@ -51,6 +57,9 @@ import java.util.HashMap;
  */
 public class Ensemble {
     
+  /** The Logger instance used to log system messages */
+  private static Logger logger = Logger.getLogger(Ensemble.class);
+  
   /**
    *  A field that stores the RDI reserved BIT data (two bytes) in a ByteBuffer
    *  which contains two bytes of data for internal RDI use.
@@ -187,21 +196,20 @@ public class Ensemble {
     // first, build the EnsembleHeader to be used in subsequent parsing
     this.ensembleHeader = new EnsembleHeader(ensembleBuffer, this);     
     
-    // create the components of the ensemble based on the metadata content
-    // of the EnsembleHeader
-    this.ensembleFixedLeader = 
-      new EnsembleFixedLeader(ensembleBuffer, this);     
-    this.ensembleVariableLeader = 
-      new EnsembleVariableLeader(ensembleBuffer, this);     
-    
-    // build each of the collected data types
-    if ( getNumberOfDataTypes() > 2 ) {
-      
       // identify which data types are present in the Ensemble based
       // on the Data Type ID
       findDataTypes(ensembleBuffer);
       
+      // create the components of the ensemble based on the metadata content
+      // of the EnsembleHeader
+      this.ensembleFixedLeader = 
+        new EnsembleFixedLeader(ensembleBuffer, this);     
+      this.ensembleVariableLeader = 
+        new EnsembleVariableLeader(ensembleBuffer, this);     
       
+    // build each of the collected data types
+    if ( getNumberOfDataTypes() > 2 ) {
+
       // build 'em if we got 'em
       if ( hasVelocityProfile ){
         this.ensembleVelocityProfile = 
@@ -257,7 +265,7 @@ public class Ensemble {
    * data stream.
    */
    protected void addToByteSum(byte[] byteArray) {
-     System.out.println("Ensemble.addToByteSum() called.");
+     logger.debug("Ensemble.addToByteSum() called.");
      
      // iterate through the bytes and add them to ensembleByteSum
      for ( byte i : byteArray ) ensembleByteSum += i;
@@ -272,19 +280,20 @@ public class Ensemble {
    *  instance, the Velocity Profile data type is Data Type #3 in the ensemble.
    */
    private void findDataTypes(ByteBuffer ensembleBuffer ) {
-     System.out.println("Ensemble.findDataTypes() called.");
+     logger.debug("Ensemble.findDataTypes() called.");
      
        // search the ensemble byte buffer for the above IDs at each of the 
        // data type offset locations, and mark them present or not present
-       ensembleBuffer.flip();
+       ensembleBuffer.limit(ensembleBuffer.capacity());
+       ensembleBuffer.position(0);
        
-       for (int i = 1; i < getNumberOfDataTypes(); i++) {
-         ensembleBuffer.position( getDataTypeOffset(i) + 1 );
-         
+       for (int i = 1; i <= getNumberOfDataTypes(); i++) {
+         int offset = getDataTypeOffset(i);
+         ensembleBuffer.position( offset );
          // once the cursor is in place, read the 2-byte ID marker, and test
          // it against the constant enumerated data types
          EnsembleDataType dataType = getDataType(
-           ensembleBuffer.order(ByteOrder.LITTLE_ENDIAN).getInt());
+           (int) ensembleBuffer.order(ByteOrder.LITTLE_ENDIAN).getShort());
          
          // for each dataType ID marker found in the ensemble, cache it's 
          // sequence location and data type in a HashMap for later processing.
@@ -332,6 +341,7 @@ public class Ensemble {
          // prepare the buffer for rereading of the next dataType
          ensembleBuffer.rewind();
        }
+       logger.debug("Ensemble.dataTypeMap: " + dataTypeMap.toString());
    }
 
    /**
@@ -339,15 +349,16 @@ public class Ensemble {
     * as a int.
     */
    public int getChecksum(){
-     return this.checksum.order(ByteOrder.LITTLE_ENDIAN).getInt();
+     this.checksum.flip();
+     return (int) this.checksum.order(ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
     * A method that returns the Ensemble headerID field contents 
     * as a int.
     */
-   public short getHeaderID(){
-     return ensembleHeader.getHeaderID().order(
+   public int getHeaderID(){
+     return (int) ensembleHeader.getHeaderID().order(
        ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
@@ -356,8 +367,7 @@ public class Ensemble {
     * as a int.
     */
    public int getHeaderSpare(){
-     return ensembleHeader.getHeaderSpare().order(
-       ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleHeader.getHeaderSpare().get();
    }
 
    /**
@@ -378,28 +388,28 @@ public class Ensemble {
       if ( dataTypeID == 0x0000 ) {
         returnType = EnsembleDataType.FIXED_LEADER;
       }
-      if ( dataTypeID == 0x8000 ) {
+      if ( dataTypeID == 0x0080 ) {
         returnType = EnsembleDataType.VARIABLE_LEADER;
       }
-      if ( dataTypeID == 0x0001 ) {
+      if ( dataTypeID == 0x0100 ) {
         returnType = EnsembleDataType.VELOCITY_PROFILE;
       }
-      if ( dataTypeID == 0x0002 ) {
+      if ( dataTypeID == 0x0200 ) {
         returnType = EnsembleDataType.CORRELATION_PROFILE;
       }
-      if ( dataTypeID == 0x0003 ) {
+      if ( dataTypeID == 0x0300 ) {
         returnType = EnsembleDataType.ECHOINTENSITY_PROFILE;
       }
-      if ( dataTypeID ==0x0004 ) {
+      if ( dataTypeID == 0x0400 ) {
         returnType = EnsembleDataType.PERCENTGOOD_PROFILE;
       }
-      if ( dataTypeID ==0x0005 ) {
+      if ( dataTypeID == 0x0500 ) {
         returnType = EnsembleDataType.STATUS_PROFILE;
       }
-      if ( dataTypeID ==0x0006 ) {
+      if ( dataTypeID == 0x0600 ) {
         returnType = EnsembleDataType.BOTTOMTRACK_DATA;
       }
-      if ( dataTypeID == 0x0008 ) {
+      if ( dataTypeID == 0x0800 ) {
         returnType = EnsembleDataType.MICROCAT_DATA;
       }
       return returnType;
@@ -423,8 +433,8 @@ public class Ensemble {
     * @param dataTypeNumber  the number of the Data Type desired (as an int)
     */
     public int getDataTypeOffset (int dataTypeNumber) {
-     return ensembleHeader.getDataTypeOffset(dataTypeNumber).order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+      ByteBuffer dataTypeOffset = ensembleHeader.getDataTypeOffset(dataTypeNumber);
+      return (int) dataTypeOffset.order(ByteOrder.LITTLE_ENDIAN).getShort();
     }
 
    /**
@@ -432,8 +442,8 @@ public class Ensemble {
     * as a int.
     */
    public int getNumberOfBytesInEnsemble() {   
-     return ensembleHeader.getNumberOfBytesInEnsemble().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleHeader.getNumberOfBytesInEnsemble().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -441,8 +451,10 @@ public class Ensemble {
     * as a int.
     */
    public int getNumberOfDataTypes() {
-     return ensembleHeader.getNumberOfDataTypes().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     ByteBuffer numberOfDataTypes = ensembleHeader.getNumberOfDataTypes();
+     numberOfDataTypes.limit(numberOfDataTypes.capacity());
+     numberOfDataTypes.position(0);
+     return (int) numberOfDataTypes.get();
    }
 
    /**
@@ -450,7 +462,8 @@ public class Ensemble {
     * as a int.  This is really just for RDI internal use.
     */
    public int getReservedBIT(){
-     return this.reservedBIT.order(ByteOrder.LITTLE_ENDIAN).getInt();
+     this.reservedBIT.flip();
+     return (int) this.reservedBIT.order(ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -458,8 +471,9 @@ public class Ensemble {
     * as an int.
     */
    public int getBaseFrequencyIndex() {
-     return ensembleFixedLeader.getBaseFrequencyIndex().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     this.reservedBIT.flip();
+     return (int) ensembleFixedLeader.getBaseFrequencyIndex().order(
+          ByteOrder.LITTLE_ENDIAN).get();
    }
 
    /**
@@ -1779,7 +1793,7 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setChecksum(byte[] byteArray) {
-     System.out.println("Ensemble.setChecksum() called.");
+     logger.debug("Ensemble.setChecksum() called.");
      this.checksum.put(byteArray);
    }
 
@@ -1790,7 +1804,7 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setReservedBIT(byte[] byteArray) {
-     System.out.println("Ensemble.setReservedBIT() called.");
+     logger.debug("Ensemble.setReservedBIT() called.");
      this.reservedBIT.put(byteArray);
    }
 
