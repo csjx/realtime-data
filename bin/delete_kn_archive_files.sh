@@ -24,7 +24,7 @@ do
   # if the mirror result and the local result are an exact match, delete the file locally
   if [ $result == $i ]; then
     rm -f $i;
-    echo $(basename $result) "exists on $MIRROR_SERVER. Deleted " $(basename $i) " locally.";
+    echo $(basename $result) "exists on $MIRROR_SERVER. Deleted" $(basename $i) "locally.";
   fi
 
 done
