@@ -766,8 +766,8 @@ public final class EnsembleFixedLeader {
    * as a ByteBuffer.
    */
   protected ByteBuffer getSystemConfiguration() {
-    this.reservedBIT.limit(this.reservedBIT.capacity());
-    this.reservedBIT.position(0);
+    this.systemConfiguration.limit(this.systemConfiguration.capacity());
+    this.systemConfiguration.position(0);
     return this.systemConfiguration;
   }
   
