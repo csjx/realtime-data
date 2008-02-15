@@ -60,7 +60,6 @@ public final class EnsembleCorrelationProfile {
    */
   public EnsembleCorrelationProfile( ByteBuffer ensembleBuffer, 
                                      Ensemble ensemble ) {
-    System.out.println("EnsembleCorrelationProfile called.");
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
     ensembleBuffer.limit(ensembleBuffer.capacity());
