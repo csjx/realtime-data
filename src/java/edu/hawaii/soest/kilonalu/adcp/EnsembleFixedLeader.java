@@ -34,7 +34,7 @@ import edu.hawaii.soest.kilonalu.adcp.Ensemble;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *  A class that represents the Fixed Leader of data produced by
@@ -296,7 +296,7 @@ public final class EnsembleFixedLeader {
     int typeNumber = 
       ensemble.getDataTypeNumber( EnsembleDataType.FIXED_LEADER );
     int offset = ensemble.getDataTypeOffset( typeNumber );
-    ensembleBuffer.position( (int) offset + 1 );
+    ensembleBuffer.position( offset );
     
     // define the temporary arrays for passing bytes
     byte[] oneByte  = new byte[1];
@@ -376,9 +376,9 @@ public final class EnsembleFixedLeader {
     ensembleBuffer.get(oneByte);
     setSensorAvailability(oneByte);
     ensemble.addToByteSum(oneByte);
-    ensembleBuffer.get(oneByte);
-    setBinOneDistance(oneByte);
-    ensemble.addToByteSum(oneByte);
+    ensembleBuffer.get(twoBytes);
+    setBinOneDistance(twoBytes);
+    ensemble.addToByteSum(twoBytes);
     ensembleBuffer.get(twoBytes);
     setTransmitPulseLength(twoBytes);
     ensemble.addToByteSum(twoBytes);
@@ -407,16 +407,20 @@ public final class EnsembleFixedLeader {
     ensembleBuffer.get(oneByte);
     setSystemPower(oneByte);
     ensemble.addToByteSum(oneByte);
-    ensembleBuffer.get(oneByte);
-    setBaseFrequencyIndex(oneByte);
-    ensemble.addToByteSum(oneByte);
-    byte[] instrumentSerialNumber = new byte[4];
-    ensembleBuffer.get(instrumentSerialNumber);  // read 4 bytes
-    setSerialNumber(instrumentSerialNumber);
-    ensemble.addToByteSum(instrumentSerialNumber);
-    ensembleBuffer.get(oneByte);
-    setBeamAngle(oneByte);
-    ensemble.addToByteSum(oneByte);
+    
+    // the following don't get called for Workhorse ADCPs
+    // TODO: test for model and add fields if necessary
+    
+    //ensembleBuffer.get(oneByte);
+    //setBaseFrequencyIndex(oneByte);
+    //ensemble.addToByteSum(oneByte);
+    //byte[] instrumentSerialNumber = new byte[4];
+    //ensembleBuffer.get(instrumentSerialNumber);  // read 4 bytes
+    //setSerialNumber(instrumentSerialNumber);
+    //ensemble.addToByteSum(instrumentSerialNumber);
+    //ensembleBuffer.get(oneByte);
+    //setBeamAngle(oneByte);
+    //ensemble.addToByteSum(oneByte);
     
   }
   
@@ -823,9 +827,9 @@ public final class EnsembleFixedLeader {
   
   /**
    * A method that sets the binOneDistance field from the given
-   * byte array. The byteArray argument must be 1-byte in size.
+   * byte array. The byteArray argument must be 2-bytes in size.
    *
-   * @param byteArray  the 1-byte array that contains the fixed leader bytes
+   * @param byteArray  the 2-byte array that contains the fixed leader bytes
    */
   private void setBinOneDistance(byte[] byteArray) {
     this.binOneDistance.put(byteArray);
