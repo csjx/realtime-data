@@ -42,9 +42,9 @@ import java.nio.ShortBuffer;
 public final class EnsembleVariableLeader {
 
   /**
-   *  A field that stores the Variable Leader ID (2-bytes) in a ByteBuffer
+   *  A field that stores the Variable Leader ID (2-bytes) in a ShortBuffer
    */
-  private ByteBuffer variableLeaderID              = ByteBuffer.allocate(2);
+  private ShortBuffer variableLeaderID              = ShortBuffer.allocate(1);
   
   /**
    *  A field that stores the Ensemble Number in a ByteBuffer
@@ -429,6 +429,7 @@ public final class EnsembleVariableLeader {
    */
   public EnsembleVariableLeader( ByteBuffer ensembleBuffer, 
                                  Ensemble ensemble ) {
+    
     // prepare the ensemble buffer for reading
     ensembleBuffer.flip();
     ensembleBuffer.limit(ensembleBuffer.capacity());
@@ -438,7 +439,7 @@ public final class EnsembleVariableLeader {
     int typeNumber = 
       ensemble.getDataTypeNumber( EnsembleDataType.VARIABLE_LEADER );
     int offset = ensemble.getDataTypeOffset( typeNumber );
-    ensembleBuffer.position( offset + 1 );
+    ensembleBuffer.position( offset );
     
     // define the temporary arrays for passing bytes
     byte[] oneByte  = new byte[1];
@@ -446,8 +447,11 @@ public final class EnsembleVariableLeader {
     
     // set all of the FixedLeader fields in the order that they are read from 
     // the byte stream
-    ensembleBuffer.get(twoBytes);
-    setVariableLeaderID(twoBytes);
+    short shortValue = ensembleBuffer.getShort();
+    setVariableLeaderID(shortValue);
+    //ensembleBuffer.get(twoBytes);
+    twoBytes[0] = (byte) ((shortValue << 8) >> 8);
+    twoBytes[1] = (byte) (shortValue >> 8);
     ensemble.addToByteSum(twoBytes);
     ensembleBuffer.get(twoBytes);
     setEnsembleNumber(twoBytes);
@@ -590,7 +594,7 @@ public final class EnsembleVariableLeader {
    * A method that returns the Ensemble Variable Leader ID field contents 
    * as a ByteBuffer.
    */
-  protected ByteBuffer getVariableLeaderID(){
+  protected ShortBuffer getVariableLeaderID(){
     this.variableLeaderID.limit(this.variableLeaderID.capacity());
     this.variableLeaderID.position(0);
     return this.variableLeaderID;
@@ -1040,8 +1044,8 @@ public final class EnsembleVariableLeader {
    * A method that sets the Ensemble Variable Leader ID field contents 
    * with the given byte array.
    */
-  private void setVariableLeaderID(byte[] byteArray){
-    this.variableLeaderID.put(variableLeaderID);
+  private void setVariableLeaderID(short shortValue){
+    this.variableLeaderID.put(shortValue);
   }
   
   /**
