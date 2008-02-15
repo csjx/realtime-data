@@ -271,7 +271,6 @@ public class Ensemble {
    * data stream.
    */
    protected void addToByteSum(byte[] byteArray) {
-     //logger.debug("Ensemble.addToByteSum() called.");
      
      // iterate through the bytes and add them to ensembleByteSum
      for ( byte i : byteArray ) {
@@ -292,7 +291,6 @@ public class Ensemble {
    *  instance, the Velocity Profile data type is Data Type #3 in the ensemble.
    */
    private void findDataTypes(ByteBuffer ensembleBuffer ) {
-     logger.debug("Ensemble.findDataTypes() called.");
      
        // search the ensemble byte buffer for the above IDs at each of the 
        // data type offset locations, and mark them present or not present
@@ -1754,7 +1752,6 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setReservedBIT(byte[] byteArray) {
-     logger.debug("Ensemble.setReservedBIT() called.");
      this.reservedBIT.put(byteArray);
    }
 
