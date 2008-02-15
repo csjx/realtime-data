@@ -704,10 +704,10 @@ public class TextOutputPlugin extends RBNBBase {
       byte[][] data = m.GetDataAsByteArray(index); // uses local byte order??
       for ( int i = 0; i < data.length; i++ ) {
         ByteBuffer ensembleBuffer = ByteBuffer.allocate(data[i].length);
-        logger.debug("Ensemble is:\n" + new String(Hex.encodeHex(data[i])));
         // create an Ensemble
         ensembleBuffer.put(data[i]);
         Ensemble ensemble = new Ensemble(ensembleBuffer);
+        logger.info("Ensemble is valid: " + ensemble.isValid());
       }
       doTextConversion = false;
     }
