@@ -73,6 +73,12 @@ public class Ensemble {
    */
   private ByteBuffer checksum = ByteBuffer.allocate(2);
 
+  /**
+   *  A field that stores the Ensemble byte count
+   */
+  private int ensembleByteCount = 0;
+
+  
   /*
    *  An instance of the Header component of the Ensemble
    */
@@ -254,8 +260,8 @@ public class Ensemble {
     addToByteSum(twoBytes);
     ensembleBuffer.get(twoBytes);
     setChecksum(twoBytes);
-    addToByteSum(twoBytes);
-  
+    //addToByteSum(twoBytes); // don't add checksum bytes to ensembleChecksum
+    logger.debug("Ensemble stated checksum: " + new String(Hex.encodeHex(twoBytes)));
   }
 
   /**
@@ -265,11 +271,16 @@ public class Ensemble {
    * data stream.
    */
    protected void addToByteSum(byte[] byteArray) {
-     logger.debug("Ensemble.addToByteSum() called.");
+     //logger.debug("Ensemble.addToByteSum() called.");
      
      // iterate through the bytes and add them to ensembleByteSum
-     for ( byte i : byteArray ) ensembleByteSum += (i & 0xFF);
-     logger.debug("Ensemble.ensembleByteSum = " + ensembleByteSum);
+     for ( byte i : byteArray ) {
+       ensembleByteSum += (i & 0xFF);
+       ensembleByteCount++;
+       //logger.debug("Ensemble.ensembleByteSum, Ensemble.ensembleByteCount =\t" + 
+       //ensembleByteSum + "\t" + ensembleByteCount);
+     }
+     
    }
   
   /**
@@ -352,7 +363,15 @@ public class Ensemble {
    public int getChecksum(){
      this.checksum.limit(this.checksum.capacity());
      this.checksum.position(0);
-     return (int) this.checksum.order(ByteOrder.LITTLE_ENDIAN).getShort();
+     int csum = 0;
+     byte[] b = new byte[2];
+     b[0] = this.checksum.get();
+     b[1] = this.checksum.get();
+     
+     csum |= b[1] & 0xFF;
+     csum <<= 8;
+     csum |= b[0] & 0xFF;
+     return csum;
    }
 
    /**
@@ -474,7 +493,6 @@ public class Ensemble {
     * as an int.
     */
    public int getBaseFrequencyIndex() {
-     this.reservedBIT.flip();
      return (int) ensembleFixedLeader.getBaseFrequencyIndex().order(
           ByteOrder.LITTLE_ENDIAN).get();
    }
@@ -484,8 +502,7 @@ public class Ensemble {
     * as an int.
     */
     public int getBeamAngle() {
-      return ensembleFixedLeader.getBeamAngle().order(
-           ByteOrder.LITTLE_ENDIAN).getInt();
+      return ensembleFixedLeader.getBeamAngle().get();
    }
 
    /**
@@ -493,8 +510,8 @@ public class Ensemble {
     * as an int.
     */
    public int getBinOneDistance() {
-     return ensembleFixedLeader.getBinOneDistance().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getBinOneDistance().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -502,8 +519,8 @@ public class Ensemble {
     * as an int.
     */
    public int getBlankAfterTransmit() {
-     return ensembleFixedLeader.getBlankAfterTransmit().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getBlankAfterTransmit().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -516,8 +533,7 @@ public class Ensemble {
     */
    public int getCoordinateTransformParams() {
      int coordTransform = 
-       ensembleFixedLeader.getCoordinateTransformParams().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+       (int) ensembleFixedLeader.getCoordinateTransformParams().get();
      coordTransform = (coordTransform >> 3) << 3; // clear the first 7 bits
      coordTransform = (coordTransform << 27) >> 27; // clear all but bits 4,5
      
@@ -557,8 +573,7 @@ public class Ensemble {
     */
    public int getTransformTiltsSetting() {
      int coordTransform = 
-       ensembleFixedLeader.getCoordinateTransformParams().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+       (int) ensembleFixedLeader.getCoordinateTransformParams().get();
      coordTransform = (coordTransform >> 2) << 2; // clear the first 2 bits
      coordTransform = (coordTransform << 29) >> 29; // clear all but bit 3
      
@@ -590,8 +605,7 @@ public class Ensemble {
     */
    public int getTransformThreeBeamSetting() {
      int coordTransform = 
-       ensembleFixedLeader.getCoordinateTransformParams().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+       (int) ensembleFixedLeader.getCoordinateTransformParams().get();
      coordTransform = (coordTransform >> 1) << 1;   // clear bit 1
      coordTransform = (coordTransform << 30) >> 30; // clear all but bit 2
      
@@ -623,8 +637,7 @@ public class Ensemble {
     */
    public int getTransformBinMappingSetting() {
      int coordTransform = 
-       ensembleFixedLeader.getCoordinateTransformParams().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+       (int) ensembleFixedLeader.getCoordinateTransformParams().get();
      coordTransform = (coordTransform << 31) >> 31; // clear all but bit 1
      
      int returnValue = 0;
@@ -653,8 +666,7 @@ public class Ensemble {
     * as an int.
     */
    public int getCpuFirmwareRevision() {
-     return ensembleFixedLeader.getCpuFirmwareRevision().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getCpuFirmwareRevision().get();
    }
 
    /**
@@ -662,12 +674,11 @@ public class Ensemble {
     * as an int.
     */
    public int getCpuFirmwareVersion() {
-     return ensembleFixedLeader.getCpuFirmwareVersion().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getCpuFirmwareVersion().get();
    }
 
    /**
-    * A method that returns the Ensemble cpuFirmwareVersion field contents 
+    * A method that returns the Ensemble CpuBoardSerialNumber field contents 
     * as an double.
     */
    public double getCpuBoardSerialNumber() {
@@ -680,8 +691,8 @@ public class Ensemble {
     * as an int.
     */
    public int getDepthCellLength() {
-     return ensembleFixedLeader.getDepthCellLength().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getDepthCellLength().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -689,8 +700,8 @@ public class Ensemble {
     * as an int.
     */
    public int getErrorVelocityThreshold() {
-     return ensembleFixedLeader.getErrorVelocityThreshold().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getErrorVelocityThreshold().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -698,8 +709,7 @@ public class Ensemble {
     * as an int.
     */
    public int getFalseTargetThreshold() {
-     return ensembleFixedLeader.getFalseTargetThreshold().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getFalseTargetThreshold().get();
    }
 
    /**
@@ -707,8 +717,8 @@ public class Ensemble {
     * as an int.
     */
    public int getFixedLeaderID() {
-     return ensembleFixedLeader.getFixedLeaderID().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getFixedLeaderID().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -716,8 +726,7 @@ public class Ensemble {
     * as an int.
     */
    public int getFixedLeaderSpare() {
-     return ensembleFixedLeader.getFixedLeaderSpare().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getFixedLeaderSpare().get();
    }
 
    /**
@@ -743,8 +752,7 @@ public class Ensemble {
     * as an int.
     */
    public int getLagLength() {
-     return ensembleFixedLeader.getLagLength().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getLagLength().get();
    }
 
    /**
@@ -752,8 +760,7 @@ public class Ensemble {
     * as an int.
     */
    public int getLowCorrelationThreshold() {
-     return ensembleFixedLeader.getLowCorrelationThreshold().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getLowCorrelationThreshold().get();
    }
 
    /**
@@ -761,8 +768,7 @@ public class Ensemble {
     * as an int.
     */
    public int getNumberOfBeams() {
-     return ensembleFixedLeader.getNumberOfBeams().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return ensembleFixedLeader.getNumberOfBeams().get();
    }
 
    /**
@@ -770,8 +776,7 @@ public class Ensemble {
     * as an int.
     */
    public int getNumberOfCells() {
-     return ensembleFixedLeader.getNumberOfCells().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getNumberOfCells().get();
    }
 
 
@@ -780,8 +785,7 @@ public class Ensemble {
     * as an int.
     */
    public int getNumberOfCodeRepetitions() {
-     return ensembleFixedLeader.getNumberOfCodeRepetitions().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getNumberOfCodeRepetitions().get();
    }
 
    /**
@@ -789,8 +793,7 @@ public class Ensemble {
     * as an int.
     */
    public int getPdRealOrSimulatedFlag() {
-     return ensembleFixedLeader.getPdRealOrSimulatedFlag().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPdRealOrSimulatedFlag().get();
    }
 
    /**
@@ -798,8 +801,7 @@ public class Ensemble {
     * as an int.
     */
    public int getPercentGoodMinimum() {
-     return ensembleFixedLeader.getPercentGoodMinimum().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPercentGoodMinimum().get();
    }
 
    /**
@@ -807,8 +809,7 @@ public class Ensemble {
     * as an int.
     */
    public int getPingHundredths() {
-     return ensembleFixedLeader.getPingHundredths().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPingHundredths().get();
    }
 
    /**
@@ -816,8 +817,7 @@ public class Ensemble {
     * as an int.
     */
    public int getPingMinutes() {
-     return ensembleFixedLeader.getPingMinutes().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPingMinutes().get();
    }
 
    /**
@@ -825,8 +825,7 @@ public class Ensemble {
     * as an int.
     */
    public int getPingSeconds() {
-     return ensembleFixedLeader.getPingSeconds().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPingSeconds().get();
    }
 
    /**
@@ -834,8 +833,8 @@ public class Ensemble {
     * as an int.
     */
    public int getPingsPerEnsemble() {
-     return ensembleFixedLeader.getPingsPerEnsemble().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getPingsPerEnsemble().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -843,8 +842,7 @@ public class Ensemble {
     * as an int.
     */
    public int getProfilingMode() {
-     return ensembleFixedLeader.getProfilingMode().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getProfilingMode().get();
    }
 
    /**
@@ -852,8 +850,7 @@ public class Ensemble {
     * as an int.
     */
    public int getReferenceLayerEnd() {
-     return ensembleFixedLeader.getReferenceLayerEnd().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getReferenceLayerEnd().get();
    }
 
    /**
@@ -861,8 +858,7 @@ public class Ensemble {
     * as an int.
     */
     public int getReferenceLayerStart() {
-      return ensembleFixedLeader.getReferenceLayerStart().order(
-           ByteOrder.LITTLE_ENDIAN).getInt();
+      return (int) ensembleFixedLeader.getReferenceLayerStart().get();
     }
 
    /**
@@ -870,8 +866,7 @@ public class Ensemble {
     * as an int.
     */
    public int getSensorAvailability() {
-     return ensembleFixedLeader.getSensorAvailability().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSensorAvailability().get();
    }
 
    /**
@@ -879,8 +874,7 @@ public class Ensemble {
     * as an int.
     */
    public int getSensorSource() {
-     return ensembleFixedLeader.getSensorSource().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSensorSource().get();
    }
 
    /**
@@ -890,9 +884,7 @@ public class Ensemble {
     * 1 - speed of sound is calculated from depth, salinity, and temperature
     */
    public int getSensorSpeedOfSoundSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 6) << 6; // clear the first 6 bits
      sensorSetting = (sensorSetting << 25) >> 25; // clear all but bit 7
      
@@ -924,9 +916,7 @@ public class Ensemble {
     * 1 - depth sensor is used for calculations
     */
    public int getSensorDepthSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 5) << 5; // clear the first 5 bits
      sensorSetting = (sensorSetting << 26) >> 26; // clear all but bit 6
      
@@ -958,9 +948,7 @@ public class Ensemble {
     * 1 - heading is used from transducer heading sensor
     */
    public int getSensorHeadingSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 4) << 4; // clear the first 4 bits
      sensorSetting = (sensorSetting << 27) >> 27; // clear all but bit 5
      
@@ -992,9 +980,7 @@ public class Ensemble {
     * 1 - pitch is used from transducer pitch sensor
     */
    public int getSensorPitchSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 3) << 3; // clear the first 3 bits
      sensorSetting = (sensorSetting << 28) >> 28; // clear all but bit 4
      
@@ -1026,9 +1012,7 @@ public class Ensemble {
     * 1 - roll is used from transducer roll sensor
     */
    public int getSensorRollSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 2) << 2; // clear the first 2 bits
      sensorSetting = (sensorSetting << 29) >> 29; // clear all but bit 3
      
@@ -1060,9 +1044,7 @@ public class Ensemble {
     * 1 - salinity is used from conductivity sensor
     */
    public int getSensorSalinitySetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting >> 1) << 1; // clear the first bit
      sensorSetting = (sensorSetting << 30) >> 30; // clear all but bit 2
      
@@ -1094,9 +1076,7 @@ public class Ensemble {
     * 1 - temperature is used from transducer sensor
     */
    public int getSensorTemperatureSetting() {
-     int sensorSetting = 
-       ensembleFixedLeader.getSensorSource().order(
-         ByteOrder.LITTLE_ENDIAN).getInt();
+     int sensorSetting = (int) ensembleFixedLeader.getSensorSource().get();
      sensorSetting = (sensorSetting << 31) >> 31; // clear all but bit 1
      
      int returnValue = 0;
@@ -1122,7 +1102,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble serialNumber field contents 
-    * as an int.
+    * as an int. Remus only, spare for other Workhorse ADCPs
     */
    public int getSerialNumber() {
      return ensembleFixedLeader.getSerialNumber().order(
@@ -1134,8 +1114,7 @@ public class Ensemble {
     * as an int.
     */
    public int getSignalProcessingMode() {
-     return ensembleFixedLeader.getSignalProcessingMode().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSignalProcessingMode().get();
    }
 
    /**
@@ -1143,8 +1122,8 @@ public class Ensemble {
     * as an int.
     */
    public int getSystemBandwidth() {
-     return ensembleFixedLeader.getSystemBandwidth().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSystemBandwidth().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1152,8 +1131,8 @@ public class Ensemble {
     * as an int.
     */
    public int getSystemConfiguration() {
-     return ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1163,8 +1142,8 @@ public class Ensemble {
     * a convex beam pattern.
     */
    public int getBeamPattern() {
-     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     int systemConfig = (int) ensembleFixedLeader.getSystemConfiguration().order(
+           ByteOrder.LITTLE_ENDIAN).getShort();
      int returnValue = 0;
      
      systemConfig = (systemConfig >> 3) << 3; // clear the first 3 bits
@@ -1196,8 +1175,8 @@ public class Ensemble {
     * indicates an up facing beam.
     */
    public int getBeamDirection() {
-     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     int systemConfig = (int) ensembleFixedLeader.getSystemConfiguration().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
      int returnValue = 0;
      
      systemConfig = (systemConfig >> 7) << 7; // clear the first 7 bits
@@ -1229,8 +1208,8 @@ public class Ensemble {
     * indicates the transducer is attached.
     */
    public int getTransducerAttachment() {
-     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     int systemConfig = (int) ensembleFixedLeader.getSystemConfiguration().order(
+           ByteOrder.LITTLE_ENDIAN).getShort();
      int returnValue = 0;
      
      systemConfig = (systemConfig >> 6) << 6; // clear the first 6 bits
@@ -1261,8 +1240,8 @@ public class Ensemble {
     * are in kHz, e.g. 1200 kHz.
     */
    public int getSystemFrequency() {
-     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     int systemConfig = (int) ensembleFixedLeader.getSystemConfiguration().order(
+           ByteOrder.LITTLE_ENDIAN).getShort();
      int returnValue = 0;
      
      systemConfig = (systemConfig << 29) >> 29; // clear all but first 3 bits
@@ -1309,8 +1288,8 @@ public class Ensemble {
     * config #2, and a return value of 3 indicates sensor config 3.
     */
    public int getSensorConfiguration() {
-     int systemConfig = ensembleFixedLeader.getSystemConfiguration().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     int systemConfig = (int) ensembleFixedLeader.getSystemConfiguration().order(
+           ByteOrder.LITTLE_ENDIAN).getShort();
      int returnValue = 0;
      
      systemConfig = (systemConfig >> 4) << 4; // clear the first 4 bits
@@ -1344,8 +1323,7 @@ public class Ensemble {
     * as an int.
     */
    public int getSystemPower() {
-     return ensembleFixedLeader.getSystemPower().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getSystemPower().get();
    }
 
    /**
@@ -1353,8 +1331,8 @@ public class Ensemble {
     * as an int.
     */
    public int getTransmitLagDistance() {
-     return ensembleFixedLeader.getTransmitLagDistance().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getTransmitLagDistance().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1362,8 +1340,8 @@ public class Ensemble {
     * as an int.
     */
    public int getTransmitPulseLength() {
-     return ensembleFixedLeader.getTransmitPulseLength().order(
-          ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleFixedLeader.getTransmitPulseLength().order(
+          ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    // CSJ review the getShort() call below !!!!!!!
@@ -1373,8 +1351,8 @@ public class Ensemble {
     * as a short.
     */
    protected int getVariableLeaderID(){
-     return ensembleVariableLeader.getVariableLeaderID().order(
-           ByteOrder.LITTLE_ENDIAN).getInt();
+     // do we need to reverse the byte order of the incoming short?? CSJ
+     return (int) ensembleVariableLeader.getVariableLeaderID().get();
      
    }
 
@@ -1392,8 +1370,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockYear(){
-     return ensembleVariableLeader.getRealTimeClockYear().order(
-             ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockYear().get();
    }
 
    /**
@@ -1401,8 +1378,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockMonth(){
-     return ensembleVariableLeader.getRealTimeClockMonth().order(
-              ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockMonth().get();
    }
 
    /**
@@ -1410,8 +1386,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockDay(){
-     return ensembleVariableLeader.getRealTimeClockDay().order(
-               ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockDay().get();
    }
 
    /**
@@ -1419,8 +1394,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockHour(){
-     return ensembleVariableLeader.getRealTimeClockHour().order(
-                ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockHour().get();
    }
 
    /**
@@ -1428,8 +1402,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockMinute(){
-     return ensembleVariableLeader.getRealTimeClockMinute().order(
-                 ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockMinute().get();
    }
 
    /**
@@ -1437,8 +1410,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockSecond(){
-     return ensembleVariableLeader.getRealTimeClockSecond().order(
-                  ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockSecond().get();
    }
 
    /**
@@ -1446,8 +1418,7 @@ public class Ensemble {
     * as an int.
     */
    public int getRealTimeClockHundredths(){
-     return ensembleVariableLeader.getRealTimeClockHundredths().order(
-                   ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeClockHundredths().get();
    }
 
    /**
@@ -1455,8 +1426,7 @@ public class Ensemble {
     * as an int.
     */
    public int getEnsembleNumberIncrement(){
-     return ensembleVariableLeader.getEnsembleNumberIncrement().order(
-                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getEnsembleNumberIncrement().get();
    }
 
    /**
@@ -1536,8 +1506,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getMinPrePingWaitMinutes(){
-     return ensembleVariableLeader.getMinPrePingWaitMinutes().order(
-                             ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getMinPrePingWaitMinutes().get();
    }
 
    /**
@@ -1545,8 +1514,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getMinPrePingWaitSeconds(){
-     return ensembleVariableLeader.getMinPrePingWaitSeconds().order(
-                              ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getMinPrePingWaitSeconds().get();
    }
 
    /**
@@ -1554,8 +1522,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getMinPrePingWaitHundredths(){
-     return ensembleVariableLeader.getMinPrePingWaitHundredths().order(
-                               ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getMinPrePingWaitHundredths().get();
    }
 
    /**
@@ -1563,8 +1530,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getHeadingStandardDeviation(){
-     return ensembleVariableLeader.getHeadingStandardDeviation().order(
-                                ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getHeadingStandardDeviation().get();
    }
 
    /**
@@ -1572,8 +1538,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getPitchStandardDeviation(){
-     return ensembleVariableLeader.getPitchStandardDeviation().order(
-                                 ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getPitchStandardDeviation().get();
    }
 
    /**
@@ -1581,8 +1546,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getRollStandardDeviation(){
-     return ensembleVariableLeader.getRollStandardDeviation().order(
-                                  ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRollStandardDeviation().get();
    }
 
    /**
@@ -1590,8 +1554,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelZero(){
-     return ensembleVariableLeader.getADCChannelZero().order(
-                                   ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelZero().get();
    }
 
    /**
@@ -1599,8 +1562,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelOne(){
-     return ensembleVariableLeader.getADCChannelOne().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelOne().get();
    }
 
    /**
@@ -1608,8 +1570,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelTwo(){
-     return ensembleVariableLeader.getADCChannelTwo().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelTwo().get();
    }
 
    /**
@@ -1617,8 +1578,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelThree(){
-     return ensembleVariableLeader.getADCChannelThree().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelThree().get();
    }
 
    /**
@@ -1626,8 +1586,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelFour(){
-     return ensembleVariableLeader.getADCChannelFour().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelFour().get();
    }
 
    /**
@@ -1635,8 +1594,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelFive(){
-     return ensembleVariableLeader.getADCChannelFive().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelFive().get();
    }
 
    /**
@@ -1644,8 +1602,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelSix(){
-     return ensembleVariableLeader.getADCChannelSix().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelSix().get();
    }
 
    /**
@@ -1653,8 +1610,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getADCChannelSeven(){
-     return ensembleVariableLeader.getADCChannelSeven().order(
-                                    ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getADCChannelSeven().get();
    }
 
    /**
@@ -1671,8 +1627,8 @@ public class Ensemble {
     * contents as an int.
     */
    public int getSpareFieldOne(){
-     return ensembleVariableLeader.getSpareFieldOne().order(
-                                     ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getSpareFieldOne().order(
+                                     ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1698,8 +1654,8 @@ public class Ensemble {
     * contents as an int.
     */
    public int getSpareFieldTwo(){
-     return ensembleVariableLeader.getSpareFieldTwo().order(
-                                     ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getSpareFieldTwo().order(
+                                     ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1707,8 +1663,7 @@ public class Ensemble {
     * field contents as an int.
     */
    public int getRealTimeY2KClockCentury(){
-     return ensembleVariableLeader.getRealTimeY2KClockCentury().order(
-                                     ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getRealTimeY2KClockCentury().get();
    }
 
    /**
@@ -1716,8 +1671,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockYear(){
-       return ensembleVariableLeader.getRealTimeY2KClockYear().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockYear().get();
    }
 
    /**
@@ -1725,8 +1679,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockMonth(){
-       return ensembleVariableLeader.getRealTimeY2KClockMonth().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockMonth().get();
    }
 
    /**
@@ -1734,8 +1687,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockDay(){
-       return ensembleVariableLeader.getRealTimeY2KClockDay().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockDay().get();
    }
 
    /**
@@ -1743,8 +1695,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockHour(){
-       return ensembleVariableLeader.getRealTimeY2KClockHour().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockHour().get();
    }
 
    /**
@@ -1752,8 +1703,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockMinute(){
-       return ensembleVariableLeader.getRealTimeY2KClockMinute().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockMinute().get();
    }
 
    /**
@@ -1761,8 +1711,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockSecond(){
-       return ensembleVariableLeader.getRealTimeY2KClockSecond().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockSecond().get();
    }
 
    /**
@@ -1770,8 +1719,7 @@ public class Ensemble {
     * field contents as an int.
     */
      public int getRealTimeY2KClockHundredths(){
-       return ensembleVariableLeader.getRealTimeY2KClockHundredths().order(
-                                        ByteOrder.LITTLE_ENDIAN).getInt();
+       return (int) ensembleVariableLeader.getRealTimeY2KClockHundredths().get();
    }
    
    /**
@@ -1782,6 +1730,7 @@ public class Ensemble {
    public boolean isValid() {
      boolean isValid = false;
      logger.debug("Ensemble bytesum remainder: " + (ensembleByteSum % 65535)); 
+     logger.debug("Ensemble stated checksum: " + getChecksum()); 
      if (  ensembleByteSum % 65535 == getChecksum() ) {
        isValid = true;
      }
@@ -1795,8 +1744,7 @@ public class Ensemble {
     * @param byteArray  the 2-byte array that contains the checksum bytes
     */
    private void setChecksum(byte[] byteArray) {
-     logger.debug("Ensemble.setChecksum() called.");
-     this.checksum.put(byteArray);
+    this.checksum.put(byteArray);
    }
 
    /**
