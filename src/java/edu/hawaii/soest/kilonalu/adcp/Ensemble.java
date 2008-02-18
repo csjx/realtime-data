@@ -1702,8 +1702,7 @@ public class Ensemble {
     * contents as an int.
     */
    public int getSpareFieldTwo(){
-     return (int) ensembleVariableLeader.getSpareFieldTwo().order(
-                                     ByteOrder.LITTLE_ENDIAN).getShort();
+     return (int) ensembleVariableLeader.getSpareFieldTwo().get();
    }
 
    /**
