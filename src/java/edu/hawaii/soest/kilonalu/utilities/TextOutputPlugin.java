@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,6 +58,7 @@ import org.nees.rbnb.TimeRange;
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Sink;
+import com.rbnb.sapi.Source;
 import com.rbnb.sapi.ChannelTree.Node;
 
 import edu.hawaii.soest.kilonalu.adcp.Ensemble;
@@ -92,6 +94,9 @@ public class TextOutputPlugin extends RBNBBase {
   /** the RBNB sink name */
   private String sinkName = DEFAULT_SINK_NAME;
 
+  /** the RBNB sink */
+  private final Source source;
+  
   /** the RBNB source name */
   private String sourceName = DEFAULT_SOURCE_NAME;
 
@@ -137,6 +142,7 @@ public class TextOutputPlugin extends RBNBBase {
   public TextOutputPlugin() {
     super();    
     sink = new Sink();
+    source = new Source(50000, "append", 3000000);
   }
   
   /**
@@ -598,6 +604,14 @@ public class TextOutputPlugin extends RBNBBase {
       ChannelMap sMap = new ChannelMap();
       sMap.Add(channelPath);
       
+      ChannelMap cMap = new ChannelMap();
+      String temperatureChannel = "temperature";
+      String pressureChannel    = "pressure";
+      String salinityChannel    = "salinity";
+      int temperatureIndex = cMap.Add(temperatureChannel);
+      int pressureIndex    = cMap.Add(pressureChannel);
+      int salinityIndex    = cMap.Add(salinityChannel);
+      
       if (timeRanges.get(timeRanges.size()-1).getEndTime() == Double.MAX_VALUE) {
         duration = Double.MAX_VALUE;
       } else {
@@ -626,7 +640,7 @@ public class TextOutputPlugin extends RBNBBase {
           return false;
         }
         
-        dataFramesConverted += convertData(sMap,
+        dataFramesConverted += convertData(sMap, cMap,
                                          timeRange.getStartTime(),
                                          timeRange.getEndTime(),
                                          duration,
@@ -671,7 +685,7 @@ public class TextOutputPlugin extends RBNBBase {
    *                        server
    * @throws IOException    if there is an error writing the file
    */
-  private int convertData(ChannelMap map, double startTime, double endTime, 
+  private int convertData(ChannelMap map, ChannelMap cmap, double startTime, double endTime, 
     double duration, double baseTime) throws SAPIException, IOException {
     logger.debug("TextOutputPlugin.convertData() called.");
 
@@ -708,8 +722,56 @@ public class TextOutputPlugin extends RBNBBase {
         ensembleBuffer.put(data[i]);
         Ensemble ensemble = new Ensemble(ensembleBuffer);
         logger.info("Ensemble is valid: " + ensemble.isValid());
+        
+        if ( ensemble.isValid() ) {
+          int ensYear =      (ensemble.getRealTimeY2KClockCentury() * 100) +
+                              ensemble.getRealTimeY2KClockYear();
+          int ensMonth =      ensemble.getRealTimeY2KClockMonth() - 1; // 0 start
+          int ensDay =        ensemble.getRealTimeY2KClockDay();
+          int ensHour =       ensemble.getRealTimeY2KClockHour();
+          int ensMinute =     ensemble.getRealTimeY2KClockMinute();
+          int ensSecond =     ensemble.getRealTimeY2KClockSecond();
+          int ensHundredths = ensemble.getRealTimeY2KClockHundredths();
+          
+          Calendar ensCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+          ensCalendar.set(ensYear, ensMonth, ensDay, ensHour, ensMinute, ensSecond);
+          ensCalendar.add(Calendar.MILLISECOND, ensHundredths * 10);
+          
+          // set the data frame timestamp to the observation timestamp
+          double[] times = new double[1];
+          times[0] = (double) ensCalendar.getTime().getTime();
+          logger.debug("times[0] = " + ensCalendar.getTime().toString());          
+          cmap.PutTimes(times);
+          
+          String[] channelList = new String[cmap.NumberOfChannels()];
+          for (int j=0; j < channelList.length; j++) {
+            channelList[j] = cmap.GetName(j);
+            // add temperature data channel
+            if ( channelList[j].equals("temperature") ) {
+              //logger.debug("Temperature: " + ensemble.getTemperature());
+              cmap.PutDataAsFloat32(cmap.GetIndex(channelList[j]), 
+                new float[] {ensemble.getTemperature()});
+            }            
+            // add pressure data channel
+            if ( channelList[j].equals("pressure") ) {
+              //logger.debug("Pressure: " + ensemble.getPressure());
+              cmap.PutDataAsFloat32(cmap.GetIndex(channelList[j]), 
+                new float[] {ensemble.getPressure()});
+            }            
+            // add salinity data channel
+            if ( channelList[j].equals("salinity") ) {
+              //logger.debug("Salinity: " + ensemble.getSalinity());
+              cmap.PutDataAsInt32(cmap.GetIndex(channelList[j]), 
+                new int[] {ensemble.getSalinity()});
+            }            
+          }
+          // Flush the data frame to rbnb
+          source.Flush(cmap);
+          logger.debug("Flushed data to data turbine.");                    
+        }
+        
       }
-      doTextConversion = false;
+      //doTextConversion = false;
     }
 
     return frameCount;
@@ -728,8 +790,11 @@ public class TextOutputPlugin extends RBNBBase {
     
     try {
       sink.OpenRBNBConnection(getServer(), sinkName);
+      source.OpenRBNBConnection(getServer(), "KN0101_010ADCP010R00_1");
     } catch (SAPIException e) {
       logger.debug("Error: Unable to connect to server.");
+      logger.debug(e.getMessage());
+      e.printStackTrace();
       disconnect();
       return false;
     }
@@ -749,6 +814,7 @@ public class TextOutputPlugin extends RBNBBase {
     }
 
     sink.CloseRBNBConnection();
+    source.CloseRBNBConnection();
     
     connected = false;
   }
