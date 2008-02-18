@@ -45,21 +45,32 @@ import java.nio.ByteOrder;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.commons.codec.binary.Hex;
-
 /**
  *  A class that represents a single ensemble of data produced by
  *  an RDI 1200kHz Workhorse Acoustic Doppler Current Profiler in the
- *  default PD0 format. 
+ *  default PD0 format.  This class is built from a series of subcomponents
+ *  that model each of the sections of data found in an RDI PD0 ensemble. They
+ *  include:
+ *
+ * <ul>
+ *   <li> EnsembleHeader (always output)</li>
+ *   <li> EnsembleFixedLeader (always output)</li>
+ *   <li> EnsembleHeader (always output)</li>
+ *   <li> EnsembleVelocityProfile (optionally output)</li>
+ *   <li> EnsembleCorrelationProfile (optionally output)</li>
+ *   <li> EnsembleEchoIntensityProfile (optionally output)</li>
+ *   <li> EnsemblePercentGoodProfile (optionally output)</li>
+ *   <li> EnsembleBottomTrack (optionally output) [this is unfinished]</li>
+ *   <li> EnsembleMicroCAT (optionally output) [this is unfinished]</li>
+ *   <li> EnsembleStatusProfile (optionally output) [this is unfinished]</li>
+ * </ul>
+ *
+ *  Depending on the settings found in the Header, Fixed Leader, and Variable
+ *  Leader, the remaining data objects may or may not be present.  the Ensemble
+ *  class tests for their existence, and if found, creates the subcomponents.
  */
 public class Ensemble {
     
-  /** The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(Ensemble.class);
-  
   /**
    *  A field that stores the RDI reserved BIT data (two bytes) in a ByteBuffer
    *  which contains two bytes of data for internal RDI use.
@@ -261,7 +272,6 @@ public class Ensemble {
     ensembleBuffer.get(twoBytes);
     setChecksum(twoBytes);
     //addToByteSum(twoBytes); // don't add checksum bytes to ensembleChecksum
-    logger.debug("Ensemble stated checksum: " + new String(Hex.encodeHex(twoBytes)));
   }
 
   /**
@@ -276,8 +286,6 @@ public class Ensemble {
      for ( byte i : byteArray ) {
        ensembleByteSum += (i & 0xFF);
        ensembleByteCount++;
-       //logger.debug("Ensemble.ensembleByteSum, Ensemble.ensembleByteCount =\t" + 
-       //ensembleByteSum + "\t" + ensembleByteCount);
      }
      
    }
@@ -351,7 +359,6 @@ public class Ensemble {
          // prepare the buffer for rereading of the next dataType
          ensembleBuffer.rewind();
        }
-       logger.debug("Ensemble.dataTypeMap: " + dataTypeMap.toString());
    }
 
    /**
@@ -1348,7 +1355,7 @@ public class Ensemble {
     * A method that returns the Ensemble Variable Leader ID field contents 
     * as a short.
     */
-   protected int getVariableLeaderID(){
+   public int getVariableLeaderID(){
      // do we need to reverse the byte order of the incoming short?? CSJ
      return (int) ensembleVariableLeader.getVariableLeaderID().get();
      
@@ -1359,8 +1366,8 @@ public class Ensemble {
     * as an int.
     */
    public int getEnsembleNumber(){
-     return ensembleVariableLeader.getEnsembleNumber().order(
-            ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getEnsembleNumber().order(
+            ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
@@ -1429,74 +1436,110 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Built In Test Result field contents 
-    * as an int.
+    * as a short.
     */
-   public int getBuiltInTestResult(){
+   public short getBuiltInTestResult(){
      return ensembleVariableLeader.getBuiltInTestResult().order(
-                     ByteOrder.LITTLE_ENDIAN).getInt();
+                     ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
     * A method that returns the Ensemble Speed of Sound field contents 
-    * as an int.
+    * as an int expressed in meters/s.
     */
    public int getSpeedOfSound(){
-     return ensembleVariableLeader.getSpeedOfSound().order(
-                      ByteOrder.LITTLE_ENDIAN).getInt();
+     return (int) ensembleVariableLeader.getSpeedOfSound().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
    }
 
    /**
     * A method that returns the Ensemble Depth of Transducer field contents 
-    * as an int.
+    * as a float expressed in meters.
     */
-   public int getDepthOfTransducer(){
-     return ensembleVariableLeader.getDepthOfTransducer().order(
-                       ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getDepthOfTransducer(){
+     short value = ensembleVariableLeader.getDepthOfTransducer().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     int exp = (int) (value/10)*10;
+     int valueAsInt = (int) value;
+     int man = valueAsInt - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/10) + (mantissa/10);
+     return returnValue;
    }
 
    /**
     * A method that returns the Ensemble Heading field contents 
-    * as an int.
+    * as an int expressed in degrees (0.00 - 360.00).
     */
-   public int getHeading(){
-     return ensembleVariableLeader.getHeading().order(
-                        ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getHeading(){
+     short value = ensembleVariableLeader.getHeading().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     int exp = (int) (value/100)*100;
+     int valueAsInt = (int) value;
+     int man = valueAsInt - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/100) + (mantissa/100);
+     return returnValue;
    }
 
    /**
     * A method that returns the Ensemble Pitch field contents 
-    * as an int.
+    * as an int expressed in degrees (+/- 20.00).
     */
-   public int getPitch(){
-     return ensembleVariableLeader.getPitch().order(
-                         ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getPitch(){
+     short value = ensembleVariableLeader.getPitch().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     int exp = (int) (value/100)*100;
+     int valueAsInt = (int) value;
+     int man = valueAsInt - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/100) + (mantissa/100);
+     return returnValue;
    }
 
    /**
     * A method that returns the Ensemble Heading field contents 
-    * as an int.
+    * as an int expressed in degrees (+/- 20.00).
     */
-   public int getRoll(){
-     return ensembleVariableLeader.getRoll().order(
-                          ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getRoll(){
+     short value = ensembleVariableLeader.getRoll().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     int exp = (int) (value/100)*100;
+     int valueAsInt = (int) value;
+     int man = valueAsInt - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/100) + (mantissa/100);
+     return returnValue;
    }
 
    /**
     * A method that returns the Ensemble Salinity field contents 
-    * as an int.
+    * as a float expressed in parts per thousand.
     */
    public int getSalinity(){
-     return ensembleVariableLeader.getSalinity().order(
-                           ByteOrder.LITTLE_ENDIAN).getInt();
+     short value = ensembleVariableLeader.getSalinity().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     return (int) value;
    }
 
    /**
     * A method that returns the Ensemble Temperature field contents 
-    * as an int.
+    * as a float expressed in degrees Celcius.
     */
-   public int getTemperature(){
-     return ensembleVariableLeader.getTemperature().order(
-                            ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getTemperature(){
+     short value = ensembleVariableLeader.getTemperature().order(
+                   ByteOrder.LITTLE_ENDIAN).getShort();
+     int exp = (int) (value/100)*100;
+     int valueAsInt = (int) value;
+     int man = valueAsInt - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/100) + (mantissa/100);
+     return returnValue;
    }
 
    /**
@@ -1527,88 +1570,88 @@ public class Ensemble {
     * A method that returns the Ensemble Heading Standard Deviation field 
     * contents as an int.
     */
-   public int getHeadingStandardDeviation(){
-     return (int) ensembleVariableLeader.getHeadingStandardDeviation().get();
+   public float getHeadingStandardDeviation(){
+     return (float) ensembleVariableLeader.getHeadingStandardDeviation().get();
    }
 
    /**
     * A method that returns the Ensemble Pitch Standard Deviation field 
     * contents as an int.
     */
-   public int getPitchStandardDeviation(){
-     return (int) ensembleVariableLeader.getPitchStandardDeviation().get();
+   public float getPitchStandardDeviation(){
+     return (float) ensembleVariableLeader.getPitchStandardDeviation().get();
    }
 
    /**
     * A method that returns the Ensemble Roll Standard Deviation field 
     * contents as an int.
     */
-   public int getRollStandardDeviation(){
-     return (int) ensembleVariableLeader.getRollStandardDeviation().get();
+   public float getRollStandardDeviation(){
+     return (float) ensembleVariableLeader.getRollStandardDeviation().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Zero field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelZero(){
-     return (int) ensembleVariableLeader.getADCChannelZero().get();
+   public byte getADCChannelZero(){
+     return ensembleVariableLeader.getADCChannelZero().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel One field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelOne(){
-     return (int) ensembleVariableLeader.getADCChannelOne().get();
+   public byte getADCChannelOne(){
+     return ensembleVariableLeader.getADCChannelOne().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Two field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelTwo(){
-     return (int) ensembleVariableLeader.getADCChannelTwo().get();
+   public byte getADCChannelTwo(){
+     return ensembleVariableLeader.getADCChannelTwo().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Three field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelThree(){
-     return (int) ensembleVariableLeader.getADCChannelThree().get();
+   public byte getADCChannelThree(){
+     return ensembleVariableLeader.getADCChannelThree().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Four field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelFour(){
-     return (int) ensembleVariableLeader.getADCChannelFour().get();
+   public byte getADCChannelFour(){
+     return ensembleVariableLeader.getADCChannelFour().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Five field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelFive(){
-     return (int) ensembleVariableLeader.getADCChannelFive().get();
+   public byte getADCChannelFive(){
+     return ensembleVariableLeader.getADCChannelFive().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Six field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelSix(){
-     return (int) ensembleVariableLeader.getADCChannelSix().get();
+   public byte getADCChannelSix(){
+     return ensembleVariableLeader.getADCChannelSix().get();
    }
 
    /**
     * A method that returns the Ensemble ADC Channel Seven field 
-    * contents as an int.
+    * contents as a byte.
     */
-   public int getADCChannelSeven(){
-     return (int) ensembleVariableLeader.getADCChannelSeven().get();
+   public byte getADCChannelSeven(){
+     return ensembleVariableLeader.getADCChannelSeven().get();
    }
 
    /**
@@ -1631,24 +1674,31 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Pressure field 
-    * contents as an int.
+    * contents as a float expressed in deca-pascals.
     */
-   public int getPressure(){
-     return ensembleVariableLeader.getPressure().order(
-                                     ByteOrder.LITTLE_ENDIAN).getInt();
+   public float getPressure(){
+     int value = ensembleVariableLeader.getPressure().order(
+                   ByteOrder.LITTLE_ENDIAN).getInt();
+     int exp = (int) (value/10000)*10000;
+     int valueAsLong = (int) value;
+     int man = valueAsLong - exp;
+     float mantissa = (float) man;
+     float exponent = (float) exp;
+     float returnValue = (exponent/10000) + (mantissa/10000);
+     return returnValue;
    }
 
    /**
     * A method that returns the Ensemble Pressure Variance field 
-    * contents as an int.
+    * contents as a float expressed in deca-pascals.
     */
-   public int getPressureVariance(){
+   public float getPressureVariance(){
      return ensembleVariableLeader.getPressureVariance().order(
-                                     ByteOrder.LITTLE_ENDIAN).getInt();
+                                     ByteOrder.LITTLE_ENDIAN).getFloat();
    }
 
    /**
-    * A method that returns the Ensemble Spare Field TWo field 
+    * A method that returns the Ensemble Spare Field Two field 
     * contents as an int.
     */
    public int getSpareFieldTwo(){
@@ -1727,8 +1777,6 @@ public class Ensemble {
     */
    public boolean isValid() {
      boolean isValid = false;
-     logger.debug("Ensemble bytesum remainder: " + (ensembleByteSum % 65535)); 
-     logger.debug("Ensemble stated checksum: " + getChecksum()); 
      if (  ensembleByteSum % 65535 == getChecksum() ) {
        isValid = true;
      }
