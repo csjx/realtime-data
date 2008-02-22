@@ -1707,7 +1707,9 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Century 
-    * field contents as an int.
+    * field contents as an int. This field represents the century of observation,
+    * and can be used with the Real Time Y2K-compliant Clock Year field to get 
+    * the full year as YYYY.
     */
    public int getRealTimeY2KClockCentury(){
      return (int) ensembleVariableLeader.getRealTimeY2KClockCentury().get();
@@ -1715,7 +1717,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Year 
-    * field contents as an int.
+    * field contents as an int. This field represents the year of observation.
     */
      public int getRealTimeY2KClockYear(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockYear().get();
@@ -1723,7 +1725,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Month 
-    * field contents as an int.
+    * field contents as an int. This field represents the month of observation.
     */
      public int getRealTimeY2KClockMonth(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockMonth().get();
@@ -1731,7 +1733,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Day 
-    * field contents as an int.
+    * field contents as an int. This field represents the day of observation.
     */
      public int getRealTimeY2KClockDay(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockDay().get();
@@ -1739,7 +1741,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Hour 
-    * field contents as an int.
+    * field contents as an int. This field represents the hour of observation.
     */
      public int getRealTimeY2KClockHour(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockHour().get();
@@ -1747,7 +1749,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Minute 
-    * field contents as an int.
+    * field contents as an int. This field represents the minute of observation.
     */
      public int getRealTimeY2KClockMinute(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockMinute().get();
@@ -1755,7 +1757,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Second 
-    * field contents as an int.
+    * field contents as an int. This field represents the second of observation.
     */
      public int getRealTimeY2KClockSecond(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockSecond().get();
@@ -1763,7 +1765,7 @@ public class Ensemble {
 
    /**
     * A method that returns the Ensemble Real Time Y2K-compliant Clock Hundredths 
-    * field contents as an int.
+    * field contents as an int. This field represents the fractional seconds of observation.
     */
      public int getRealTimeY2KClockHundredths(){
        return (int) ensembleVariableLeader.getRealTimeY2KClockHundredths().get();
