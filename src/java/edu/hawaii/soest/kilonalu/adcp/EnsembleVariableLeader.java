@@ -951,7 +951,7 @@ public final class EnsembleVariableLeader {
   }
     
   /**
-   * A method that returns the Ensemble Spare Field TWo field 
+   * A method that returns the Ensemble Spare Field Two field 
    * contents as a ByteBuffer.
    */
   protected ByteBuffer getSpareFieldTwo(){

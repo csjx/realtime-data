@@ -1772,6 +1772,49 @@ public class Ensemble {
    }
    
    /**
+    * A method that returns the all of velocity measurements for a given beam as
+    * a double array.  The array is returned in depth-bin order, with the 
+    * the first array member being the first bin closest to the transducer head.
+    */
+   public float[] getVelocitiesByBeam(int beamNumber){
+     
+     // create a map to store velocity arrays by beam     
+     float[] beamArray = new float[getNumberOfBeams()];
+     float[] velocitiesArray = new float[getNumberOfDepthCells()];
+     float[][] velocitiesByBeamMap;
+      
+     // prep the velocity profile buffer for reading
+     ByteBuffer velocitiesBuffer = ensembleVelocityProfile.getVelocityProfile();
+     velocitiesBuffer.limit(velocitiesBuffer.capacity());
+     velocitiesBuffer.position(0);
+     
+     // build the map
+     for (int i=0; i < getNumberOfDepthCells(); i) ) {
+       for (int j=0; j < getNumberOfBeams(); j++) {
+         short value = velocitiesBuffer.order(ByteOrder.LITTLE_ENDIAN).getShort();         
+         int exp = (int) (value/100)*100;
+         int valueAsInt = (int) value;
+         int man = valueAsInt - exp;
+         float mantissa = (float) man;
+         float exponent = (float) exp;
+         float floatValue = (exponent/100) + (mantissa/100);
+                  
+       }
+       //velocititesByBeamMap.put();
+     }
+     
+     //return velocitiesByBeamMap.get(new Integer(beamNumber));
+   }
+
+   /**
+    * A method that returns the all velocity measurements for a given depth cell as
+    * a double array.  The array is returned in beam order, with the 
+    * the first array member being the velocity of beam 1.
+    */
+   public float[] getVelocitiesByDepthCell(int depthCell){
+   }
+   
+   /**
     * A method that determines whether or not the Ensemble is valid by
     * comparing the cumulative byte sum value with the stated checksum
     * value in the ensemble byte stream.  Returns true if it is valid.

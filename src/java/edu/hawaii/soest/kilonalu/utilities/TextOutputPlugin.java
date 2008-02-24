@@ -733,14 +733,23 @@ public class TextOutputPlugin extends RBNBBase {
           int ensSecond =     ensemble.getRealTimeY2KClockSecond();
           int ensHundredths = ensemble.getRealTimeY2KClockHundredths();
           
+          logger.debug("ensYear      : " + ensYear        );
+          logger.debug("ensMonth     : " + ensMonth       );
+          logger.debug("ensDay       : " + ensDay         );
+          logger.debug("ensHour      : " + ensHour        );
+          logger.debug("ensMinute    : " + ensMinute      );
+          logger.debug("ensSecond    : " + ensSecond      );
+          logger.debug("ensHundredths: " + ensHundredths  );
+          
           Calendar ensCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
           ensCalendar.set(ensYear, ensMonth, ensDay, ensHour, ensMinute, ensSecond);
+          ensCalendar.add(Calendar.HOUR, 10); // set observation time to GMT
           ensCalendar.add(Calendar.MILLISECOND, ensHundredths * 10);
           
           // set the data frame timestamp to the observation timestamp
           double[] times = new double[1];
-          times[0] = (double) ensCalendar.getTime().getTime();
-          logger.debug("times[0] = " + ensCalendar.getTime().toString());          
+          times[0] = (double) (ensCalendar.getTime().getTime()/1000);
+          logger.debug("Observation time: = " + RBNBUtilities.secondsToISO8601(times[0]));          
           cmap.PutTimes(times);
           
           String[] channelList = new String[cmap.NumberOfChannels()];
@@ -814,7 +823,7 @@ public class TextOutputPlugin extends RBNBBase {
     }
 
     sink.CloseRBNBConnection();
-    source.CloseRBNBConnection();
+    source.Detach();
     
     connected = false;
   }
