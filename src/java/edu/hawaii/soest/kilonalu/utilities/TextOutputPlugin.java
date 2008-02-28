@@ -821,10 +821,8 @@ public class TextOutputPlugin extends RBNBBase {
     if (!isConnected()) {
       return;
     }
-
-    sink.CloseRBNBConnection();
     source.Detach();
-    
+    sink.CloseRBNBConnection();    
     connected = false;
   }
   
