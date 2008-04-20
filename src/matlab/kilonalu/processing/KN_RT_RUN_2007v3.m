@@ -4,7 +4,8 @@
 % JWells Dec 2006
 % JW Aug 24 2007 added call to KN_TC_RUN_DK
 
-% ts=datenum(2006,11,21,15,0,0)+(2*DT/60/24);  %for test only
+% CSJ changed for testing
+%ts=datenum(2008,04,02,13,01,12);%+(2*DT/60/24);  %for test only
 
 close('all');
 clear   Padcp Tadcp Temp VVE VVN VVU VVEr AIs Ttmp H13 HMX Hss Tpzc VB VRMS ALPHs Tps DTps Dps Pp Tf Pf SPD SPF
@@ -14,44 +15,63 @@ PROCINT = DT;
 datmess = '';
 
 if ADCP
-% look for newest adcp file
-d=dir(['KNRT*r.*']);
-clear dat
-for i = 1:length(d)    
-    dat(i) = datenum(d(i).date);
-end
-nn = find(dat == max(dat));  % newest file in directory ...
+  % Create a new sink client to the DataTurbine
+  matlabSink = rbnb_sink('bbl.ancl.hawaii.edu:3333', 'MatlabADCPProcessingSink');
 
-% % copy file to a local directory
-% [suc, mess, messid] = copyfile(d(nn).name,[ldir '\temp_mostrecent.dat']);
-% 
-% Check if this is a new file name
-ndum = find(d(nn).name == '.');
-if str2num(d(nn).name(ndum+1:ndum+3)) ~= str2num(prevfilid) & prevtim > 0  % make sure there's more than 1 file in the directory
-    newfile = 1;
-else
-    newfile = 0;
-end
+  % define the request details (get the latest 20 minutes of data)
+  channelName = 'KN0101_010ADCP010R00/BinaryPD0EnsembleData';
+  startTime = 0;
+  duration = 2400;
+  timeReference = 'newest';
 
-Tdum = [];
-VEdum = [];
-VNdum = [];
-VUdum = [];
-VErdum = [];
-Tempdum = [];
-Pdum = [];
+  % make the request to the DataTurbine and close the connection
+  [mostRecent40MinuteData, dataTimes, dataName] = ...
+    rbnb_get(matlabSink, channelName, startTime, duration, timeReference);
+  matlabSink.CloseRBNBConnection;
+  clear matlabSink channelName startTime duration timeReference;
+  % write the data to disk  
+  fd = fopen('KN0101_010ADCP010R00_20080403120409.10.1.dat', 'wb', 'l');
+  fwrite(fd, mostRecent40MinuteData, 'int8');
+  fclose(fd);
 
-% reprocess previous file (if newfile)
-if length(dat)>1    
+  % look for newest adcp file
+  d=dir(['KN*ADCP*.10.1.dat']);
+  clear dat
+  for i = 1:length(d)    
+      dat(i) = datenum(d(i).date);
+  end
+  nn = find(dat == max(dat));  % newest file in directory ...
+
+  % % copy file to a local directory
+  % [suc, mess, messid] = copyfile(d(nn).name,[ldir '\temp_mostrecent.dat']);
+  % 
+  % Check if this is a new file name
+  ndum = find(d(nn).name == '.');
+  if str2num(d(nn).name(ndum+1:ndum+3)) ~= str2num(prevfilid) & prevtim > 0  % make sure there's more than 1 file in the directory
+      newfile = 1;
+  else
+      newfile = 0;
+  end
+
+  Tdum = [];
+  VEdum = [];
+  VNdum = [];
+  VUdum = [];
+  VErdum = [];
+  Tempdum = [];
+  Pdum = [];
+
+  % reprocess previous file (if newfile)
+  if length(dat)>1    
     if newfile
-        [dum, nni] = sort(dat);
-        nnp = nni(end-1);  % index for second most recent file
-        % copy to local directory
-        [suc, mess, messid] = copyfile(d(nnp).name,[ldir '\temp_2ndmostrecent.dat']);
-        filnam = 'temp_2ndmostrecent.dat';
-        cd(ldir);
-        fprintf('converting raw data for completed data file ... \n');
-        [adcp,cfg,nens]=rdradcp_short_v1(filnam,1,-1);  %read in all ensembles
+      [dum, nni] = sort(dat);
+      nnp = nni(end-1);  % index for second most recent file
+      % copy to local directory
+      [suc, mess, messid] = copyfile(d(nnp).name,[ldir '\temp_2ndmostrecent.dat']);
+      filnam = 'temp_2ndmostrecent.dat';
+      cd(ldir);
+      fprintf('converting raw data for completed data file ... \n');
+      [adcp,cfg,nens]=rdradcp_short_v1(filnam,1,-1);  %read in all ensembles
     % %     adcp = rmfield(adcp,char('pressure_std','pitch_std', 'roll_std', 'heading_std', 'bt_range', 'bt_vel', 'salinity','depth'));  
     % %     rdr..short removes all these It also returns beam labels   
     % %     if beam 
@@ -63,80 +83,80 @@ if length(dat)>1
     % %     end
     %%%%%%%%%%%%%% different naming system   %%%%%%%%%%%%%%
     % %     filnamout = [d(nnp).name(1:find(d(nnp).name == '.')-1) '_raw'];
-        F=datestr(adcp.mtime(1),30);
-        filnamout=['KN',F(3:8),F(10:15),'_raw'];
-        save(filnamout, 'adcp','cfg');  % save data in mat format 
-        fileload=[filnamout,'.mat'];
-        adcp0 = adcp;
-        clear adcp cfg
+      F=datestr(adcp.mtime(1),30);
+      filnamout=['KN',F(3:8),F(10:15),'_raw'];
+      save(filnamout, 'adcp','cfg');  % save data in mat format 
+      fileload=[filnamout,'.mat'];
+      adcp0 = adcp;
+      clear adcp cfg
     else
-        if prevtim >1
-        cd (ldir)
-        fprintf('loading previous .mat file ... \n');
-        load (fileload)
-        adcp0=adcp;
-        clear adcp cfg
-        end
+      if prevtim >1
+      cd (ldir)
+      fprintf('loading previous .mat file ... \n');
+      load (fileload)
+      adcp0=adcp;
+      clear adcp cfg
+      end
     end
-end
+  end
 
 
-%cd(ldir);
+  %cd(ldir);
 
-if 1 
-% process most recent file
-% Process VMDas data from most recent file
-filnam = 'temp_mostrecent.dat';
-fprintf('converting raw data for most recent file ... \n');
-%[adcp,cfg,nens]=rdradcp(filnam,1,-1);  %read in all ensembles
+  if 1 
+  % process most recent file
+  % Process VMDas data from most recent file
+  filnam = 'temp_mostrecent.dat';
+  fprintf('converting raw data for most recent file ... \n');
+  %[adcp,cfg,nens]=rdradcp(filnam,1,-1);  %read in all ensembles
 
-nens = -1;
-cnt = 1;
-while ~isstruct(nens) & cnt < 2
-    cd(indir)
-    % copy file to a local directory
-    %[suc, mess, messid] = copyfile(d(nni(end-1)).name,[ldir '\temp_mostrecent.dat']);
-    [suc, mess, messid] = copyfile(d(nn).name,[ldir '\temp_mostrecent.dat']);
+  nens = -1;
+  cnt = 1;
+  while ~isstruct(nens) & cnt < 2
+      cd(indir)
+      % copy file to a local directory
+      %[suc, mess, messid] = copyfile(d(nni(end-1)).name,[ldir 'temp_mostrecent.dat']);
+      [suc, mess, messid] = copyfile(d(nn).name,[ldir 'temp_mostrecent.dat']);
 
-    cd(ldir);
-    [adcp,cfg,nens]=rdradcp_short_v1(filnam,1,-1);  %read in all ensembles
-    cnt = cnt+1;
-end
+      cd(ldir);
+      [adcp,cfg,nens]=rdradcp_short_v1(filnam,1,-1);  %read in all ensembles
+      cnt = cnt+1;
+  end
 
 
-% adcp = rmfield(adcp,char('pressure_std','pitch_std', 'roll_std', 'heading_std', 'bt_range', 'bt_vel', 'salinity','depth'));
-%%%%%%%%%%%%%%%%%%%%%%%%%
-% if beam 
-%     adcp.beam1 = adcp.east_vel;
-%     adcp.beam2 = adcp.north_vel;
-%     adcp.beam3 = adcp.vert_vel;
-%     adcp.beam4 = adcp.error_vel;
-%     adcp = rmfield(adcp,char('east_vel','north_vel','vert_vel','error_vel'));       
-% end    
-filnamout = 'tempmostrecent_raw';
-save(filnamout, 'adcp','cfg');  % save data in mat format 
+  % adcp = rmfield(adcp,char('pressure_std','pitch_std', 'roll_std', 'heading_std', 'bt_range', 'bt_vel', 'salinity','depth'));
+  %%%%%%%%%%%%%%%%%%%%%%%%%
+  % if beam 
+  %     adcp.beam1 = adcp.east_vel;
+  %     adcp.beam2 = adcp.north_vel;
+  %     adcp.beam3 = adcp.vert_vel;
+  %     adcp.beam4 = adcp.error_vel;
+  %     adcp = rmfield(adcp,char('east_vel','north_vel','vert_vel','error_vel'));       
+  % end    
+  filnamout = 'tempmostrecent_raw';
+  save(filnamout, 'adcp','cfg');  % save data in mat format 
 
-%if length(dat)>1
-if length(dat)>1  & prevtim >= 1 % concatenate data
-    if beam
-        adcp.beam1 = [adcp0.beam1 adcp.beam1];
-        adcp.beam2 = [adcp0.beam2 adcp.beam2];
-        adcp.beam3 = [adcp0.beam3 adcp.beam3];
-        adcp.beam4 = [adcp0.beam4 adcp.beam4];
-    else
-        adcp.east_vel = [adcp0.east_vel adcp.east_vel];
-        adcp.north_vel = [adcp0.north_vel adcp.north_vel];
-        adcp.vert_vel = [adcp0.vert_vel adcp.vert_vel];
-        adcp.error_vel = [adcp0.error_vel adcp.error_vel];
-    end    
-    adcp.mtime = [adcp0.mtime adcp.mtime];
-    adcp.temperature = [adcp0.temperature adcp.temperature];
-    adcp.pressure = [adcp0.pressure adcp.pressure];
-    adcp.heading = [adcp0.heading adcp.heading];
-    adcp.pitch = [adcp0.pitch adcp.pitch];
-    adcp.roll = [adcp0.roll adcp.roll];
-    adcp.intens = cat(3,adcp0.intens,adcp.intens);
-end
+  %if length(dat)>1
+  if length(dat)>1  & prevtim >= 1 % concatenate data
+      if beam
+          adcp.beam1 = [adcp0.beam1 adcp.beam1];
+          adcp.beam2 = [adcp0.beam2 adcp.beam2];
+          adcp.beam3 = [adcp0.beam3 adcp.beam3];
+          adcp.beam4 = [adcp0.beam4 adcp.beam4];
+      else
+          adcp.east_vel = [adcp0.east_vel adcp.east_vel];
+          adcp.north_vel = [adcp0.north_vel adcp.north_vel];
+          adcp.vert_vel = [adcp0.vert_vel adcp.vert_vel];
+          adcp.error_vel = [adcp0.error_vel adcp.error_vel];
+      end    
+      adcp.mtime = [adcp0.mtime adcp.mtime];
+      adcp.temperature = [adcp0.temperature adcp.temperature];
+      adcp.pressure = [adcp0.pressure adcp.pressure];
+      adcp.heading = [adcp0.heading adcp.heading];
+      adcp.pitch = [adcp0.pitch adcp.pitch];
+      adcp.roll = [adcp0.roll adcp.roll];
+      adcp.intens = cat(3,adcp0.intens,adcp.intens);
+  end
 end
 datmess = ['data read: ' num2str(cnt)];
 %adcp = adcp0;
@@ -150,7 +170,9 @@ datmess = ['data read: ' num2str(cnt)];
 %     ts = prevtim;
 % end
 
+% CSJ commented ts = floor() calculation for testing
 ts = floor((now-DT/60/24)*24*(60/DT))/(24*(60/DT)); % finds second most recent DT fraction of the hour
+
 %ts = ts-1/24;
 
 
@@ -190,7 +212,6 @@ Padcp = nan_interp(Padcp);
 
 clear adcp
 
-% 
 KN_ADCP_Proc_2007v2;
 datmess = [ datmess procmess];
 Tnow = Tt(end);
@@ -331,11 +352,13 @@ fprintf(fid,[datmess '\n']);
 fclose(fid);
 
 % save ADAM status file
-voltlog='';
-[voltlog]=getADAM;
-fid = fopen('AdamLog.txt','wt');
-fprintf(fid,[voltlog '\n']);
-fclose(fid);
+if ADAM
+  voltlog='';
+  [voltlog]=getADAM;
+  fid = fopen('AdamLog.txt','wt');
+  fprintf(fid,[voltlog '\n']);
+  fclose(fid);
+end
 
 % Update times
 if ADCP
