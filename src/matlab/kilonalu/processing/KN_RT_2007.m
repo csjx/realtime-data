@@ -5,12 +5,23 @@
 
 clear
 delete(timerfind)
+base_dir = '/home/cjones/development/KNRT_processing/';
+indir=[base_dir 'temp_data/latest_data/'];  % data directory
+ldir=[base_dir 'temp_data/hold_and_process/'];  % temporary holding and processing
+ftpdir = '/var/www/html/OE/KiloNalu/Data/';  % ftp directory
+archdir = [base_dir 'KiloNalu/ADCP/archive/'];   %archive directory
+specdir=[base_dir 'KiloNalu/ADCP/spectra/'];  % wave spectra storage (& archive?)
 
-indir='C:\KiloNalu\ADCP\data\033007';  % data directory
-ldir='C:\KiloNalu\ADCP\storage';  % temporary holding and processing
-ftpdir = 'C:\KiloNalu\ADCP\ftp';  % ftp directory
-archdir = 'C:\KiloNalu\ADCP\archive';   %archive directory
-specdir='C:\KiloNalu\ADCP\spectra';  % wave spectra storage (& archive?)
+javaaddpath('/usr/local/RBNB/V3.0/bin/rbnb.jar');
+addpath('/usr/local/RBNB/V3.0/Matlab/');
+addpath(base_dir);
+addpath([base_dir 'DirSpec0']);
+addpath([base_dir 'DirSpec0/diwasp']);
+%indir=[base_dir 'KiloNalu/ADCP/data/033007/'];  % data directory
+%ldir=[base_dir 'KiloNalu/ADCP/storage/'];  % temporary holding and processing
+%ftpdir = [base_dir 'KiloNalu/ADCP/ftp/'];  % ftp directory
+%archdir = [base_dir 'KiloNalu/ADCP/archive/'];   %archive directory
+%specdir=[base_dir 'KiloNalu/ADCP/spectra/'];  % wave spectra storage (& archive?)
 % Write log files, initialize variables
 depfilnam = '033007';
 
@@ -22,9 +33,9 @@ reproc = 1; % 0 = new deployment
 %%%%%% parameters for TChain processing - used by KN_TC_RUN_DK
 TChain=0;  % 1: process tchain data; 0: skip tchain processing            
 tcdepfilnam = 'tc070510';
-tcindir = 'Z:'; % data directory on laptop
-tcldir = 'C:\KiloNalu\TChain\TCtemp';  % temporary holding and processing
-tczdir = 'C:\KiloNalu\TChain';   % summ files for plots
+tcindir = [base_dir 'TCindir']; % data directory on laptop
+tcldir = [base_dir 'KiloNalu/TChain/TCtemp/'];  % temporary holding and processing
+tczdir = [base_dir 'KiloNalu/TChain/'];   % summ files for plots
 adcpdir = ldir;
 % [MAB==meters above bottom]
 MABgrid=(0:.25:12)';  % depth vector used by tcdepths.m data interpolation
@@ -50,8 +61,8 @@ ztrans = 0.3;
 % %%%% if using observed heading ....
 headoffset=0;
 %heading=293;% FILL IN;
-heading = 127; % 7/10/07
-
+%heading = 127; % 7/10/07
+heading = 200; %CSJ per JRW 4/17/2008
 beams_up = 1;
 zds = [-4 -8];  % Use data at this depth range for dir spectra analysis (z is positive UP)
 beam = 1;  % data in beam coordinates? 1=y, 0=n
@@ -62,7 +73,7 @@ zbed=3;  % specify bottom velocities at up to # m above bed
 YSI=0; %If YSI is connected, change this to 1
 LISST=0; % if LISST is connected, change this to 1
 ADCP = 1;
-
+ADAM = 0;
 % Spectral parameters
 SM.freqs = [0.0025:0.005:0.35];
 SM.dirs = [0:1:180];
@@ -83,7 +94,7 @@ prevdat = 0;  % time for previously analyzed file
 % use prevtim = 0 for new deployment (no old data to append)
 % use prevtim = 1 to continue existing deployment
 % use prevtim = -1 to interpolate previous deployment data onto new depths
-prevtim = 1;  
+prevtim = 0;  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%  NOT IN USE   %%%%%%%%%%%%%%%%%
