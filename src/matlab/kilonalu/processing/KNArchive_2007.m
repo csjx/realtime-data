@@ -52,7 +52,7 @@ end
 if newday
     if prevtim ~= 0 % if this isn't a new deployment, then copy last file to a file named by date
         % first clear ftp/archive directory
-        cd([ftpdir '\Archive']);
+        cd([ftpdir 'Archive']);
         delete('*');
         
         % copy to archive directory
@@ -60,7 +60,7 @@ if newday
         ext2='.txt';
         archfile=[filnamarch ext2];
         %[suc, mess, messid] = copyfile([ldir '\KNData.txt'],[archdir '\' eval('archfile')]);
-        [suc2, mess, messid] = copyfile([ftpdir '\KNDataSumm.txt'],[ftpdir '\Archive\' archfile]);
+        [suc2, mess, messid] = copyfile([ftpdir 'KNDataSumm.txt'],[ftpdir 'Archive/' archfile]);
         % also produce daily plot from last day
         trng = 72;  %plot time range in hours
         maxt = Tt(nyest);
