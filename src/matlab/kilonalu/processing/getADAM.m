@@ -1,7 +1,10 @@
 function [voltlog]=getADAM;
 % goes to ADAM status text files and copies last line
 retdir=pwd;
-Adamdir='C:\Documents and Settings\Geno\Desktop\ADAM\log_filies_2006_11_11';
+% CSJ changed for testing
+%Adamdir='C:\Documents and Settings\Geno\Desktop\ADAM\log_filies_2006_11_11';
+base_dir = '/home/cjones/development/KNRT_processing/';
+Adamdir=[base_dir 'log_files'];
 cd (Adamdir);
 d=dir(['*.log']);
 clear dat
