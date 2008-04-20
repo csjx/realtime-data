@@ -5,7 +5,7 @@
 
 clear
 delete(timerfind)
-base_dir = '/home/cjones/development/KNRT_processing/';
+base_dir = '/home/kilonalu/projects/bbl/trunk/kilonalu/processing/';
 indir=[base_dir 'temp_data/latest_data/'];  % data directory
 ldir=[base_dir 'temp_data/hold_and_process/'];  % temporary holding and processing
 ftpdir = '/var/www/html/OE/KiloNalu/Data/';  % ftp directory
