@@ -608,7 +608,7 @@ function y=nmean(x,dim);
 %   R_NMEAN(X,DIM) takes the mean along the dimension DIM of X. 
 %
 
-kk=isfinite(x);
+kk=finite(x);
 x(~kk)=0;
 
 if nargin==1, 
