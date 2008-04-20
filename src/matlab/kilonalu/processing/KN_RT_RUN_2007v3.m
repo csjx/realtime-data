@@ -18,7 +18,7 @@ if ADCP
   % Create a new sink client to the DataTurbine
   matlabSink = rbnb_sink('bbl.ancl.hawaii.edu:3333', 'MatlabADCPProcessingSink');
 
-  % define the request details (get the latest 20 minutes of data)
+  % define the request details (get the latest 40 minutes of data)
   channelName = 'KN0101_010ADCP010R00/BinaryPD0EnsembleData';
   startTime = 0;
   duration = 2400;
