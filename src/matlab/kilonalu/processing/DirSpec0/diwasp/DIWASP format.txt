@@ -1,0 +1,18 @@
+DIWASP format
+Directional Wave Spectrum 
+
+Continuous ASCII stream:
+xaxisdir		DOUBLE   compass direction of x axis
+nspec			INTEGER  number of frequency bins
+ndir			INTEGER  number of direction bins
+spfreq(nspec)	DOUBLE   frequency bins in rad/s
+spdir(ndir)		DOUBLE   direction bins in radians
+999			INTEGER  end of header marker
+spden(nspec,ndir)	DOUBLE   density of wave component with frequency:freq ; direction:dir 
+	
+Loop order for spectral densities::
+	do i=1,nspec
+	do j=1,ndir
+		read(##,*) spden(i,j)
+	enddo
+	enddo	

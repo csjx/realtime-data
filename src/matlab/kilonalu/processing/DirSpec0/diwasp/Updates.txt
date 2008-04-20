@@ -1,0 +1,12 @@
+Version 1.1
+	17 Sep 2002
+	Version 1.1 public release
+
+Version 1.1.1
+	7 Oct 2002
+	Correction of minor mistake in Infospec function for energy based significant wave height calculation.
+
+Version 1.1.2
+	9 Oct 2002
+	Correction of spectral density scaling which gave incorrect significant wave height calculation. Fix of bug in transfer functions for subsurface datatypes ('velx','vely','velz','pres') where hyperbolic functions "blew up" in large depths and gave a NaN transfer value.
+	

@@ -1,0 +1,116 @@
+function plotspec_mod(SM,ptype,clims);
+
+%DIWASP V1.1 function
+%plotspec: plots the spectral matrix in 3D or polar form
+%
+%plotspec(SM,ptype)
+%
+%Inputs:
+% SM   		A spectral matrix structure
+% ptype		plot type:
+%   1	3D surface plot
+%   2	polar type plot 
+%   3	3D surface plot (compass bearing angles)
+%   4	polar type plot   (compass bearing angles)
+%
+%The 3D surface plot type is a MATLAB surface plot with SM.freqs on the x axis, SM.dirs on the y axis and the spectral density, SM.S as the z value. 
+%The polar type plot is a MATLAB polar plot with the direction showing values in SM.dirs, the radius showing values in SM.freqs 
+%and contours representing the spectral density, SM.S. An example of the polar type plot is shown on the front cover of the manual.
+%For both plot types, the direction is the direction of propagation (see also The DIWASP spectrum file format).  
+%For options 3 and 4 the direction is the compass bearing. This is calculated from the SM.xaxisdir input that defines the orientation of the axes. 
+%Note that if SM.xaxisdir is 90 the appearance of the polar plot is unchanged.
+%
+%"help data_structures" for information on the DIWASP data structures
+% plotspecmod, modified by gpawlak to allow input of coloraxis limits
+
+%Copyright (C) 2002 Coastal Oceanography Group, CWR, UWA, Perth
+
+%fig=figure;
+
+SM=check_data(SM,2);if isempty(SM) return;end;
+dirs=SM.dirs;ffreqs=SM.freqs;S=real(SM.S);
+
+if (ptype==3|ptype==4)
+      xaxisdir=SM.xaxisdir;
+      if ~(xaxisdir >=0 & xaxisdir <=360)
+         warning('xaxisdir must be between 0 and 360 -set to default value of 90');
+         xaxisdir=90;
+      end   
+end
+
+if(ptype==1|ptype==3)
+      if(ptype==3)
+      	dirs=xaxisdir*ones(size(dirs))-dirs;
+         dirs=dirs+360*(dirs<0);
+         dirs=dirs-360*(dirs>360);
+      	[dirs,order]=sort(dirs);
+   	else
+         order=([1:max(size(dirs))]);
+      end
+   [ddir,df]=meshgrid(dirs,ffreqs);
+   surf(df,ddir,real(S(:,order)));
+   
+   shading interp;
+   xlabel('frequency [Hz]');
+   if(ptype==1)
+      ylabel('direction [degrees]');
+      axis([0 (max(ffreqs)) -180 180 0 (max(max(S)))]);
+
+   else
+      ylabel('direction [bearing]');
+      axis([0 (max(ffreqs)) 0 360 0 (max(max(S)))]);
+   end
+   zlabel('m^2s / deg');
+   
+elseif(ptype==2|ptype==4)
+   if(ptype==4)
+      dirs=(90-xaxisdir)*ones(size(dirs))+dirs;
+   end
+   h = polar([0 2*pi], [0 0.8*max(ffreqs)]);
+   delete(h);
+   
+   [df,ddir]=meshgrid(ffreqs,dirs);
+   
+%uses the existing polar figure function and replaces numbering of angles for compass directions. Will probably be changed in future versions.
+	if(ptype==4)
+   set(0,'ShowHiddenHandles','on')
+   chhs=get(gca,'Children');
+   for i=1:size(chhs,1);
+      obj=chhs(i);
+      if strcmp(get(obj,'Type'),'text')
+         num=str2num(get(obj,'String'));
+         if~(isempty(num))
+         if mod(num,30)==0
+            num=90-num;
+            num=(num<0)*360+num;
+            set(obj,'String',num2str(num));
+         end
+         end
+      end
+   end
+   set(0,'ShowHiddenHandles','off')
+   end
+         
+   hold on;
+    
+	[px,py]=pol2cart(ddir*pi/180,df);
+    caxis(clims);
+    if sum(real(S(:)))~=0
+       colorbar('vert');
+    end
+	contour(px,py,real(S'),20);
+
+   %caxis([0.001 max(max(S))]);
+   %caxis([min(min(S)) max(max(S))]);  % changed by G. Pawlak due to errors when S is smaller that 0.001
+   if(ptype==2)
+      ylabel('direction [degrees] / frequency [Hz]','fontsize',8);
+   else
+      ylabel('direction [bearing] / frequency [Hz]','fontsize',8);
+   end
+	xlabel('m^2s / deg','fontsize',8);
+   hold off;
+end
+
+set(gca,'Color','none');
+
+
