@@ -2,7 +2,6 @@
 % Processes real time data from moored ADCP    
 % given adcp, cfg, ts, DT and adds results to a deployment file same as KN_ADCP_Proc_2007
 % modified 4/6/07 to include filtered pressure signal (higher than tidal)
-
 kk = kk+1;
 
 % identify averaging start and end points 
@@ -44,6 +43,7 @@ if ~isempty(nens)
         VelU(nnz(i),nens) = nan_interp(VelU(nnz(i),nens));
         VelErr(nnz(i),nens) = nan_interp(VelErr(nnz(i),nens));
     end
+
     nnan = find(~isnan(VelE(:,nens)));
     
     % interpolate data to regular time vector 
@@ -104,6 +104,7 @@ if ~isempty(nens)
     Hzc = mean(HSort((2*round(length(HSort)/3)):end));
     Tzc = mean(diff(tz))*24*3600;
     Hmx = max(H);
+    clear pv a;
     %%%%%%%%%%%%%%%
     % calculate wave direction for each burst at each depth
     for j = 1:nbins
@@ -340,7 +341,7 @@ else
     Pf = pf;
     Tf = tpf;    
     SPF = SPf;
-    SPD = SPd;
+    SPD = SPd';
 end
 
 % % These variables will be used in the plot routines
