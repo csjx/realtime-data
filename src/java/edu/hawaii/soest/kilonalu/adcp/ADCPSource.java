@@ -282,110 +282,18 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum += (byteTwo & 0xFF);
                 ensembleByteCount++; // add Data Source ID
                 ensembleChecksum += (byteOne & 0xFF);
-    
-                //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                //logger.debug(
-                //  state                                              + ":\tb1\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //   ensembleBytes                                     + "\t"      + 
-                //   ensembleChecksum                   
-                //);                                    
-                //logger.debug(                         
-                //  state                                              + ":\tb2\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);                  
-                //logger.debug(                         
-                //  state                                              + ":\tb3\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-                //logger.debug(
-                //  state                                              + ":\tb4\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-    
+        
                 state = 1;
                 break;
     
-              }else {
-    
-                //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                //logger.debug(
-                //  state                                              + ":\tb1\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //   ensembleBytes                                     + "\t"      + 
-                //   ensembleChecksum                   
-                //);                                    
-                //logger.debug(                         
-                //  state                                              + ":\tb2\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);                  
-                //logger.debug(                         
-                //  state                                              + ":\tb3\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-                //logger.debug(
-                //  state                                              + ":\tb4\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
+              }else {    
                 break;
+                
               }
     
             case 1: // find the Ensemble Length (LSB)
               ensembleByteCount++; // add Ensemble Byte Count (LSB)
               ensembleChecksum += (byteOne & 0xFF);
-    
-              //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-              //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-              //logger.debug(
-              //  state                                              + ":\tb1\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //   ensembleBytes                                     + "\t"      + 
-              //   ensembleChecksum                   
-              //);                                    
-              //logger.debug(                         
-              //  state                                              + ":\tb2\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);                  
-              //logger.debug(                         
-              //  state                                              + ":\tb3\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);
-              //logger.debug(
-              //  state                                              + ":\tb4\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);
   
               state = 2;
               break;
@@ -393,37 +301,6 @@ public class ADCPSource extends RBNBSource {
             case 2: // find the Ensemble Length (MSB)
               ensembleByteCount++; // add Ensemble Byte Count (MSB)
               ensembleChecksum += (byteOne & 0xFF);
-    
-              //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-              //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-              //logger.debug(
-              //  state                                              + ":\tb1\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //   ensembleBytes                                     + "\t"      + 
-              //   ensembleChecksum                   
-              //);                                    
-              //logger.debug(                         
-              //  state                                              + ":\tb2\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);                  
-              //logger.debug(                         
-              //  state                                              + ":\tb3\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);
-              //logger.debug(
-              //  state                                              + ":\tb4\t" + 
-              //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-              //  ensembleByteCount                                  + "\t"      + 
-              //  ensembleBytes                                      + "\t"      + 
-              //  ensembleChecksum
-              //);
   
               int upperEnsembleByte = (byteOne & 0xFF) << 8;
               int lowerEnsembleByte = (byteTwo  & 0xFF);
@@ -473,40 +350,6 @@ public class ADCPSource extends RBNBSource {
                 // We are consistently 1 byte over in the checksum.  Trim it.  We need to
                 // troubleshoot why this is. CSJ 12/18/2007
                 ensembleChecksum = ensembleChecksum - 1;
-    
-                //logger.debug("The buffer contains: " + buffer.toString());
-    
-                // byteThree and byteFour contain the ensemble checksum
-                //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                //logger.debug(
-                //  state                                              + ":\tb1\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //   ensembleBytes                                     + "\t"      + 
-                //   ensembleChecksum                   
-                //);                                    
-                //logger.debug(                         
-                //  state                                              + ":\tb2\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);                  
-                //logger.debug(                         
-                //  state                                              + ":\tb3\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-                //logger.debug(
-                //  state                                              + ":\tb4\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
     
                 // jockey byteThree into LSB, byteFour into MSB
                 int upperChecksumByte = (byteThree & 0xFF) << 8;
@@ -618,37 +461,6 @@ public class ADCPSource extends RBNBSource {
                 ensembleByteCount++; // add each byte found
                 ensembleChecksum += (byteOne & 0xFF);
     
-                //logger.debug("state:\tbyte:\tvalue:\tcount:\tlength:\tsum:");
-                //logger.debug(
-                //  state                                              + ":\tb1\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //   ensembleBytes                                     + "\t"      + 
-                //   ensembleChecksum                   
-                //);                                    
-                //logger.debug(                         
-                //  state                                              + ":\tb2\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);                  
-                //logger.debug(                         
-                //  state                                              + ":\tb3\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-                //logger.debug(
-                //  state                                              + ":\tb4\t" + 
-                //  new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t"      + 
-                //  ensembleByteCount                                  + "\t"      + 
-                //  ensembleBytes                                      + "\t"      + 
-                //  ensembleChecksum
-                //);
-                //logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                
                 if ( ensembleBuffer.remaining() > 0 ) {
                   ensembleBuffer.put(byteOne);
                   
