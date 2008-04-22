@@ -672,6 +672,7 @@ public class ADCPSource extends RBNBSource {
     
     
       } // end while (more socket bytes to read)
+      socket.close();
         
     } catch ( IOException e ) {
       // handle exceptions
@@ -707,11 +708,13 @@ public class ADCPSource extends RBNBSource {
       
       // create the socket channel connection to the data source via the 
       // converter serial2IP converter      
-      dataSocket = SocketChannel.open( new InetSocketAddress(host, portNumber));
+      dataSocket = SocketChannel.open();
+      dataSocket.connect( new InetSocketAddress(host, portNumber));
       
       // if the connection to the source fails, also disconnect from the RBNB
       // server and return null
       if ( !dataSocket.isConnected()) {
+        dataSocket.close();
         disconnect();
         dataSocket = null;
       }      
