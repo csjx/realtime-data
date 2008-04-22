@@ -28,7 +28,7 @@ try
 
     % copy most recent file to a local directory
     filnam = 'tctemp_mostrecent.log';
-    [suc, mess, messid] = copyfile(tcd(nn).name,[tcldir,'\',filnam]);
+    [suc, mess, messid] = copyfile(tcd(nn).name,[tcldir,'/',filnam]);
     % process most recent file
     cd (tcldir)
     fprintf('converting raw tc data for most recent file ... \n');
@@ -40,7 +40,7 @@ try
         % copy to local directory
         cd (tcindir)
         filnam = 'tctemp_2ndmostrecent.log';
-        [suc, mess, messid] = copyfile(tcd(nnp).name,[tcldir,'\',filnam]); 
+        [suc, mess, messid] = copyfile(tcd(nnp).name,[tcldir,'/',filnam]); 
         cd (tcldir)
         fprintf('converting raw tc data for completed data file ... \n');
         [tctime0,tccal0,tcpres0]=tcfiles(filnam);

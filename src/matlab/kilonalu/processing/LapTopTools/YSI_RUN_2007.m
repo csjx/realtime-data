@@ -37,7 +37,7 @@ if length(dat)>1
         [dum, nni] = sort(dat);
         nnp = nni(end-1);  % index for second most recent file
         % copy to local directory
-        [suc, mess, messid] = copyfile(d(nnp).name,[ldir '\temp_2ndmostrecent.dat']);
+        [suc, mess, messid] = copyfile(d(nnp).name,[ldir 'temp_2ndmostrecent.dat']);
         filnam = 'temp_2ndmostrecent.dat';
         cd(ldir);
         fprintf('converting raw data for completed data file ... \n');
@@ -86,7 +86,7 @@ while ~isstruct(nens) & cnt < 2
     cd(indir)
     % copy file to a local directory
     %[suc, mess, messid] = copyfile(d(nni(end-1)).name,[ldir '\temp_mostrecent.dat']);
-    [suc, mess, messid] = copyfile(d(nn).name,[ldir '\temp_mostrecent.dat']);
+    [suc, mess, messid] = copyfile(d(nn).name,[ldir 'temp_mostrecent.dat']);
 
     cd(ldir);
     [adcp,cfg,nens]=rdradcp_short_v1(filnam,1,-1);  %read in all ensembles

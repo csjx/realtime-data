@@ -43,7 +43,7 @@ if ADCP
   nn = find(dat == max(dat));  % newest file in directory ...
 
   % % copy file to a local directory
-  % [suc, mess, messid] = copyfile(d(nn).name,[ldir '\temp_mostrecent.dat']);
+  % [suc, mess, messid] = copyfile(d(nn).name,[ldir 'temp_mostrecent.dat']);
   % 
   % Check if this is a new file name
   ndum = find(d(nn).name == '.');
@@ -67,7 +67,7 @@ if ADCP
       [dum, nni] = sort(dat);
       nnp = nni(end-1);  % index for second most recent file
       % copy to local directory
-      [suc, mess, messid] = copyfile(d(nnp).name,[ldir '\temp_2ndmostrecent.dat']);
+      [suc, mess, messid] = copyfile(d(nnp).name,[ldir 'temp_2ndmostrecent.dat']);
       filnam = 'temp_2ndmostrecent.dat';
       cd(ldir);
       fprintf('converting raw data for completed data file ... \n');
