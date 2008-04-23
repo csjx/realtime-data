@@ -328,6 +328,7 @@ public class FileArchiverSink extends RBNBBase {
       String a = cmd.getOptionValue('n');
       if (a != null)
         sourceName = a;
+        setFilePrefix(a + "_");
     }
     
     if (cmd.hasOption('c')) {
