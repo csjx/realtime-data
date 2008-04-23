@@ -87,7 +87,7 @@ public class FileArchiverSink extends RBNBBase {
   private static final String DEFAULT_CHANNEL_NAME = "BinaryPD0EnsembleData";
   
   /** the default File prefix for archived filenames */
-  private static final String DEFAULT_FILE_PREFIX = "KN0101_010ADCP010R00_";
+  private static final String DEFAULT_FILE_PREFIX = "KNXXXX_XXXADCPXXXRXX_";
 
   /** the File prefix for archived filenames */
   private String filePrefix = DEFAULT_FILE_PREFIX;
