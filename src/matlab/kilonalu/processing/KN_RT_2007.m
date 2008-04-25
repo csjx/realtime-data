@@ -5,9 +5,10 @@
 
 clear
 delete(timerfind)
-base_dir = '/home/kilonalu/projects/bbl/trunk/kilonalu/processing/';
+base_dir = '/home/kilonalu/projects/bbl/trunk/src/matlab/kilonalu/processing/';
 indir=[base_dir 'temp_data/latest_data/'];  % data directory
 ldir=[base_dir 'temp_data/hold_and_process/'];  % temporary holding and processing
+%ftpdir = [base_dir 'KiloNalu/HTTPData/'];  % ftp directory
 ftpdir = '/var/www/html/OE/KiloNalu/Data/';  % ftp directory
 archdir = [base_dir 'KiloNalu/ADCP/archive/'];   %archive directory
 specdir=[base_dir 'KiloNalu/ADCP/spectra/'];  % wave spectra storage (& archive?)
@@ -47,8 +48,8 @@ nsvdys = 21;   % days to save in summ file
 
 nodatagap = 1; % acceptable data gap (hours) before we need to add a filler
 
-strttim = now+1/60/24;  % time for first analysis 
-%strttim = ceil(now*24*60/DT)/(24*60/DT) + 5/60/24;
+%strttim = now+1/60/24;  % time for first analysis 
+strttim = ceil(now*24*60/DT)/(24*60/DT) + 5/60/24;
 tstart = now;
 
 % Processing Parameters:
@@ -62,7 +63,7 @@ ztrans = 0.3;
 headoffset=0;
 %heading=293;% FILL IN;
 %heading = 127; % 7/10/07
-heading = 200; %CSJ per JRW 4/17/2008
+heading = 197; %CSJ per JRW 4/17/2008
 beams_up = 1;
 zds = [-4 -8];  % Use data at this depth range for dir spectra analysis (z is positive UP)
 beam = 1;  % data in beam coordinates? 1=y, 0=n
