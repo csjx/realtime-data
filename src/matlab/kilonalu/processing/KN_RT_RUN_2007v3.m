@@ -19,7 +19,7 @@ if ADCP
   matlabSink = rbnb_sink('bbl.ancl.hawaii.edu:3333', 'MatlabADCPProcessingSink');
 
   % define the request details (get the latest 40 minutes of data)
-  channelName = 'KN0101_010ADCP010R00/BinaryPD0EnsembleData';
+  channelName = 'KN02XX_020ADCP020R00/BinaryPD0EnsembleData';
   startTime = 0;
   duration = 2400;
   timeReference = 'newest';
@@ -30,7 +30,7 @@ if ADCP
   matlabSink.CloseRBNBConnection;
   clear matlabSink channelName startTime duration timeReference;
   % write the data to disk  
-  fd = fopen('KN0101_010ADCP010R00_20080403120409.10.1.dat', 'wb', 'l');
+  fd = fopen('KN02XX_020ADCP020R00_20080403120409.10.1.dat', 'wb', 'l');
   fwrite(fd, mostRecent40MinuteData, 'int8');
   fclose(fd);
 
