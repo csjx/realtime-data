@@ -349,7 +349,7 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum -= (byteFour  & 0xFF);
                 // We are consistently 1 byte over in the checksum.  Trim it.  We need to
                 // troubleshoot why this is. CSJ 12/18/2007
-                ensembleChecksum = ensembleChecksum - 1;
+                //ensembleChecksum = ensembleChecksum - 1;
     
                 // jockey byteThree into LSB, byteFour into MSB
                 int upperChecksumByte = (byteThree & 0xFF) << 8;

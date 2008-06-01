@@ -799,7 +799,7 @@ public class TextOutputPlugin extends RBNBBase {
     
     try {
       sink.OpenRBNBConnection(getServer(), sinkName);
-      source.OpenRBNBConnection(getServer(), "KN0101_010ADCP010R00_1");
+      source.OpenRBNBConnection(getServer(), "KN02XX_020ADCP020R00_CHANNELS");
     } catch (SAPIException e) {
       logger.debug("Error: Unable to connect to server.");
       logger.debug(e.getMessage());
