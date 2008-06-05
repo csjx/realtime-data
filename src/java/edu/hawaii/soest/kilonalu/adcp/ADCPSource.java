@@ -136,6 +136,12 @@ public class ADCPSource extends RBNBSource {
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
 
   /**
+   * The number of bytes in an ensemble to the Number of Data Types field,
+   * as defined by the RDI PD0 binary ensemble format
+   */
+  private int NUMBER_OF_DATA_TYPES_OFFSET = 6;
+
+  /**
    * The Logger instance used to log system messages 
    */
   private static Logger logger = Logger.getLogger(ADCPSource.class);
@@ -143,8 +149,11 @@ public class ADCPSource extends RBNBSource {
   //private int DEFAULT_CACHE_FRAME_SIZE =   100000; // ~100MB for 1K Ensembles
   //private int DEFAULT_ARCHIVE_FRAME_SIZE = 1000000; // ~1GB for 1K Ensembles
   protected int state = 0;
+  
   private int ensembleBytes = 0;
+  
   private boolean readyToStream = false;
+  
   private Thread streamingThread;
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
@@ -250,12 +259,27 @@ public class ADCPSource extends RBNBSource {
       // Each ensemble will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-    
-      int ensembleByteCount = 0;
+      
+      // number of bytes in the ensemble is assumed until header is verified
+      int assumedEnsembleBytes = 0;
+      
       ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
+      
+      // a flag indicating whether not the header is verified
+      boolean headerIsVerified = false;
+      
       // the number of bytes in the ensemble to validate
       int ensembleChecksum = 0;
-    
+
+      // placeholder for the Header Spare byte
+      byte headerSpare;
+      
+      // placeholder for the number of data types in the ensemble 
+      int numberOfDataTypes = 0;                                    
+      
+      // integer to store data type offset bytes
+      int dataTypeOneOffset;
+      
       // while there are bytes to read from the socket ...
       while ( socket.read(buffer) != -1 || buffer.position() > 0) {
         // prepare the buffer for reading
@@ -277,7 +301,7 @@ public class ADCPSource extends RBNBSource {
           switch( state ) {
     
             case 0: // find ensemble header id
-              if ( byteOne == 0x7F && byteTwo == 0x7F) {
+              if ( byteOne == 0x7F && byteTwo == 0x7F ) {
                 ensembleByteCount++; // add Header ID
                 ensembleChecksum += (byteTwo & 0xFF);
                 ensembleByteCount++; // add Data Source ID
@@ -286,7 +310,7 @@ public class ADCPSource extends RBNBSource {
                 state = 1;
                 break;
     
-              }else {    
+              }else {
                 break;
                 
               }
@@ -325,15 +349,40 @@ public class ADCPSource extends RBNBSource {
     
               state = 3;
               break;
-    
-            case 3: // read the rest of the bytes to the next Header ID 
+            
+            // verify that the header is real, not a random 0x7F7F
+            case 3: // find the number of data types in the ensemble
+              
+              // set the numberOfDataTypes byte
+              if ( ensembleByteCount == NUMBER_OF_DATA_TYPES_OFFSET - 1 ) {
+                ensembleByteCount++;
+                ensembleChecksum += (byteOne & 0xFF);
+                numberOfDataTypes = byteOne;
+              
+              } else {
+                ensembleByteCount++;
+                ensembleChecksum += (byteOne & 0xFF);
+                break;
+              }
+              
+            case 4:  // find the offset to data type #1 and verify the header ID
+              if ( headerIsVerified ){
+                state = 5;
+                break;
+              
+              } else {
+                // set the numberOfDataTypes byte
+
+              }
+            
+            case 5: // read the rest of the bytes to the next Header ID 
     
               // if we've made it to the next ensemble's header id, prepare to
               // flush the data.  Also check that the calculated byte count 
               // is greater than the recorded byte count in case of finding an
               // arbitrary 0x7f 0x7f sequence in the data stream
               if ( byteOne == 0x7f && byteTwo == byteOne &&
-                    ensembleByteCount > ensembleBytes ) {
+                   ensembleByteCount > ensembleBytes && headerIsVerified ) {
     
                 // remove the last byte from the count (byteTwo),and don't 
                 // add one for the current byte (byteOne)
