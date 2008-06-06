@@ -142,6 +142,37 @@ public class ADCPSource extends RBNBSource {
   private int NUMBER_OF_DATA_TYPES_OFFSET = 6;
 
   /**
+   * The number of bytes in the ensemble as each byte is read from the stream
+   */
+  private int ensembleByteCount = 0;
+    
+  /**
+   * The flag indicating whether not the header is verified.  The value will be
+   * set to true if the identifier for the first data type (0x0000, i.e. the
+   * Fixed Leader ID) is found at the exact number of bytes from the Header ID
+   * (0x7F7F) that is stated in the header's offset for Data Type One.  This is
+   * used to avoid re-starting the Ensemble parsing when a random 0x7F7F is found
+   * in the data stream (which is fairly frequent).
+   */
+  private boolean headerIsVerified = false;
+  
+  // the number of bytes in the ensemble to validate
+  /**
+   * The checksum calculated for each ensemble as the data are read from the stream
+   */
+  int ensembleChecksum = 0;
+
+  /**
+   * The number of data types in the ensemble as stated in the ensemble header
+   */
+  int numberOfDataTypes = 0;                                    
+  
+  /**
+   * The byte offset location for the first data type in the the ensemble, where
+   * byte 1 == the first 0x7F of the ensemble Header ID
+   */
+  int dataTypeOneOffset = 0;
+  /**
    * The Logger instance used to log system messages 
    */
   private static Logger logger = Logger.getLogger(ADCPSource.class);
@@ -239,8 +270,7 @@ public class ADCPSource extends RBNBSource {
     
     SocketChannel socket = getSocketConnection();
     
-    // while data are being sent, read it into
-    // the buffer and print it to STDOUT
+    // while data are being sent, read them into the buffer
     try {
       // create four byte placeholders used to evaluate up to a four-byte 
       // window.  The FIFO layout looks like:
@@ -251,35 +281,18 @@ public class ADCPSource extends RBNBSource {
            byteTwo   = 0x00,
            byteThree = 0x00,
            byteFour  = 0x00;
-    
+      
       // Create a buffer that will store the ensemble bytes as they are read
       ByteBuffer ensembleBuffer = ByteBuffer.allocate(getBufferSize());
-    
+      
+      // create a byte buffer to store bytes from the TCP stream
+      ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
+      
       // add a channel of data that will be pushed to the server.  
       // Each ensemble will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-      
-      // number of bytes in the ensemble is assumed until header is verified
-      int assumedEnsembleBytes = 0;
-      
-      ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
-      
-      // a flag indicating whether not the header is verified
-      boolean headerIsVerified = false;
-      
-      // the number of bytes in the ensemble to validate
-      int ensembleChecksum = 0;
-
-      // placeholder for the Header Spare byte
-      byte headerSpare;
-      
-      // placeholder for the number of data types in the ensemble 
-      int numberOfDataTypes = 0;                                    
-      
-      // integer to store data type offset bytes
-      int dataTypeOneOffset;
-      
+            
       // while there are bytes to read from the socket ...
       while ( socket.read(buffer) != -1 || buffer.position() > 0) {
         // prepare the buffer for reading
@@ -357,7 +370,11 @@ public class ADCPSource extends RBNBSource {
               if ( ensembleByteCount == NUMBER_OF_DATA_TYPES_OFFSET - 1 ) {
                 ensembleByteCount++;
                 ensembleChecksum += (byteOne & 0xFF);
-                numberOfDataTypes = byteOne;
+                numberOfDataTypes = (byteOne & 0xFF);
+                // calculate the number of bytes to the Fixed Leader ID
+                dataTypeOneOffset = 6 + (2 * numberOfDataTypes);
+                state = 4;
+                break;
               
               } else {
                 ensembleByteCount++;
@@ -366,15 +383,25 @@ public class ADCPSource extends RBNBSource {
               }
               
             case 4:  // find the offset to data type #1 and verify the header ID
-              if ( headerIsVerified ){
+              if ( (ensembleByteCount == dataTypeOneOffset + 1) &&
+                   byteOne == 0x00 && byteTwo == 0x00) {
+                ensembleByteCount++;
+                ensembleChecksum += (byteOne & 0xFF);
+                // we are confident that the previous sequence of 0x7F7F is truly
+                // an headerID and not a random occurrence in the stream because
+                // we have identified the Fixed Leader ID (0x0000) the correct
+                // number of bytes beyond the 0x7F7F
+                headerIsVerified = true;
                 state = 5;
                 break;
               
               } else {
-                // set the numberOfDataTypes byte
-
+                ensembleByteCount++;
+                ensembleChecksum += (byteOne & 0xFF);
+                break;
+                
               }
-            
+
             case 5: // read the rest of the bytes to the next Header ID 
     
               // if we've made it to the next ensemble's header id, prepare to
