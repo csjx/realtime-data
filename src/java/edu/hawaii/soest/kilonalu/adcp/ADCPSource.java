@@ -441,10 +441,10 @@ public class ADCPSource extends RBNBSource {
                 rbnbChannelMap.Clear();
                 channelIndex      = rbnbChannelMap.Add(getRBNBChannelName());
 
-                byte byteOne   = 0x00,
-                     byteTwo   = 0x00,
-                     byteThree = 0x00,
-                     byteFour  = 0x00;
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
                 
                 state = 0;
                 
