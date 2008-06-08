@@ -376,7 +376,6 @@ public class ADCPSource extends RBNBSource {
                 numberOfDataTypes = (byteOne & 0xFF);
                 // calculate the number of bytes to the Fixed Leader ID
                 dataTypeOneOffset = 6 + (2 * numberOfDataTypes);
-                state = 4;
                 
                 if ( ensembleBuffer.remaining() > 0 ) {
                   ensembleBuffer.put(byteOne);
@@ -386,7 +385,7 @@ public class ADCPSource extends RBNBSource {
                   ensembleBuffer.put(byteOne);
                   
                 }
-               
+                state = 4;
                 break;
               
               } else {
@@ -429,8 +428,25 @@ public class ADCPSource extends RBNBSource {
                 break;
               
               } else {
-                ensembleByteCount++;
-                ensembleChecksum += (byteOne & 0xFF);
+                
+                // We've hit a random 0x7F7F byte sequence that is not a true
+                // ensemble header id.  Reset the processing and look for the 
+                // next 0x7F7F sequence in the stream
+                ensembleByteCount = 0;
+                ensembleChecksum  = 0;
+                dataTypeOneOffset = 0;
+                numberOfDataTypes = 0;                                    
+                headerIsVerified  = false;
+                ensembleBuffer.clear();
+                rbnbChannelMap.Clear();
+                channelIndex      = rbnbChannelMap.Add(getRBNBChannelName());
+
+                byte byteOne   = 0x00,
+                     byteTwo   = 0x00,
+                     byteThree = 0x00,
+                     byteFour  = 0x00;
+                
+                state = 0;
                 
                 if ( ensembleBuffer.remaining() > 0 ) {
                   ensembleBuffer.put(byteOne);
@@ -452,7 +468,8 @@ public class ADCPSource extends RBNBSource {
               // is greater than the recorded byte count in case of finding an
               // arbitrary 0x7f 0x7f sequence in the data stream
               if ( byteOne == 0x7f && byteTwo == byteOne &&
-                   ensembleByteCount > ensembleBytes && headerIsVerified ) {
+                   (ensembleByteCount == ensembleBytes + 3 ) && 
+                   headerIsVerified ) {
     
                 // remove the last bytes from the count (byteOne and byteTwo)
                 ensembleByteCount -= 1;
@@ -588,7 +605,7 @@ public class ADCPSource extends RBNBSource {
                   ensembleBuffer.put(byteOne);
                   
                 }
-                // rbnbChannelMap.PutDataAsInt8(channelIndex, new byte[]{byteOne});
+                
                 break;
               }                
           }
