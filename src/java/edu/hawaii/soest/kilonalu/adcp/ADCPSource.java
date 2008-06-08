@@ -300,8 +300,11 @@ public class ADCPSource extends RBNBSource {
     
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
-          //logger.debug("Bytes remaining between position & limit: " +
-          //buffer.remaining());
+            logger.debug("remaining:\t" + buffer.remaining() +
+                         "\tstate:\t" + state +
+                         "\tens byte count:\t" + ensembleByteCount +
+                         "\tbyte value:\t" + 
+                         new String(Hex.encodeHex((new byte[]{byteOne}))));
           byteOne = buffer.get();
     
           // Use a State Machine to process the byte stream.
@@ -374,11 +377,31 @@ public class ADCPSource extends RBNBSource {
                 // calculate the number of bytes to the Fixed Leader ID
                 dataTypeOneOffset = 6 + (2 * numberOfDataTypes);
                 state = 4;
+                
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put(byteOne);
+                  
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put(byteOne);
+                  
+                }
+               
                 break;
               
               } else {
                 ensembleByteCount++;
                 ensembleChecksum += (byteOne & 0xFF);
+                
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put(byteOne);
+                  
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put(byteOne);
+                  
+                }
+               
                 break;
               }
               
@@ -392,12 +415,32 @@ public class ADCPSource extends RBNBSource {
                 // we have identified the Fixed Leader ID (0x0000) the correct
                 // number of bytes beyond the 0x7F7F
                 headerIsVerified = true;
+                
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put(byteOne);
+                  
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put(byteOne);
+                  
+                }
+               
                 state = 5;
                 break;
               
               } else {
                 ensembleByteCount++;
                 ensembleChecksum += (byteOne & 0xFF);
+                
+                if ( ensembleBuffer.remaining() > 0 ) {
+                  ensembleBuffer.put(byteOne);
+                  
+                } else {
+                  ensembleBuffer.compact();
+                  ensembleBuffer.put(byteOne);
+                  
+                }
+               
                 break;
                 
               }
@@ -411,8 +454,7 @@ public class ADCPSource extends RBNBSource {
               if ( byteOne == 0x7f && byteTwo == byteOne &&
                    ensembleByteCount > ensembleBytes && headerIsVerified ) {
     
-                // remove the last byte from the count (byteTwo),and don't 
-                // add one for the current byte (byteOne)
+                // remove the last bytes from the count (byteOne and byteTwo)
                 ensembleByteCount -= 1;
     
                 // remove the last three bytes from the checksum: 
@@ -425,7 +467,7 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum -= (byteFour  & 0xFF);
                 // We are consistently 1 byte over in the checksum.  Trim it.  We need to
                 // troubleshoot why this is. CSJ 12/18/2007
-                //ensembleChecksum = ensembleChecksum - 1;
+                ensembleChecksum = ensembleChecksum - 1;
     
                 // jockey byteThree into LSB, byteFour into MSB
                 int upperChecksumByte = (byteThree & 0xFF) << 8;
@@ -519,6 +561,7 @@ public class ADCPSource extends RBNBSource {
                   logger.info("pos: " + buffer.position() + 
                                "\t\trem: " + buffer.remaining() +
                                "\t\tstate: " + state);
+                  logger.info("Ensemble position: " + ensembleBuffer.position());
                   logger.info("+++++++++++++++++++++++++++++++++++++++++++");
     
                   rbnbChannelMap.Clear();
