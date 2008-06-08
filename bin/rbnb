@@ -1,0 +1,67 @@
+#!/bin/bash
+# Init script for the RBNB server
+#
+# LJM 060607
+# The RBNB_HOME location needs to exist and be acceptable to the admin of the
+# RBNB host system.
+#
+# chkconfig: 345 98 98
+# description: Start the RBNB server
+#
+
+if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/RBNB/V3.1B4a; fi
+RBNB_LOG='/var/log/rbnb/rbnb.log'
+KN0101_010ADCP010R00_LOG='/var/log/rbnb/KN0101_010ADCP010R00.log'
+RBNB_PIDFILE='/var/run/rbnb.pid'
+RBNB_ARCHIVE_LOC='/var/lib/rbnb'
+RBNB_USER='kilonalu';
+RBNB_SERVER="192.168.100.60";
+RBNB_PORT="3333";
+# Amount of memory in MegaBytes for the JVM running RBNB to use
+RBNB_MEM='2048'
+RBNB_NAME='KNShoreStaionDataTurbine';
+BBL_HOME='/usr/local/bbl/trunk';
+
+######################################################################################
+start() {
+   mkdir -p ${RBNB_ARCHIVE_LOC}
+   cd ${RBNB_ARCHIVE_LOC}
+   su - ${RBNB_USER} -c "java -Xms${RBNB_MEM}M -Xmx${RBNB_MEM}M -jar ${RBNB_HOME}/bin/rbnb.jar -H ${RBNB_ARCHIVE_LOC} -a ${RBNB_SERVER}:${RBNB_PORT} -n ${RBNB_NAME} > ${RBNB_LOG} 2>&1 &"
+   #java -Xmx${RBNB_MEM}M -jar ${RBNB_HOME}/bin/rbnb.jar -n ${RBNB_NAME} > ${RBNB_LOG} 2>&1 &
+   echo $! > ${RBNB_PIDFILE}
+
+   #sleep 10
+
+   #if [ -f ${RBNB_PIDFILE} ]; then
+   #   echo "Starting the KN0101_010ADCP010R00 ADCP Source Driver"
+   #  su - ${RBNB_USER} -c "${BBL_HOME}/bin/KN0101_010ADCP010R00-Source.sh > ${KN0101_010ADCP010R00_LOG} 2>&1 &"
+   #fi
+
+}
+
+######################################################################################
+stop() {
+  if [ -f ${RBNB_PIDFILE} ]; then
+    kill -s TERM `cat ${RBNB_PIDFILE}`
+    rm -f ${RBNB_PIDFILE}
+  fi
+}
+     
+case "$1" in
+   'start')
+       echo "Starting the RBNB server"
+       start
+       ;;
+   'stop')
+       echo "Stopping the RBNB server"
+       stop
+       ;;
+   'restart')
+       echo "Restarting the RBNB server"
+       stop
+       start
+       ;;
+   *)
+       echo "Usage: $0 {start|stop|restart} "
+       ;;
+esac
