@@ -13,8 +13,8 @@ ftpdir = '/var/www/html/OE/KiloNalu/Data/';  % ftp directory
 archdir = [base_dir 'KiloNalu/ADCP/archive/'];   %archive directory
 specdir=[base_dir 'KiloNalu/ADCP/spectra/'];  % wave spectra storage (& archive?)
 
-javaaddpath('/usr/local/RBNB/V3.0/bin/rbnb.jar');
-addpath('/usr/local/RBNB/V3.0/Matlab/');
+javaaddpath('/usr/local/RBNB/V3.1B4a/bin/rbnb.jar');
+addpath('/usr/local/RBNB/V3.1B4a/Matlab/');
 addpath(base_dir);
 addpath([base_dir 'DirSpec0']);
 addpath([base_dir 'DirSpec0/diwasp']);
