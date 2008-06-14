@@ -300,11 +300,6 @@ public class ADCPSource extends RBNBSource {
     
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
-            logger.debug("remaining:\t" + buffer.remaining() +
-                         "\tstate:\t" + state +
-                         "\tens byte count:\t" + ensembleByteCount +
-                         "\tbyte value:\t" + 
-                         new String(Hex.encodeHex((new byte[]{byteOne}))));
           byteOne = buffer.get();
     
           // Use a State Machine to process the byte stream.
@@ -429,35 +424,56 @@ public class ADCPSource extends RBNBSource {
               
               } else {
                 
-                // We've hit a random 0x7F7F byte sequence that is not a true
-                // ensemble header id.  Reset the processing and look for the 
-                // next 0x7F7F sequence in the stream
-                ensembleByteCount = 0;
-                ensembleChecksum  = 0;
-                dataTypeOneOffset = 0;
-                numberOfDataTypes = 0;                                    
-                headerIsVerified  = false;
-                ensembleBuffer.clear();
-                rbnbChannelMap.Clear();
-                channelIndex      = rbnbChannelMap.Add(getRBNBChannelName());
+                if ( ensembleByteCount > dataTypeOneOffset + 1 ) {
+                  // We've hit a random 0x7F7F byte sequence that is not a true
+                  // ensemble header id.  Reset the processing and look for the 
+                  // next 0x7F7F sequence in the stream
+                  ensembleByteCount = 0;
+                  ensembleChecksum  = 0;
+                  dataTypeOneOffset = 0;
+                  numberOfDataTypes = 0;                                    
+                  headerIsVerified  = false;
+                  ensembleBuffer.clear();
+                  rbnbChannelMap.Clear();
+                  channelIndex      = rbnbChannelMap.Add(getRBNBChannelName());
 
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
-                
-                state = 0;
-                
-                if ( ensembleBuffer.remaining() > 0 ) {
-                  ensembleBuffer.put(byteOne);
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  state = 0;
+                  
+                  if ( ensembleBuffer.remaining() > 0 ) {
+                    ensembleBuffer.put(byteOne);
+                    
+                  } else {
+                    ensembleBuffer.compact();
+                    ensembleBuffer.put(byteOne);
+                    
+                  }
+                  
+                  break;
                   
                 } else {
-                  ensembleBuffer.compact();
-                  ensembleBuffer.put(byteOne);
+                  // We are still parsing bytes between the purported header ID
+                  // and fixed leader ID. Keep parsing until we hit the fixed
+                  // leader ID, or until we are greater than the dataTypeOneOffset
+                  // stated value.
+                  ensembleByteCount++;
+                  ensembleChecksum += (byteOne & 0xFF);
                   
-                }
-               
-                break;
+                  if ( ensembleBuffer.remaining() > 0 ) {
+                    ensembleBuffer.put(byteOne);
+                    
+                  } else {
+                    ensembleBuffer.compact();
+                    ensembleBuffer.put(byteOne);
+                    
+                  }
+                  
+                  break;
+                  }
                 
               }
 
@@ -467,8 +483,8 @@ public class ADCPSource extends RBNBSource {
               // flush the data.  Also check that the calculated byte count 
               // is greater than the recorded byte count in case of finding an
               // arbitrary 0x7f 0x7f sequence in the data stream
-              if ( byteOne == 0x7f && byteTwo == byteOne &&
-                   (ensembleByteCount == ensembleBytes + 3 ) && 
+              if ( byteOne == 0x7F && byteTwo == 0x7F &&
+                   ( ensembleByteCount == ensembleBytes + 3 ) && 
                    headerIsVerified ) {
     
                 // remove the last bytes from the count (byteOne and byteTwo)
@@ -502,7 +518,10 @@ public class ADCPSource extends RBNBSource {
     
                 // check if the calculated checksum (modulo 65535) is equal
                 // to the true checksum; if so, flush to the data turbine
-                if ( (ensembleChecksum % 65535) == trueChecksum ) {
+                // Also, if the checksums are off by 1 byte, also flush the
+                // data.  We need to troubleshoot this bug CSJ 06/11/2008
+                if ( ( (ensembleChecksum % 65535) == trueChecksum ) ||
+                     ( (ensembleChecksum + 1 ) % 65535 == trueChecksum ) ) {
     
                   // extract just the length of the ensemble bytes out of the
                   // ensemble buffer, and place it in the channel map as a 
@@ -516,7 +535,7 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
                   logger.info(
-                    "Flushed: "   + ensembleByteCount          + " "    +
+                    "flushed: "   + ensembleByteCount          + " "    +
                     "ens cksum: " + ensembleChecksum           + "\t\t" +
                     "ens pos: "   + ensembleBuffer.position()  + "\t"   +
                     "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
@@ -569,17 +588,15 @@ public class ADCPSource extends RBNBSource {
                 } else {
     
                   // The checksums don't match, move on 
-                  logger.info("+++++++++++++++++++++++++++++++++++++++++++");
-                  logger.info("Checksums are not equal:" +
-                               "calculated checksum: " + 
+                  logger.info("not equal: " +
+                               "calc chksum: " + 
                                (ensembleChecksum % 65535) +
-                               ", recorded checksum: " + 
-                               trueChecksum);
-                  logger.info("pos: " + buffer.position() + 
-                               "\t\trem: " + buffer.remaining() +
-                               "\t\tstate: " + state);
-                  logger.info("Ensemble position: " + ensembleBuffer.position());
-                  logger.info("+++++++++++++++++++++++++++++++++++++++++++");
+                               "\tens chksum: " + trueChecksum +
+                               "\tbuf pos: " + buffer.position() + 
+                               "\tbuf rem: " + buffer.remaining() +
+                               "\tens pos: " + ensembleBuffer.position() + 
+                               "\tens rem: " + ensembleBuffer.remaining() +
+                               "\tstate: " + state);
     
                   rbnbChannelMap.Clear();
                   channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
@@ -613,6 +630,14 @@ public class ADCPSource extends RBNBSource {
           byteFour = byteThree;
           byteThree = byteTwo;
           byteTwo = byteOne;
+
+          //logger.debug("remaining:\t" + buffer.remaining() +
+          //             "\tstate:\t" + state +
+          //             "\tens byte count:\t" + ensembleByteCount +
+          //             "\tens bytes:\t" + ensembleBytes +
+          //             "\tver:\t" + headerIsVerified +
+          //             "\tbyte value:\t" + 
+          //             new String(Hex.encodeHex((new byte[]{byteOne}))));
         } //end while (more unread bytes)
     
         // prepare the buffer to read in more bytes from the stream
