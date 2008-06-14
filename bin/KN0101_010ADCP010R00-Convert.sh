@@ -15,7 +15,7 @@ $BBL_HOME/lib/log4j.properties
 # data channel 'BinaryPD0EnsembleData'.  The client is also setting the sink 
 # name to be 'KN0101_0101ADCP010R00_BinaryPD0EnsembleData_FileArchiver', and is
 # setting the archive directory to be '
-# '/data1/rbnb/KN0101_0101ADCP010R00/BinaryPD0EnsembleData'.  The sink client
+# '/data/rbnb/KN0101_0101ADCP010R00/BinaryPD0EnsembleData'.  The sink client
 # connects to the server once per hour, every hour, and archives the previous
 # hour's worth of data collected.
 

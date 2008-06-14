@@ -139,7 +139,7 @@ public class FileArchiverSink extends RBNBBase {
   private List<TimeRange> timeRanges;
 
   /** the default directory to archive to */
-  public static final File DEFAULT_ARCHIVE_DIRECTORY = new File("/data1/rbnb");
+  public static final File DEFAULT_ARCHIVE_DIRECTORY = new File("/data/rbnb");
 
   /** the directory to archive to */
   private File archiveDirectory = DEFAULT_ARCHIVE_DIRECTORY;

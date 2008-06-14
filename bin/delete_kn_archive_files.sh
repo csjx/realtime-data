@@ -13,7 +13,7 @@ MIRROR_COMMAND="ls";
 SSH_COMMAND="/usr/bin/ssh";
 
 FIND_COMMAND="/usr/bin/find";
-FIND_DIR="/data1/kilonalu";
+FIND_DIR="/data/kilonalu";
 FIND_OPTIONS="-mtime +14 -type f -print";
 
 # search for files older than the threshold
