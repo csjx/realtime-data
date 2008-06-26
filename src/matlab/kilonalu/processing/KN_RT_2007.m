@@ -65,10 +65,10 @@ headoffset=0;
 %heading = 127; % 7/10/07
 heading = 197; %CSJ per JRW 4/17/2008
 beams_up = 1;
-zds = [-4 -8];  % Use data at this depth range for dir spectra analysis (z is positive UP)
+zds = [-10 -14];  % Use data at this depth range for dir spectra analysis (z is positive UP)
 beam = 1;  % data in beam coordinates? 1=y, 0=n
 % Note :  the current version of RT_RUN is ONLY for beam coordinates
-zlm = [-12 -1];
+zlm = [-22 -3];
 zbed=3;  % specify bottom velocities at up to # m above bed
 
 YSI=0; %If YSI is connected, change this to 1
