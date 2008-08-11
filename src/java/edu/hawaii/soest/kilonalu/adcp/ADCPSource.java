@@ -521,7 +521,8 @@ public class ADCPSource extends RBNBSource {
                 // Also, if the checksums are off by 1 byte, also flush the
                 // data.  We need to troubleshoot this bug CSJ 06/11/2008
                 if ( ( (ensembleChecksum % 65535) == trueChecksum ) ||
-                     ( (ensembleChecksum + 1 ) % 65535 == trueChecksum ) ) {
+                     ( (ensembleChecksum + 1 ) % 65535 == trueChecksum ) ||
+                     ( (ensembleChecksum - 1 ) % 65535 == trueChecksum ) ) {
     
                   // extract just the length of the ensemble bytes out of the
                   // ensemble buffer, and place it in the channel map as a 
