@@ -1,5 +1,5 @@
 #!/bin/bash
-BBL_HOME=/Users/cjones/development/bbl/trunk
+BBL_HOME=/usr/local/bbl/trunk
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
@@ -18,12 +18,12 @@ $BBL_HOME/lib/log4j.properties
 # CTD instrument (15/minute), which equates to about 69 bytes of data per frame,
 # depending on the CTD configuration. With this ring buffer request, this source
 # use approximately 25MB of RAM, and 543MB of disk storage (in a 1 year period).
-java edu.hawaii.soest.kilonalu.ctd.SeabirdCTDSource\
+java edu.hawaii.soest.kilonalu.ctd.CTDSource\
  -H 68.25.65.111\
  -P 5111\
  -S AW01XX_002CTDXXXXR00\
  -C DecimalASCIISampleData\
- -s 127.0.0.1\
+ -s localhost\
  -p 3333\
  -z 375000\
  -Z 7884000
