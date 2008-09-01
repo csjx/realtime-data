@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ActiveLayerIndex</key>
-	<integer>1</integer>
+	<integer>0</integer>
 	<key>ApplicationVersion</key>
 	<array>
 		<string>com.omnigroup.OmniGrafflePro</string>
@@ -79,7 +79,7 @@
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -138,7 +138,7 @@
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -193,7 +193,7 @@
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -260,7 +260,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -439,7 +439,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -511,7 +511,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -618,7 +618,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -725,7 +725,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -832,7 +832,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -939,7 +939,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red204\green102\blue51;}
 \deftab720
@@ -1340,7 +1340,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1447,7 +1447,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1554,7 +1554,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1661,7 +1661,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1768,7 +1768,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1875,7 +1875,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -1982,7 +1982,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -2089,7 +2089,7 @@
 						<key>Align</key>
 						<integer>0</integer>
 						<key>Text</key>
-						<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+						<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\fnil\fcharset77 ZapfDingbatsITC;}
 {\colortbl;\red255\green255\blue255;\red21\green191\blue32;}
 \deftab720
@@ -2106,7 +2106,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{315.789, 46}, {220, 19}}</string>
+			<string>{{376.898, 65.5681}, {220, 19}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -2121,7 +2121,7 @@
 				<real>18</real>
 			</dict>
 			<key>ID</key>
-			<integer>1120</integer>
+			<integer>1481</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -2147,7 +2147,7 @@
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -2164,7 +2164,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{435.139, 285.206}, {4.27088, 9.64766}}</string>
+					<string>{{496.248, 304.774}, {4.27088, 9.64766}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2206,7 +2206,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{295.363, 285.081}, {141.972, 10.0235}}</string>
+					<string>{{356.472, 304.649}, {141.972, 10.0235}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2257,7 +2257,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{435.062, 280.166}, {22.7191, 19.8527}}</string>
+					<string>{{496.171, 299.734}, {22.7191, 19.8527}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2335,7 +2335,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{687.631, 282.95}, {4.27088, 9.64766}}</string>
+					<string>{{748.74, 302.518}, {4.27088, 9.64766}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2377,7 +2377,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{547.855, 282.825}, {141.972, 10.0235}}</string>
+					<string>{{608.964, 302.393}, {141.972, 10.0235}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2428,7 +2428,7 @@
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{687.555, 277.911}, {22.7191, 19.8527}}</string>
+					<string>{{748.664, 297.479}, {22.7191, 19.8527}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -2501,7 +2501,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{616.651, 400.949}, {22.7191, 19.8527}}</string>
+			<string>{{677.76, 420.517}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2570,7 +2570,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{549.866, 400.949}, {22.7191, 19.8527}}</string>
+			<string>{{610.976, 420.517}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2639,7 +2639,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{467.118, 374.137}, {72.3537, 73.6731}}</string>
+			<string>{{528.227, 393.705}, {72.3537, 73.6731}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2698,7 +2698,7 @@
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -2708,7 +2708,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{771.412, 173.981}, {99.2331, 20.2258}}</string>
+			<string>{{832.521, 193.549}, {99.2331, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2780,7 +2780,7 @@
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -2790,7 +2790,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{578.929, 400.861}, {42.6, 20.2258}}</string>
+			<string>{{640.039, 420.429}, {42.6, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2862,7 +2862,7 @@
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -2872,7 +2872,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{645.679, 334.948}, {36.4991, 99.2331}}</string>
+			<string>{{706.789, 354.516}, {36.4991, 99.2331}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -2942,7 +2942,7 @@
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -2953,7 +2953,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{771.412, 273.214}, {99.2331, 20.2258}}</string>
+			<string>{{832.521, 292.782}, {99.2331, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3025,7 +3025,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3035,7 +3035,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{810.915, 432.176}, {19.9033, 19.8525}}</string>
+			<string>{{872.025, 451.744}, {19.9033, 19.8525}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3096,7 +3096,7 @@ RAID array}</string>
 				<key>Pad</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3106,7 +3106,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{678.992, 273.375}, {99.2331, 19.9033}}</string>
+			<string>{{740.102, 292.943}, {99.2331, 19.9033}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3178,7 +3178,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3188,7 +3188,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{771.412, 372.447}, {99.2331, 20.2258}}</string>
+			<string>{{832.521, 392.015}, {99.2331, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3260,7 +3260,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3270,7 +3270,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{738.561, 134.476}, {72.3537, 317.552}}</string>
+			<string>{{799.671, 154.044}, {72.3537, 317.552}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3349,7 +3349,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3359,7 +3359,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{582.98, 107.413}, {257.203, 360.848}}</string>
+			<string>{{644.089, 126.981}, {257.203, 360.848}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3414,7 +3414,7 @@ RAID array}</string>
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red128\green128\blue128;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -3426,7 +3426,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{367.295, 400.949}, {22.7191, 19.8527}}</string>
+			<string>{{428.404, 420.517}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3495,7 +3495,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{385.852, 400.763}, {42.6, 20.2258}}</string>
+			<string>{{446.961, 420.331}, {42.6, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3567,7 +3567,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3577,7 +3577,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{434.004, 400.949}, {22.7191, 19.8527}}</string>
+			<string>{{495.113, 420.517}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3646,7 +3646,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{226.298, 173.98}, {99.2331, 20.2258}}</string>
+			<string>{{287.407, 193.548}, {99.2331, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3718,7 +3718,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3728,7 +3728,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{385.852, 344.13}, {42.6, 20.2258}}</string>
+			<string>{{446.961, 363.698}, {42.6, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3800,7 +3800,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3810,7 +3810,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{294.503, 373.308}, {22.7191, 19.8527}}</string>
+			<string>{{355.612, 392.876}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3879,7 +3879,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{323.123, 332.943}, {36.4991, 99.2331}}</string>
+			<string>{{384.232, 352.511}, {36.4991, 99.2331}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -3949,7 +3949,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -3960,7 +3960,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{226.298, 273.213}, {99.2331, 20.2258}}</string>
+			<string>{{287.407, 292.781}, {99.2331, 20.2258}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4032,7 +4032,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4042,7 +4042,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{265.802, 432.176}, {19.9033, 19.8525}}</string>
+			<string>{{326.911, 451.744}, {19.9033, 19.8525}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4103,7 +4103,7 @@ RAID array}</string>
 				<key>Pad</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4113,7 +4113,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{134.551, 432.176}, {22.7191, 18.5024}}</string>
+			<string>{{195.66, 451.744}, {22.7191, 18.5024}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4182,7 +4182,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.9818, 432.176}, {99.4864, 19.8523}}</string>
+			<string>{{79.0912, 451.744}, {99.4864, 19.8523}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4250,7 +4250,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4260,7 +4260,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{134.551, 373.308}, {22.7191, 18.5024}}</string>
+			<string>{{195.66, 392.876}, {22.7191, 18.5024}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4329,7 +4329,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{134.551, 274.075}, {22.7191, 18.5024}}</string>
+			<string>{{195.66, 293.643}, {22.7191, 18.5024}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4398,7 +4398,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.9818, 372.633}, {99.4864, 19.8527}}</string>
+			<string>{{79.0912, 392.201}, {99.4864, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4466,7 +4466,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4476,7 +4476,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.9818, 273.4}, {99.4864, 19.8527}}</string>
+			<string>{{79.0912, 292.968}, {99.4864, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4544,7 +4544,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4554,7 +4554,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{17.9818, 174.842}, {99.4864, 19.8527}}</string>
+			<string>{{79.0912, 194.41}, {99.4864, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4622,7 +4622,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4632,7 +4632,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{173.544, 432.176}, {19.9033, 19.8523}}</string>
+			<string>{{234.653, 451.744}, {19.9033, 19.8523}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4702,7 +4702,7 @@ RAID array}</string>
 				<key>Pad</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4712,7 +4712,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{133.879, 372.608}, {99.2331, 19.9033}}</string>
+			<string>{{194.988, 392.176}, {99.2331, 19.9033}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4784,7 +4784,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4794,7 +4794,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{467.118, 253.256}, {72.3537, 73.6731}}</string>
+			<string>{{528.227, 272.824}, {72.3537, 73.6731}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4853,7 +4853,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4863,7 +4863,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{133.879, 273.375}, {99.2331, 19.9033}}</string>
+			<string>{{194.988, 292.943}, {99.2331, 19.9033}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -4935,7 +4935,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -4945,7 +4945,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{134.551, 174.842}, {22.7191, 18.5024}}</string>
+			<string>{{195.66, 194.41}, {22.7191, 18.5024}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5014,7 +5014,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{226.298, 372.447}, {99.2331, 20.2257}}</string>
+			<string>{{287.407, 392.015}, {99.2331, 20.2257}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5086,7 +5086,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -5096,7 +5096,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{133.879, 174.141}, {99.2331, 19.9033}}</string>
+			<string>{{194.988, 193.709}, {99.2331, 19.9033}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5168,7 +5168,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -5178,7 +5178,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{365.684, 344.317}, {22.7191, 19.8527}}</string>
+			<string>{{426.793, 363.885}, {22.7191, 19.8527}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5247,7 +5247,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{10.4464, 107.413}, {114.308, 360.848}}</string>
+			<string>{{71.5558, 126.981}, {114.308, 360.848}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5313,7 +5313,7 @@ RAID array}</string>
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red128\green128\blue128;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -5325,7 +5325,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{193.448, 134.476}, {72.3537, 317.552}}</string>
+			<string>{{254.557, 154.044}, {72.3537, 317.552}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5404,7 +5404,7 @@ RAID array}</string>
 			<key>Text</key>
 			<dict>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red64\green64\blue64;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\qc\pardirnatural
@@ -5414,7 +5414,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{166.406, 107.413}, {257.203, 360.848}}</string>
+			<string>{{227.515, 126.981}, {257.203, 360.848}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5469,7 +5469,7 @@ RAID array}</string>
 				<key>Align</key>
 				<integer>0</integer>
 				<key>Text</key>
-				<string>{\rtf1\ansi\ansicpg1252\cocoartf949
+				<string>{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf270
 {\fonttbl\f0\froman\fcharset0 Palatino-Roman;}
 {\colortbl;\red255\green255\blue255;\red128\green128\blue128;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
@@ -5481,7 +5481,7 @@ RAID array}</string>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{0.123108, 31}, {847.435, 586.333}}</string>
+			<string>{{61.2325, 50.568}, {847.435, 474.864}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5544,7 +5544,7 @@ RAID array}</string>
 	<key>GuidesVisible</key>
 	<string>YES</string>
 	<key>HPages</key>
-	<integer>2</integer>
+	<integer>1</integer>
 	<key>ImageCounter</key>
 	<integer>2</integer>
 	<key>IsPalette</key>
@@ -5651,7 +5651,7 @@ RAID array}</string>
 		</dict>
 	</array>
 	<key>ModificationDate</key>
-	<string>2008-02-12 12:35:12 -0700</string>
+	<string>2008-02-24 14:01:41 -0700</string>
 	<key>Modifier</key>
 	<string>Christopher Jones</string>
 	<key>NotesVisible</key>
@@ -5681,10 +5681,15 @@ RAID array}</string>
 			<string>int</string>
 			<string>1</string>
 		</array>
+		<key>NSPaperName</key>
+		<array>
+			<string>string</string>
+			<string>na-legal</string>
+		</array>
 		<key>NSPaperSize</key>
 		<array>
 			<string>size</string>
-			<string>{792, 612}</string>
+			<string>{1008, 612}</string>
 		</array>
 		<key>NSRightMargin</key>
 		<array>
@@ -5714,7 +5719,7 @@ RAID array}</string>
 	<key>UseEntirePage</key>
 	<true/>
 	<key>VPages</key>
-	<integer>2</integer>
+	<integer>1</integer>
 	<key>WindowInfo</key>
 	<dict>
 		<key>CurrentSheet</key>
@@ -5726,13 +5731,13 @@ RAID array}</string>
 		<key>DrawerWidth</key>
 		<real>238</real>
 		<key>Frame</key>
-		<string>{{413, 55}, {1390, 1123}}</string>
-		<key>ShowRuler</key>
-		<true/>
+		<string>{{248, 286}, {1354, 892}}</string>
+		<key>ShowStatusBar</key>
+		<false/>
 		<key>VisibleRegion</key>
-		<string>{{0, 23.3333}, {906, 652.667}}</string>
+		<string>{{-31, -25}, {1032.22, 659.108}}</string>
 		<key>Zoom</key>
-		<real>1.5</real>
+		<real>1.2972085475921631</real>
 	</dict>
 </dict>
 </plist>
