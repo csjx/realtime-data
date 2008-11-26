@@ -18,10 +18,10 @@ $BBL_HOME/lib/log4j.properties
 # ADCP instrument, which equates to about 1024 bytes of # data per frame,
 # depending on the ADCP configuration.
 java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
- -H 192.168.100.130\
+ -H 192.168.100.136\
  -P 2101\
  -S KN0101_010ADCP010R00 -C BinaryPD0EnsembleData\
- -s 192.168.103.50\
+ -s 192.168.100.60\
  -p 3333\
  -z 50000\
- -Z 13000000
+ -Z 31536000
