@@ -250,39 +250,8 @@ classdef CTDProcessor
               graphicYLimit = project.graphicYLimit{i};
               minYObservation=[]; maxYObservation=[];
               minYObservation=min(y); maxYObservation=max(y);
-              
-              if isempty(minYObservation)           | ...
-                 isnan(minYObservation)             | ...
-                 minYObservation == maxYObservation | ...
-                 (maxYObservation - minYObservation) < 2 ,
-                  myLimit = ylim;
-                  minYObservation=myLimit(1); maxYObservation=myLimit(2);
-              
-              elseif ~isempty(graphicYLimit),
-                  if minYObservation < graphicYLimit(1), 
-                      y(find(y < graphicYLimit(1))) = nan;
-                      minYObservation = min(y);
-                  end
-                  if maxYObservation > graphicYLimit(2) & maxYObservation > minYObservation,
-                      y(find(y > graphicYLimit(2))) = nan;
-                      maxYObservation = max(y);
-                  end
-                  if ~isempty(loc.yLimit{j})
-                      if ~isempty(loc.yLimit{j}{i}),
-                          if minYObservation<loc.yLimit{j}{i}(1),
-                              minYObservation=loc.yLimit{j}{i}(1);
-                          end
-                          if maxYObservation>loc.yLimit{j}{i}(2),
-                              maxYObservation=loc.yLimit{j}{i}(2);
-                          end
-                      end
-                  end
-              
-              else,
-                  minYObservation=[-.5]; maxYObservation=[1.5];
-              
-              end;
               ylim([minYObservation maxYObservation]);
+
               % Ticks and Ticklabels
               %xtick = get(axhan,'XTick');
               xtick = floor(now-6:now);
