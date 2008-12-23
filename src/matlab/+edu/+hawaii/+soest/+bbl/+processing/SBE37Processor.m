@@ -6,13 +6,9 @@
 %  Copyright: 2007 Regents of the University of Hawaii and the
 %             School of Ocean and Earth Science and Technology
 % 
-%    Purpose: To process SBE37 data in seven day increments and produce plots
+%    Purpose: To process SBE37 data in yearly increments and produce plots
 %             of observations.
 %    Authors: Christopher Jones             
-%    History: This code was adapted from code written by Eufemia Palomino at 
-%             the University of California Santa Cruz for the Network for 
-%             Environmental Observations of the Coastal Ocean (NEOCO) project
-%             in 2003.
 %  
 % $HeadURL: $
 % $LastChangedDate: $
