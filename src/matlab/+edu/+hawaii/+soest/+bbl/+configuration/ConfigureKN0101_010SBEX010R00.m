@@ -39,13 +39,13 @@ classdef ConfigureKN0101_010SBEX010R00
     baseDirectory = '/usr/local/bbl/trunk/'; % note trailing slash
     
     % The output path directory
-    outputDirectory = '/var/www/html/OE/Data/CTD/KN0101_010SBEX010R00/'; % note trailing slash
+    outputDirectory = '/var/www/html/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/'; % note trailing slash
 
     % The remote web server 
     remoteServer = 'bbl.ancl.hawaii.edu';
         
     % The path of the RBNB software
-    rbnbPath = '/Applications/RBNB-3.1a/'; % note trailing slash
+    rbnbPath = '/usr/local/RBNB/V3.1B4a/'; % note trailing slash
     
     % The path of the RBNB java library
     rbnbLibraryPath = '/usr/local/RBNB/V3.1B4a/bin/rbnb.jar';
