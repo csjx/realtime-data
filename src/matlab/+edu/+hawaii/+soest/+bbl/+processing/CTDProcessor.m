@@ -108,8 +108,8 @@ classdef CTDProcessor
     % 1) # (pound delimiter)
     % 2) temperature
     % 3) conductivity
-    % 4) turbidity
-    % 5) Chlorophyl-a
+    % 4) Chlorophyl-a
+    % 5) turbidity
     % 6) salinity
     % 7) dd mmm yyyy HH:MM:SS (reported date-time stamp)
     % EOL character is a carraige return (\r\n)
@@ -147,8 +147,8 @@ classdef CTDProcessor
       loc_id  = ones(length(self.ctdDataCellArray{1}), 1);
       project.data{1} = self.ctdDataCellArray{1};  % temperature
       project.data{2} = self.ctdDataCellArray{5};  % salinity
-      project.data{3} = self.ctdDataCellArray{3};  % turbidity
-      project.data{4} = self.ctdDataCellArray{4};  % chlorophyll
+      project.data{3} = self.ctdDataCellArray{3};  % chlorophyll
+      project.data{4} = self.ctdDataCellArray{4};  % turbidity
 
       i=[]; loc = [];
       loc.idn = [1 2 3 4 5 6 7];
@@ -169,8 +169,8 @@ classdef CTDProcessor
       loc.yLimit{1} = { ...
         [20 45];...           % temperature
         [31.0 36.0]; ...      % salinity
-        [0 2.0]; ...          % turbidity
-        [0 10];...            % chlorophyll
+        [0 2.0]; ...          % chlorophyll
+        [0 10];...            % turbidity
       };
 
       %============
@@ -183,8 +183,8 @@ classdef CTDProcessor
       project.graphicName = [
         {'Temperature (\circC)'},...
         {'Salinity (PSU)'},...
-        {'Turbidity (NTU)'},...
         {'Chlorophyll Units (\mug/L)'},...
+        {'Turbidity (NTU)'},...
       ];
       % See http://geography.uoregon.edu/datagraphics/color_scales.htm,
       % Stepped Sequential scheme with numbers from
@@ -193,12 +193,12 @@ classdef CTDProcessor
       project.graphicColor = [ ...
         % {[0.600 0.060 0.060]}, ...     % red   (muted)
         % {[0.060 0.420 0.600]}, ...     % blue  (muted)
-        % {[0.600 0.330 0.060]}, ...     % brown (muted)
         % {[0.420 0.600 0.060]}, ...     % green (muted)
+        % {[0.600 0.330 0.060]}, ...     % brown (muted)
         {[255/255 0       0      ]}, ... % red   (bright)
         {[0       0       255/255]}, ... % blue  (bright)
-        {[102/255 047/255 0      ]}, ... % brown (bright)
         {[0       255/255 0      ]}, ... % green (bright)
+        {[102/255 047/255 0      ]}, ... % brown (bright)
       ];
       project.graphicMarker = [{'.'},{'.'},{'.'},{'.'}];
       project.graphicMarkersize = [{3.0},{3.0},{3.0},{3.0}];
@@ -206,8 +206,8 @@ classdef CTDProcessor
       project.graphicYLimit = [ ...
         {[20 45]}, ...
         {[31.0 36.0]}, ...
-        {[0 2.0]}, ...
         {[0 10]}, ...
+        {[0 2.0]}, ...
       ];
 
       jbuf = [];
