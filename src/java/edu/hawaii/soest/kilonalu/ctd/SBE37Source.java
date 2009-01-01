@@ -306,11 +306,14 @@ public class SBE37Source extends RBNBSource {
             
               // verify the instrument ID is correct
               if ( getInstrumentID() == null ) {
-                
+                logger.debug("Instrument ID == null.");
                 if (  this.sentCommand == false ) {
+                  logger.debug("sentCommand is false.");
                   // send the command and update the sentCommand status
                   this.sentCommand = queryInstrument(this.idCommand);
-                  
+                  logger.debug("Command was sent.  sentCommand is " + 
+                                this.sentCommand);
+                  break;
                 // look for the 'id =' string  
                 } else if ( byteOne   == 0x3D && byteTwo  == 0x20 && 
                             byteThree == 0x64 && byteFour == 0x69 ) {
