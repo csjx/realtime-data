@@ -271,6 +271,28 @@ public class SBE37Source extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+      
+      // verify the instrument ID is correct
+      if ( getInstrumentID() == null ) {
+        logger.debug("Instrument ID == null.");
+        
+        if (  this.sentCommand == false ) {
+          logger.debug("sentCommand is false.");
+          
+          // send the command and update the sentCommand status
+          this.sentCommand = queryInstrument(this.idCommand);
+          logger.debug("Command was sent.  sentCommand is " + 
+                        this.sentCommand);
+          state = 0;
+        }
+
+      } else {
+        // instrumentID is already set
+        takeSampleCommand = "#" + getInstrumentID() + "TS\n";
+        this.sentCommand = queryInstrument(takeSampleCommand);
+        state = 1;
+        
+      }
             
       // while there are bytes to read from the socket ...
       while ( this.socket.read(buffer) != -1 || buffer.position() > 0) {
@@ -292,6 +314,7 @@ public class SBE37Source extends RBNBSource {
                        "buffer rem: "   + buffer.remaining()                       + "\t" +
                        "state: "        + state
           );
+          logger.debug("Sample results: " + sampleBuffer.toString());
           
           // Use a State Machine to process the byte stream.
           // Start building an rbnb frame for the entire sample, first by 
@@ -301,60 +324,32 @@ public class SBE37Source extends RBNBSource {
           // of the sample in the Sink client code
     
           switch( state ) {
-            
+                        
             case 0:
-            
-              // verify the instrument ID is correct
-              if ( getInstrumentID() == null ) {
-                logger.debug("Instrument ID == null.");
-                if (  this.sentCommand == false ) {
-                  logger.debug("sentCommand is false.");
-                  // send the command and update the sentCommand status
-                  this.sentCommand = queryInstrument(this.idCommand);
-                  logger.debug("Command was sent.  sentCommand is " + 
-                                this.sentCommand);
-                  break;
-                // look for the 'id =' string  
-                } else if ( byteOne   == 0x3D && byteTwo  == 0x20 && 
-                            byteThree == 0x64 && byteFour == 0x69 ) {
-                  state = 1;
-                  break;
-                }
-                
-              } else {
-                // instrumentID is already set
-                state = 2;
-                break;
-              }
-
-            case 1:
               
               // we are 2 bytes past the ' =' characters, which should be the ID
               if ( byteThree == 0x3D && byteFour  == 0x20 ) {
                 
                 setInstrumentID(new String(new byte[]{byteTwo, byteOne}));
-                takeSampleCommand = "#" + getInstrumentID() + "TS\n";
-                queryInstrument(takeSampleCommand);
-                this.sentCommand = true; 
-                state = 2;
+                break;
                 
               } else {
                 break;
               }
-            case 2:
+            case 1:
               
               // sample line is begun by S>
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x3E && byteTwo == 0x53 ) {
                 // we've found the beginning of a sample, move on
-                state = 3;
+                state = 2;
                 break;
     
               } else {
                 break;                
               }
             
-            case 3: // read the rest of the bytes to the next EOL characters
+            case 2: // read the rest of the bytes to the next EOL characters
               
               // sample line is terminated by S>
               // note bytes are in reverse order in the FIFO window
