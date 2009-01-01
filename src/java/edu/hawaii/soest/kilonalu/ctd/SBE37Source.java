@@ -130,7 +130,22 @@ public class SBE37Source extends RBNBSource {
    * The TCP port to connect to on the Source host machine 
    */
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
+  
+  /**
+   * The ID of the instrument as determined by the queryInstrument() method
+   */
+  private String instrumentID = null;
+  
+  /**
+   *The command used to get the ID from the instrument
+   */ 
+  private String idCommand = "ID?\n";
 
+  /**
+   *The command used to have the instrument take a sample
+   */ 
+  private String takeSampleCommand;
+  
   /**
    * The number of bytes in the ensemble as each byte is read from the stream
    */
@@ -144,8 +159,12 @@ public class SBE37Source extends RBNBSource {
   protected int state = 0;
   
   private boolean readyToStream = false;
+
+  private boolean sentCommand = false;
   
   private Thread streamingThread;
+  
+  private SocketChannel socket;
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
    * execution of the data streaming Thread should wait before re-executing
@@ -227,7 +246,7 @@ public class SBE37Source extends RBNBSource {
     
       boolean failed = false;
     
-      SocketChannel socket = getSocketConnection();
+      socket = getSocketConnection();
     
     // while data are being sent, read them into the buffer
     try {
@@ -241,6 +260,7 @@ public class SBE37Source extends RBNBSource {
            byteThree = 0x00,
            byteFour  = 0x00;
       
+      
       // Create a buffer that will store the sample bytes as they are read
       ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
       
@@ -253,8 +273,8 @@ public class SBE37Source extends RBNBSource {
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
             
       // while there are bytes to read from the socket ...
-      while ( socket.read(buffer) != -1 || buffer.position() > 0) {
-
+      while ( this.socket.read(buffer) != -1 || buffer.position() > 0) {
+        
         // prepare the buffer for reading
         buffer.flip();          
     
@@ -281,21 +301,57 @@ public class SBE37Source extends RBNBSource {
           // of the sample in the Sink client code
     
           switch( state ) {
-    
+            
             case 0:
+            
+              // verify the instrument ID is correct
+              if ( getInstrumentID() == null ) {
+                
+                if (  this.sentCommand == false ) {
+                  // send the command and update the sentCommand status
+                  this.sentCommand = queryInstrument(this.idCommand);
+                  
+                // look for the 'id =' string  
+                } else if ( byteOne   == 0x3D && byteTwo  == 0x20 && 
+                            byteThree == 0x64 && byteFour == 0x69 ) {
+                  state = 1;
+                  break;
+                }
+                
+              } else {
+                // instrumentID is already set
+                state = 2;
+                break;
+              }
+
+            case 1:
+              
+              // we are 2 bytes past the ' =' characters, which should be the ID
+              if ( byteThree == 0x3D && byteFour  == 0x20 ) {
+                
+                setInstrumentID(new String(new byte[]{byteTwo, byteOne}));
+                takeSampleCommand = "#" + getInstrumentID() + "TS\n";
+                queryInstrument(takeSampleCommand);
+                this.sentCommand = true; 
+                state = 2;
+                
+              } else {
+                break;
+              }
+            case 2:
               
               // sample line is begun by S>
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x3E && byteTwo == 0x53 ) {
                 // we've found the beginning of a sample, move on
-                state = 1;
+                state = 3;
                 break;
     
               } else {
                 break;                
               }
             
-            case 1: // read the rest of the bytes to the next EOL characters
+            case 3: // read the rest of the bytes to the next EOL characters
               
               // sample line is terminated by S>
               // note bytes are in reverse order in the FIFO window
@@ -346,6 +402,10 @@ public class SBE37Source extends RBNBSource {
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
                   //state = 0;
                   
+                  // Once the sample is flushed, take a new sample
+                  takeSampleCommand = "#" + getInstrumentID() + "TS\n";
+                  queryInstrument(takeSampleCommand);
+                  this.sentCommand = true;
               } else { // not 0x0A0D
 
                 // still in the middle of the sample, keep adding bytes
@@ -377,7 +437,7 @@ public class SBE37Source extends RBNBSource {
     
     
       } // end while (more socket bytes to read)
-      socket.close();
+      this.socket.close();
         
     } catch ( IOException e ) {
       // handle exceptions
@@ -471,6 +531,45 @@ public class SBE37Source extends RBNBSource {
    */
   public int getHostPort(){
     return this.sourceHostPort;
+  }
+
+  /**
+   * A method that sets the ID of the instrument
+   */
+  private void setInstrumentID(String instrumentID) {
+    this.instrumentID = instrumentID;
+  }
+
+  /**
+   * A method that returns ID of the instrument
+   */
+  public String getInstrumentID( ){
+    return this.instrumentID;
+  }
+
+  /**
+   * A method that queries the instrument to obtain its ID
+   */
+  public boolean queryInstrument(String command) {
+    
+    // the result of the query
+    boolean result = false;
+    
+    // only send the command if the socket is connected
+    if ( this.socket.isConnected() ) {
+      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 4);
+      commandBuffer.put(command.getBytes());
+      
+      try {
+        this.socket.write(commandBuffer);
+        result = true;
+        
+      } catch (IOException ioe ) {
+        ioe.printStackTrace();
+        result = false;
+      }
+    }
+    return result;
   }
 
   /**
