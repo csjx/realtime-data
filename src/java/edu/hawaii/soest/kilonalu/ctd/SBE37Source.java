@@ -248,7 +248,7 @@ public class SBE37Source extends RBNBSource {
       boolean failed = false;
     
       socket = getSocketConnection();
-    
+      
     // while data are being sent, read them into the buffer
     try {
       // create four byte placeholders used to evaluate up to a four-byte 
@@ -291,8 +291,10 @@ public class SBE37Source extends RBNBSource {
           while ( buffer.hasRemaining() ) {
             charBuffer.put((char) buffer.get());
           }
+          logger.debug("Response in charBuffer is: " + charBuffer.toString());
           buffer.compact();
         }
+
         
         // parse the ID from the idCommand response
         String idCommandResponse = charBuffer.toString();
