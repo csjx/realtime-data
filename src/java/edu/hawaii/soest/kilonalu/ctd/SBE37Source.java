@@ -42,6 +42,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
 
 import org.apache.commons.cli.Options;
@@ -267,6 +268,9 @@ public class SBE37Source extends RBNBSource {
       // create a byte buffer to store bytes from the TCP stream
       ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
       
+      // create a character buffer to store characters from the TCP stream
+      CharBuffer charBuffer = CharBuffer.allocate(getBufferSize());
+      
       // add a channel of data that will be pushed to the server.  
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
@@ -276,21 +280,42 @@ public class SBE37Source extends RBNBSource {
       if ( getInstrumentID() == null ) {
         logger.debug("Instrument ID == null.");
         
-        if (  this.sentCommand == false ) {
-          logger.debug("sentCommand is false.");
+        // send the command and update the sentCommand status
+        this.sentCommand = queryInstrument(this.idCommand);
+        logger.debug("Command was sent.  sentCommand is " + 
+                      this.sentCommand);
+        
+        // read the response into the buffer
+        while ( this.socket.read(buffer) != -1 || buffer.position() > 0) {
+          buffer.flip();          
+          while ( buffer.hasRemaining() ) {
+            charBuffer.put((char) buffer.get());
+          }
+          buffer.compact();
+        }
+        
+        // parse the ID from the idCommand response
+        String idCommandResponse = charBuffer.toString();
+        int prefixIndex = idCommandResponse.indexOf("=") + 1; // add the space character
+        String idString = idCommandResponse.substring(prefixIndex, prefixIndex + 2);
+        
+        // test that the ID is a valid number and set the instrument ID
+        if ( (new Integer(idString)).intValue() > 0 ) {
+          setInstrumentID(idString);
+          buffer.clear();
           
-          // send the command and update the sentCommand status
-          this.sentCommand = queryInstrument(this.idCommand);
-          logger.debug("Command was sent.  sentCommand is " + 
-                        this.sentCommand);
-          state = 0;
+          // then take the first sample
+          takeSampleCommand = "#" + getInstrumentID() + "TS\n";
+          this.sentCommand = queryInstrument(takeSampleCommand);
+          
+        } else {
+          logger.debug("Instrument ID \"" + idString + "\" was not set.");
         }
 
       } else {
         // instrumentID is already set
         takeSampleCommand = "#" + getInstrumentID() + "TS\n";
         this.sentCommand = queryInstrument(takeSampleCommand);
-        state = 1;
         
       }
             
@@ -314,7 +339,6 @@ public class SBE37Source extends RBNBSource {
                        "buffer rem: "   + buffer.remaining()                       + "\t" +
                        "state: "        + state
           );
-          logger.debug("Sample results: " + sampleBuffer.toString());
           
           // Use a State Machine to process the byte stream.
           // Start building an rbnb frame for the entire sample, first by 
@@ -327,29 +351,18 @@ public class SBE37Source extends RBNBSource {
                         
             case 0:
               
-              // we are 2 bytes past the ' =' characters, which should be the ID
-              if ( byteThree == 0x3D && byteFour  == 0x20 ) {
-                
-                setInstrumentID(new String(new byte[]{byteTwo, byteOne}));
-                break;
-                
-              } else {
-                break;
-              }
-            case 1:
-              
               // sample line is begun by S>
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x3E && byteTwo == 0x53 ) {
                 // we've found the beginning of a sample, move on
-                state = 2;
+                state = 1;
                 break;
     
               } else {
                 break;                
               }
             
-            case 2: // read the rest of the bytes to the next EOL characters
+            case 1: // read the rest of the bytes to the next EOL characters
               
               // sample line is terminated by S>
               // note bytes are in reverse order in the FIFO window
@@ -402,8 +415,8 @@ public class SBE37Source extends RBNBSource {
                   
                   // Once the sample is flushed, take a new sample
                   takeSampleCommand = "#" + getInstrumentID() + "TS\n";
-                  queryInstrument(takeSampleCommand);
-                  this.sentCommand = true;
+                  this.sentCommand = queryInstrument(takeSampleCommand);
+                  
               } else { // not 0x0A0D
 
                 // still in the middle of the sample, keep adding bytes
@@ -429,6 +442,8 @@ public class SBE37Source extends RBNBSource {
           byteTwo = byteOne;
 
         } //end while (more unread bytes)
+        
+        logger.debug("Sample results: " + sampleBuffer.toString());
     
         // prepare the buffer to read in more bytes from the stream
         buffer.compact();
