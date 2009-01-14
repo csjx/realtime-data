@@ -309,6 +309,13 @@ public class ADCPSource extends RBNBSource {
           // observations of the measurements.  That time should be parsed out
           // of the ensemble in the Sink client code
     
+          System.out.print("\rProcessed byte # " +
+                           ensembleByteCount +
+                           " " +
+                           new String(Hex.encodeHex((new byte[]{byteOne}))) +
+                           " - log msg is: "
+                           );
+        
           switch( state ) {
     
             case 0: // find ensemble header id
@@ -317,7 +324,7 @@ public class ADCPSource extends RBNBSource {
                 ensembleChecksum += (byteTwo & 0xFF);
                 ensembleByteCount++; // add Data Source ID
                 ensembleChecksum += (byteOne & 0xFF);
-        
+
                 state = 1;
                 break;
     
@@ -535,15 +542,16 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  logger.info(
-                    "flushed: "   + ensembleByteCount          + " "    +
-                    "ens cksum: " + ensembleChecksum           + "\t\t" +
-                    "ens pos: "   + ensembleBuffer.position()  + "\t"   +
-                    "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
-                    "buf pos: "   + buffer.position()          + "\t"   +
-                    "buf rem: "   + buffer.remaining()         + "\t"   +
-                    "state: "     + state
-                  );
+                  //logger.debug(
+                  //  "flushed: "   + ensembleByteCount          + " "    +
+                  //  "ens cksum: " + ensembleChecksum           + "\t\t" +
+                  //  "ens pos: "   + ensembleBuffer.position()  + "\t"   +
+                  //  "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
+                  //  "buf pos: "   + buffer.position()          + "\t"   +
+                  //  "buf rem: "   + buffer.remaining()         + "\t"   +
+                  //  "state: "     + state
+                  //);
+                  logger.info("Sent ADCP ensemble to the data turbine.");
     
                   // only clear all four bytes if we are not one or two bytes 
                   // from the end of the byte buffer (i.e. the header id 
