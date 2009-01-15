@@ -327,7 +327,8 @@ public class CTDSource extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
+                String sampleString = new String(sampleArray, "US-ASCII");
+                rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
                 logger.info(
                   "flushed: "      + sampleByteCount          + "\t" +
