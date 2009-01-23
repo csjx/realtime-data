@@ -30,7 +30,8 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
+import java.lang.StringBuilder;
+import java.lang.InterruptedException;
 
 import java.io.PrintWriter;
 import java.io.InputStream;
@@ -42,7 +43,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
 
 import org.apache.commons.cli.Options;
@@ -138,14 +138,29 @@ public class SBE37Source extends RBNBSource {
   private String instrumentID = null;
   
   /**
+   *The command prefix used to send commands to the microcontroller
+   */ 
+  private String commandPrefix = "@@#";
+
+  /**
+   *The command suffix used to send commands to the microcontroller
+   */ 
+  private String commandSuffix = "\r\n";
+
+  /**
    *The command used to get the ID from the instrument
    */ 
-  private String idCommand = "ID?\n";
+  private String idCommand = "ID?";
 
   /**
    *The command used to have the instrument take a sample
    */ 
-  private String takeSampleCommand;
+  private String takeSampleCommand = "TS";
+  
+  /**
+   *The command sent to the instrument
+   */ 
+  private String command;
   
   /**
    * The number of bytes in the ensemble as each byte is read from the stream
@@ -165,7 +180,7 @@ public class SBE37Source extends RBNBSource {
   
   private Thread streamingThread;
   
-  private SocketChannel socket;
+  private SocketChannel socketChannel;
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
    * execution of the data streaming Thread should wait before re-executing
@@ -247,10 +262,11 @@ public class SBE37Source extends RBNBSource {
     
       boolean failed = false;
     
-      socket = getSocketConnection();
-      
     // while data are being sent, read them into the buffer
     try {
+
+      this.socketChannel = getSocketConnection();
+      
       // create four byte placeholders used to evaluate up to a four-byte 
       // window.  The FIFO layout looks like:
       //           -------------------------
@@ -268,79 +284,95 @@ public class SBE37Source extends RBNBSource {
       // create a byte buffer to store bytes from the TCP stream
       ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
       
-      // create a character buffer to store characters from the TCP stream
-      CharBuffer charBuffer = CharBuffer.allocate(getBufferSize());
+      // create a character string to store characters from the TCP stream
+      StringBuilder responseString = new StringBuilder();
       
       // add a channel of data that will be pushed to the server.  
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
       
+      // wake the instrument with an initial ID command
+      this.command = this.idCommand + this.commandSuffix;
+      this.sentCommand = queryInstrument(this.command);
+
       // verify the instrument ID is correct
-      if ( getInstrumentID() == null ) {
-        logger.debug("Instrument ID == null.");
-        
+      while ( getInstrumentID() == null ) {
+        // allow time for the instrument response
+        streamingThread.sleep(2000);
+        buffer.clear();
         // send the command and update the sentCommand status
-        this.sentCommand = queryInstrument(this.idCommand);
-        logger.debug("Command was sent.  sentCommand is " + 
-                      this.sentCommand);
+        this.sentCommand = queryInstrument(this.command);
         
-        // read the response into the buffer
-        while ( this.socket.read(buffer) != -1 || buffer.position() > 0) {
-          buffer.flip();          
+        // read the response into the buffer. Note that the streamed bytes
+        // are 8-bit, not 16-bit Unicode characters.  Use the US-ASCII
+        // encoding instead.
+        while (this.socketChannel.read(buffer) != -1 || buffer.position() > 0 ) {
+
+          buffer.flip();
           while ( buffer.hasRemaining() ) {
-            charBuffer.put((char) buffer.get());
+            String nextCharacter = new String(new byte[]{buffer.get()}, "US-ASCII");
+            responseString.append(nextCharacter);
           }
-          logger.debug("Response in charBuffer is: " + charBuffer.toString());
+          // look for the command line ending
+          if ( responseString.toString().indexOf("S>") > 0 ) {
+
+            // parse the ID from the idCommand response
+            int idStartIndex = responseString.indexOf("=") + 2;
+            int idStopIndex = responseString.indexOf("=") + 4;
+            String idString = responseString.substring(idStartIndex, idStopIndex);
+            // test that the ID is a valid number and set the instrument ID
+            if ( (new Integer(idString)).intValue() > 0 ) {
+              setInstrumentID(idString);
+              buffer.clear();
+              logger.debug("Instrument ID is " + getInstrumentID() + ".");
+              break;
+
+            } else {
+              logger.debug("Instrument ID \"" + idString + "\" was not set.");
+            }
+
+          } else {
+           break;
+          }
+          
           buffer.compact();
+          if ( getInstrumentID() != null ) {
+            break;
+          }
         }
-
-        
-        // parse the ID from the idCommand response
-        String idCommandResponse = charBuffer.toString();
-        int prefixIndex = idCommandResponse.indexOf("=") + 1; // add the space character
-        String idString = idCommandResponse.substring(prefixIndex, prefixIndex + 2);
-        
-        // test that the ID is a valid number and set the instrument ID
-        if ( (new Integer(idString)).intValue() > 0 ) {
-          setInstrumentID(idString);
-          buffer.clear();
-          
-          // then take the first sample
-          takeSampleCommand = "#" + getInstrumentID() + "TS\n";
-          this.sentCommand = queryInstrument(takeSampleCommand);
-          
-        } else {
-          logger.debug("Instrument ID \"" + idString + "\" was not set.");
-        }
-
-      } else {
-        // instrumentID is already set
-        takeSampleCommand = "#" + getInstrumentID() + "TS\n";
-        this.sentCommand = queryInstrument(takeSampleCommand);
-        
       }
+
+      // instrumentID is set
+
+      // allow time for the instrument response
+      streamingThread.sleep(2000);
+      this.command = this.commandPrefix + 
+                     getInstrumentID()  + 
+                     this.takeSampleCommand +
+                     this.commandSuffix;
+      this.sentCommand = queryInstrument(command);
+        
             
       // while there are bytes to read from the socket ...
-      while ( this.socket.read(buffer) != -1 || buffer.position() > 0) {
-        
+      while ( this.socketChannel.read(buffer) != -1 || buffer.position() > 0) {
         // prepare the buffer for reading
         buffer.flip();          
     
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
-                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
-                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
-                       "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
-                       "sample pos: "   + sampleBuffer.position()                  + "\t" +
-                       "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
-                       "sample cnt: "   + sampleByteCount                          + "\t" +
-                       "buffer pos: "   + buffer.position()                        + "\t" +
-                       "buffer rem: "   + buffer.remaining()                       + "\t" +
-                       "state: "        + state
-          );
+          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+          //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
+          //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
+          //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
+          //             "sample pos: "   + sampleBuffer.position()                  + "\t" +
+          //             "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
+          //             "sample cnt: "   + sampleByteCount                          + "\t" +
+          //             "buffer pos: "   + buffer.position()                        + "\t" +
+          //             "buffer rem: "   + buffer.remaining()                       + "\t" +
+          //             "state: "        + state
+          //);
           
           // Use a State Machine to process the byte stream.
           // Start building an rbnb frame for the entire sample, first by 
@@ -388,21 +420,23 @@ public class SBE37Source extends RBNBSource {
                 // byte array.  Then, send it to the data turbine.
                 byte[] sampleArray = new byte[sampleByteCount - 2];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
                 rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
                 getSource().Flush(rbnbChannelMap);
-                logger.info(
-                  "flushed: "      + sampleByteCount          + "\t" +
-                  "sample pos: "   + sampleBuffer.position()  + "\t" +
-                  "sample rem: "   + sampleBuffer.remaining() + "\t" +
-                  "buffer pos: "   + buffer.position()        + "\t" +
-                  "buffer rem: "   + buffer.remaining()       + "\t" +
-                  "state: "        + state
-                );
+                String sampleString = new String(sampleArray);
+                logger.info("Sample: " + sampleString);
+                logger.info("flushed data to the DataTurbine. ");
+                //logger.info(
+                //  "flushed: "      + sampleByteCount          + "\t" +
+                //  "sample pos: "   + sampleBuffer.position()  + "\t" +
+                //  "sample rem: "   + sampleBuffer.remaining() + "\t" +
+                //  "buffer pos: "   + buffer.position()        + "\t" +
+                //  "buffer rem: "   + buffer.remaining()       + "\t" +
+                //  "state: "        + state
+                //);
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
@@ -411,13 +445,19 @@ public class SBE37Source extends RBNBSource {
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
-                  logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-                  logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                  //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   //state = 0;
                   
                   // Once the sample is flushed, take a new sample
-                  takeSampleCommand = "#" + getInstrumentID() + "TS\n";
-                  this.sentCommand = queryInstrument(takeSampleCommand);
+                  if ( getInstrumentID() != null ) {
+                    // allow time for the instrument response
+                    streamingThread.sleep(2000);
+                    this.command = this.commandPrefix + 
+                                   getInstrumentID()  + 
+                                   this.takeSampleCommand +
+                                   this.commandSuffix;
+                    this.sentCommand = queryInstrument(command);
+                  }
                   
               } else { // not 0x0A0D
 
@@ -445,14 +485,12 @@ public class SBE37Source extends RBNBSource {
 
         } //end while (more unread bytes)
         
-        logger.debug("Sample results: " + sampleBuffer.toString());
-    
         // prepare the buffer to read in more bytes from the stream
         buffer.compact();
     
     
       } // end while (more socket bytes to read)
-      this.socket.close();
+      this.socketChannel.close();
         
     } catch ( IOException e ) {
       // handle exceptions
@@ -467,6 +505,8 @@ public class SBE37Source extends RBNBSource {
       failed = true;
       sapie.printStackTrace();
       return !failed;
+    } catch ( java.lang.InterruptedException ie ) {
+      ie.printStackTrace();
     }
     
     return !failed;
@@ -490,6 +530,7 @@ public class SBE37Source extends RBNBSource {
       // create the socket channel connection to the data source via the 
       // converter serial2IP converter      
       dataSocket = SocketChannel.open();
+      //dataSocket.configureBlocking(false);
       dataSocket.connect( new InetSocketAddress(host, portNumber));
       
       // if the connection to the source fails, also disconnect from the RBNB
@@ -571,12 +612,14 @@ public class SBE37Source extends RBNBSource {
     boolean result = false;
     
     // only send the command if the socket is connected
-    if ( this.socket.isConnected() ) {
-      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 4);
+    if ( this.socketChannel.isConnected() ) {
+      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 10);
       commandBuffer.put(command.getBytes());
+      commandBuffer.flip();
       
       try {
-        this.socket.write(commandBuffer);
+        this.socketChannel.write(commandBuffer);
+        logger.debug("Wrote " + command + " to the socket channel.");
         result = true;
         
       } catch (IOException ioe ) {
