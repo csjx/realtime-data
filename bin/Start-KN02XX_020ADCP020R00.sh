@@ -1,4 +1,26 @@
 #!/bin/bash
-cd /usr/local/bbl/trunk;./bin/KN02XX_020ADCP020R00-Source.sh > /var/log/rbnb/KN02XX_020ADCP020R00-Source.log 2>&1 &
-echo "Started ADCP Source driver to 20 meter node ADCP";
-echo "Run 'tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log' to view the streaming log."; 
+# set up the variables
+sourceName="KN02XX_020ADCP020R00";
+sourceType="ADCPSource";
+sourceString="20 meter 1200 kHz ADCP";
+bblHome="/usr/local/bbl/trunk";
+
+# start the instrument driver
+cd $bblHome;
+./bin/$sourceName-Source.sh > /var/log/rbnb/$sourceName-Source.log 2>&1 &
+
+# tail the log file to confirm the driver is running
+echo -e "\nStarted ADCP Source driver to 20 meter node ADCP\n";
+echo -e "Starting to view the 20 meter ADCP streaming log.\n"; 
+
+for i in $(seq 1 1 5)
+do # flash instructions on stopping the tail process
+ echo -en "\r** Type Control-C to stop viewing the log. **"; 
+ sleep 1;
+ echo -en "\r   Type Control-C to stop viewing the log.   "; 
+ sleep 1;
+done
+echo -e "\n";
+
+# start tailing the log file
+tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log; 
