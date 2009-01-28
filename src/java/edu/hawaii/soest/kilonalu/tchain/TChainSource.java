@@ -44,6 +44,11 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
@@ -162,6 +167,17 @@ public class TChainSource extends RBNBSource {
    * default values for the RBNB server name and port, source instrument name
    * and port, archive mode, archive frame size, and cache frame size. 
    */
+  
+   /** 
+    * The date format for the timestamp applied to the TChain sample 04 Aug 2008 09:15:01
+    */
+   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  
+  /**
+   * The timezone used for the sample date
+   */
+  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    
   public TChainSource() {
   }
 
@@ -305,6 +321,22 @@ public class TChainSource extends RBNBSource {
               if ( byteOne == 0x20 && byteTwo == 0x0A ) {
                 
                 sampleByteCount++; // add the last byte found to the count
+                
+                // add a delimiter to the end of the sample
+                byte[] delimiterAsBytes = new String(", ").getBytes("US-ASCII");
+                
+                for ( byte delim : delimiterAsBytes ) {
+                  sampleBuffer.put(delim);
+                  sampleByteCount++;
+                }
+                
+                // then add a timestamp to the end of the sample
+                DATE_FORMAT.setTimeZone(TZ);
+                byte[] sampleDateAsBytes = DATE_FORMAT.format(new Date()).getBytes("US-ASCII");
+                for ( byte b : sampleDateAsBytes ) {
+                  sampleBuffer.put(b);
+                  sampleByteCount++;
+                }
                 
                 // add the last byte found to the sample buffer
                 if ( sampleBuffer.remaining() > 0 ) {
