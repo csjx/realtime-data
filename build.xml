@@ -282,5 +282,4 @@
     <delete file="./${name}-src-${release}.tar" />
     <delete dir="${dist.dir}"/>
   </target>
-
 </project>
