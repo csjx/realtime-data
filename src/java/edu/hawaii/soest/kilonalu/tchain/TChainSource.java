@@ -280,17 +280,17 @@ public class TChainSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
-          //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
-          //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
-          //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
-          //             "sample pos: "   + sampleBuffer.position()                  + "\t" +
-          //             "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
-          //             "sample cnt: "   + sampleByteCount                          + "\t" +
-          //             "buffer pos: "   + buffer.position()                        + "\t" +
-          //             "buffer rem: "   + buffer.remaining()                       + "\t" +
-          //             "state: "        + state
-          //);
+          logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
+                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
+                       "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
+                       "sample pos: "   + sampleBuffer.position()                  + "\t" +
+                       "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
+                       "sample cnt: "   + sampleByteCount                          + "\t" +
+                       "buffer pos: "   + buffer.position()                        + "\t" +
+                       "buffer rem: "   + buffer.remaining()                       + "\t" +
+                       "state: "        + state
+          );
           
           // Use a State Machine to process the byte stream.
           // Start building an rbnb frame for the entire sample, first by 
@@ -305,7 +305,7 @@ public class TChainSource extends RBNBSource {
               
               // sample line is begun by '\n ' (newline, space)
               // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x0D && byteTwo == 0x20 ) {
+              if ( byteOne == 0x20 && byteTwo == 0x0D ) {
                 // we've found the beginning of a sample, move on
                 state = 1;
                 break;
@@ -318,12 +318,12 @@ public class TChainSource extends RBNBSource {
               
               // sample line is terminated by ' \r' (space, carraige return)
               // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x20 && byteTwo == 0x0A ) {
+              if ( byteOne == 0x0A && byteTwo == 0x20 ) {
                 
-                sampleByteCount++; // add the last byte found to the count
+                //sampleByteCount++; // add the last byte found to the count
                 
                 // add a delimiter to the end of the sample
-                byte[] delimiterAsBytes = new String(", ").getBytes("US-ASCII");
+                byte[] delimiterAsBytes = new String("     ").getBytes("US-ASCII");
                 
                 for ( byte delim : delimiterAsBytes ) {
                   sampleBuffer.put(delim);
@@ -339,14 +339,14 @@ public class TChainSource extends RBNBSource {
                 }
                 
                 // add the last byte found to the sample buffer
-                if ( sampleBuffer.remaining() > 0 ) {
-                  sampleBuffer.put(byteOne);
-                
-                } else {
-                  sampleBuffer.compact();
-                  sampleBuffer.put(byteOne);
-                  
-                }                
+                //if ( sampleBuffer.remaining() > 0 ) {
+                //  //sampleBuffer.put(byteOne);
+                //
+                //} else {
+                //  sampleBuffer.compact();
+                //  //sampleBuffer.put(byteOne);
+                //  
+                //}                
                 
                 // extract just the length of the sample bytes out of the
                 // sample buffer, and place it in the channel map as a 
@@ -358,7 +358,8 @@ public class TChainSource extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
+                String sampleString = new String(sampleArray, "US-ASCII");
+                rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
                 logger.info(
                   "flushed: "      + sampleByteCount          + "\t" +
