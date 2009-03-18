@@ -25,4 +25,4 @@ java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
  -s 192.168.100.60\
  -p 3333\
  -z 50000\
- -Z 7884000
+ -Z 31536000
