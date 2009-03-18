@@ -32,14 +32,27 @@ package edu.hawaii.soest.kilonalu.utilities;
  * allowed by the RBNB DataTurbine.  The types include 'int8', 'int16',
  * 'int32', 'int64', 'float32', 'float64', 'string', and 'bytearray'.
  */
-public enum EnsembleDataType {
+public enum RBNBDataType {
     
-    int8      , //represents an 8 bit integer data type
-    int16     , //represents an 16 bit integer data type
-    int32     , //represents an 32 bit integer data type
-    int64     , //represents an 64 bit integer data type
-    float32   , //represents an 32 bit float data type
-    float64   , //represents an 64 bit float data type
-    string    , //represents a string data type
-    bytearray   //represents a byte array data type
+  int8      , //represents an 8 bit integer data type
+  int16     , //represents an 16 bit integer data type
+  int32     , //represents an 32 bit integer data type
+  int64     , //represents an 64 bit integer data type
+  float32   , //represents an 32 bit float data type
+  float64   , //represents an 64 bit float data type
+  string    , //represents a string data type
+  bytearray , //represents a byte array data type
+  notype;     //used as a default when no type is given
+
+  /*
+   * A method to convert a string to a RBNBDataType object,
+   * used to compare strings to the enum values.
+   */
+  public static RBNBDataType toDataType(String str) {
+    try {
+      return valueOf(str);
+    } catch (Exception ex) {
+      return notype;
+    }
+  }
 }
