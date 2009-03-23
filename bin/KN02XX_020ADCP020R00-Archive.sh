@@ -1,5 +1,5 @@
 #!/bin/bash
-BBL_HOME=/usr/local/bbl/trunk
+BBL_HOME=/usr/local/bbl/trunk;
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
@@ -19,10 +19,11 @@ $BBL_HOME/lib/log4j.properties
 # connects to the server once per hour, every hour, and archives the previous
 # hour's worth of data collected.
 
-java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
+java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink \
  -s 192.168.100.60\
  -p 3333\
  -n KN02XX_020ADCP020R00\
  -c BinaryPD0EnsembleData\
  -k KN02XX_020ADCP020R00_BinaryPD0EnsembleData_FileArchiver\
+ -I hourly\
  -d /data/kilonalu/KN02XX_020ADCP020R00/BinaryPD0EnsembleData

@@ -1,5 +1,5 @@
 #!/bin/bash
-BBL_HOME=/usr/local/bbl/trunk
+BBL_HOME=/usr/local/bbl/trunk;
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
@@ -24,5 +24,6 @@ java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
  -p 3333\
  -n KN0101_010TCHN010R00\
  -c DecimalASCIISampleData\
+ -I hourly\
  -k KN0101_010TCHN010R00_DecimalASCIISampleData_FileArchiver\
  -d /data/kilonalu/KN0101_010TCHN010R00/DecimalASCIISampleData
