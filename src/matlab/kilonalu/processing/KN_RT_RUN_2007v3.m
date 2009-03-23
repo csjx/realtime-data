@@ -16,7 +16,10 @@ datmess = '';
 
 if ADCP
   % Create a new sink client to the DataTurbine
+  % temporarily point to the shore station data turbine CSJ 09/19/2008
   matlabSink = rbnb_sink('bbl.ancl.hawaii.edu:3333', 'MatlabADCPProcessingSink');
+  %matlabSink = rbnb_sink('168.105.160.139:3333', 'MatlabADCPProcessingSink');
+  %matlabSink = rbnb_sink('192.168.100.60:3333', 'MatlabADCPProcessingSink');
 
   % define the request details (get the latest 40 minutes of data)
   channelName = 'KN02XX_020ADCP020R00/BinaryPD0EnsembleData';
@@ -284,7 +287,7 @@ if ~isempty(nens) | YSI | LISST
     %suptext = ['Latest observation period: ' datestr(Tt(end)-PROCINT/60/24/2,'mm-dd-yyyy HH:MM') ' - ' datestr(Tt(end)+PROCINT/60/24/2,'HH:MM')];
     suptext = ['Latest observation period: ' datestr(Tnow-PROCINT/60/24/2,'mm-dd-yyyy HH:MM') ' - ' datestr(Tnow+PROCINT/60/24/2,'HH:MM')];
     cd(ldir);
-    KN_Plot2007v3;
+    KN_Plot2007v4;  % changed to v4, GP 8/8/08 to add history plot on velocity profile
     % Write output to ftp directory
     cd(ftpdir);
     saveas(f1,'VelProf_wk','jpeg');
@@ -307,7 +310,7 @@ if ~isempty(nens) | YSI | LISST
     mint = max([min(Tt) Tnow-trng/24]);
     maxt = Tnow+1/24;
     cd(ldir);
-    KN_Plot2007v3;
+    KN_Plot2007v4;  % changed to v4, GP 8/8/08 to add history plot on velocity profile
     % Write output to ftp directory
     cd(ftpdir);
     saveas(f1,'VelProf','jpeg');
@@ -326,6 +329,12 @@ if ~isempty(nens) | YSI | LISST
     end        
     fprintf('Completed Daily plots \n');
 
+    % copy 20m data to pawlak/incoming (workaround for 10m data - 11/14/08)
+    %f0 = ftp('ftp.soest.hawaii.edu'); % anonymous login
+    %cd(f0,'pawlak/incoming/20m');
+    % mput(f0,'*.jpg');
+    % close(f0);
+    
     % Archive and text file output
     KNArchive_2007;
     fprintf('Completed archiving \n');
