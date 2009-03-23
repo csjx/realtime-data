@@ -255,6 +255,7 @@ public class FileArchiverSink extends RBNBBase {
       
       // set the begin time of the duration 1 hour prior to the execution time
       beginArchiveCal.add(Calendar.HOUR_OF_DAY, -1);  
+      endArchiveCal.add(Calendar.SECOND, -1);
       sDate = beginArchiveCal.getTime();
       sTime = sDate.getTime();
       startTime = ((double) sTime) / 1000.0;
@@ -279,6 +280,7 @@ public class FileArchiverSink extends RBNBBase {
       
       // set the begin time of the duration 1 day prior to the execution time
       beginArchiveCal.add(Calendar.DATE, -1);  
+      endArchiveCal.add(Calendar.SECOND, -1);
       sDate = beginArchiveCal.getTime();
       sTime = sDate.getTime();
       startTime = ((double) sTime) / 1000.0;
@@ -303,6 +305,7 @@ public class FileArchiverSink extends RBNBBase {
 
         // set the begin time of the duration 1 day prior to the execution time
         beginArchiveCal.add(Calendar.DATE, -7);  
+        endArchiveCal.add(Calendar.SECOND, -1);
         sDate = beginArchiveCal.getTime();
         sTime = sDate.getTime();
         startTime = ((double) sTime) / 1000.0;
