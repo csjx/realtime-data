@@ -98,6 +98,11 @@ public class FileArchiverSink extends RBNBBase {
   /** the File extension for archived filenames */
   private String fileExtension = DEFAULT_FILE_EXTENSION;
 
+  /**
+   * The archive interval used to periodically archive data (in seconds)
+   */
+  private int archiveInterval;
+
   /** 
    * the default File path depth archived file directory paths.  The should
    * be one a SimpleDateFormat object of yyyy, MM, dd, HH, or mm.  It determines
@@ -129,8 +134,11 @@ public class FileArchiverSink extends RBNBBase {
   /** the end time for data export */
   private double endTime = Double.MAX_VALUE;
   
-  /** the Calendar representation of the FileArchiver start time (now)**/
+  /** the Calendar representation of the FileArchiver start time **/
   private static Calendar endArchiveCal;
+
+  /** the Calendar representation of the FileArchiver start time **/
+  private static Calendar beginArchiveCal;
   
   /** the event marker filter string */
   private String eventMarkerFilter;
@@ -181,34 +189,42 @@ public class FileArchiverSink extends RBNBBase {
         
     if ( fileArchiverSink.parseArgs(args) ) {
       
-      setupShutdownHook(fileArchiverSink);
-      
+      setupShutdownHook(fileArchiverSink);      
       setupProgressListener(fileArchiverSink);
       
-      // override the command line start and end times      
-      fileArchiverSink.setupArchiveTime(fileArchiverSink);
-      
-      TimerTask archiveData = new TimerTask() {
-        public void run() {
-          logger.debug("TimerTask.run() called.");
+      // archive data on a schedule
+      if ( fileArchiverSink.getArchiveInterval() > 0 ) {
+        // override the command line start and end times      
+        fileArchiverSink.setupArchiveTime(fileArchiverSink);
 
-          if ( fileArchiverSink.validateSetup() ) {          
-            fileArchiverSink.export();      
-            fileArchiverSink.setupArchiveTime(fileArchiverSink);
+        TimerTask archiveData = new TimerTask() {
+          public void run() {
+            logger.debug("TimerTask.run() called.");
+
+            if ( fileArchiverSink.validateSetup() ) {          
+              fileArchiverSink.export();      
+              fileArchiverSink.setupArchiveTime(fileArchiverSink);
+            }
           }
-        }
-      };
+        };
 
-      Timer archiveTimer = new Timer();
-      // run the archiveData timer task on the hour, every hour
-      archiveTimer.scheduleAtFixedRate(archiveData, endArchiveCal.getTime(), 3600000);
+        Timer archiveTimer = new Timer();
+        // run the archiveData timer task on the hour, every hour
+        archiveTimer.scheduleAtFixedRate(archiveData, 
+          endArchiveCal.getTime(), fileArchiverSink.getArchiveInterval() * 1000);
+      
+      // archive data once based on the start and end times  
+      } else {
+        fileArchiverSink.export();      
+        
+      }
     }
   }
   
   /**
    * A method that initializes time variables for the File Archiver class.  For 
    * now, it overides the start and end times provided on the command line
-   * and sets the rolls the end time forward to be on the hour, and sets the 
+   * and rolls the end time forward to be on the hour, and sets the 
    * start time to be one hour prior.  This results in hourly data files written
    * on the hour.
    */
@@ -217,25 +233,83 @@ public class FileArchiverSink extends RBNBBase {
     
     // remove the time ranges assumed from the command line args
     timeRanges.clear();
+        
+    long eTime; // intermediate end time variable
+    Date sDate; // intermediate start date variable
+    long sTime; // intermediate start time variable
     
-    // set the FileArchiver end time (now)
-    endArchiveCal = Calendar.getInstance();
-    // set the execution time to be on the upcoming hour    
-    endArchiveCal.clear(Calendar.MILLISECOND);
-    endArchiveCal.clear(Calendar.SECOND);
-    endArchiveCal.clear(Calendar.MINUTE);
-    endArchiveCal.add(Calendar.HOUR_OF_DAY, 1);
-    //endArchiveCal.add(Calendar.MINUTE, 2);
-    long eTime = (endArchiveCal.getTime()).getTime();
-    endTime = ((double) eTime) / 1000.0;
-    
-    /** the Calendar representation of the FileArchiver end time **/
-    Calendar beginArchiveCal = (Calendar) endArchiveCal.clone();
-    // set the end time of the duration 1 hour prior to the execution time
-    beginArchiveCal.add(Calendar.HOUR_OF_DAY, -1);  
-    Date sDate = beginArchiveCal.getTime();
-    long sTime = sDate.getTime();
-    startTime = ((double) sTime) / 1000.0;
+    // schedule hourly on the hour
+    if ( getArchiveInterval() == 3600 ) {
+      // set the execution time to be on the upcoming hour    
+      endArchiveCal = Calendar.getInstance();
+      endArchiveCal.clear(Calendar.MILLISECOND);
+      endArchiveCal.clear(Calendar.SECOND);
+      endArchiveCal.clear(Calendar.MINUTE);
+      endArchiveCal.add(Calendar.HOUR_OF_DAY, 1);
+      
+      eTime = (endArchiveCal.getTime()).getTime();
+      endTime = ((double) eTime) / 1000.0;
+
+      /** the Calendar representation of the FileArchiver begin time **/
+      beginArchiveCal = (Calendar) endArchiveCal.clone();
+      
+      // set the begin time of the duration 1 hour prior to the execution time
+      beginArchiveCal.add(Calendar.HOUR_OF_DAY, -1);  
+      sDate = beginArchiveCal.getTime();
+      sTime = sDate.getTime();
+      startTime = ((double) sTime) / 1000.0;
+      logger.debug("Next archive time will be " + endArchiveCal.getTime().toString());
+      logger.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+      
+    // else schedule daily on the day
+    } else if ( getArchiveInterval() == 86400 ) {
+      // set the execution time to be on the upcoming hour    
+      endArchiveCal = Calendar.getInstance();
+      endArchiveCal.clear(Calendar.MILLISECOND);
+      endArchiveCal.clear(Calendar.SECOND);
+      endArchiveCal.clear(Calendar.MINUTE);
+      endArchiveCal.set(Calendar.HOUR_OF_DAY, 0);
+      endArchiveCal.add(Calendar.DATE, 1);
+      
+      eTime = (endArchiveCal.getTime()).getTime();
+      endTime = ((double) eTime) / 1000.0;
+
+      /** the Calendar representation of the FileArchiver begin time **/
+      beginArchiveCal = (Calendar) endArchiveCal.clone();
+      
+      // set the begin time of the duration 1 day prior to the execution time
+      beginArchiveCal.add(Calendar.DATE, -1);  
+      sDate = beginArchiveCal.getTime();
+      sTime = sDate.getTime();
+      startTime = ((double) sTime) / 1000.0;
+      logger.debug("Next archive time will be " + endArchiveCal.getTime().toString());
+      logger.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+      
+      // else schedule weekly on the day
+      } else if ( getArchiveInterval() == 604800 ) {
+        // set the execution time to be on the upcoming hour    
+        endArchiveCal = Calendar.getInstance();
+        endArchiveCal.clear(Calendar.MILLISECOND);
+        endArchiveCal.clear(Calendar.SECOND);
+        endArchiveCal.clear(Calendar.MINUTE);
+        endArchiveCal.set(Calendar.HOUR_OF_DAY, 0);
+        endArchiveCal.add(Calendar.DATE, 7);
+
+        eTime = (endArchiveCal.getTime()).getTime();
+        endTime = ((double) eTime) / 1000.0;
+
+        /** the Calendar representation of the FileArchiver begin time **/
+        beginArchiveCal = (Calendar) endArchiveCal.clone();
+
+        // set the begin time of the duration 1 day prior to the execution time
+        beginArchiveCal.add(Calendar.DATE, -7);  
+        sDate = beginArchiveCal.getTime();
+        sTime = sDate.getTime();
+        startTime = ((double) sTime) / 1000.0;
+        logger.debug("Next archive time will be " + endArchiveCal.getTime().toString());
+        logger.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+
+      }
   }
 
   /**
@@ -279,12 +353,13 @@ public class FileArchiverSink extends RBNBBase {
    */
   protected Options setOptions() {
     Options opt = setBaseOptions(new Options()); // uses h, s, p
-    opt.addOption("k", true, "Sink Name *" + DEFAULT_SINK_NAME);
-    opt.addOption("n", true, "Source Name *" + DEFAULT_SOURCE_NAME);
-    opt.addOption("c", true, "Source Channel Name *" + DEFAULT_CHANNEL_NAME);
-    opt.addOption("d", true, "Base directory path *" + DEFAULT_ARCHIVE_DIRECTORY);
+    opt.addOption("k", true, "Sink Name (defaults to " + DEFAULT_SINK_NAME + ")");
+    opt.addOption("n", true, "Source Name (defaults to " + DEFAULT_SOURCE_NAME + ")");
+    opt.addOption("c", true, "Source Channel Name (defaults to " + DEFAULT_CHANNEL_NAME + ")");
+    opt.addOption("d", true, "Base directory path (defaults to " + DEFAULT_ARCHIVE_DIRECTORY + ")");
     opt.addOption("S", true, "Start time (defauts to now)");
     opt.addOption("E", true, "End time (defaults to forever)");
+    opt.addOption("I", true, "Interval (hourly, daily, or weekly) to periodically archive data\n Mututally exclusive with -E and -S");    
     opt.addOption(OptionBuilder.withDescription("Event markers to filter start/stop times")
                                .hasOptionalArg()
                                .create("M"));
@@ -388,6 +463,8 @@ public class FileArchiverSink extends RBNBBase {
           secondsResetStart = Integer.parseInt(a);
           startTime = System.currentTimeMillis()/1000d - secondsResetStart;
           endTime = System.currentTimeMillis()/1000d;
+          endArchiveCal = Calendar.getInstance();
+          
         } catch (NumberFormatException nf) {
           logger.debug("Please enter a number for seconds to reset the start to.");
           return false;
@@ -408,6 +485,30 @@ public class FileArchiverSink extends RBNBBase {
       }
     }
 
+    // handle the -I option, test if it's an allowed value
+    if ( cmd.hasOption("I") ) {
+      String interval = cmd.getOptionValue("I");
+      if ( interval != null ) {
+        try {
+          if ( interval.equals("hourly") ) {
+            setArchiveInterval(3600);
+            
+          } else if ( interval.equals("daily") ) {
+            setArchiveInterval(86400);
+            
+          } else if ( interval.equals("weekly") ) {
+            setArchiveInterval(604800);
+            
+          } else {
+            logger.debug("Please enter either hourly, daily, or weekly for the archiving interval.");
+            
+          }
+        } catch (NumberFormatException nf) {
+          return false;
+        }
+      }
+    }
+    
     channelPath = sourceName + "/" + channelName;
 
     return validateSetup();
@@ -616,6 +717,24 @@ public class FileArchiverSink extends RBNBBase {
   public String getEventMarkerFilter() {
     return eventMarkerFilter;
   }
+
+  /**
+   * A method that gets the archive interval 
+   * 
+   * @return the archive interval in seconds
+   */
+  public int getArchiveInterval() {
+    return this.archiveInterval;
+  }
+
+  /**
+   * A method that sets archive interval (in seconds) 
+   *
+   * @param interval  the archive interval (in seconds)
+   */
+  public void setArchiveInterval(int interval) {
+    this.archiveInterval = interval;
+  }
   
   /**
    * Export data to disk.
@@ -766,36 +885,31 @@ public class FileArchiverSink extends RBNBBase {
         break;
       }
       
-      byte[][] data = m.GetDataAsByteArray(index);
-      //for (int i=0; i<data.length; i++) {
+      // convert sec to millisec
+      double timestamp = m.GetTimes(index)[0];
+      long unixTime = (long) (timestamp * 1000.0);        
+      File output = 
+      FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
+                                      filePrefix, filePathDepth, 
+                                      fileExtension);
+      
+      if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
         
-        // get the start timestamp
-        double timestamp = m.GetTimes(index)[0];
-        //if (timestamp < startTime) {
-        //  continue;
-        //} else if (timestamp > endTime) {
-        //  return frameCount;
-        //}
+        byte[] data = m.GetData(index);
+        int numberOfFrames = (m.GetTimes(index)).length;
         
-        // convert sec to millisec
-        long unixTime = (long) (timestamp * 1000.0);        
-        File output = 
-        FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
-                                        filePrefix, filePathDepth, 
-                                        fileExtension);
-        if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
-          FileOutputStream out = new FileOutputStream(output);
-          for ( int i = 0; i < data.length; i++ ) {
-            timestamp = m.GetTimes(index)[i]; // get the start timestamp
-            out.write(data[i]);
-            fireProgressUpdate(baseTime + (timestamp - startTime));
+        FileOutputStream out = new FileOutputStream(output);
+        for ( int i = 0; i < data.length; i++ ) {
+          
+          out.write(data[i]);
+          if ( i % data.length/numberOfFrames == 0 ) {
             frameCount++;
           }
-          out.close();
-          doExport = false;
         }
-        
-      //}     
+        out.close();
+        doExport = false;
+      }
+    
     }
 
     return frameCount;
