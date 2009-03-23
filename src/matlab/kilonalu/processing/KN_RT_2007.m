@@ -95,7 +95,7 @@ prevdat = 0;  % time for previously analyzed file
 % use prevtim = 0 for new deployment (no old data to append)
 % use prevtim = 1 to continue existing deployment
 % use prevtim = -1 to interpolate previous deployment data onto new depths
-prevtim = 0;  
+prevtim = 1;  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%  NOT IN USE   %%%%%%%%%%%%%%%%%
