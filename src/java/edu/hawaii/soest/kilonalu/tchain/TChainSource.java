@@ -374,14 +374,8 @@ public class TChainSource extends RBNBSource {
                 String sampleString = new String(sampleArray, "US-ASCII");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info(
-                  "flushed: "      + sampleByteCount          + "\t" +
-                  "sample pos: "   + sampleBuffer.position()  + "\t" +
-                  "sample rem: "   + sampleBuffer.remaining() + "\t" +
-                  "buffer pos: "   + buffer.position()        + "\t" +
-                  "buffer rem: "   + buffer.remaining()       + "\t" +
-                  "state: "        + state
-                );
+                logger.info("Sample: " + sampleString);
+                logger.info("flushed data to the DataTurbine. ");
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
