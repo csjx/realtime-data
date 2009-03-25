@@ -424,19 +424,11 @@ public class SBE37Source extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
+                String sampleString = new String(sampleArray, "US-ASCII");
+                rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                String sampleString = new String(sampleArray);
                 logger.info("Sample: " + sampleString);
                 logger.info("flushed data to the DataTurbine. ");
-                //logger.info(
-                //  "flushed: "      + sampleByteCount          + "\t" +
-                //  "sample pos: "   + sampleBuffer.position()  + "\t" +
-                //  "sample rem: "   + sampleBuffer.remaining() + "\t" +
-                //  "buffer pos: "   + buffer.position()        + "\t" +
-                //  "buffer rem: "   + buffer.remaining()       + "\t" +
-                //  "state: "        + state
-                //);
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
