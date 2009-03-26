@@ -30,7 +30,6 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import edu.hawaii.soest.kilonalu.utilities.RBNBDataType;
 import java.lang.StringBuffer;
 
 import java.io.PrintWriter;
@@ -139,18 +138,6 @@ public class TChainSource extends RBNBSource {
    * The TCP port to connect to on the Source host machine 
    */
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
-
-  /*
-   *  A default source data type for the given source instrument
-   */
-  private final String DEFAULT_SOURCE_DATA_TYPE = "bytearray";  
-
-  /**
-   * The data type of this Source, as defined by the accepted
-   * RBNB data types of int8, int16, int32, int64, float32,
-   * float64, string, or bytearray. 
-   */
-  private String sourceDataType = DEFAULT_SOURCE_DATA_TYPE;
 
   /**
    * The number of bytes in the ensemble as each byte is read from the stream
@@ -516,13 +503,6 @@ public class TChainSource extends RBNBSource {
   }
 
   /**
-   * A method that gets the data type of the source 
-   */
-  public String getSourceDataType() {
-    return this.sourceDataType;
-  }
-
-  /**
    * A method that returns the versioning info for this file.  In this case, 
    * it returns a String that includes the Subversion LastChangedDate, 
    * LastChangedBy, LastChangedRevision, and HeadURL fields.
@@ -655,55 +635,6 @@ public class TChainSource extends RBNBSource {
       }
     }
 
-    // handle the -T option, test if it's an allowed value
-    if ( command.hasOption("T") ) {
-      String dataType = command.getOptionValue("T");
-      if ( dataType != null ) {
-        try {
-          // compare the string to the enum values
-          switch( RBNBDataType.toDataType(dataType) ) {
-            case int8:
-              setSourceDataType(dataType);
-              break;
-            case int16:
-              setSourceDataType(dataType);
-              break;
-            case int32:
-              setSourceDataType(dataType);
-              break;
-            case int64:
-              setSourceDataType(dataType);
-              break;
-            case float32:
-              setSourceDataType(dataType);
-              break;
-            case float64:
-              setSourceDataType(dataType);
-              break;
-            case string:
-              setSourceDataType(dataType);
-              break;
-            case bytearray:
-              setSourceDataType(dataType);
-              break;
-            default:
-              throw new Exception("Data type string " +
-                                  dataType +
-                                  " is not allowed. Please use one of" +
-                                  " int8, int16, int32, int64, float32" +
-                                  " float64, string, or bytearray.");
-          }
-
-        } catch ( java.lang.Exception dte ){
-          logger.info("Data type string " +
-                      " is not allowed. Please use one of" +
-                      " int8, int16, int32, int64, float32" +
-                      " float64, string, or bytearray.");
-          return false;
-        }
-      }
-    }
-
     // handle the -C option
     if ( command.hasOption("C") ) {
       String channelName = command.getOptionValue("C");
@@ -756,15 +687,6 @@ public class TChainSource extends RBNBSource {
   }
 
   /**
-   * A method that sets the data type of the source 
-   *
-   * @param dataType  the data type of the source instrument
-   */
-  public void setSourceDataType(String dataType) {
-    this.sourceDataType = dataType;
-  }
-
-  /**
    * A method that sets the command line options for this class.  This method 
    * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
    * properties such as the sourceHostName, sourceHostPort, serverName, and
@@ -788,8 +710,6 @@ public class TChainSource extends RBNBSource {
     // add command line options here
     options.addOption("H", true, "Source host name or IP *" + getHostName());
     options.addOption("P", true, "Source host port number *" + getHostPort());    
-    options.addOption("T", true, "Source data type (int8, int16, int32, int64, " +
-                      "float32, float64, string, bytearray) *" + getSourceDataType());    
     options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
     //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
