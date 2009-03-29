@@ -543,6 +543,7 @@ classdef CTDProcessor < hgsetget & dynamicprops
       %============
       % Plotting
       %============
+      close(gcf);
       numberOfFigures = length(figureYAxisVariables{1});
       figureRectangle = [1950 800 800 800];
       paperPosition = [0 0 8.5 11.0];
