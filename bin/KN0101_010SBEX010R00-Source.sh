@@ -25,5 +25,5 @@ java edu.hawaii.soest.kilonalu.ctd.SBE37Source\
  -C DecimalASCIISampleData\
  -s 192.168.100.60\
  -p 3333\
- -z 375000\
- -Z 7884000
+ -z 50000\
+ -Z 31536000
