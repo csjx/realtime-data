@@ -53,6 +53,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.DecoderException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -145,6 +146,16 @@ public class TChainSource extends RBNBSource {
   private int sampleByteCount = 0;
   
   /**
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /**
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+
+  /**
    * The Logger instance used to log system messages 
    */
   private static Logger logger = Logger.getLogger(TChainSource.class);
@@ -154,6 +165,41 @@ public class TChainSource extends RBNBSource {
   private boolean readyToStream = false;
   
   private Thread streamingThread;
+
+  /**
+   * The default field delimiter string used to separate data fields in the sample
+   */
+  private String DEFAULT_FIELD_DELIMITER = "  ";
+
+  /**
+   * The field delimiter string used to separate data fields in the sample
+   */
+  private String fieldDelimiter = DEFAULT_FIELD_DELIMITER;
+
+  /**
+   * The default first byte of the sample delimiter (i.e for Windows
+   * line endings (\r\n) the byte is 0x0D (the \r)
+   */
+  private final byte DEFAULT_FIRST_DELIMITER_BYTE = 0x0A;
+
+  /**
+   * The default first byte of the sample delimiter (i.e for Windows
+   * line endings (\r\n) the byte is 0x0D (the \r)
+   */
+  private final byte DEFAULT_SECOND_DELIMITER_BYTE = 0x0D;
+
+  /**
+   * The first byte of the sample delimiter (i.e for Windows
+   * line endings (\r\n) the byte is 0x0D (the \r)
+   */
+  private byte firstDelimiterByte = DEFAULT_FIRST_DELIMITER_BYTE;
+
+  /**
+   * The default first byte of the sample delimiter (i.e for Windows
+   * line endings (\r\n) the byte is 0x0D (the \r)
+   */
+  private byte secondDelimiterByte = DEFAULT_SECOND_DELIMITER_BYTE;
+
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
    * execution of the data streaming Thread should wait before re-executing
@@ -269,7 +315,6 @@ public class TChainSource extends RBNBSource {
       // add a channel of data that will be pushed to the server.  
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
-      int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
             
       // while there are bytes to read from the socket ...
       while ( socket.read(buffer) != -1 || buffer.position() > 0) {
@@ -280,17 +325,18 @@ public class TChainSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
-                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
-                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
-                       "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
-                       "sample pos: "   + sampleBuffer.position()                  + "\t" +
-                       "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
-                       "sample cnt: "   + sampleByteCount                          + "\t" +
-                       "buffer pos: "   + buffer.position()                        + "\t" +
-                       "buffer rem: "   + buffer.remaining()                       + "\t" +
-                       "state: "        + state
-          );
+         logger.debug("char: " + (char) byteOne                                   + "\t" + 
+                      "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+                      "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
+                      "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
+                      "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
+                      "sample pos: "   + sampleBuffer.position()                  + "\t" +
+                      "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
+                      "sample cnt: "   + sampleByteCount                          + "\t" +
+                      "buffer pos: "   + buffer.position()                        + "\t" +
+                      "buffer rem: "   + buffer.remaining()                       + "\t" +
+                      "state: "        + state
+         );
           
           // Use a State Machine to process the byte stream.
           // Start building an rbnb frame for the entire sample, first by 
@@ -303,10 +349,11 @@ public class TChainSource extends RBNBSource {
     
             case 0:
               
-              // sample line is begun by '\n ' (newline, space)
+              // sample line ending is '\r\n' (carraige return, newline)
               // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x20 && byteTwo == 0x0D ) {
-                // we've found the beginning of a sample, move on
+              if ( byteOne == this.firstDelimiterByte && 
+                   byteTwo == this.secondDelimiterByte ) {
+                // we've found the end of a sample, move on
                 state = 1;
                 break;
     
@@ -316,14 +363,18 @@ public class TChainSource extends RBNBSource {
             
             case 1: // read the rest of the bytes to the next EOL characters
               
-              // sample line is terminated by ' \r' (space, carraige return)
+              // sample line is terminated by record delimiter bytes (usually \r\n or \n)
               // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x0A && byteTwo == 0x20 ) {
+              if ( byteOne == this.firstDelimiterByte && 
+                   byteTwo == this.secondDelimiterByte ) {
                 
-                //sampleByteCount++; // add the last byte found to the count
-                
-                // add a delimiter to the end of the sample
-                byte[] delimiterAsBytes = new String("     ").getBytes("US-ASCII");
+                // rewind the sample to overwrite the line ending so we can add
+                // in the timestamp (then add the line ending)
+                sampleBuffer.position(sampleBuffer.position() - 1);
+                --sampleByteCount;
+
+                // add the delimiter to the end of the sample.
+                byte[] delimiterAsBytes = getFieldDelimiter().getBytes("US-ASCII");
                 
                 for ( byte delim : delimiterAsBytes ) {
                   sampleBuffer.put(delim);
@@ -338,31 +389,39 @@ public class TChainSource extends RBNBSource {
                   sampleByteCount++;
                 }
                 
-                // add the last byte found to the sample buffer
-                //if ( sampleBuffer.remaining() > 0 ) {
-                //  //sampleBuffer.put(byteOne);
-                //
-                //} else {
-                //  sampleBuffer.compact();
-                //  //sampleBuffer.put(byteOne);
-                //  
-                //}                
+                // add the last two bytes found (usually \r\n) to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                  sampleByteCount++;
+                  sampleBuffer.put(byteTwo);
+                  sampleByteCount++;
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  sampleByteCount++;
+                  sampleBuffer.put(byteTwo);
+                  sampleByteCount++;
+                  
+                }                
                 
                 // extract just the length of the sample bytes out of the
                 // sample buffer, and place it in the channel map as a 
                 // byte array.  Then, send it to the data turbine.
                 byte[] sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
                 String sampleString = new String(sampleArray, "US-ASCII");
+                int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info("Sample: " + sampleString);
-                logger.info("flushed data to the DataTurbine. ");
+                logger.info("Sample: " + 
+                            sampleString.substring(0, sampleString.length() - 2) + 
+                            " sent data to the DataTurbine. ");
+                logger.info("ChannelMap: " + rbnbChannelMap.toString());
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
@@ -370,9 +429,8 @@ public class TChainSource extends RBNBSource {
                   byteFour  = 0x00;
                   sampleBuffer.clear();
                   sampleByteCount = 0;
-                  //rbnbChannelMap.Clear();                      
+                  rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-                  logger.debug("sampleBuffer: " + sampleBuffer.toString());
                   //state = 0;
                   
               } else { // not 0x0D20
@@ -479,6 +537,16 @@ public class TChainSource extends RBNBSource {
    }
    
   /**
+   * A method that gets the field delimiter string, which is used to append
+   * a timestamp at the end of the sample using the correct delimiter.
+   *
+   * @return delimiter  the delimiter as a string of characters
+   */
+   public String getFieldDelimiter() {
+     return this.fieldDelimiter;
+   }
+  
+  /**
    * A method that returns the domain name or IP address of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
    */
@@ -486,6 +554,15 @@ public class TChainSource extends RBNBSource {
     return this.sourceHostName;
   }
 
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
   /**
    * A method that returns the name of the RBNB channel that contains the 
    * streaming data from this instrument
@@ -533,11 +610,6 @@ public class TChainSource extends RBNBSource {
 
   public static void main (String args[]) {
     
-    // Set up a simple logger that logs to the console
-    BasicConfigurator.configure();
-    
-    logger.info("TChainSource.main() called.");
-    
     try {
       // create a new instance of the TChainSource object, and parse the command 
       // line arguments as settings for this instance
@@ -546,6 +618,11 @@ public class TChainSource extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( tChainSource.parseArgs(args) ) {
+
+        // Set up a simple logger that logs to the console
+        PropertyConfigurator.configure(tChainSource.getLogConfigurationFile());
+        logger.info("TChainSource.main() called.");
+    
         tChainSource.start();
       }
       
@@ -643,6 +720,50 @@ public class TChainSource extends RBNBSource {
       }
     }
 
+    // handle the -d option
+    if ( command.hasOption("d") ) {
+      String delimiter = command.getOptionValue("d");
+      if ( delimiter != null ) {
+        setFieldDelimiter(delimiter);
+      }
+    }
+
+    // handle the -l option
+    if ( command.hasOption("l") ) {
+      String lineEnding = command.getOptionValue("l");
+      if ( lineEnding != null ) {
+        try {
+         
+          String[] endingBytes = lineEnding.split(",");
+
+          if ( endingBytes.length == 2 ) {
+           byte[] firstByte   = Hex.decodeHex(endingBytes[0].trim().toCharArray());      
+           byte[] secondByte  = Hex.decodeHex(endingBytes[1].trim().toCharArray());      
+           setFirstDelimiterByte(firstByte[0]);
+           setSecondDelimiterByte(secondByte[0]);
+
+          } else if ( endingBytes.length == 1 ) {
+           byte[] firstByte2  = Hex.decodeHex(endingBytes[0].trim().toCharArray());      
+           setFirstDelimiterByte(firstByte2[0]);
+
+          } else {
+            throw new Exception("The number of delimiter bytes must be one or two.");
+
+          }
+
+        } catch (org.apache.commons.codec.DecoderException de ) {
+          logger.info("Please set the record delimiter (-l) with a one or two byte" +
+                       " comma-sparated sequence in hexadecimal format, such as 0D,0A" +
+                       " (which represents a Windows line ending \\r\\n).");
+
+        } catch (java.lang.Exception e ) {
+          logger.info("Please set the record delimiter (-l) with a one or two byte" +
+                       " comma-sparated sequence in hexadecimal format, such as 0D,0A" +
+                       " (which represents a Windows line ending \\r\\n).");
+        }
+      }
+    }
+
     return true;
   }
 
@@ -654,6 +775,47 @@ public class TChainSource extends RBNBSource {
    */
   public void setBuffersize(int bufferSize) {
     this.bufferSize = bufferSize;
+  }
+  
+  /**
+   * A method that sets the field delimiter string, which is used to append
+   * a timestamp at the end of the sample using the correct delimiter.
+   *
+   * @param delimiter  the delimiter as a string of characters
+   */
+   public void setFieldDelimiter(String delimiter) {
+     this.fieldDelimiter = delimiter;
+   }
+
+  /**
+   * A method that sets the first delimiter byte of the record delimiter.  For
+   * instance, a Windows line ending is 0x0A,0x0D (\r\n), and this method
+   * sets the 0x0A as the first delimiter byte for evauluating the data stream.
+   *
+   * @param delimiterByte  the first delimiter byte character
+   */
+   public void setFirstDelimiterByte(byte delimiterByte) {
+     this.firstDelimiterByte = delimiterByte;
+   }
+
+  /**
+   * A method that sets the second delimiter byte of the record delimiter.  For
+   * instance, a Windows line ending is 0x0A,0x0D (\r\n), and this method
+   * sets the 0x0A as the second delimiter byte for evauluating the data stream.
+   *
+   * @param delimiterByte  the second delimiter byte character
+   */
+   public void setSecondDelimiterByte(byte delimiterByte) {
+     this.secondDelimiterByte = delimiterByte;
+   }
+
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
   }
   
   /**
@@ -708,9 +870,14 @@ public class TChainSource extends RBNBSource {
     // -Z "Archive size"
     
     // add command line options here
-    options.addOption("H", true, "Source host name or IP *" + getHostName());
-    options.addOption("P", true, "Source host port number *" + getHostPort());    
-    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
+    options.addOption("H", true, "Source host name or IP (defaults to " + getHostName() + ").");
+    options.addOption("P", true, "Source host port number (defaults to " + getHostPort() + ").");    
+    options.addOption("C", true, "RBNB source channel name (defaults to " + getRBNBChannelName() + ").");
+    options.addOption("d", true, "The field delimiter string (characters between columns)" +
+                                 "(defaults to two space characters \"  \".");
+    options.addOption("l", true, "The line ending characters (record delimiter) as a comma" +
+                                 " separated sequence of one or two bytes in hexadecimal format" +
+                                 " (i.e. \"0D,0A\" represents a Windows line ending \\r\\n)");
     //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
     return options;
