@@ -1,8 +1,8 @@
 /**
  *  Copyright: 2007 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To convert a Seacat ASCII data source into RBNB Data Turbine
- *             frames for archival and realtime access.
+ *    Purpose: To convert a Davis Scientific Vantage Pro 2 ASCII data source into 
+ *             RBNB Data Turbine frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
  * $HeadURL: $
@@ -58,8 +58,8 @@ import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
- * A simple class used to harvest a decimal ASCII data stream from a Seabird 
- * SBE37-SMP MicroCAT) over a TCP socket connection  to a 
+ * A simple class used to harvest a decimal ASCII data stream from a Davis
+ * Scientif Vantage Pro 2 weather station over a TCP socket connection  to a 
  * serial2ip converter host. The data stream is then converted into RBNB frames 
  * and pushed into the RBNB DataTurbine real time server.  This class extends 
  * org.nees.rbnb.RBNBSource, which in turn extends org.nees.rbnb.RBNBBase, 
@@ -125,7 +125,7 @@ public class DavisWxSource extends RBNBSource {
   /*
    *  A default source TCP port for the given source instrument
    */  
-  private final int DEFAULT_SOURCE_HOST_PORT  = 2103;
+  private final int DEFAULT_SOURCE_HOST_PORT  = 2102;
 
   /**
    * The TCP port to connect to on the Source host machine 
@@ -167,14 +167,30 @@ public class DavisWxSource extends RBNBSource {
    */
   private static Logger logger = Logger.getLogger(DavisWxSource.class);
 
+  /*
+   * An integer value indicating the execution state.  This is used by the 
+   * execute() method while parsing the stream of bytes from the instrument
+   */
   protected int state = 0;
   
+  /*
+   * A boolean field indicating if the instrument connection is ready to stream
+   */
   private boolean readyToStream = false;
 
+  /*
+   * A boolean field indicating if a command has been sent to the instrument
+   */
   private boolean sentCommand = false;
   
+  /*
+   * The thread that is run for streaming data from the instrument
+   */
   private Thread streamingThread;
   
+  /*
+   * The socket channel used to establish TCP communication with the instrument
+   */
   private SocketChannel socketChannel;
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
@@ -330,9 +346,9 @@ public class DavisWxSource extends RBNBSource {
                         
             case 0:
               
-              // sample line is begun by "LO" (the first part of "LOOP")
+              // sample line is begun by "ACK L" (the first part of ACK + "LOOP")
               // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x4F && byteTwo == 0x4C ) {
+              if ( byteOne == 0x4C && byteTwo == 0x06 ) {
                 // we've found the beginning of a sample, move on
                 state = 1;
                 break;
@@ -343,7 +359,7 @@ public class DavisWxSource extends RBNBSource {
             
             case 1: // read the rest of the bytes to the next EOL characters
               
-              // sample line is terminated by "\r\n"
+              // sample line is terminated by "\n\r"
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0D && byteTwo == 0x0A ) {
                 
