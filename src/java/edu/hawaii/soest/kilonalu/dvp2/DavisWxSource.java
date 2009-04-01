@@ -125,7 +125,7 @@ public class DavisWxSource extends RBNBSource {
   /*
    *  A default source TCP port for the given source instrument
    */  
-  private final int DEFAULT_SOURCE_HOST_PORT  = 2102;
+  private final int DEFAULT_SOURCE_HOST_PORT  = 2101;
 
   /**
    * The TCP port to connect to on the Source host machine 
