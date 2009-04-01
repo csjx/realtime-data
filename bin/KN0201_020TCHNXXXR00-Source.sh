@@ -23,6 +23,8 @@ java edu.hawaii.soest.kilonalu.tchain.TChainSource\
  -P 2101\
  -S KN0201_020TCHNXXXR00\
  -C DecimalASCIISampleData\
+ -d "    "\
+ -l "0D,0A"\
  -s 192.168.100.60\
  -p 3333\
  -z 50000\
