@@ -21,7 +21,7 @@ java edu.hawaii.soest.kilonalu.dvp2.DavisWxSource\
  -P 2101\
  -S KNWXXX_XXXDVP2XXXR00\
  -C DecimalASCIISampleData\
- -s bbl.ancl.hawaii.edu\
+ -s 192.168.103.50\
  -p 3333\
  -z 50000\
  -Z 31536000
