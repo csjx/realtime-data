@@ -18,12 +18,13 @@ $BBL_HOME/lib/log4j.properties
 # CTD instrument (15/minute), which equates to about 69 bytes of data per frame,
 # depending on the CTD configuration. With this ring buffer request, this source
 # use approximately 25MB of RAM, and 543MB of disk storage (in a 1 year period).
+# -H 68.25.65.111\
 java edu.hawaii.soest.kilonalu.ctd.CTDSource\
- -H 68.25.65.111\
+ -H 68.25.35.242\
  -P 5111\
  -S AW01XX_002CTDXXXXR00\
  -C DecimalASCIISampleData\
- -s localhost\
+ -s 192.168.103.50\
  -p 3333\
- -z 375000\
- -Z 7884000
+ -z 50000\
+ -Z 31536000

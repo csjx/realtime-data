@@ -12,14 +12,14 @@ $BBL_HOME/lib/log4j.properties
 
 # run the DavisWxSource driver, connecting to the Wx station @ 168.105.160.135:2101
 # and to the RBNB server @ bbl.ancl.hawaii.edu:3333, defining the source name as
-# 'KNWXXX_000DVP2000R00' and the data channel as 'DecimalASCIISampleData'.  The 
+# 'KNWXXX_XXXDVP2XXXR00' and the data channel as 'DecimalASCIISampleData'.  The 
 # client is also requesting a cache size of 50000 frames, and an archive size
 # of 31536000 frames.  The driver can currently only be run from bbl.ancl.hawaii.edu
 # since the portserver it's connecting to filters requests from other IPs.
 java edu.hawaii.soest.kilonalu.dvp2.DavisWxSource\
  -H 168.105.160.135\
  -P 2101\
- -S KNWXXX_000DVP2000R00\
+ -S KNWXXX_XXXDVP2XXXR00\
  -C DecimalASCIISampleData\
  -s bbl.ancl.hawaii.edu\
  -p 3333\
