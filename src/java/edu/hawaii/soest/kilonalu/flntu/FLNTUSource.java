@@ -44,11 +44,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-import java.text.SimpleDateFormat;
-
-import java.util.Date;
-import java.util.TimeZone;
-
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
@@ -318,12 +313,6 @@ public class FLNTUSource extends RBNBSource {
          );
           
           // Use a State Machine to process the byte stream.
-          // Start building an rbnb frame for the entire sample, first by 
-          // inserting a timestamp into the channelMap.  This time is merely
-          // the time of insert into the data turbine, not the time of
-          // observations of the measurements.  That time should be parsed out
-          // of the sample in the Sink client code
-    
           switch( state ) {
     
             case 0:
