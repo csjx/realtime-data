@@ -15,7 +15,7 @@ $BBL_HOME/lib/log4j.properties
 # 'KN0101_010FLNT010R00' and the data channel as 'DecimalASCIISampleData'.  The 
 # client is also requesting a cache size of 50000 frames, and an archive size
 # of 31536000 frames.
-java edu.hawaii.soest.kilonalu.tchain.FLNTUSource\
+java edu.hawaii.soest.kilonalu.flntu.FLNTUSource\
  -H 192.168.100.136\
  -P 2102\
  -S KN0101_010FLNT010R00\
