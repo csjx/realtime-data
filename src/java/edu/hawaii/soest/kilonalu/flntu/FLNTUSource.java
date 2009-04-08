@@ -383,7 +383,7 @@ public class FLNTUSource extends RBNBSource {
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
                 logger.info("Sample: " + 
-                            sampleString.substring(0, sampleString.length() - 1) + 
+                            sampleString.substring(0, sampleString.length() - 2) + 
                             " sent data to the DataTurbine. ");                
                 byteOne   = 0x00;
                 byteTwo   = 0x00;
