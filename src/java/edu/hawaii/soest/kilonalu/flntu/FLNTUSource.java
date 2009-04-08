@@ -317,13 +317,13 @@ public class FLNTUSource extends RBNBSource {
     
             case 0:
               
-              // sample sets begin with 'mvs 1\n' and end with 'mvs 0\n'.  Find the 
-              // beginning of the sample set using the 4-byte window (s 1\n)
+              // sample sets begin with 'mvs 1\r\n' and end with 'mvs 0\r\n'.  Find the 
+              // beginning of the sample set using the 4-byte window (s 1\r\n)
               // note bytes are in reverse order in the FIFO window
               if ( byteOne   == 0x0A && 
-                   byteTwo   == 0x31 &&
-                   byteThree == 0x20 &&
-                   byteFour  == 0x73 ) {
+                   byteTwo   == 0x0D &&
+                   byteThree == 0x31 &&
+                   byteFour  == 0x20 ) {
                 // we've found the beginning of a sample set, move on
                 state = 1;
                 break;
@@ -334,12 +334,12 @@ public class FLNTUSource extends RBNBSource {
             
             case 1: // read the rest of the bytes to the next EOL characters
               
-              // sample line is terminated by record delimiter byte (\n)
+              // sample line is terminated by record delimiter byte (\r\n)
               // note bytes are in reverse order in the FIFO window
               if ( byteOne   == 0x0A && 
-                   byteTwo   == 0x30 &&
-                   byteThree == 0x20 &&
-                   byteFour  == 0x73 ) {
+                   byteTwo   == 0x0D &&
+                   byteThree == 0x30 &&
+                   byteFour  == 0x20 ) {
               
                 // we've found the sample set ending, clear buffers and return
                 // to state 0 to wait for the next set
@@ -354,7 +354,7 @@ public class FLNTUSource extends RBNBSource {
                 state = 0;
                 
               // if we're not at the sample set end, look for individual samples    
-              } else if ( byteOne == 0x0A  ) { 
+              } else if ( byteOne == 0x0A && byteTwo == 0x0D  ) { 
                 
                 // found the sample ending delimiter
                 // add in the sample delimiter to the sample buffer
