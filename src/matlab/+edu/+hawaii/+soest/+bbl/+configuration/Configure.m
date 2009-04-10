@@ -116,6 +116,14 @@ classdef Configure < hgsetget & dynamicprops
     % voltage column in the data.  
     chlorophyllVoltageFieldName = 'chlorophyllVolts';
     
+    % The string used to designate which variable name represents a chlorophyll
+    % dark count calibration value to interpret the chlorophylVoltages.  
+    chlorophyllDarkCountsFieldName = 'chlorophyllDarkCounts';
+    
+    % The string used to designate which variable name represents a chlorophyll
+    % scale factor calibration value to interpret the chlorophylVoltages.  
+    chlorophyllScaleFactorFieldName = 'chlorophyllScaleFactor';
+    
     % The string used to designate which variable name represents a turbidity
     % column in the data.  
     turbidityFieldName = 'turbidity';
@@ -123,6 +131,14 @@ classdef Configure < hgsetget & dynamicprops
     % The string used to designate which variable name represents a turbidity
     % voltage column in the data.  
     turbidityVoltageFieldName = 'turbidityVolts';
+    
+    % The string used to designate which variable name represents a turbidity
+    % dark count calibration value to interpret the turbidityVoltages.  
+    turbidityDarkCountsFieldName = 'turbidityDarkCounts';
+    
+    % The string used to designate which variable name represents a turbidity
+    % scale factor calibration value to interpret the turbidityVoltages.  
+    turbidityScaleFactorFieldName = 'turbidityScaleFactor';
     
     % The string used to designate which variable name represents a dissolved
     % oxygen column in the data.  
@@ -136,6 +152,15 @@ classdef Configure < hgsetget & dynamicprops
     % depth column in the data.  
     depthFieldName = 'depth';
     
+    % A property used to store calibration coefficient names for use in interpreting
+    % raw data voltages or signals (e.g. chlorophyll and turbidity coefficients)
+    calibrationCoefficientNames = {};
+
+    % A property used to store calibration coefficient values for use in interpreting
+    % raw data voltages or signals (e.g. chlorophyll and turbidity coefficients)
+    % The list must be the same length as the above calibrationCoefficientNames
+    calibrationCoefficientValues = {};
+
     % A list (cell array) of the names of derived variables that need to be
     % calculated from the raw data variables.  The order of the derived fields
     % is important, since later variables may rely on earlier ones.  
