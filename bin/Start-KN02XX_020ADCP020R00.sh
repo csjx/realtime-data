@@ -10,8 +10,8 @@ cd $bblHome;
 ./bin/$sourceName-Source.sh > /var/log/rbnb/$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running
-echo -e "\nStarted ADCP Source driver to 20 meter node ADCP\n";
-echo -e "Starting to view the 20 meter ADCP streaming log.\n"; 
+echo -e "\nStarted $sourceString driver\n";
+echo -e "Starting to view the $sourceString streaming log.\n"; 
 
 for i in $(seq 1 1 5)
 do # flash instructions on stopping the tail process
