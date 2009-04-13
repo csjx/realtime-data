@@ -1,8 +1,8 @@
 #!/bin/bash
 # set up the variables
-sourceName="KN02XX_020ADCP020R00";
-sourceType="ADCPSource";
-sourceString="20 meter 1200 kHz ADCP";
+sourceName="KN0101_010SBEX010R00";
+sourceType="SBE37Source";
+sourceString="10 meter Seabird 37 CTD";
 bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver

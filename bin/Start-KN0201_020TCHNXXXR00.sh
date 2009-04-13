@@ -1,8 +1,8 @@
 #!/bin/bash
 # set up the variables
-sourceName="KN02XX_020ADCP020R00";
-sourceType="ADCPSource";
-sourceString="20 meter 1200 kHz ADCP";
+sourceName="KN0201_020TCHNXXXR00";
+sourceType="TChainSource";
+sourceString="20 meter TChain";
 bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver

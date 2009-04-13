@@ -1,8 +1,8 @@
 #!/bin/bash
 # set up the variables
-sourceName="KN02XX_020ADCP020R00";
-sourceType="ADCPSource";
-sourceString="20 meter 1200 kHz ADCP";
+sourceName="KN0101_010FLNT010R00";
+sourceType="FLNTUSource";
+sourceString="10 meter WetLabs FLNTU";
 bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver
@@ -23,4 +23,4 @@ done
 echo -e "\n";
 
 # start tailing the log file
-tail -f /var/log/rbnb/$sourceName-Source.log; 
+tail -f /var/log/rbnb/$sourceName-Source.log;
