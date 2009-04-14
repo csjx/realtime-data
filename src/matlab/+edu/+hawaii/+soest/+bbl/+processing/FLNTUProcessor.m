@@ -8,11 +8,15 @@
 % 
 %    Purpose: To process WetLabs ECO FLNTU data in seven day increments 
 %             and produce plots of observations.
-%    Authors: Christopher Jones             
+%    Authors: Christopher Jones
+%             Judith Wells
+%             Kristen Fogaren
 %    History: This code was adapted from code written by Eufemia Palomino at 
 %             the University of California Santa Cruz for the Network for 
 %             Environmental Observations of the Coastal Ocean (NEOCO) project
-%             in 2003.
+%             in 2003, and by FLNTU processing code originally written by 
+%             Judith Wells and Kristen Fogaren at the University of Hawaii at
+%             Manoa.
 %  
 % $HeadURL: $
 % $LastChangedDate: $
