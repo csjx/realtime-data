@@ -2,7 +2,7 @@
 %   This is a short runtime script that kicks off processing and
 %   display of FLNTU data.  It depends on configuration information
 %   found in the Configure class, and creates an instance of the
-%   FLNTUProcessor class, and then runs the process() method via a
+%   DataProcessor class, and then runs the process() method via a
 %   timer object so that the processing regularly recurs.
 
 %  Copyright: 2007 Regents of the University of Hawaii and the
@@ -303,12 +303,12 @@ set( configuration,                                                  ...
 'timerInterval'       , 20                                           ...
 );                                                                 
   
-% Set up directory paths, and create a new FLNTUProcessor instance
-import edu.hawaii.soest.bbl.processing.FLNTUProcessor;
+% Set up directory paths, and create a new DataProcessor instance
+import edu.hawaii.soest.bbl.processing.DataProcessor;
 javaaddpath(configuration.rbnbLibraryPath);
 addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
-flntuProcessor = FLNTUProcessor(configuration);
+flntuProcessor = DataProcessor(configuration);
 
 % schedule the processing
 
