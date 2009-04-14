@@ -1,12 +1,13 @@
-% The FLNTUProcessor class processes FLNTU time series data for a given interval
-% and produces plots of the data.  This class relies on the 
-% edu.hawaii.soest.bbl.configuration.Configure class to get runtime 
-% configuration information.
+% The DataProcessor class processes ASCII time series data for a given interval
+% and produces plots of the data.  It currently handles the processing of ASCII 
+% data produced by WetLabs FLNTUs, Seabird SBE37s, Seabird SBE16 CTDs.
+% This class relies on the edu.hawaii.soest.bbl.configuration.Configure 
+% class to get runtime configuration information.
   
 %  Copyright: 2007 Regents of the University of Hawaii and the
 %             School of Ocean and Earth Science and Technology
 % 
-%    Purpose: To process WetLabs ECO FLNTU data in seven day increments 
+%    Purpose: To process ASCII data in multiple increments (daily, weekly, etc)
 %             and produce plots of observations.
 %    Authors: Christopher Jones
 %             Judith Wells
@@ -37,25 +38,25 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 % 
-classdef FLNTUProcessor < hgsetget & dynamicprops
+classdef DataProcessor < hgsetget & dynamicprops
 
   properties % of this class
   
     % The instance of the Configure class used to provide configuration
-    % details for this FLNTUProcessor
+    % details for this DataProcessor
     configuration;
     
-    % The parsed ASCII string of FLNTU data as a cell array of observations
-    flntDataCellArray;
+    % The parsed ASCII string of the data as a cell array of observations
+    dataCellArray;
     
-    % The raw ASCII string of FLNTU data from the RBNB Data Turbine to be processed
-    flntDataString;
+    % The raw ASCII string of data from the RBNB Data Turbine to be processed
+    dataString;
     
-    % The times associated with each frame of flnt data fetched from the RBNB
-    flntDataTimes;
+    % The times associated with each frame of data fetched from the RBNB
+    dataTimes;
     
     % The name returned by the RBNB Data Turbine
-    flntDataName;
+    dataName;
     
     % The start time of the timer object
     timerStartTime;
@@ -72,36 +73,36 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
   
   methods % functions available from this class
     
-    % The Constructor: creates an instance of the FLNTUProcessor class
-    % @returns flntProcessor - an instance of the FLNTUProcessor
-    function self = FLNTUProcessor(configuration)
+    % The Constructor: creates an instance of the DataProcessor class
+    % @returns dataProcessor - an instance of the DataProcessor
+    function self = DataProcessor(configuration)
       % set the configuration information for this processing instance
       self.configuration  = configuration;
-    end % FLNTUProcessor
+    end % DataProcessor
     
     % A method used to parse the raw data string. This method assumes that
-    % the FLNTUProcessor.configuration.dataFormatString is set to provide data
-    % typing information, FLNTUprocessor.configuration.duration is set to 
-    % provide relative size information, FLNTUprocessor.configuration.fieldDelimiter
+    % the DataProcessor.configuration.dataFormatString is set to provide data
+    % typing information, Dataprocessor.configuration.duration is set to 
+    % provide relative size information, Dataprocessor.configuration.fieldDelimiter
     % is set to provide the field delimiter character, and that 
-    % FLNTUprocessor.configuration.numberOfHeaderLines is set to provide header 
+    % Dataprocessor.configuration.numberOfHeaderLines is set to provide header 
     % information for the raw data string.
     % @returns void
-    function flntDataCellArray = parse(self)
+    function dataCellArray = parse(self)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.parse() called.');
+        disp('DataProcessor.parse() called.');
       end
       
       % Parse the data string
-      if ( ~isempty(self.flntDataString) ) 
-      flntDataCellArray = textscan( ...
-                           self.flntDataString, ...
-                           self.configuration.dataFormatString, ...
-                           'BufSize', (10 * self.configuration.duration),  ...
-                           'Delimiter', self.configuration.fieldDelimiter, ...
-                           'MultipleDelimsAsOne', true,                    ...
-                           'headerLines', self.configuration.numberOfHeaderLines);
+      if ( ~isempty(self.dataString) ) 
+      dataCellArray = textscan( ...
+                        self.dataString, ...
+                        self.configuration.dataFormatString, ...
+                        'BufSize', (10 * self.configuration.duration),  ...
+                        'Delimiter', self.configuration.fieldDelimiter, ...
+                        'MultipleDelimsAsOne', true,                    ...
+                        'headerLines', self.configuration.numberOfHeaderLines);
       end
       
     end %parse
@@ -113,25 +114,25 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     function process(self)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.process() called.');
+        disp('DataProcessor.process() called.');
       end
       
       set(self, 'processTime', now());
       % get the most recent interval of data
-      [self.flntDataString, ...
-       self.flntDataTimes,  ...
-       self.flntDataName] = self.getRBNBData();
+      [self.dataString, ...
+       self.dataTimes,  ...
+       self.dataName] = self.getRBNBData();
       
       % parse the data string into a cell array used to create graphics
-      self.flntDataCellArray = self.parse();
+      self.dataCellArray = self.parse();
       
       % Create derived variables.  For each variable name in the list of derived
       % variables, calculate the derived variable and append it to the
-      % flntDataCellArray for later use.  Also update the dataVariableNames and
+      % dataCellArray for later use.  Also update the dataVariableNames and
       % dataVariableUnits properties.            
       try
         for derivedVariableNumber = 1:length(self.configuration.derivedVariableNames)
-          self.flntDataCellArray{length(self.flntDataCellArray) + 1} = ...
+          self.dataCellArray{length(self.dataCellArray) + 1} = ...
             createDerivedVariable(self, ...
               self.configuration.derivedVariableNames{ ...
                 derivedVariableNumber ...
@@ -241,6 +242,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
              % TSHandle = self.createTSFigure();    
              
              % export figures as outlined in the configuration properties
+             % Todo: Needs work to make the export take format arguments
              if ( self.configuration.exportFigures )
                % call the export method
                outputFormat = '';
@@ -277,13 +279,13 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     % depth: from pressure
     % turbidity: from turbidityVolts
     % chlorophyll: from chlorophyllVolts
-    % The variable returned has the same length as the flntDataCellArray so it
+    % The variable returned has the same length as the dataCellArray so it
     % can be appended to that cell array for later use.
     % @returns value - the derived variable array
     function value = createDerivedVariable(self, derivedVariableName)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.createDerivedVariable() called.');
+        disp('DataProcessor.createDerivedVariable() called.');
       end
       
       % derive each of the named variables
@@ -291,7 +293,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
         
         % derive the serial date from either the date & time, or datetime
         case self.configuration.serialdateFieldName
-          if ( ~isempty(self.flntDataCellArray) ) 
+          if ( ~isempty(self.dataCellArray) ) 
             % Extract timestamp information out of the data cell array, and append a
             % serial date vector to the end of the data cell array for use in plotting.
 
@@ -312,7 +314,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
               % columns, using the configuration fields that designate which column
               % represents the date, time, or datetime columns
               value = datenum( ...
-                        [char(self.flntDataCellArray{ ...
+                        [char(self.dataCellArray{ ...
                            find( ...
                              strcmp( ...
                                self.configuration.dateFieldName, ...
@@ -322,7 +324,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
                          }) ...
                          repmat(' ', ...
                            length( ...
-                             self.flntDataCellArray{ ...
+                             self.dataCellArray{ ...
                                find( ...
                                  strcmp( ...
                                    self.configuration.dateFieldName, ...
@@ -332,7 +334,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
                              } ...
                            ), 1 ...
                          ) ...
-                         char(self.flntDataCellArray{ ...
+                         char(self.dataCellArray{ ...
                            find( ...
                              strcmp( ...
                                self.configuration.timeFieldName, ...
@@ -370,7 +372,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
 
               % use datenum(X, format)
               value = datenum( ...
-                        char(self.flntDataCellArray{ ...
+                        char(self.dataCellArray{ ...
                            find( ...
                              strcmp( ...
                                self.configuration.datetimeFieldName, ...
@@ -400,15 +402,15 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
           else
             % we have no data yet, return an empty array
             value = [];
-          end % end if statement (~isempty(self.flntDataCellArray))
+          end % end if statement (~isempty(self.dataCellArray))
         
         % derive the depth from pressure  
         case self.configuration.depthFieldName
-          if ( ~isempty(self.flntDataCellArray) ) 
+          if ( ~isempty(self.dataCellArray) ) 
             
             % 3. calculate the gravity variation with latitude and pressure:
             % 21.16 = latitude of Honolulu
-            pressure = self.flntDataCellArray{ ...
+            pressure = self.dataCellArray{ ...
               find( ...
                 strcmp( ...
                   self.configuration.pressureFieldName, ...
@@ -442,11 +444,11 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
             
           else
             value = [];
-          end % end if statement (~isempty(self.flntDataCellArray))
+          end % end if statement (~isempty(self.dataCellArray))
         
         % derive turbidity from turbidity volts
         case self.configuration.turbidityFieldName
-          if ( ~isempty(self.flntDataCellArray) ) 
+          if ( ~isempty(self.dataCellArray) ) 
             if ( ~isempty(find(strcmp(self.configuration.turbidityVoltageFieldName, ...
                                       self.configuration.dataVariableNames))) && ...
                  length(self.configuration.dataVariableNames) == ...
@@ -478,7 +480,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
 
               % get a reference to the turbidity volts array
               turbidityVoltsArray = ...
-                self.flntDataCellArray{ ...
+                self.dataCellArray{ ...
                   find( ...
                     strcmp( ...
                       self.configuration.turbidityVoltageFieldName, ...
@@ -489,7 +491,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
               
               % build an array of ones for set-based multiplication
               onesArray     = ...
-                ones(length(self.flntDataCellArray{ ...
+                ones(length(self.dataCellArray{ ...
                               find( ...
                                 strcmp( ...
                                   self.configuration.turbidityVoltageFieldName, ...
@@ -524,11 +526,11 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
             
           else
             value = [];
-          end % end if statement (~isempty(self.flntDataCellArray))
+          end % end if statement (~isempty(self.dataCellArray))
         
         % derive chlorophyll from chlorophyll volts
         case self.configuration.chlorophyllFieldName
-          if ( ~isempty(self.flntDataCellArray) ) 
+          if ( ~isempty(self.dataCellArray) ) 
             if ( ~isempty(find(strcmp(self.configuration.chlorophyllVoltageFieldName, ...
                                       self.configuration.dataVariableNames))) && ...
                  length(self.configuration.dataVariableNames) == ...
@@ -560,7 +562,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
                
               % get a reference to the chlorophyll volts array
               chlorophyllVoltsArray = ...
-                self.flntDataCellArray{ ...
+                self.dataCellArray{ ...
                   find( ...
                     strcmp( ...
                       self.configuration.chlorophyllVoltageFieldName, ...
@@ -571,7 +573,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
               
               % build an array of ones for set-based multiplication
               onesArray     = ...
-                ones(length(self.flntDataCellArray{ ...
+                ones(length(self.dataCellArray{ ...
                               find( ...
                                 strcmp( ...
                                   self.configuration.chlorophyllVoltageFieldName, ...
@@ -605,7 +607,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
             end
           else
             value = [];
-          end % end if statement (~isempty(self.flntDataCellArray))          
+          end % end if statement (~isempty(self.dataCellArray))          
       
       end % end switch
       
@@ -620,7 +622,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
                                     figureXAxisVariables  ...
     )
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.createTSFigure() called.');
+        disp('DataProcessor.createTSFigure() called.');
       end
       
     end
@@ -643,7 +645,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
                                              movingAverageLineWidth   ...
     )
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.createTimesSeriesFigure() called.');
+        disp('DataProcessor.createTimesSeriesFigure() called.');
       end
 
       %============
@@ -685,7 +687,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
         % Plotting
         % build the X variable
         xAxisVariableName = char(figureXAxisVariables{1}(1));
-        x = self.flntDataCellArray{ ...
+        x = self.dataCellArray{ ...
               find( ...
                 strcmp( ...
                   xAxisVariableName, ...
@@ -696,7 +698,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
         
         % build the Y variable
         yAxisVariableName = char(figureYAxisVariables{1}(plotNumber));
-        y = self.flntDataCellArray{ ...
+        y = self.dataCellArray{ ...
               find( ...
                 strcmp( ...
                   yAxisVariableName, ...
@@ -827,6 +829,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     % A method used to export a figure to various vector and raster-based image
     % formats.  This method requires ImageMagick to be installed on the processing
     % machine.
+    % Todo: Needs work to make the export take format arguments
     % @param inputFigure - the figure to be exported
     % @param outputFormat - the desired raster or vector format (EPS, PNG, JPG, PDF)
     % @param figureNameSuffix - the suffix to append to the figure name
@@ -834,7 +837,7 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     function export(self, inputFigure, outputFormat, figureNameSuffix)
      
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.export() called.');
+        disp('DataProcessor.export() called.');
       end
           
           % Export to Enhanced Postscript
@@ -852,17 +855,17 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     % A method used to fetch the ASCII data string for the given RBNB
     % Data Turbine source, channel, reference, and given time duration
     % @todo - support the RBNB 'absolute' reference
-    % @param source - the name of the RBNB FLNTU source instrument
-    % @param channel -  the name of the RBNB FLNTU channel
+    % @param source - the name of the RBNB Data source instrument
+    % @param channel -  the name of the RBNB Data channel
     % @param reference - the reference datum for the time series (newest, oldest)
     % @param duration - the duration of the time series to process in seconds
-    function [flntDataString, flntDataTimes, flntDataName] = getRBNBData(self)
+    function [dataString, dataTimes, dataName] = getRBNBData(self)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.getRBNBData() called.');
+        disp('DataProcessor.getRBNBData() called.');
       end
       
-      % set the pertinent properties of this FLNTUProcessor object
+      % set the pertinent properties of this DataProcessor object
       
       % Create a new sink client to the DataTurbine
       try
@@ -880,9 +883,9 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
       
       % make the request to the DataTurbine and close the connection
       try
-      [flntDataString, ...
-       flntDataTimes,  ...
-       flntDataName] = ...
+      [dataString, ...
+       dataTimes,  ...
+       dataName] = ...
         rbnb_get(matlabSink, fullChannelName, self.configuration.startTime, ...
         self.configuration.duration, self.configuration.reference);
       matlabSink.CloseRBNBConnection;
@@ -896,19 +899,19 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
       catch rbnbChannelException
         disp('Could not get channel data.  Setting values to null.');
         disp(rbnbChannelException.message);
-        flntDataString = [];
-        flntDataTimes = [];
-        flntDataName = '';
+        dataString = [];
+        dataTimes = [];
+        dataName = '';
       end
     end % getRBNBData
     
     % A method that appends a new variable field name to the dataVariableNames
     % property in order to keep track of variable names inside of the 
-    % flntDataCellArray
+    % dataCellArray
     function updateDataVariableNames(self, newFieldName)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.updateDataVariableNames() called.');
+        disp('DataProcessor.updateDataVariableNames() called.');
       end
       
       % if the variable name does not already exist
@@ -933,11 +936,11 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     
     % A method that appends a new variable unit to the dataVariableUnits
     % property in order to keep track of variable units inside of the 
-    % flntDataCellArray
+    % dataCellArray
     function updateDataVariableUnits(self, newUnitName)
       
       if ( self.configuration.debug )
-        disp('FLNTUProcessor.updateDataVariableUnits() called.');
+        disp('DataProcessor.updateDataVariableUnits() called.');
       end
       
       % if the variable name does not already exist
@@ -964,9 +967,9 @@ classdef FLNTUProcessor < hgsetget & dynamicprops
     % Setter methods 
     % --------------%
 
-    % A setter method for the flntDataString property
-    function self = set.flntDataString(self, value) 
-      self.flntDataString = char(value)';  
+    % A setter method for the dataString property
+    function self = set.dataString(self, value) 
+      self.dataString = char(value)';  
     end
     
     % A setter method for the timerStartTime property
