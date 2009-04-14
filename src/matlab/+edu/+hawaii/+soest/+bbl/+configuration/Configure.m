@@ -43,6 +43,9 @@ classdef Configure < hgsetget & dynamicprops
     % The output path directory
     outputDirectory = '/var/www/html/OE/KiloNalu/Data/CTD/';
     
+    % The library directory for 3rd party Matlab functions or classes
+    libraryDirectory = '/usr/local/bbl/trunk/lib/matlab';
+
     % The path to the 'convert' program from the ImageMagick software.  This 
     % software is needed on the processing machine to produce PNG, JPG, and PDF
     % versions of the figures.
