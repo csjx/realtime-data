@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * 
- * $URL:  $
- * $Revision:  $
- * $Date:  $
- * $Author: $
+ * $URL$
+ * $Revision$
+ * $Date$
+ * $Author$
  */
 package edu.hawaii.soest.kilonalu.utilities;
 

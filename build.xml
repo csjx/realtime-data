@@ -64,6 +64,7 @@
         <not><available file="lib/commons-cli-1.0.jar"/></not>
         <not><available file="lib/commons-logging-1.0.4.jar"/></not>
         <not><available file="lib/RXTXcomm.jar"/></not>
+        <not><available file="lib/oss-apps.jar"/></not>
       </or>
     </condition>
 
@@ -76,9 +77,10 @@
     <property name="clijar"  value="${libdir}/commons-cli-1.0.jar" />
     <property name="loggingjar"  value="${libdir}/commons-logging-1.0.4.jar" />
     <property name="rxtxjar"  value="${libdir}/RXTXcomm.jar" />
+    <property name="oss-apps"  value="${libdir}/oss-apps.jar" />
     <!-- CLASSPATH -->
     <property name="cpath"      
-            value="${log4jjar}:${httpjar}:${codecjar}:${rbnbjar}:${turbinejar}:${clijar}:${loggingjar}:${rxtxjar}" />
+            value="${log4jjar}:${httpjar}:${codecjar}:${rbnbjar}:${turbinejar}:${clijar}:${loggingjar}:${rxtxjar}:${oss-apps}" />
     <echo message="classpath is:   ${cpath}"/>
   </target>
 

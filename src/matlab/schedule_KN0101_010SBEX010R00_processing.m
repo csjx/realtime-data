@@ -8,10 +8,10 @@
 %             timer object so that the processing regularly recurs.
 %    Authors: Christopher Jones             
 %  
-% $HeadURL: $
-% $LastChangedDate: $
-% $LastChangedBy: $
-% $LastChangedRevision: $
+% $HeadURL$
+% $LastChangedDate$
+% $LastChangedBy$
+% $LastChangedRevision$
 % 
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by

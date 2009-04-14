@@ -24,10 +24,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * 
- * $URL:  $
- * $Revision:  $
- * $Date:  $
- * $Author: $
+ * $URL$
+ * $Revision$
+ * $Date$
+ * $Author$
  */
 package edu.hawaii.soest.kilonalu.utilities;
 
@@ -996,10 +996,10 @@ public class FileArchiverSink extends RBNBBase {
 
   /** A method that returns the CVS version string */
   protected String getCVSVersionString() {
-    return ("$LastChangedDate: 2007-10-30 17:57:07 -0600 (Tue, 30 Oct 2007) $\n"
-        + "$LastChangedRevision: 9457 $"
-        + "$LastChangedBy: msoltani $"
-        + "$HeadURL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/JpgSaverSink.java $"); 
+    return ("$LastChangedDate$\n"
+        + "$LastChangedRevision$"
+        + "$LastChangedBy$"
+        + "$HeadURL$"); 
   }
 
 }
