@@ -694,7 +694,9 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.dataVariableNames ...
                 ) ...
               ) ...
-            }; 
+            };
+        % Subset the y axis data based on the duration of the particular figure
+        x = x(find(x > (max(x) - figureDurationInDays)));
         
         % build the Y variable
         yAxisVariableName = char(figureYAxisVariables{1}(plotNumber));
@@ -706,6 +708,8 @@ classdef DataProcessor < hgsetget & dynamicprops
                 ) ...
               ) ...
             }; 
+        % Subset the y axis data based on the duration of the particular figure
+        y = y(find(x > (max(x) - figureDuration)));
         
         % get the graphic color
         graphicColorArray = graphicMarkerColors{1};
