@@ -6,7 +6,7 @@ sourceType="ADCPSource";
 sourceString="10 meter 1200 kHz ADCP";
 
 # find any pertinent processes
-processDetails=$(ps -ef | grep $sourceType | grep sourceName);
+processDetails=$(ps -ef | grep $sourceType | grep $sourceName);
 processCount=$(echo $processDetails | grep -ve "^$" | wc -l);
 
 # kill the driver process if it exists

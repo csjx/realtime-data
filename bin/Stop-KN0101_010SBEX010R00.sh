@@ -6,7 +6,7 @@ sourceType="SBE37Source";
 sourceString="10 meter Seabird 37 CTD";
 
 # find any pertinent processes
-processDetails=$(ps -ef | grep $sourceType | grep sourceName);
+processDetails=$(ps -ef | grep $sourceType | grep $sourceName);
 processCount=$(echo $processDetails | grep -ve "^$" | wc -l);
 
 # kill the driver process if it exists
