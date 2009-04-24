@@ -46,11 +46,28 @@ classdef Configure < hgsetget & dynamicprops
     % The library directory for 3rd party Matlab functions or classes
     libraryDirectory = '/usr/local/bbl/trunk/lib/matlab';
 
-    % The path to the 'convert' program from the ImageMagick software.  This 
+    % The path to the convert program.  This may either be the 'convert' command
+    % from the ImageMagick software, or the 'gs' command from Ghostscript.  This 
     % software is needed on the processing machine to produce PNG, JPG, and PDF
     % versions of the figures.
-    convertPath = '/usr/local/bin/convert';
+    convertPath = '/usr/bin/gs';
     
+    % The list of command line options passed to the convert command.  This 
+    % software is needed on the processing machine to produce PNG, JPG, or PDF
+    % versions of the figures.  Using external software such as ImageMagick or 
+    % Ghostscript produces better graphics than the internal Matlab versions, 
+    % since they start from a higher resolution vector graphics file (EPS). 
+    convertOptions = [' -q'                    ...
+                      ' -dNOPAUSE'             ...
+                      ' -dBATCH'               ...
+                      ' -dSAFER'               ... 
+                      ' -dTextAlphaBits=4'     ...
+                      ' -dGraphicsAlphaBits=4' ...
+                      ' -dJPEGQ=100'           ...
+                      ' -sDEVICE=jpeg'         ...
+                      ' -r90x90'               ...
+                      ' -sOutputFile='];
+
     % The path to the copy program from the ImageMagick software.  This 
     % software is needed on the processing machine to produce PNG, JPG, and PDF
     % versions of the figures.
