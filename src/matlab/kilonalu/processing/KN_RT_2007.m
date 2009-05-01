@@ -12,9 +12,10 @@ ldir=[base_dir 'temp_data/hold_and_process/'];  % temporary holding and processi
 ftpdir = '/var/www/html/OE/KiloNalu/Data/';  % ftp directory
 archdir = [base_dir 'KiloNalu/ADCP/archive/'];   %archive directory
 specdir=[base_dir 'KiloNalu/ADCP/spectra/'];  % wave spectra storage (& archive?)
+lib_dir = '/home/kilonalu/projects/bbl/trunk/lib/';
 
-javaaddpath('/usr/local/RBNB/V3.1B4a/bin/rbnb.jar');
-addpath('/usr/local/RBNB/V3.1B4a/Matlab/');
+javaaddpath([lib_dir 'rbnb.jar']);
+addpath([lib_dir 'matlab/rbnb/']);
 addpath(base_dir);
 addpath([base_dir 'DirSpec0']);
 addpath([base_dir 'DirSpec0/diwasp']);
@@ -27,7 +28,7 @@ addpath([base_dir 'DirSpec0/diwasp']);
 depfilnam = '033007';
 
 instrtype = 'adc'; % adc for ADCP, aqd for Aquadopp, vec for Vector
-reproc = 1; % 0 = new deployment
+reproc = 0; % 0 = new deployment
             % 1 = continue deployment (do not reprocess existing data)
             % 2 = Reprocess existing data (all data in folder)
 
@@ -95,7 +96,7 @@ prevdat = 0;  % time for previously analyzed file
 % use prevtim = 0 for new deployment (no old data to append)
 % use prevtim = 1 to continue existing deployment
 % use prevtim = -1 to interpolate previous deployment data onto new depths
-prevtim = 1;  
+prevtim = 0;  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%  NOT IN USE   %%%%%%%%%%%%%%%%%
