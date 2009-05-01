@@ -34,7 +34,7 @@ end
 end
 
 
-kk=finite(x);
+kk=isfinite(x);
 x(~kk)=0;
 
 ndat=sum(kk,dim);
