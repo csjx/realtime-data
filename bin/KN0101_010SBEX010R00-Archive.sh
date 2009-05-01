@@ -1,5 +1,5 @@
 #!/bin/bash
-BBL_HOME=/Users/cjones/development/bbl/trunk;
+BBL_HOME=/usr/local/bbl/trunk;
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
@@ -20,10 +20,10 @@ $BBL_HOME/lib/log4j.properties
 # hour's worth of data collected.
 
 java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
- -s bbl.ancl.hawaii.edu\
+ -s 192.168.100.60\
  -p 3333\
  -n KN0101_010SBEX010R00\
  -c DecimalASCIISampleData\
- -I hourly\
+ -I daily\
  -k KN0101_010SBEX010R00_DecimalASCIISampleData_FileArchiver\
- -d /Users/cjones/data/kilonalu/KN0101_010SBEX010R00/DecimalASCIISampleData
+ -d /data/kilonalu/KN0101_010SBEX010R00/DecimalASCIISampleData
