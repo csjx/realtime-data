@@ -20,7 +20,7 @@ $BBL_HOME/lib/log4j.properties
 # hour's worth of data collected.
 
 java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink \
- -s 192.168.100.60\
+ -s 192.168.103.50\
  -p 3333\
  -n KNWXXX_XXXDVP2XXXR00\
  -c BinarySampleData\
