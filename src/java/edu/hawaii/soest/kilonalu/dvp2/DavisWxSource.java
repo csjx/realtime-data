@@ -373,42 +373,9 @@ public class DavisWxSource extends RBNBSource {
                   sampleBuffer.compact();
                   sampleBuffer.put(byteOne);
                   
-                }                
-                
-                // extract just the length of the sample bytes out of the
-                // sample buffer, and place it in the channel map as a 
-                // byte array.  Then, send it to the data turbine.
-                byte[] sampleArray = new byte[sampleByteCount];
-                sampleBuffer.flip();
-                sampleBuffer.get(sampleArray);
-                
-                // send the sample to the data turbine
-                rbnbChannelMap.PutTimeAuto("server");
-                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
-                getSource().Flush(rbnbChannelMap);
-                String sampleString = new String(Hex.encodeHex(sampleArray));
-                logger.info("Sample: " + sampleString);
-                logger.info(" flushed data to the DataTurbine. ");
-                
-                  byteOne   = 0x00;
-                  byteTwo   = 0x00;
-                  byteThree = 0x00;
-                  byteFour  = 0x00;
-                  sampleBuffer.clear();
-                  sampleByteCount = 0;
-                  //rbnbChannelMap.Clear();                      
-                  //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-                  //state = 0;
-//
-// CSJ implement this after read-only testing                  
-//                // Once the sample is flushed, take a new sample
-//                  // allow time for the instrument response
-//                  streamingThread.sleep(2000);
-//                  this.command = this.commandPrefix + 
-//                                 this.takeSampleCommand +
-//                                 this.commandSuffix;
-//                  this.sentCommand = queryInstrument(command);
-                  
+                }
+                state = 3;
+                break;
               } else { // not 0x0A0D
 
                 // still in the middle of the sample, keep adding bytes
@@ -426,6 +393,76 @@ public class DavisWxSource extends RBNBSource {
                 break;
               } // end if for 0x0A0D EOL
           
+                
+            case 3:
+               
+               // At this point, we've found the \n\r delimiter, read the first
+               // of 2 CRC bytes
+               sampleByteCount++; // add the last byte found to the count
+               
+               // add the last byte found to the sample buffer
+               if ( sampleBuffer.remaining() > 0 ) {
+                 sampleBuffer.put(byteOne);
+               
+               } else {
+                 sampleBuffer.compact();
+                 sampleBuffer.put(byteOne);
+                 
+               }
+               state = 4;
+               break;
+                
+            case 4:
+               
+               // At this point, we've found the \n\r delimiter, read the first
+               // of 2 CRC bytes
+               sampleByteCount++; // add the last byte found to the count
+               
+               // add the last byte found to the sample buffer
+               if ( sampleBuffer.remaining() > 0 ) {
+                 sampleBuffer.put(byteOne);
+               
+               } else {
+                 sampleBuffer.compact();
+                 sampleBuffer.put(byteOne);
+               
+               }
+               state = 0;
+               
+               // extract just the length of the sample bytes out of the
+               // sample buffer, and place it in the channel map as a 
+               // byte array.  Then, send it to the data turbine.
+               byte[] sampleArray = new byte[sampleByteCount];
+               sampleBuffer.flip();
+               sampleBuffer.get(sampleArray);
+               
+               // send the sample to the data turbine
+               rbnbChannelMap.PutTimeAuto("server");
+               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
+               getSource().Flush(rbnbChannelMap);
+               String sampleString = new String(Hex.encodeHex(sampleArray));
+               logger.info("Sample: " + sampleString);
+               logger.info(" flushed data to the DataTurbine. ");
+               
+                 byteOne   = 0x00;
+                 byteTwo   = 0x00;
+                 byteThree = 0x00;
+                 byteFour  = 0x00;
+                 sampleBuffer.clear();
+                 sampleByteCount = 0;
+                 //rbnbChannelMap.Clear();                      
+                 //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                 //state = 0;
+//
+// CSJ implement this after read-only testing                  
+//                // Once the sample is flushed, take a new sample
+//                  // allow time for the instrument response
+//                  streamingThread.sleep(2000);
+//                  this.command = this.commandPrefix + 
+//                                 this.takeSampleCommand +
+//                                 this.commandSuffix;
+//                  this.sentCommand = queryInstrument(command);
+                  
           } // end switch statement
           
           // shift the bytes in the FIFO window
