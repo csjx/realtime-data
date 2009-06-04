@@ -349,10 +349,23 @@ public class DavisWxSource extends RBNBSource {
               // sample line is begun by "ACK L" (the first part of ACK + "LOOP")
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x4C && byteTwo == 0x06 ) {
+                
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }
+                
                 // we've found the beginning of a sample, move on
                 state = 1;
                 break;
-    
+                
               } else {
                 break;                
               }
@@ -414,7 +427,7 @@ public class DavisWxSource extends RBNBSource {
                 
             case 4:
                
-               // At this point, we've found the \n\r delimiter, read the first
+               // At this point, we've found the \n\r delimiter, read the second
                // of 2 CRC bytes
                sampleByteCount++; // add the last byte found to the count
                
