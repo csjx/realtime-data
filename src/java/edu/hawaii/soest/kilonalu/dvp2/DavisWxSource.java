@@ -384,10 +384,9 @@ public class DavisWxSource extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                String sampleString = new String(Hex.encodeHex(sampleArray));
                 rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
-                rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
+                String sampleString = new String(Hex.encodeHex(sampleArray));
                 logger.info("Sample: " + sampleString);
                 logger.info(" flushed data to the DataTurbine. ");
                 
