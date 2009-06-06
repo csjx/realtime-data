@@ -28,6 +28,8 @@
  */ 
 package edu.hawaii.soest.kilonalu.dvp2;
 
+import edu.hawaii.soest.kilonalu.dvp2.DavisWxParser;
+
 import java.io.File; 
 import java.io.FileInputStream; 
 
@@ -836,21 +838,21 @@ public class DavisWxParser {
   /**
    * get the value from the barometer field
    *
-   * @return barometer - the barometer as a double
+   * @return barometer - the barometer as a float
    */
-  public double getBarometer(){
+  public float getBarometer(){
     this.barometer.flip();
-    return (double) (this.barometer.order(ByteOrder.LITTLE_ENDIAN).getShort())/1000;
+    return (float) (this.barometer.order(ByteOrder.LITTLE_ENDIAN).getShort())/1000;
   }
   
   /**
    * get the value from the insideTemperature field
    *
-   * @return insideTemperature - the insideTemperature as a double
+   * @return insideTemperature - the insideTemperature as a float
    */
-  public double getInsideTemperature(){
+  public float getInsideTemperature(){
     this.insideTemperature.flip();
-    return (double) (this.insideTemperature.order(ByteOrder.LITTLE_ENDIAN).getShort())/10;
+    return (float) (this.insideTemperature.order(ByteOrder.LITTLE_ENDIAN).getShort())/10;
   }
   
   /**
@@ -866,11 +868,11 @@ public class DavisWxParser {
   /**
    * get the value from the outsideTemperature field
    *
-   * @return outsideTemperature - the outsideTemperature as a double
+   * @return outsideTemperature - the outsideTemperature as a float
    */
-  public double getOutsideTemperature(){
+  public float getOutsideTemperature(){
     this.outsideTemperature.flip();
-    return (double) (this.outsideTemperature.order(ByteOrder.LITTLE_ENDIAN).getShort())/10;
+    return (float) (this.outsideTemperature.order(ByteOrder.LITTLE_ENDIAN).getShort())/10;
   }
   
   /**
@@ -906,15 +908,15 @@ public class DavisWxParser {
   /**
    * get the value from the extraTemperatures field
    *
-   * @return extraTemperatures - the extraTemperatures as an double array
+   * @return extraTemperatures - the extraTemperatures as an float array
    */
-  public double[] getExtraTemperatures(){
+  public float[] getExtraTemperatures(){
     this.extraTemperatures.flip();
     
-    // add each of the temperature values to a double array
-    double[] extraTemperatures = new double[7];
+    // add each of the temperature values to a float array
+    float[] extraTemperatures = new float[7];
     for (int i = 0; i < extraTemperatures.length; i++ ) {
-      extraTemperatures[i] = (double) (this.extraTemperatures.get() - 90.0 )/10;
+      extraTemperatures[i] = (float) (this.extraTemperatures.get() - 90.0 )/10;
     }
     return extraTemperatures;
   }
@@ -922,15 +924,15 @@ public class DavisWxParser {
   /**
    * get the value from the soilTemperatures field
    *
-   * @return soilTemperatures - the soilTemperatures as an double array
+   * @return soilTemperatures - the soilTemperatures as an float array
    */
-  public double[] getSoilTemperatures(){
+  public float[] getSoilTemperatures(){
     this.soilTemperatures.flip();
     
-    // add each of the temperature values to a double array
-    double[] soilTemperatures = new double[4];
+    // add each of the temperature values to a float array
+    float[] soilTemperatures = new float[4];
     for (int i = 0; i < soilTemperatures.length; i++ ) {
-      soilTemperatures[i] = (double) (this.soilTemperatures.get() - 90.0 )/10;
+      soilTemperatures[i] = (float) (this.soilTemperatures.get() - 90.0 )/10;
     }
     return soilTemperatures;
   }
@@ -938,15 +940,15 @@ public class DavisWxParser {
   /**
    * get the value from the leafTemperatures field
    *
-   * @return leafTemperatures - the leafTemperatures as an double array
+   * @return leafTemperatures - the leafTemperatures as an float array
    */
-  public double[] getLeafTemperatures(){
+  public float[] getLeafTemperatures(){
     this.leafTemperatures.flip();
     
-    // add each of the temperature values to a double array
-    double[] leafTemperatures = new double[4];
+    // add each of the temperature values to a float array
+    float[] leafTemperatures = new float[4];
     for (int i = 0; i < leafTemperatures.length; i++ ) {
-      leafTemperatures[i] = (double) (this.leafTemperatures.get() - 90.0 )/10;
+      leafTemperatures[i] = (float) (this.leafTemperatures.get() - 90.0 )/10;
     }
     return leafTemperatures;
   }
@@ -964,12 +966,12 @@ public class DavisWxParser {
   /**
    * get the value from the extraHumidities field
    *
-   * @return extraHumidities - the extraHumidities as an double array
+   * @return extraHumidities - the extraHumidities as an int array
    */
   public int[] getExtraHumidities(){
     this.extraHumidities.flip();
     
-    // add each of the humidity values to a double array
+    // add each of the humidity values to a float array
     int[] extraHumidities = new int[7];
     for (int i = 0; i < extraHumidities.length; i++ ) {
       extraHumidities[i] = (int) this.extraHumidities.get();
@@ -980,11 +982,11 @@ public class DavisWxParser {
   /**
    * get the value from the rainRate field
    *
-   * @return rainRate - the rainRate as a double
+   * @return rainRate - the rainRate as a float
    */
-  public double getRainRate(){
+  public float getRainRate(){
     this.rainRate.flip();
-    return (double) (this.rainRate.order(ByteOrder.LITTLE_ENDIAN).getShort())/100;
+    return (float) (this.rainRate.order(ByteOrder.LITTLE_ENDIAN).getShort())/100;
   }
   
   /**
@@ -1000,21 +1002,21 @@ public class DavisWxParser {
   /**
    * get the value from the solarRadiation field
    *
-   * @return solarRadiation - the solarRadiation as a double
+   * @return solarRadiation - the solarRadiation as a float
    */
-  public double getSolarRadiation(){
+  public float getSolarRadiation(){
     this.solarRadiation.flip();
-    return (double) (this.solarRadiation.order(ByteOrder.LITTLE_ENDIAN).getShort());
+    return (float) (this.solarRadiation.order(ByteOrder.LITTLE_ENDIAN).getShort());
   }
   
   /**
    * get the value from the stormRain field
    *
-   * @return stormRain - the stormRain as an integer
+   * @return stormRain - the stormRain as a float
    */
-  public double getStormRain(){
+  public float getStormRain(){
     this.stormRain.flip();
-    return (double) (this.stormRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.stormRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
@@ -1045,75 +1047,75 @@ public class DavisWxParser {
   /**
    * get the value from the dailyRain field
    *
-   * @return dailyRain - the dailyRain as a double
+   * @return dailyRain - the dailyRain as a float
    */
-  public double getDailyRain(){
+  public float getDailyRain(){
     this.dailyRain.flip();
-    return (int) (this.dailyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.dailyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the monthlyRain field
    *
-   * @return monthlyRain - the monthlyRain as a double
+   * @return monthlyRain - the monthlyRain as a float
    */
-  public double getMonthlyRain(){
+  public float getMonthlyRain(){
     this.monthlyRain.flip();
-    return (double) (this.monthlyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.monthlyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the yearlyRain field
    *
-   * @return yearlyRain - the yearlyRain as a double
+   * @return yearlyRain - the yearlyRain as a float
    */
-  public double getYearlyRain(){
+  public float getYearlyRain(){
     this.yearlyRain.flip();
-    return (double) (this.yearlyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.yearlyRain.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the dailyEvapoTranspiration field
    *
-   * @return dailyEvapoTranspiration - the dailyEvapoTranspiration as a double
+   * @return dailyEvapoTranspiration - the dailyEvapoTranspiration as a float
    */
-  public double getDailyEvapoTranspiration(){
+  public float getDailyEvapoTranspiration(){
     this.dailyEvapoTranspiration.flip();
-    return (double) (this.dailyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.dailyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the monthlyEvapoTranspiration field
    *
-   * @return monthlyEvapoTranspiration - the monthlyEvapoTranspiration as a double
+   * @return monthlyEvapoTranspiration - the monthlyEvapoTranspiration as a float
    */
-  public double getMonthlyEvapoTranspiration(){
+  public float getMonthlyEvapoTranspiration(){
     this.monthlyEvapoTranspiration.flip();
-    return (double) (this.monthlyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.monthlyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the yearlyEvapoTranspiration field
    *
-   * @return yearlyEvapoTranspiration - the yearlyEvapoTranspiration as a double
+   * @return yearlyEvapoTranspiration - the yearlyEvapoTranspiration as a float
    */
-  public double getYearlyEvapoTranspiration(){
+  public float getYearlyEvapoTranspiration(){
     this.yearlyEvapoTranspiration.flip();
-    return (double) (this.yearlyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
+    return (float) (this.yearlyEvapoTranspiration.order(ByteOrder.LITTLE_ENDIAN).getShort()/100);
   }
   
   /**
    * get the value from the soilMoistures field
    *
-   * @return soilTemperatures - the soilMoistures values as a double array
+   * @return soilTemperatures - the soilMoistures values as a float array
    */
-  public double[] getSoilMoistures(){
+  public float[] getSoilMoistures(){
     this.soilMoistures.flip();
     
-    // add each of the soilMoistures values to a double array
-    double[] soilMoistures = new double[4];
+    // add each of the soilMoistures values to a float array
+    float[] soilMoistures = new float[4];
     for (int i = 0; i < soilMoistures.length; i++ ) {
-      soilMoistures[i] = (double) this.soilMoistures.get();
+      soilMoistures[i] = (float) this.soilMoistures.get();
     }
     return soilMoistures;
   }
@@ -1121,15 +1123,15 @@ public class DavisWxParser {
   /**
    * get the value from the leafWetnesses field
    *
-   * @return leafWetnesses - the leafWetnesses values as a double array
+   * @return leafWetnesses - the leafWetnesses values as a float array
    */
-  public double[] getLeafWetnesses(){
+  public float[] getLeafWetnesses(){
     this.leafWetnesses.flip();
     
-    // add each of the leafWetnesses values to a double array
-    double[] leafWetnesses = new double[4];
+    // add each of the leafWetnesses values to a float array
+    float[] leafWetnesses = new float[4];
     for (int i = 0; i < leafWetnesses.length; i++ ) {
-      leafWetnesses[i] = (double) this.leafWetnesses.get();
+      leafWetnesses[i] = (float) this.leafWetnesses.get();
     }
     return leafWetnesses;
   }
@@ -1182,11 +1184,11 @@ public class DavisWxParser {
   /**
    * get the value from the consoleBatteryVoltage field
    *
-   * @return consoleBatteryVoltage - the consoleBatteryVoltage as a double
+   * @return consoleBatteryVoltage - the consoleBatteryVoltage as a float
    */
-  public double getConsoleBatteryVoltage(){
+  public float getConsoleBatteryVoltage(){
     this.consoleBatteryVoltage.flip();
-    double consoleBatteryVoltage = (double)
+    float consoleBatteryVoltage = (float)
       this.consoleBatteryVoltage.order(ByteOrder.LITTLE_ENDIAN).getShort();
     
     consoleBatteryVoltage = ((consoleBatteryVoltage * 300.0f)/512.0f)/100.0f; // from the instrument guide
