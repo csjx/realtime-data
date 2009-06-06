@@ -104,7 +104,7 @@ public class DavisWxSource extends RBNBSource {
   /*
    *  A default RBNB channel name for the given source instrument
    */  
-  private String DEFAULT_RBNB_CHANNEL = "DecimalASCIISampleData";
+  private String DEFAULT_RBNB_CHANNEL = "BinarySampleData";
 
   /**
    * The name of the RBNB channel for this data stream
@@ -199,7 +199,13 @@ public class DavisWxSource extends RBNBSource {
    * @see execute()
    */
   private final int RETRY_INTERVAL = 5000;
-    
+  
+  /*
+   * The instance of the DavisWxParser object used to parse the binary LOOP
+   * data packet and retrieve each of the data fields
+   */
+   private DavisWxParser davisWxParser = null;
+   
   /**
    * Constructor - create an empty instance of the DavisWxSource object, using
    * default values for the RBNB server name and port, source instrument name
@@ -450,11 +456,199 @@ public class DavisWxSource extends RBNBSource {
                sampleBuffer.get(sampleArray);
                
                // send the sample to the data turbine
+               this.davisWxParser = new DavisWxParser(sampleBuffer);
+               
                rbnbChannelMap.PutTimeAuto("server");
-               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);
+               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getBarTrendAsString());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("barometer:");                      // 29.9
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getBarometer()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch Hg");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getInsideTemperature()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("insideHumidity");                  // 51
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getInsideHumidity()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("outsideTemperature");              // 76.7
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getOutsideTemperature()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("windSpeed");                       // 5
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindSpeed()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("tenMinuteAverageWindSpeed");      // 4
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTenMinuteAverageWindSpeed()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("windDirection");                   // 80
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindDirection()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("outsideHumidity");                 // 73
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getOutsideHumidity()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("rainRate");                        // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getRainRate()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch/hour");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("uvRadiation");                     // 0
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getUvRadiation()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "UV index");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("solarRadiation");                  // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getSolarRadiation()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "watt/m^2");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("stormRain");                       // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getStormRain()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("currentStormStartDate");           // -1--1-1999
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getCurrentStormStartDate());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("dailyRain");                       // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyRain()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("monthlyRain");                     // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyRain()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("yearlyRain");                      // 15.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyRain()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("dailyEvapoTranspiration");         // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyEvapoTranspiration()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("monthlyEvapoTranspiration");       // 0.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyEvapoTranspiration()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("yearlyEvapoTranspiration");        // 93.0
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyEvapoTranspiration()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("transmitterBatteryStatus");        // 0
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTransmitterBatteryStatus()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("consoleBatteryVoltage");           // 4.681640625
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getConsoleBatteryVoltage()});
+               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=volts");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastRuleNumberAsString());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunrise());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+               
+               // add the barTrendAsString field data
+               channelIndex = rbnbChannelMap.Add("timeOfSunset");                    // 19:11
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
+               rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");               
+               
+               // finally, send the channel map of data to the DataTurbine
                getSource().Flush(rbnbChannelMap);
                String sampleString = new String(Hex.encodeHex(sampleArray));
                logger.info("Sample: " + sampleString);
+               logger.info("barTrendAsString:               " + davisWxParser.getBarTrendAsString());
+               logger.info("barometer:                      " + davisWxParser.getBarometer());
+               logger.info("insideTemperature:              " + davisWxParser.getInsideTemperature());
+               logger.info("insideHumidity:                 " + davisWxParser.getInsideHumidity());
+               logger.info("outsideTemperature:             " + davisWxParser.getOutsideTemperature());
+               logger.info("windSpeed:                      " + davisWxParser.getWindSpeed());
+               logger.info("tenMinuteAverageWindSpeed:      " + davisWxParser.getTenMinuteAverageWindSpeed());
+               logger.info("windDirection:                  " + davisWxParser.getWindDirection());
+               logger.info("outsideHumidity:                " + davisWxParser.getOutsideHumidity());
+               logger.info("rainRate:                       " + davisWxParser.getRainRate());
+               logger.info("uvRadiation:                    " + davisWxParser.getUvRadiation());
+               logger.info("solarRadiation:                 " + davisWxParser.getSolarRadiation());
+               logger.info("stormRain:                      " + davisWxParser.getStormRain());
+               logger.info("currentStormStartDate:          " + davisWxParser.getCurrentStormStartDate());
+               logger.info("dailyRain:                      " + davisWxParser.getDailyRain());
+               logger.info("monthlyRain:                    " + davisWxParser.getMonthlyRain());
+               logger.info("yearlyRain:                     " + davisWxParser.getYearlyRain());
+               logger.info("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
+               logger.info("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
+               logger.info("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
+               logger.info("transmitterBatteryStatus:       " + davisWxParser.getTransmitterBatteryStatus());
+               logger.info("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
+               logger.info("forecastAsString:               " + davisWxParser.getForecastAsString());
+               logger.info("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
+               logger.info("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
+               logger.info("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
                logger.info(" flushed data to the DataTurbine. ");
                
                  byteOne   = 0x00;
