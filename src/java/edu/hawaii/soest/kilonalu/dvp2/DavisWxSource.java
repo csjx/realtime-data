@@ -307,7 +307,7 @@ public class DavisWxSource extends RBNBSource {
       // add a channel of data that will be pushed to the server.  
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
-      int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+      int channelIndex = 0;
 //
 // CSJ implement this after read-only testing      
 //    // wake the instrument with an initial '\n' command
@@ -459,6 +459,7 @@ public class DavisWxSource extends RBNBSource {
                this.davisWxParser = new DavisWxParser(sampleBuffer);
                
                rbnbChannelMap.PutTimeAuto("server");
+               channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
