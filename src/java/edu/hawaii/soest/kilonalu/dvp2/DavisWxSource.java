@@ -455,10 +455,12 @@ public class DavisWxSource extends RBNBSource {
                sampleBuffer.flip();
                sampleBuffer.get(sampleArray);
                
-               // send the sample to the data turbine
+               // parse and send the sample to the data turbine
                this.davisWxParser = new DavisWxParser(sampleBuffer);
                
                rbnbChannelMap.PutTimeAuto("server");
+               
+               // add the raw binary LOOP packet data
                channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
                rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
@@ -658,7 +660,7 @@ public class DavisWxSource extends RBNBSource {
                  byteFour  = 0x00;
                  sampleBuffer.clear();
                  sampleByteCount = 0;
-                 //rbnbChannelMap.Clear();                      
+                 rbnbChannelMap.Clear();                      
                  //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                  //state = 0;
 //
