@@ -308,6 +308,120 @@ public class DavisWxSource extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = 0;
+      
+      // add the raw binary LOOP packet data
+      channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the barTrendAsString field data
+      channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the barometer field data
+      channelIndex = rbnbChannelMap.Add("barometer");                      // 29.9
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch Hg");
+      
+      // add the insideTemperature field data
+      channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
+      
+      // add the insideHumidity field data
+      channelIndex = rbnbChannelMap.Add("insideHumidity");                  // 51
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
+      
+      // add the outsideTemperature field data
+      channelIndex = rbnbChannelMap.Add("outsideTemperature");              // 76.7
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
+      
+      // add the windSpeed field data
+      channelIndex = rbnbChannelMap.Add("windSpeed");                       // 5
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
+      
+      // add the tenMinuteAverageWindSpeed field data
+      channelIndex = rbnbChannelMap.Add("tenMinuteAverageWindSpeed");      // 4
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
+      
+      // add the windDirection field data
+      channelIndex = rbnbChannelMap.Add("windDirection");                   // 80
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees");
+      
+      // add the outsideHumidity field data
+      channelIndex = rbnbChannelMap.Add("outsideHumidity");                 // 73
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
+      
+      // add the rainRate field data
+      channelIndex = rbnbChannelMap.Add("rainRate");                        // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch/hour");
+      
+      // add the uvRadiation field data
+      channelIndex = rbnbChannelMap.Add("uvRadiation");                     // 0
+     rbnbChannelMap.PutUserInfo(channelIndex, "UV index");
+      
+      // add the solarRadiation field data
+      channelIndex = rbnbChannelMap.Add("solarRadiation");                  // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "watt/m^2");
+      
+      // add the stormRain field data
+      channelIndex = rbnbChannelMap.Add("stormRain");                       // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "inch");
+      
+      // add the currentStormStartDate field data
+      channelIndex = rbnbChannelMap.Add("currentStormStartDate");           // -1--1-1999
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the dailyRain field data
+      channelIndex = rbnbChannelMap.Add("dailyRain");                       // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the monthlyRain field data
+      channelIndex = rbnbChannelMap.Add("monthlyRain");                     // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the yearlyRain field data
+      channelIndex = rbnbChannelMap.Add("yearlyRain");                      // 15.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the dailyEvapoTranspiration field data
+      channelIndex = rbnbChannelMap.Add("dailyEvapoTranspiration");         // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the monthlyEvapoTranspiration field data
+      channelIndex = rbnbChannelMap.Add("monthlyEvapoTranspiration");       // 0.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the yearlyEvapoTranspiration field data
+      channelIndex = rbnbChannelMap.Add("yearlyEvapoTranspiration");        // 93.0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
+      
+      // add the transmitterBatteryStatus field data
+      channelIndex = rbnbChannelMap.Add("transmitterBatteryStatus");        // 0
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the consoleBatteryVoltage field data
+      channelIndex = rbnbChannelMap.Add("consoleBatteryVoltage");           // 4.681640625
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=volts");
+      
+      // add the forecastAsString field data
+      channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the forecastRuleNumberAsString field data
+      channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the timeOfSunrise field data
+      channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // add the timeOfSunset field data
+      channelIndex = rbnbChannelMap.Add("timeOfSunset");                    // 19:11
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");               
+      
+      // register the channel map of variables and units with the DataTurbine
+      getSource().Register(rbnbChannelMap);
+      // reset variables for use with the incoming data
+      rbnbChannelMap.Clear();
+      channelIndex = 0;
 //
 // CSJ implement this after read-only testing      
 //    // wake the instrument with an initial '\n' command
@@ -462,166 +576,139 @@ public class DavisWxSource extends RBNBSource {
                
                // add the raw binary LOOP packet data
                channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
+                              
                // add the barTrendAsString field data
                channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getBarTrendAsString());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getBarTrendAsString());
+                              
                // add the barometer field data
                channelIndex = rbnbChannelMap.Add("barometer");                      // 29.9
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getBarometer()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch Hg");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getBarometer()});
+                              
                // add the insideTemperature field data
                channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getInsideTemperature()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getInsideTemperature()});
+                              
                // add the insideHumidity field data
                channelIndex = rbnbChannelMap.Add("insideHumidity");                  // 51
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getInsideHumidity()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getInsideHumidity()});
+                              
                // add the outsideTemperature field data
                channelIndex = rbnbChannelMap.Add("outsideTemperature");              // 76.7
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getOutsideTemperature()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getOutsideTemperature()});
+                              
                // add the windSpeed field data
                channelIndex = rbnbChannelMap.Add("windSpeed");                       // 5
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindSpeed()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindSpeed()});
+                              
                // add the tenMinuteAverageWindSpeed field data
                channelIndex = rbnbChannelMap.Add("tenMinuteAverageWindSpeed");      // 4
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTenMinuteAverageWindSpeed()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=mph");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTenMinuteAverageWindSpeed()});
+                              
                // add the windDirection field data
                channelIndex = rbnbChannelMap.Add("windDirection");                   // 80
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindDirection()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindDirection()});
+                              
                // add the outsideHumidity field data
                channelIndex = rbnbChannelMap.Add("outsideHumidity");                 // 73
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getOutsideHumidity()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=percent");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getOutsideHumidity()});
+                              
                // add the rainRate field data
                channelIndex = rbnbChannelMap.Add("rainRate");                        // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getRainRate()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch/hour");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getRainRate()});
+                              
                // add the uvRadiation field data
                channelIndex = rbnbChannelMap.Add("uvRadiation");                     // 0
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getUvRadiation()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "UV index");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getUvRadiation()});
+                              
                // add the solarRadiation field data
                channelIndex = rbnbChannelMap.Add("solarRadiation");                  // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getSolarRadiation()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "watt/m^2");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getSolarRadiation()});
+                              
                // add the stormRain field data
                channelIndex = rbnbChannelMap.Add("stormRain");                       // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getStormRain()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getStormRain()});
+                              
                // add the currentStormStartDate field data
                channelIndex = rbnbChannelMap.Add("currentStormStartDate");           // -1--1-1999
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getCurrentStormStartDate());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getCurrentStormStartDate());
+                              
                // add the dailyRain field data
                channelIndex = rbnbChannelMap.Add("dailyRain");                       // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyRain()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyRain()});
+                              
                // add the monthlyRain field data
                channelIndex = rbnbChannelMap.Add("monthlyRain");                     // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyRain()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyRain()});
+                              
                // add the yearlyRain field data
                channelIndex = rbnbChannelMap.Add("yearlyRain");                      // 15.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyRain()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyRain()});
+                              
                // add the dailyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("dailyEvapoTranspiration");         // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyEvapoTranspiration()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyEvapoTranspiration()});
+                              
                // add the monthlyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("monthlyEvapoTranspiration");       // 0.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyEvapoTranspiration()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyEvapoTranspiration()});
+                              
                // add the yearlyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("yearlyEvapoTranspiration");        // 93.0
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyEvapoTranspiration()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=inch");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyEvapoTranspiration()});
+                              
                // add the transmitterBatteryStatus field data
                channelIndex = rbnbChannelMap.Add("transmitterBatteryStatus");        // 0
-               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTransmitterBatteryStatus()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTransmitterBatteryStatus()});
+                              
                // add the consoleBatteryVoltage field data
                channelIndex = rbnbChannelMap.Add("consoleBatteryVoltage");           // 4.681640625
-               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getConsoleBatteryVoltage()});
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=volts");
-               
+               rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getConsoleBatteryVoltage()});
+                              
                // add the forecastAsString field data
                channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
+                              
                // add the forecastRuleNumberAsString field data
                channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastRuleNumberAsString());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastRuleNumberAsString());
+                              
                // add the timeOfSunrise field data
                channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunrise());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunrise());
+                              
                // add the timeOfSunset field data
                channelIndex = rbnbChannelMap.Add("timeOfSunset");                    // 19:11
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutUserInfo(channelIndex, "units=none");               
-               
+               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
+                              
                // finally, send the channel map of data to the DataTurbine
                getSource().Flush(rbnbChannelMap);
                String sampleString = new String(Hex.encodeHex(sampleArray));
