@@ -406,8 +406,8 @@ public class DavisWxSource extends RBNBSource {
       rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
       
       // add the forecastRuleNumberAsString field data
-      channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
-      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      //channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
+      //rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
       
       // add the timeOfSunrise field data
       channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
@@ -695,9 +695,9 @@ public class DavisWxSource extends RBNBSource {
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
                               
                // add the forecastRuleNumberAsString field data
-               channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
-               rbnbChannelMap.PutMime(channelIndex, "text/plain");
-               rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastRuleNumberAsString());
+               //channelIndex = rbnbChannelMap.Add("forecastRuleNumberAsString");      // Increasing clouds with little temperature change.
+               //rbnbChannelMap.PutMime(channelIndex, "text/plain");
+               //rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastRuleNumberAsString());
                               
                // add the timeOfSunrise field data
                channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
@@ -736,7 +736,7 @@ public class DavisWxSource extends RBNBSource {
                logger.info("transmitterBatteryStatus:       " + davisWxParser.getTransmitterBatteryStatus());
                logger.info("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
                logger.info("forecastAsString:               " + davisWxParser.getForecastAsString());
-               logger.info("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
+               //logger.info("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
                logger.info("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
                logger.info("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
                logger.info(" flushed data to the DataTurbine. ");
