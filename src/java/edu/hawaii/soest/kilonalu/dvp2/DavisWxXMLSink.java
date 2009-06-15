@@ -90,7 +90,7 @@ public class DavisWxXMLSink extends RBNBBase {
   private boolean connected = false;
 
   /** The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "/Users/cjones/development/bbl/trunk/lib/log4j.properties";
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
 
   /** The log configuration file location */
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
