@@ -30,6 +30,7 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import java.lang.StringBuffer;
 import java.lang.StringBuilder;
 import java.lang.InterruptedException;
 
@@ -44,6 +45,11 @@ import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -199,6 +205,16 @@ public class DavisWxSource extends RBNBSource {
    * @see execute()
    */
   private final int RETRY_INTERVAL = 5000;
+  
+  /** 
+   * The date format for the timestamp applied to the LOOP sample 04 Aug 2008 09:15:01
+   */
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  
+  /**
+   * The timezone used for the sample date
+   */
+  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
   
   /*
    * The instance of the DavisWxParser object used to parse the binary LOOP
@@ -705,7 +721,7 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("consoleBatteryVoltage");           // 4.681640625
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getConsoleBatteryVoltage()});
-               decimalASCIISampleData.append((new Float(davisWxParser.getConsoleBatteryVoltage())).toString()); // also convert to ASCII
+               decimalASCIISampleData.append((new Float(davisWxParser.getConsoleBatteryVoltage())).toString() + ", "); // also convert to ASCII
                
                // add the forecastAsString field data
                channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
@@ -727,8 +743,13 @@ public class DavisWxSource extends RBNBSource {
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
                
-               // add the ASCII CSV string of selected fields as a channel
+               // then add a timestamp to the end of the sample
+               DATE_FORMAT.setTimeZone(TZ);
+               String sampleDateAsString = DATE_FORMAT.format(new Date()).toString();
+               decimalASCIISampleData.append(sampleDateAsString);
                decimalASCIISampleData.append("\n");
+               
+               // add the ASCII CSV string of selected fields as a channel
                channelIndex = rbnbChannelMap.Add("DecimalASCIISampleData");                    // 19:11
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
