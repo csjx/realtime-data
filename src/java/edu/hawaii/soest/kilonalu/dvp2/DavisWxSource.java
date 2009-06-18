@@ -586,7 +586,20 @@ public class DavisWxSource extends RBNBSource {
                sampleBuffer.get(sampleArray);
                
                // parse and send the sample to the data turbine
-               this.davisWxParser = new DavisWxParser(sampleBuffer);
+               try {
+                 this.davisWxParser = new DavisWxParser(sampleBuffer);
+                 
+               } catch (java.lang.Exception e) {
+                 logger.info("There was a problem parsing the binary weather LOOP packet. Skipping this sample.");
+                 byteOne   = 0x00;
+                 byteTwo   = 0x00;
+                 byteThree = 0x00;
+                 byteFour  = 0x00;
+                 sampleBuffer.clear();
+                 sampleByteCount = 0;
+                 rbnbChannelMap.Clear();                      
+                 break;
+               }
                
                // create a character string to store characters from the TCP stream
                StringBuilder decimalASCIISampleData = new StringBuilder();
