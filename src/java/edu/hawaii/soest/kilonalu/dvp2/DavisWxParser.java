@@ -786,7 +786,7 @@ public class DavisWxParser {
    */
   public int getBarTrend(){
     this.barTrend.flip();
-    return (int) this.barTrend.get();
+    return (int) (this.barTrend.get() & 0xFF);
   }
   
   /**
@@ -822,7 +822,7 @@ public class DavisWxParser {
    */
   public int getPacketType(){
     this.packetType.flip();
-    return (int) this.packetType.get();
+    return (int) (this.packetType.get() & 0xFF);
   }
   
   /**
@@ -862,7 +862,7 @@ public class DavisWxParser {
    */
   public int getInsideHumidity(){
     this.insideHumidity.flip();
-    return (int) (this.insideHumidity.get());
+    return (int) (this.insideHumidity.get() & 0xFF);
   }
   
   /**
@@ -882,7 +882,7 @@ public class DavisWxParser {
    */
   public int getWindSpeed(){
     this.windSpeed.flip();
-    return (int) (this.windSpeed.get());
+    return (int) (this.windSpeed.get() & 0xFF);
   }
   
   /**
@@ -892,7 +892,7 @@ public class DavisWxParser {
    */
   public int getTenMinuteAverageWindSpeed(){
     this.tenMinuteAverageWindSpeed.flip();
-    return (int) (this.tenMinuteAverageWindSpeed.get());
+    return (int) (this.tenMinuteAverageWindSpeed.get() & 0xFF);
   }
   
   /**
@@ -960,7 +960,7 @@ public class DavisWxParser {
    */
   public int getOutsideHumidity(){
     this.outsideHumidity.flip();
-    return (int) (this.outsideHumidity.get());
+    return (int) (this.outsideHumidity.get() & 0xFF);
   }
   
   /**
@@ -996,7 +996,7 @@ public class DavisWxParser {
    */
   public int getUvRadiation(){
     this.uvRadiation.flip();
-    return (int) (this.uvRadiation.get());
+    return (int) (this.uvRadiation.get() & 0xFF);
   }
   
   /**
