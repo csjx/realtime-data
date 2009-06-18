@@ -902,7 +902,7 @@ public class DavisWxParser {
    */
   public int getWindDirection(){
     this.windDirection.flip();
-    return (int) (this.windDirection.get());
+    return (int) (this.windDirection.get() & 0xFF);
   }
   
   /**
@@ -1178,7 +1178,7 @@ public class DavisWxParser {
    */
   public int getTransmitterBatteryStatus(){
     this.transmitterBatteryStatus.flip();
-    return (int) (this.transmitterBatteryStatus.get());
+    return (int) (this.transmitterBatteryStatus.get() & 0xFF);
   }
   
   /**
