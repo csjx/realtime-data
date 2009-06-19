@@ -23,7 +23,7 @@ java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink \
  -s 192.168.103.50\
  -p 3333\
  -n KNWXXX_XXXDVP2XXXR00\
- -c BinarySampleData\
- -k KNWXXX_XXXDVP2XXXR00_BinarySampleData_FileArchiver\
+ -c DecimalASCIISampleData\
+ -k KNWXXX_XXXDVP2XXXR00_DecimalASCIISampleData_FileArchiver\
  -I hourly\
- -d /data/kilonalu/KNWXXX_XXXDVP2XXXR00/BinarySampleData
+ -d /data/kilonalu/KNWXXX_XXXDVP2XXXR00/DecimalASCIISampleData

@@ -20,7 +20,7 @@ java edu.hawaii.soest.kilonalu.dvp2.DavisWxSource\
  -H 168.105.160.135\
  -P 2101\
  -S KNWXXX_XXXDVP2XXXR00\
- -C BinarySampleData\
+ -C DecimalASCIISampleData\
  -s 192.168.103.50\
  -p 3333\
  -z 50000\
