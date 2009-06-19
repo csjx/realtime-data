@@ -634,7 +634,6 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getInsideTemperature()});
-               decimalASCIISampleData.append((new Float(davisWxParser.getInsideTemperature())).toString() + ", ");
                decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(davisWxParser.getInsideTemperature())) + ", ");
                
                // add the insideHumidity field data
