@@ -916,7 +916,7 @@ public class DavisWxParser {
     // add each of the temperature values to a float array
     float[] extraTemperatures = new float[7];
     for (int i = 0; i < extraTemperatures.length; i++ ) {
-      extraTemperatures[i] = (float) (this.extraTemperatures.get() - 90.0 )/10;
+      extraTemperatures[i] = (float) ((this.extraTemperatures.get() & 0xFF) - 90.0 )/10;
     }
     return extraTemperatures;
   }
@@ -932,7 +932,7 @@ public class DavisWxParser {
     // add each of the temperature values to a float array
     float[] soilTemperatures = new float[4];
     for (int i = 0; i < soilTemperatures.length; i++ ) {
-      soilTemperatures[i] = (float) (this.soilTemperatures.get() - 90.0 )/10;
+      soilTemperatures[i] = (float) ((this.soilTemperatures.get() & 0xFF) - 90.0 )/10;
     }
     return soilTemperatures;
   }
@@ -948,7 +948,7 @@ public class DavisWxParser {
     // add each of the temperature values to a float array
     float[] leafTemperatures = new float[4];
     for (int i = 0; i < leafTemperatures.length; i++ ) {
-      leafTemperatures[i] = (float) (this.leafTemperatures.get() - 90.0 )/10;
+      leafTemperatures[i] = (float) ((this.leafTemperatures.get() & 0xFF) - 90.0 )/10;
     }
     return leafTemperatures;
   }
@@ -1041,7 +1041,11 @@ public class DavisWxParser {
         year  = (year << 25) >> 25; // clear bits 7-32
     int centuryYear = 2000 + (int) year;
           String centuryYearString = (new Integer(centuryYear)).toString();
-    return( monthString + "-" + dayString + "-" + centuryYearString );
+    if ( monthString.equals("-1") || dayString.equals("-1") ) {
+      return "01-01-1999";
+    } else {
+      return( monthString + "-" + dayString + "-" + centuryYearString );
+    }
   }
   
   /**
@@ -1176,9 +1180,9 @@ public class DavisWxParser {
    *
    * @return transmitterBatteryStatus - the transmitterBatteryStatus as an integer
    */
-  public int getTransmitterBatteryStatus(){
+  public byte[] getTransmitterBatteryStatus(){
     this.transmitterBatteryStatus.flip();
-    return (int) (this.transmitterBatteryStatus.get() & 0xFF);
+    return new byte[]{this.transmitterBatteryStatus.get()};
   }
   
   /**
@@ -1249,7 +1253,7 @@ public class DavisWxParser {
    */
   public String getForecastRuleNumberAsString(){
     this.forecastRuleNumber.flip();
-    int forecastRuleNumber = (int) this.forecastRuleNumber.get();
+    int forecastRuleNumber = (int) (this.forecastRuleNumber.get() & 0xFF);
     
     String forecastRuleNumberAsString = "No forecast rule string available";
     Map<Integer, String> forecastRuleMap = new HashMap<Integer,String>();
