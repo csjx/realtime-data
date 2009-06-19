@@ -323,8 +323,8 @@ public class DavisWxSource extends RBNBSource {
       int channelIndex = 0;
       
       // add the raw binary LOOP packet data
-      channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      //channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+      //rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
       
       // add the barTrendAsString field data
       channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
@@ -607,9 +607,9 @@ public class DavisWxSource extends RBNBSource {
                rbnbChannelMap.PutTimeAuto("server");
                
                // add the raw binary LOOP packet data
-               channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-               rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-               rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
+               //channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+               //rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+               //rbnbChannelMap.PutDataAsByteArray(channelIndex, sampleArray);         // raw binary LOOP packet
                
                // add the barTrendAsString field data
                channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
@@ -794,7 +794,7 @@ public class DavisWxSource extends RBNBSource {
                decimalASCIISampleData.append("\n");
                
                // add the ASCII CSV string of selected fields as a channel
-               channelIndex = rbnbChannelMap.Add("DecimalASCIISampleData");                    // 19:11
+               channelIndex = rbnbChannelMap.Add(getRBNBChannelName());                    // 19:11
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
                
@@ -822,7 +822,7 @@ public class DavisWxSource extends RBNBSource {
                logger.info("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
                logger.info("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
                logger.info("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
-               logger.info("transmitterBatteryStatus:       " + davisWxParser.getTransmitterBatteryStatus());
+               logger.info("transmitterBatteryStatus:       " + Arrays.toString(davisWxParser.getTransmitterBatteryStatus()));
                logger.info("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
                logger.info("forecastAsString:               " + davisWxParser.getForecastAsString());
                //logger.info("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
