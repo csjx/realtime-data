@@ -615,7 +615,7 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getBarTrendAsString());
-               decimalASCIISampleData.append(String.format("%16s", (Object) davisWxParser.getBarTrendAsString()));
+               decimalASCIISampleData.append(String.format("%16s", (Object) davisWxParser.getBarTrendAsString()) + ", ");
                
                // add the packetType field to the ASCII string only
                decimalASCIISampleData.append(String.format("%1d", (Object) new Integer(davisWxParser.getPacketType())) + ", ");
@@ -722,7 +722,7 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("currentStormStartDate");           // -1--1-1999
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getCurrentStormStartDate());
-               decimalASCIISampleData.append(String.format("%10s", (Object) davisWxParser.getCurrentStormStartDate()));
+               decimalASCIISampleData.append(String.format("%10s", (Object) davisWxParser.getCurrentStormStartDate()) + ", ");
                
                // add the dailyRain field data
                channelIndex = rbnbChannelMap.Add("dailyRain");                       // 0.0
@@ -770,22 +770,22 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
-               decimalASCIISampleData.append(String.format("%47s", (Object) davisWxParser.getForecastAsString()));
+               decimalASCIISampleData.append(String.format("%47s", (Object) davisWxParser.getForecastAsString()) + ", ");
                               
                // add the forecastRuleNumberAsString field data as ASCII only
-               decimalASCIISampleData.append(String.format("%167s", (Object) davisWxParser.getForecastRuleNumberAsString()));
+               decimalASCIISampleData.append(String.format("%167s", (Object) davisWxParser.getForecastRuleNumberAsString()) + ", ");
                
                // add the timeOfSunrise field data
                channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunrise());
-               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunrise()));
+               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunrise()) + ", ");
                               
                // add the timeOfSunset field data
                channelIndex = rbnbChannelMap.Add("timeOfSunset");                    // 19:11
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
-               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunset()));
+               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunset()) + ", ");
                
                // then add a timestamp to the end of the sample
                DATE_FORMAT.setTimeZone(TZ);
