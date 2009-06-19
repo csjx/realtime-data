@@ -274,19 +274,19 @@ public class DavisWxXMLSink extends RBNBBase {
           sb.append("<wx>\n");
           sb.append("  <updatetime>"  + updateDateString + "</updatetime>\n");
           sb.append("  <barotrend>"   + responseMap.GetDataAsString(responseMap.GetIndex(fullSourceName             + "barTrendAsString")         )[0]              + "</barotrend>\n" );
-          sb.append("  <baropress>"   + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "barometer")                )[0])).toString() + "</baropress>\n" );
-          sb.append("  <outtemp>"     + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "outsideTemperature")       )[0])).toString() + "</outtemp>\n"   );
-          sb.append("  <intemp>"      + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "insideTemperature")        )[0])).toString() + "</intemp>\n"    );
-          sb.append("  <inrelhum>"    + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "insideHumidity")           )[0])).toString() + "</inrelhum>\n"  );
-          sb.append("  <outrelhum>"   + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "outsideHumidity")          )[0])).toString() + "</outrelhum>\n" );
-          sb.append("  <windspd>"     + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "windSpeed")                )[0])).toString() + "</windspd>\n"   );
-          sb.append("  <windavg>"     + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "tenMinuteAverageWindSpeed"))[0])).toString() + "</windavg>\n"   );
-          sb.append("  <winddir>"     + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "windDirection")            )[0])).toString() + "</winddir>\n"   );
-          sb.append("  <todayrain>"   + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "dailyRain")                )[0])).toString() + "</todayrain>\n" );
-          sb.append("  <rainrate>"    + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "rainRate")                 )[0])).toString() + "</rainrate>\n"  );
-          sb.append("  <uv>"          + (new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "uvRadiation")              )[0])).toString() + "</uv>\n"        );
-          sb.append("  <solrad>"      + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "solarRadiation")           )[0])).toString() + "</solrad>\n"    );
-          sb.append("  <monthrain>"   + (new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "monthlyRain")              )[0])).toString() + "</monthrain>\n" );
+          sb.append("  <baropress>"   + String.format("%5.3f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "barometer")                )[0]))) + "</baropress>\n" );
+          sb.append("  <outtemp>"     + String.format("%4.1f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "outsideTemperature")       )[0]))) + "</outtemp>\n"   );
+          sb.append("  <intemp>"      + String.format("%4.1f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "insideTemperature")        )[0]))) + "</intemp>\n"    );
+          sb.append("  <inrelhum>"    + String.format("%3d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "insideHumidity")           )[0]))) + "</inrelhum>\n"  );
+          sb.append("  <outrelhum>"   + String.format("%3d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "outsideHumidity")          )[0]))) + "</outrelhum>\n" );
+          sb.append("  <windspd>"     + String.format("%3d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "windSpeed")                )[0]))) + "</windspd>\n"   );
+          sb.append("  <winddir>"     + String.format("%3d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "windDirection")            )[0]))) + "</winddir>\n"   );
+          sb.append("  <windavg>"     + String.format("%3d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "tenMinuteAverageWindSpeed"))[0]))) + "</windavg>\n"   );
+          sb.append("  <todayrain>"   + String.format("%4.2f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "dailyRain")                )[0]))) + "</todayrain>\n" );
+          sb.append("  <monthrain>"   + String.format("%4.2f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "monthlyRain")              )[0]))) + "</monthrain>\n" );
+          sb.append("  <rainrate>"    + String.format("%4.2f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "rainRate")                 )[0]))) + "</rainrate>\n"  );
+          sb.append("  <uv>"          + String.format("%4d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "uvRadiation")              )[0]))) + "</uv>\n"        );
+          sb.append("  <solrad>"      + String.format("%4d",    (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "solarRadiation")           )[0]))) + "</solrad>\n"    );
           sb.append("  <forecast>"    + responseMap.GetDataAsString(responseMap.GetIndex(fullSourceName             + "forecastAsString")         )[0]              + "</forecast>\n"  );
           sb.append("</wx>\n");
           
@@ -361,7 +361,7 @@ public class DavisWxXMLSink extends RBNBBase {
 
     try {
       sink.CloseRBNBConnection();
-      fileOutputStream.close();
+      this.fileOutputStream.close();
       
     } catch (java.io.IOException ioe){
        ioe.printStackTrace();
