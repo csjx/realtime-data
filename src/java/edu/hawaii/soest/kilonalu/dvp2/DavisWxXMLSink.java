@@ -286,7 +286,7 @@ public class DavisWxXMLSink extends RBNBBase {
           sb.append("  <monthrain>"   + String.format("%4.2f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "monthlyRain")              )[0]))) + "</monthrain>\n" );
           sb.append("  <rainrate>"    + String.format("%4.2f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "rainRate")                 )[0]))) + "</rainrate>\n"  );
           sb.append("  <uv>"          + String.format("%4d",    (Object)(new Integer(responseMap.GetDataAsInt32(responseMap.GetIndex(fullSourceName + "uvRadiation")              )[0]))) + "</uv>\n"        );
-          sb.append("  <solrad>"      + String.format("%4d",    (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "solarRadiation")           )[0]))) + "</solrad>\n"    );
+          sb.append("  <solrad>"      + String.format("%4.0f",  (Object)(new Float(responseMap.GetDataAsFloat32(responseMap.GetIndex(fullSourceName + "solarRadiation")           )[0]))) + "</solrad>\n"    );
           sb.append("  <forecast>"    + responseMap.GetDataAsString(responseMap.GetIndex(fullSourceName             + "forecastAsString")         )[0]              + "</forecast>\n"  );
           sb.append("</wx>\n");
           
