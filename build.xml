@@ -69,18 +69,19 @@
     </condition>
 
     <!-- classpath jar files (including relative path from basedir) -->
-    <property name="log4jjar"  value="${libdir}/log4j-1.2.8.jar" />
-    <property name="httpjar"  value="${libdir}/httpclient.jar" />
-    <property name="codecjar"  value="${libdir}/commons-codec-1.3.jar" />
-    <property name="rbnbjar"  value="${libdir}/rbnb.jar" />
+    <property name="log4jjar"    value="${libdir}/log4j-1.2.8.jar" />
+    <property name="httpjar"     value="${libdir}/httpclient.jar" />
+    <property name="configjar"   value="${libdir}/commons-configuration-1.6.jar" />
+    <property name="codecjar"    value="${libdir}/commons-codec-1.3.jar" />
+    <property name="rbnbjar"     value="${libdir}/rbnb.jar" />
     <property name="turbinejar"  value="${libdir}/turbine-3.9.0.jar" />
-    <property name="clijar"  value="${libdir}/commons-cli-1.0.jar" />
+    <property name="clijar"      value="${libdir}/commons-cli-1.0.jar" />
     <property name="loggingjar"  value="${libdir}/commons-logging-1.0.4.jar" />
-    <property name="rxtxjar"  value="${libdir}/RXTXcomm.jar" />
-    <property name="oss-apps"  value="${libdir}/oss-apps.jar" />
+    <property name="rxtxjar"     value="${libdir}/RXTXcomm.jar" />
+    <property name="oss-apps"    value="${libdir}/oss-apps.jar" />
     <!-- CLASSPATH -->
     <property name="cpath"      
-            value="${log4jjar}:${httpjar}:${codecjar}:${rbnbjar}:${turbinejar}:${clijar}:${loggingjar}:${rxtxjar}:${oss-apps}" />
+            value="${log4jjar}:${httpjar}:${codecjar}:${configjar}:${rbnbjar}:${turbinejar}:${clijar}:${loggingjar}:${rxtxjar}:${oss-apps}" />
     <echo message="classpath is:   ${cpath}"/>
   </target>
 
@@ -107,7 +108,9 @@
     <javac srcdir="${build.src}"
        destdir="${build.dest}"
        classpath="${cpath}"
-       debug="on"/>
+       debug="on">
+       <compilerarg value="-Xlint"/>
+    </javac>
    </target>
 
    <target name="jar" depends="compile"
