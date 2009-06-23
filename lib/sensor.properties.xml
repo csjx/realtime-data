@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!--
+  *  sensor.properties.xml
+  *
+  *  Copyright: 2009 Regents of the University of Hawaii and the
+  *         School of Ocean and Earth Science and Technology 
+  *
+  *   '$Author$'
+  *   '$Date$'
+  *   '$Revision$'
+-->
+
+<!-- Definitions for the sensor list properties are as follows:-->
+<!DOCTYPE sensors [
+  <!-- The list of sensors -->
+  <!ELEMENT sensors (sensor*)>
+  <!-- An individual sensor with each property as an element -->
+  <!ELEMENT sensor (address, name, description, type, format, senseRange, fullRange)>
+  <!-- The IP address of the sensor -->
+  <!ELEMENT address (#PCDATA)>
+  <!-- The source name of the sensor -->
+  <!ELEMENT name (#PCDATA)>
+  <!-- The source description of the sensor -->
+  <!ELEMENT description (#PCDATA)>
+  <!-- The source type of the sensor (either monitor or control)-->
+  <!ELEMENT type (#PCDATA)>
+  <!-- The source format string of the sensor used to parse the data -->
+  <!ELEMENT format (#PCDATA)>
+  <!-- The sensing range of the sensor in volts -->
+  <!ELEMENT senseRange (#PCDATA)>
+  <!-- The full range of the sensor -->
+  <!ELEMENT fullRange (#PCDATA)>
+]>
+<sensors>
+  <sensor>
+    <address>192.168.100.201</address>
+    <name>KN00XX_010ADAM010R01</name>
+    <description>10m CN ADAM monitor 1</description>
+    <type>monitor</type>
+    <format>%4s %4s %4s %4s %4s %4s %4s %4s</format>
+    <senseRange>20</senseRange>
+    <fullRange>65536</fullRange>
+  </sensor>
+</sensors>
