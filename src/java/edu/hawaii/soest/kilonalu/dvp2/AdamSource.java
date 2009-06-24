@@ -120,7 +120,7 @@ public class AdamSource extends RBNBSource {
    * The default size of the ByteBuffer used to beffer the TCP stream from the
    * source instrument.
    */  
-  private int DEFAULT_BUFFER_SIZE = 128; // bytes
+  private int DEFAULT_BUFFER_SIZE = 256; // bytes
 
   /**
    * The size of the ByteBuffer used to beffer the TCP stream from the 
@@ -286,39 +286,22 @@ public class AdamSource extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = 0;
-            
-      // add the barTrendAsString field data
-      channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
-      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
       
-      // add the barometer field data
-      channelIndex = rbnbChannelMap.Add("barometer");                      // 29.9
-      rbnbChannelMap.PutUserInfo(channelIndex, "units=inch Hg");
-      
-      // add the insideTemperature field data
-      channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
-      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees F");
-      
-      // register the channel map of variables and units with the DataTurbine
-      getSource().Register(rbnbChannelMap);
-      
-      // reset variables for use with the incoming data
-      rbnbChannelMap.Clear();
-      channelIndex = 0;
-            
       // while there are bytes to read from the socket ...
       while ( !failed ) {
         
         buffer.clear();
         InetSocketAddress socketAddress = 
           (InetSocketAddress) this.datagramChannel.receive(buffer);
-        // prepare the buffer for reading
-        //buffer.flip();          
-        // while there are unread bytes in the ByteBuffer
         
         logger.debug("Host: " + socketAddress.toString() + " data: " +
                       "rem:\t" + buffer.remaining() + 
                       "\tpos:\t" + buffer.position());
+        
+        // prepare the buffer for reading
+        buffer.flip();
+        logger.debug((new String(Hex.encodeHex(buffer.array()))).toUpperCase());
+        
       } // end while (more socket bytes to read)
       this.datagramChannel.close();
         
@@ -330,12 +313,12 @@ public class AdamSource extends RBNBSource {
       e.printStackTrace();
       return !failed;
     
-    } catch ( SAPIException sapie ) {
-      // In the event of an RBNB communication  exception, log the exception, 
-      // and allow execute() to return false, which will prompt a retry.
-      failed = true;
-      sapie.printStackTrace();
-      return !failed;
+    //} catch ( SAPIException sapie ) {
+    //  // In the event of an RBNB communication  exception, log the exception, 
+    //  // and allow execute() to return false, which will prompt a retry.
+    //  failed = true;
+    //  sapie.printStackTrace();
+    //  return !failed;
     }
     
     return !failed;
