@@ -141,6 +141,16 @@ public class CTDSource extends RBNBSource {
   private int sampleByteCount = 0;
   
   /**
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /**
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+  
+  /**
    * The Logger instance used to log system messages 
    */
   private static Logger logger = Logger.getLogger(CTDSource.class);
@@ -330,14 +340,8 @@ public class CTDSource extends RBNBSource {
                 String sampleString = new String(sampleArray, "US-ASCII");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info(
-                  "flushed: "      + sampleByteCount          + "\t" +
-                  "sample pos: "   + sampleBuffer.position()  + "\t" +
-                  "sample rem: "   + sampleBuffer.remaining() + "\t" +
-                  "buffer pos: "   + buffer.position()        + "\t" +
-                  "buffer rem: "   + buffer.remaining()       + "\t" +
-                  "state: "        + state
-                );
+                logger.info("Sample: " + sampleString);
+                logger.info("flushed data to the DataTurbine. ");
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
@@ -508,15 +512,15 @@ public class CTDSource extends RBNBSource {
 
   public static void main (String args[]) {
     
-    // Set up a simple logger that logs to the console
-    BasicConfigurator.configure();
-    
     logger.info("CTDSource.main() called.");
     
     try {
       // create a new instance of the CTDSource object, and parse the command 
       // line arguments as settings for this instance
       final CTDSource ctdSource = new CTDSource();
+      
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(ctdSource.getLogConfigurationFile());
       
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
@@ -764,4 +768,22 @@ public class CTDSource extends RBNBSource {
     streamingThread.interrupt();
   }
 
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
 }
