@@ -6,10 +6,10 @@
  *            an ad hoc XML file syntax to update a weather web page.
  *   Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy: $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -381,10 +381,10 @@ public class DavisWxXMLSink extends RBNBBase {
 
   /** A method that returns the CVS version string */
   protected String getCVSVersionString() {
-    return ("$LastChangedDate: 2009-04-14 14:15:07 -0600 (Tue, 14 Apr 2009) $\n"
-        + "$LastChangedRevision: 323 $"
-        + "$LastChangedBy: cjones $"
-        + "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/utilities/DavisWxXMLSink.java $"); 
+    return ("$LastChangedDate$\n"
+        + "$LastChangedRevision$"
+        + "$LastChangedBy$"
+        + "$HeadURL$"); 
   }
   
   /**
