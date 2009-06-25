@@ -335,14 +335,39 @@ public class CTDSource extends RBNBSource {
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
-                // send the sample to the data turbine
-                rbnbChannelMap.PutTimeAuto("server");
                 String sampleString = new String(sampleArray, "US-ASCII");
-                rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
-                getSource().Flush(rbnbChannelMap);
-                logger.info("Sample: " + sampleString);
-                logger.info("flushed data to the DataTurbine. ");
                 
+                // test if the sample is not just an instrument message
+                if ( sampleString.matches("^# [0-9].*")  || 
+                     sampleString.matches("^#  [0-9].*") ||
+                     sampleString.matches("^ [0-9].*")   || ) {
+                
+                  // send the sample to the data turbine
+                  rbnbChannelMap.PutTimeAuto("server");
+                  rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+                  getSource().Flush(rbnbChannelMap);
+                  logger.info("Sent sample to the DataTurbine: " + sampleString);
+                  
+                  // reset variables for the next sample
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  sampleBuffer.clear();
+                  sampleByteCount = 0;
+                  //rbnbChannelMap.Clear();                      
+                  logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                  logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                  state = 0;
+                
+                // the sample looks more like an instrument message, don't flush
+                } else {
+                  
+                  logger.info("This string does not look like a sample, " +
+                              "and was not sent to the DataTurbine.");
+                  logger.info("Skipping sample: " + sampleString);
+
+                  // reset variables for the next sample
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
                   byteThree = 0x00;
@@ -354,6 +379,8 @@ public class CTDSource extends RBNBSource {
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
                   state = 0;
                   
+                }
+                
               } else { // not 0x0A0D
 
                 // still in the middle of the sample, keep adding bytes
