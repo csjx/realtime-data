@@ -363,6 +363,11 @@ public class CTDSource extends RBNBSource {
                 // the sample looks more like an instrument message, don't flush
                 } else {
                   
+                  // send the sample to the data turbine
+                  rbnbChannelMap.PutTimeAuto("server");
+                  rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+                  getSource().Flush(rbnbChannelMap);
+                  
                   logger.info("This string does not look like a sample, " +
                               "and was not sent to the DataTurbine.");
                   logger.info("Skipping sample: " + sampleString);
