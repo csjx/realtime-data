@@ -338,9 +338,9 @@ public class CTDSource extends RBNBSource {
                 String sampleString = new String(sampleArray, "US-ASCII");
                 
                 // test if the sample is not just an instrument message
-                if ( sampleString.matches("^# [0-9].*")  || 
+                if ( sampleString.matches("^# [0-9].*" ) ||
                      sampleString.matches("^#  [0-9].*") ||
-                     sampleString.matches("^ [0-9].*")   || ) {
+                     sampleString.matches("^ [0-9].*") ) {
                 
                   // send the sample to the data turbine
                   rbnbChannelMap.PutTimeAuto("server");
