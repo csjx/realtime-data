@@ -5,10 +5,10 @@
  *             frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/adcp/TChainSource.java $
- * $LastChangedDate: 2008-08-11 09:15:54 -0600 (Mon, 11 Aug 2008) $
- * $LastChangedBy: cjones $
- * $LastChangedRevision: 228 $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -586,10 +586,10 @@ public class TChainSource extends RBNBSource {
 
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2008-08-11 09:15:54 -0600 (Mon, 11 Aug 2008) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 228 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/adcp/TChainSource.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 
