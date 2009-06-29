@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
@@ -288,18 +289,20 @@ public class AdamSource extends RBNBSource {
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = 0;
       
+      datagramChannel = DatagramChannel.open();
+      SocketAddress address = new InetSocketAddress(getHostPort());
+      DatagramSocket socket = datagramChannel.socket();
+      socket.bind(address);
+      
       // while there are bytes to read from the socket ...
       while ( !failed ) {
         
         buffer.clear();
-        datagramChannel = DatagramChannel.open();
-        SocketAddress address = new InetSocketAddress(0);
         
-        
-        InetSocketAddress socketAddress = 
+        InetSocketAddress packetAddress = 
           (InetSocketAddress) this.datagramChannel.receive(buffer);
         
-        logger.debug("Host: " + socketAddress.toString() + " data: " +
+        logger.debug("Host: " + packetAddress.toString() + " data: " +
                       "rem:\t" + buffer.remaining() + 
                       "\tpos:\t" + buffer.position());
         
