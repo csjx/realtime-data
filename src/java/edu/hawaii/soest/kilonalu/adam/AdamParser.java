@@ -78,12 +78,12 @@ public class AdamParser {
   /**
    *  The voltage sense range for the ADAM logger (+/- 10 volts)
    */
-  private int voltageSenseRange = 20; 
+  private float voltageSenseRange = 20f; 
 
   /**
    *  The voltage full range for the ADAM logger (16-bit == 65536)
    */
-  private int voltageFullRange = 65536;
+  private float voltageFullRange = 65536f;
   
   /*
    *  A field that stores the binary UPD packet data input as a ByteBuffer
@@ -354,4 +354,375 @@ public class AdamParser {
     this.logConfigurationFile = logConfigurationFile;
   }
                                                 
+  /**
+   * A method that gets the packetHeader data
+   *
+   * @return packetHeader - the 22 bytes of the packetHeader field as a ByteBuffer
+   */
+  public ByteBuffer getPacketHeader() {
+    return this.packetHeader;
+  }
+  
+  /**
+   * A method that gets the channel zero data as a converted decimal float
+   *
+   * @return channelZero - the 2 bytes of the channelZero data as a float
+   */
+  public float getChannelZero() {
+    float channelData = 
+      (float) this.channelZero.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel one data as a converted decimal float
+   *
+   * @return channelOne - the 2 bytes of the channelOne data as a float
+   */
+  public float getChannelOne() {
+    float channelData = 
+      (float) this.channelOne.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel two data as a converted decimal float
+   *
+   * @return channelTwo - the 2 bytes of the channelTwo data as a float
+   */
+  public float getChannelTwo() {
+    float channelData = 
+      (float) this.channelTwo.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel three data as a converted decimal float
+   *
+   * @return channelThree - the 2 bytes of the channelThree data as a float
+   */
+  public float getChannelThree() {
+    float channelData = 
+      (float) this.channelThree.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel four data as a converted decimal float
+   *
+   * @return channelFour - the 2 bytes of the channelFour data as a float
+   */
+  public float getChannelFour() {
+    float channelData = 
+      (float) this.channelFour.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel five data as a converted decimal float
+   *
+   * @return channelFive - the 2 bytes of the channelFive data as a float
+   */
+  public float getChannelFive() {
+    float channelData = 
+      (float) this.channelFive.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel six data as a converted decimal float
+   *
+   * @return channelSix - the 2 bytes of the channelSix data as a float
+   */
+  public float getChannelSix() {
+    float channelData = 
+      (float) this.channelSix.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel seven data as a converted decimal float
+   *
+   * @return channelSeven - the 2 bytes of the channelSeven data as a float
+   */
+  public float getChannelSeven() {
+    float channelData = 
+      (float) this.channelSeven.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel average data as a converted decimal float
+   *
+   * @return channelAverage - the 2 bytes of the channelAverage data as a float
+   */
+  public float getChannelAverage() {
+    float channelData = 
+      (float) this.channelAverage.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel zero maximum data as a converted decimal float
+   *
+   * @return channelZeroMax  - the 2 bytes of the channelZeroMax data as a float
+   */
+  public float getChannelZeroMax() {
+    float channelData = 
+      (float) this.channelZeroMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel one data maximum as a converted decimal float
+   *
+   * @return channelOneMax - the 2 bytes of the channelOneMax data as a float
+   */
+  public float getChannelOneMax() {
+    float channelData = 
+      (float) this.channelOneMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel two data maximum as a converted decimal float
+   *
+   * @return channelTwoMax - the 2 bytes of the channelTwoMax data as a float
+   */
+  public float getChannelTwoMax() {
+    float channelData = 
+      (float) this.channelTwoMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel three data maximum as a converted decimal float
+   *
+   * @return channelThreeMax - the 2 bytes of the channelThreeMax data as a float
+   */
+  public float getChannelThreeMax() {
+    float channelData = 
+      (float) this.channelThreeMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel four data maximum as a converted decimal float
+   *
+   * @return channelFourMax - the 2 bytes of the channelFourMax data as a float
+   */
+  public float getChannelFourMax() {
+    float channelData = 
+      (float) this.channelFourMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel five data maximum as a converted decimal float
+   *
+   * @return channelFiveMax - the 2 bytes of the channelFiveMax data as a float
+   */
+  public float getChannelFiveMax() {
+    float channelData = 
+      (float) this.channelFiveMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel six data maximum as a converted decimal float
+   *
+   * @return channelSixMax - the 2 bytes of the channelSixMax data as a float
+   */
+  public float getChannelSixMax() {
+    float channelData = 
+      (float) this.channelSixMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel seven data maximum as a converted decimal float
+   *
+   * @return channelSevenMax - the 2 bytes of the channelSevenMax data as a float
+   */
+  public float getChannelSevenMax() {
+    float channelData = 
+      (float) this.channelSevenMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel average maximum data as a converted decimal float
+   *
+   * @return channelAverageMax - the 2 bytes of the channelAverageMax data as a float
+   */
+  public float getChannelAverageMax() {
+    float channelData = 
+      (float) this.channelAverageMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel zero mimimum data as a converted decimal float
+   *
+   * @return channelZeroMin  - the 2 bytes of the channelZeroMin data as a float
+   */
+  public float getChannelZeroMin() {
+    float channelData = 
+      (float) this.channelZeroMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel one data mimimum as a converted decimal float
+   *
+   * @return channelOneMin - the 2 bytes of the channelOneMin data as a float
+   */
+  public float getChannelOneMin() {
+    float channelData = 
+      (float) this.channelOneMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel two data mimimum as a converted decimal float
+   *
+   * @return channelTwoMin - the 2 bytes of the channelTwoMin data as a float
+   */
+  public float getChannelTwoMin() {
+    float channelData = 
+      (float) this.channelTwoMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel three data mimimum as a converted decimal float
+   *
+   * @return channelThreeMin - the 2 bytes of the channelThreeMin data as a float
+   */
+  public float getChannelThreeMin() {
+    float channelData = 
+      (float) this.channelThreeMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel four data mimimum as a converted decimal float
+   *
+   * @return channelFourMin - the 2 bytes of the channelFourMin data as a float
+   */
+  public float getChannelFourMin() {
+    float channelData = 
+      (float) this.channelFourMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel five data mimimum as a converted decimal float
+   *
+   * @return channelFiveMin - the 2 bytes of the channelFiveMin data as a float
+   */
+  public float getChannelFiveMin() {
+    float channelData = 
+      (float) this.channelFiveMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel six data mimimum as a converted decimal float
+   *
+   * @return channelSixMin - the 2 bytes of the channelSixMin data as a float
+   */
+  public float getChannelSixMin() {
+    float channelData = 
+      (float) this.channelSixMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel seven data mimimum as a converted decimal float
+   *
+   * @return channelSevenMin - the 2 bytes of the channelSevenMin data as a float
+   */
+  public float getChannelSevenMin() {
+    float channelData = 
+      (float) this.channelSevenMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /**
+   * A method that gets the channel average mimimum data as a converted decimal float
+   *
+   * @return channelAverageMin - the 2 bytes of the channelAverageMin data as a float
+   */
+  public float getChannelAverageMin() {
+    float channelData = 
+      (float) this.channelAverageMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    
+    return getVoltage(channelData);
+  }
+  
+  /*
+   * A method that applies a conversion to raw ADAM module channel data to
+   * produce a voltage for the channel
+   *
+   * @return voltage - the converted decimal voltage as a float
+   */
+  private float getVoltage(float channelData) {
+    float voltage = 
+    ( this.voltageSenseRange * ( channelData / this.voltageFullRange ) -
+      this.voltageSenseRange/2 );
+    return voltage;
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }                                               
