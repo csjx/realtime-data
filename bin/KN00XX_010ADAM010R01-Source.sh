@@ -7,6 +7,7 @@ $BBL_HOME/lib/commons-codec-1.3.jar:\
 $BBL_HOME/lib/commons-cli-1.0.jar:\
 $BBL_HOME/lib/commons-logging-1.0.4.jar:\
 $BBL_HOME/lib/commons-configuration-1.6.jar:\
+$BBL_HOME/lib/commons-lang-2.4.jar:\
 $BBL_HOME/lib/turbine-3.9.0.jar:\
 $BBL_HOME/lib/log4j-1.2.8.jar:\
 $BBL_HOME/lib/log4j.properties
