@@ -105,7 +105,7 @@
   </sensor>
   <sensor>
     <address>192.168.100.206</address>
-    <name>KN00XX_010ADAM010R01</name>
+    <name>KN00XX_010ADAM010R02</name>
     <description>10m CN ADAM monitor 2</description>
     <type>monitor</type>
     <ports>
