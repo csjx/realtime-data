@@ -34,6 +34,7 @@ import java.lang.StringBuffer;
 import java.lang.StringBuilder;
 import java.lang.InterruptedException;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,6 +61,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.codec.binary.Hex;
 
 import org.apache.commons.configuration.XMLConfiguration;
+
+import org.apache.commons.lang.exception.NestableException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -298,6 +301,9 @@ public class AdamSource extends RBNBSource {
       this.datagramSocket = new DatagramSocket(getHostPort());
       this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
       
+      // Get the sensor channel configuration properties file
+      File xmlConfigFile = new File(this.logConfigurationFile);
+      XMLConfiguration xmlConfig = new XMLConfiguration(xmlConfigFile);
       // while there are bytes to read from the socket ...
       while ( !failed ) {
         
@@ -357,6 +363,13 @@ public class AdamSource extends RBNBSource {
       // to return false, which will prompt a retry.
       failed = true;
       e.printStackTrace();
+      return !failed;
+    } catch ( org.apache.commons.configuration.ConfigurationException ce ) {
+      // handle exceptions
+      // In the event of an configuration exception, log the exception, and allow execute()
+      // to return false, which will prompt a retry.
+      failed = true;
+      ce.printStackTrace();
       return !failed;
     
     //} catch ( SAPIException sapie ) {
