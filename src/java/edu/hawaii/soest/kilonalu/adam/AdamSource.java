@@ -40,13 +40,13 @@ import java.io.OutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
 
 import java.text.SimpleDateFormat;
 
@@ -176,7 +176,12 @@ public class AdamSource extends RBNBSource {
   /*
    * The socket used to establish UDP communication with the instrument
    */
-  private DatagramChannel datagramChannel;
+  private DatagramSocket datagramSocket;
+  
+  /*
+   * The datagram object used to represent an individual incoming UDP packet
+   */
+  private DatagramPacket datagramPacket;
   
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
@@ -278,40 +283,73 @@ public class AdamSource extends RBNBSource {
     // while data are being sent, read them into the buffer
     try {
       
-      // Create a buffer that will store the sample bytes as they are read
-      ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
-      
-      // create a byte buffer to store bytes from the TCP stream
-      ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
-      
       // add a channel of data that will be pushed to the server.  
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = 0;
       
-      datagramChannel = DatagramChannel.open();
-      SocketAddress address = new InetSocketAddress(getHostPort());
-      DatagramSocket socket = datagramChannel.socket();
-      socket.bind(address);
+      // Create a buffer that will store the sample bytes as they are read
+      byte[] bufferArray = new byte[getBufferSize()];
+      
+      // and a ByteBuffer used to transfer the bytes to the parser
+      ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
+      
+      // bind to the socket, and create a datagram packet to store incoming packets
+      this.datagramSocket = new DatagramSocket(getHostPort());
+      this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
       
       // while there are bytes to read from the socket ...
       while ( !failed ) {
         
-        buffer.clear();
+        // receive any incoming UDP packets and parse the data payload
+        datagramSocket.receive(this.datagramPacket);
         
-        InetSocketAddress packetAddress = 
-          (InetSocketAddress) this.datagramChannel.receive(buffer);
+        logger.debug("Host: " + datagramPacket.getAddress() + 
+                      " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
         
-        logger.debug("Host: " + packetAddress.toString() + " data: " +
-                      "rem:\t" + buffer.remaining() + 
-                      "\tpos:\t" + buffer.position());
+        sampleBuffer.put(datagramPacket.getData());
         
-        // prepare the buffer for reading
-        buffer.flip();
-        logger.debug((new String(Hex.encodeHex(buffer.array()))).toUpperCase());
+        this.adamParser = new AdamParser(sampleBuffer);
+        
+        logger.debug("Host: " + datagramPacket.getAddress() + 
+                      " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
+        
+        logger.debug(                                                        "\n" +
+          "channelZero       : "  + this.adamParser.getChannelZero()       + "\n" +
+          "channelOne        : "  + this.adamParser.getChannelOne()        + "\n" +
+          "channelTwo        : "  + this.adamParser.getChannelTwo()        + "\n" +
+          "channelThree      : "  + this.adamParser.getChannelThree()      + "\n" +
+          "channelFour       : "  + this.adamParser.getChannelFour()       + "\n" +
+          "channelFive       : "  + this.adamParser.getChannelFive()       + "\n" +
+          "channelSix        : "  + this.adamParser.getChannelSix()        + "\n" +
+          "channelSeven      : "  + this.adamParser.getChannelSeven()      + "\n" +
+          "channelAverage    : "  + this.adamParser.getChannelAverage()    + "\n" +
+          "channelZeroMax    : "  + this.adamParser.getChannelZeroMax()    + "\n" +
+          "channelOneMax     : "  + this.adamParser.getChannelOneMax()     + "\n" +
+          "channelTwoMax     : "  + this.adamParser.getChannelTwoMax()     + "\n" +
+          "channelThreeMax   : "  + this.adamParser.getChannelThreeMax()   + "\n" +
+          "channelFourMax    : "  + this.adamParser.getChannelFourMax()    + "\n" +
+          "channelFiveMax    : "  + this.adamParser.getChannelFiveMax()    + "\n" +
+          "channelSixMax     : "  + this.adamParser.getChannelSixMax()     + "\n" +
+          "channelSevenMax   : "  + this.adamParser.getChannelSevenMax()   + "\n" +
+          "channelAverageMax : "  + this.adamParser.getChannelAverageMax() + "\n" +
+          "channelZeroMin    : "  + this.adamParser.getChannelZeroMin()    + "\n" +
+          "channelOneMin     : "  + this.adamParser.getChannelOneMin()     + "\n" +
+          "channelTwoMin     : "  + this.adamParser.getChannelTwoMin()     + "\n" +
+          "channelThreeMin   : "  + this.adamParser.getChannelThreeMin()   + "\n" +
+          "channelFourMin    : "  + this.adamParser.getChannelFourMin()    + "\n" +
+          "channelFiveMin    : "  + this.adamParser.getChannelFiveMin()    + "\n" +
+          "channelSixMin     : "  + this.adamParser.getChannelSixMin()     + "\n" +
+          "channelSevenMin   : "  + this.adamParser.getChannelSevenMin()   + "\n" +
+          "channelAverageMin : "  + this.adamParser.getChannelAverageMin() + "\n"
+        
+        );
+        
+        sampleBuffer.clear();
+        //logger.debug((new String(Hex.encodeHex(buffer.array()))).toUpperCase());
         
       } // end while (more socket bytes to read)
-      this.datagramChannel.close();
+      this.datagramSocket.close();
         
     } catch ( IOException e ) {
       // handle exceptions
