@@ -244,96 +244,142 @@ public class AdamParser {
     this.packetBuffer = packetBuffer;
     // prepare the buffer for reading
     this.packetBuffer.flip();
-    byte[] twentyTwoBytes = new byte[22];
-    byte[] twoBytes = new byte[2];
     
     // Each of the ADAM packet data fields get set upon instantiation of the parser:
     
     // set the packetHeader field
-    this.packetHeader.put(this.packetBuffer.get(twentyTwoBytes));
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
+    this.packetHeader.put(this.packetBuffer.get());
     
     // set the channelZero field
-    this.channelZero.put(this.packetBuffer.get(twoBytes));
+    this.channelZero.put(this.packetBuffer.get());
+    this.channelZero.put(this.packetBuffer.get());
     
     // set the channelOne field
-    this.channelOne.put(this.packetBuffer.get(twoBytes));
+    this.channelOne.put(this.packetBuffer.get());
+    this.channelOne.put(this.packetBuffer.get());
     
     // set the channelTwo field
-    this.channelTwo.put(this.packetBuffer.get(twoBytes));
+    this.channelTwo.put(this.packetBuffer.get());
+    this.channelTwo.put(this.packetBuffer.get());
     
     // set the channelThree field
-    this.channelThree.put(this.packetBuffer.get(twoBytes));
+    this.channelThree.put(this.packetBuffer.get());
+    this.channelThree.put(this.packetBuffer.get());
     
     // set the channelFour field
-    this.channelFour.put(this.packetBuffer.get(twoBytes));
+    this.channelFour.put(this.packetBuffer.get());
+    this.channelFour.put(this.packetBuffer.get());
     
     // set the channelFive field
-    this.channelFive.put(this.packetBuffer.get(twoBytes));
+    this.channelFive.put(this.packetBuffer.get());
+    this.channelFive.put(this.packetBuffer.get());
     
     // set the channelSix field
-    this.channelSix.put(this.packetBuffer.get(twoBytes));
+    this.channelSix.put(this.packetBuffer.get());
+    this.channelSix.put(this.packetBuffer.get());
     
     // set the channelSeven field
-    this.channelSeven.put(this.packetBuffer.get(twoBytes));
+    this.channelSeven.put(this.packetBuffer.get());
+    this.channelSeven.put(this.packetBuffer.get());
     
     // set the channelAverage field
-    this.channelAverage.put(this.packetBuffer.get(twoBytes));
+    this.channelAverage.put(this.packetBuffer.get());
+    this.channelAverage.put(this.packetBuffer.get());
     
     
     // set the channelZeroMax field
-    this.channelZeroMax.put(this.packetBuffer.get(twoBytes));
+    this.channelZeroMax.put(this.packetBuffer.get());
+    this.channelZeroMax.put(this.packetBuffer.get());
     
     // set the channelOneMax field
-    this.channelOneMax.put(this.packetBuffer.get(twoBytes));
+    this.channelOneMax.put(this.packetBuffer.get());
+    this.channelOneMax.put(this.packetBuffer.get());
     
     // set the channelTwoMax field
-    this.channelTwoMax.put(this.packetBuffer.get(twoBytes));
+    this.channelTwoMax.put(this.packetBuffer.get());
+    this.channelTwoMax.put(this.packetBuffer.get());
     
     // set the channelThreeMax field
-    this.channelThreeMax.put(this.packetBuffer.get(twoBytes));
+    this.channelThreeMax.put(this.packetBuffer.get());
+    this.channelThreeMax.put(this.packetBuffer.get());
     
     // set the channelFourMax field
-    this.channelFourMax.put(this.packetBuffer.get(twoBytes));
+    this.channelFourMax.put(this.packetBuffer.get());
+    this.channelFourMax.put(this.packetBuffer.get());
     
     // set the channelFiveMax field
-    this.channelFiveMax.put(this.packetBuffer.get(twoBytes));
+    this.channelFiveMax.put(this.packetBuffer.get());
+    this.channelFiveMax.put(this.packetBuffer.get());
     
     // set the channelSixMax field
-    this.channelSixMax.put(this.packetBuffer.get(twoBytes));
+    this.channelSixMax.put(this.packetBuffer.get());
+    this.channelSixMax.put(this.packetBuffer.get());
     
     // set the channelSevenMax field
-    this.channelSevenMax.put(this.packetBuffer.get(twoBytes));
+    this.channelSevenMax.put(this.packetBuffer.get());
+    this.channelSevenMax.put(this.packetBuffer.get());
     
     // set the channelAverageMax field
-    this.channelAverageMax.put(this.packetBuffer.get(twoBytes));
+    this.channelAverageMax.put(this.packetBuffer.get());
+    this.channelAverageMax.put(this.packetBuffer.get());
     
     
     // set the channelZeroMin field
-    this.channelZeroMin.put(this.packetBuffer.get(twoBytes));
+    this.channelZeroMin.put(this.packetBuffer.get());
+    this.channelZeroMin.put(this.packetBuffer.get());
     
     // set the channelOneMin field
-    this.channelOneMin.put(this.packetBuffer.get(twoBytes));
+    this.channelOneMin.put(this.packetBuffer.get());
+    this.channelOneMin.put(this.packetBuffer.get());
     
     // set the channelTwoMin field
-    this.channelTwoMin.put(this.packetBuffer.get(twoBytes));
+    this.channelTwoMin.put(this.packetBuffer.get());
+    this.channelTwoMin.put(this.packetBuffer.get());
     
     // set the channelThreeMin field
-    this.channelThreeMin.put(this.packetBuffer.get(twoBytes));
+    this.channelThreeMin.put(this.packetBuffer.get());
+    this.channelThreeMin.put(this.packetBuffer.get());
     
     // set the channelFourMin field
-    this.channelFourMin.put(this.packetBuffer.get(twoBytes));
+    this.channelFourMin.put(this.packetBuffer.get());
+    this.channelFourMin.put(this.packetBuffer.get());
     
     // set the channelFiveMin field
-    this.channelFiveMin.put(this.packetBuffer.get(twoBytes));
+    this.channelFiveMin.put(this.packetBuffer.get());
+    this.channelFiveMin.put(this.packetBuffer.get());
     
     // set the channelSixMin field
-    this.channelSixMin.put(this.packetBuffer.get(twoBytes));
+    this.channelSixMin.put(this.packetBuffer.get());
+    this.channelSixMin.put(this.packetBuffer.get());
     
     // set the channelSevenMin field
-    this.channelSevenMin.put(this.packetBuffer.get(twoBytes));
+    this.channelSevenMin.put(this.packetBuffer.get());
+    this.channelSevenMin.put(this.packetBuffer.get());
     
     // set the channelAverageMin field
-    this.channelAverageMin.put(this.packetBuffer.get(twoBytes));
+    this.channelAverageMin.put(this.packetBuffer.get());
+    this.channelAverageMin.put(this.packetBuffer.get());
   }
   
   /**
@@ -360,6 +406,7 @@ public class AdamParser {
    * @return packetHeader - the 22 bytes of the packetHeader field as a ByteBuffer
    */
   public ByteBuffer getPacketHeader() {
+    this.packetHeader.flip();
     return this.packetHeader;
   }
   
@@ -369,8 +416,8 @@ public class AdamParser {
    * @return channelZero - the 2 bytes of the channelZero data as a float
    */
   public float getChannelZero() {
-    float channelData = 
-      (float) this.channelZero.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelZero.flip();    
+    int channelData = (int) this.channelZero.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -381,8 +428,8 @@ public class AdamParser {
    * @return channelOne - the 2 bytes of the channelOne data as a float
    */
   public float getChannelOne() {
-    float channelData = 
-      (float) this.channelOne.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelOne.flip();
+    int channelData = (int) this.channelOne.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -393,8 +440,8 @@ public class AdamParser {
    * @return channelTwo - the 2 bytes of the channelTwo data as a float
    */
   public float getChannelTwo() {
-    float channelData = 
-      (float) this.channelTwo.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelTwo.flip();
+    int channelData = (int) this.channelTwo.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -405,8 +452,8 @@ public class AdamParser {
    * @return channelThree - the 2 bytes of the channelThree data as a float
    */
   public float getChannelThree() {
-    float channelData = 
-      (float) this.channelThree.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelThree.flip();
+    int channelData = (int) this.channelThree.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -417,9 +464,8 @@ public class AdamParser {
    * @return channelFour - the 2 bytes of the channelFour data as a float
    */
   public float getChannelFour() {
-    float channelData = 
-      (float) this.channelFour.order(ByteOrder.LITTLE_ENDIAN).getShort();
-    
+    this.channelFour.flip();
+    int channelData = (int) this.channelFour.order(ByteOrder.BIG_ENDIAN).getShort();
     return getVoltage(channelData);
   }
   
@@ -429,8 +475,8 @@ public class AdamParser {
    * @return channelFive - the 2 bytes of the channelFive data as a float
    */
   public float getChannelFive() {
-    float channelData = 
-      (float) this.channelFive.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelFive.flip();
+    int channelData = (int) this.channelFive.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -441,8 +487,8 @@ public class AdamParser {
    * @return channelSix - the 2 bytes of the channelSix data as a float
    */
   public float getChannelSix() {
-    float channelData = 
-      (float) this.channelSix.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSix.flip();
+    int channelData = (int) this.channelSix.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -453,8 +499,8 @@ public class AdamParser {
    * @return channelSeven - the 2 bytes of the channelSeven data as a float
    */
   public float getChannelSeven() {
-    float channelData = 
-      (float) this.channelSeven.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSeven.flip();
+    int channelData = (int) this.channelSeven.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -465,8 +511,8 @@ public class AdamParser {
    * @return channelAverage - the 2 bytes of the channelAverage data as a float
    */
   public float getChannelAverage() {
-    float channelData = 
-      (float) this.channelAverage.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelAverage.flip();
+    int channelData = (int) this.channelAverage.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -477,8 +523,8 @@ public class AdamParser {
    * @return channelZeroMax  - the 2 bytes of the channelZeroMax data as a float
    */
   public float getChannelZeroMax() {
-    float channelData = 
-      (float) this.channelZeroMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelZeroMax.flip();
+    int channelData = (int) this.channelZeroMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -489,8 +535,8 @@ public class AdamParser {
    * @return channelOneMax - the 2 bytes of the channelOneMax data as a float
    */
   public float getChannelOneMax() {
-    float channelData = 
-      (float) this.channelOneMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelOneMax.flip();
+    int channelData = (int) this.channelOneMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -501,8 +547,8 @@ public class AdamParser {
    * @return channelTwoMax - the 2 bytes of the channelTwoMax data as a float
    */
   public float getChannelTwoMax() {
-    float channelData = 
-      (float) this.channelTwoMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelTwoMax.flip();
+    int channelData = (int) this.channelTwoMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -513,8 +559,8 @@ public class AdamParser {
    * @return channelThreeMax - the 2 bytes of the channelThreeMax data as a float
    */
   public float getChannelThreeMax() {
-    float channelData = 
-      (float) this.channelThreeMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelThreeMax.flip();
+    int channelData = (int) this.channelThreeMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -525,8 +571,8 @@ public class AdamParser {
    * @return channelFourMax - the 2 bytes of the channelFourMax data as a float
    */
   public float getChannelFourMax() {
-    float channelData = 
-      (float) this.channelFourMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelFourMax.flip();
+    int channelData = (int) this.channelFourMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -537,8 +583,8 @@ public class AdamParser {
    * @return channelFiveMax - the 2 bytes of the channelFiveMax data as a float
    */
   public float getChannelFiveMax() {
-    float channelData = 
-      (float) this.channelFiveMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelFiveMax.flip();
+    int channelData = (int) this.channelFiveMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -549,8 +595,8 @@ public class AdamParser {
    * @return channelSixMax - the 2 bytes of the channelSixMax data as a float
    */
   public float getChannelSixMax() {
-    float channelData = 
-      (float) this.channelSixMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSixMax.flip();
+    int channelData = (int) this.channelSixMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -561,8 +607,8 @@ public class AdamParser {
    * @return channelSevenMax - the 2 bytes of the channelSevenMax data as a float
    */
   public float getChannelSevenMax() {
-    float channelData = 
-      (float) this.channelSevenMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSevenMax.flip();
+    int channelData = (int) this.channelSevenMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -573,8 +619,8 @@ public class AdamParser {
    * @return channelAverageMax - the 2 bytes of the channelAverageMax data as a float
    */
   public float getChannelAverageMax() {
-    float channelData = 
-      (float) this.channelAverageMax.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelAverageMax.flip();
+    int channelData = (int) this.channelAverageMax.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -585,8 +631,8 @@ public class AdamParser {
    * @return channelZeroMin  - the 2 bytes of the channelZeroMin data as a float
    */
   public float getChannelZeroMin() {
-    float channelData = 
-      (float) this.channelZeroMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelZeroMin.flip();
+    int channelData = (int) this.channelZeroMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -597,8 +643,8 @@ public class AdamParser {
    * @return channelOneMin - the 2 bytes of the channelOneMin data as a float
    */
   public float getChannelOneMin() {
-    float channelData = 
-      (float) this.channelOneMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelOneMin.flip();
+    int channelData = (int) this.channelOneMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -609,8 +655,8 @@ public class AdamParser {
    * @return channelTwoMin - the 2 bytes of the channelTwoMin data as a float
    */
   public float getChannelTwoMin() {
-    float channelData = 
-      (float) this.channelTwoMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelTwoMin.flip();
+    int channelData = (int) this.channelTwoMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -621,8 +667,8 @@ public class AdamParser {
    * @return channelThreeMin - the 2 bytes of the channelThreeMin data as a float
    */
   public float getChannelThreeMin() {
-    float channelData = 
-      (float) this.channelThreeMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelThreeMin.flip();
+    int channelData = (int) this.channelThreeMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -633,8 +679,8 @@ public class AdamParser {
    * @return channelFourMin - the 2 bytes of the channelFourMin data as a float
    */
   public float getChannelFourMin() {
-    float channelData = 
-      (float) this.channelFourMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelFourMin.flip();
+    int channelData = (int) this.channelFourMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -645,8 +691,8 @@ public class AdamParser {
    * @return channelFiveMin - the 2 bytes of the channelFiveMin data as a float
    */
   public float getChannelFiveMin() {
-    float channelData = 
-      (float) this.channelFiveMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelFiveMin.flip();
+    int channelData = (int) this.channelFiveMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -657,8 +703,8 @@ public class AdamParser {
    * @return channelSixMin - the 2 bytes of the channelSixMin data as a float
    */
   public float getChannelSixMin() {
-    float channelData = 
-      (float) this.channelSixMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSixMin.flip();
+    int channelData = (int) this.channelSixMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -669,8 +715,8 @@ public class AdamParser {
    * @return channelSevenMin - the 2 bytes of the channelSevenMin data as a float
    */
   public float getChannelSevenMin() {
-    float channelData = 
-      (float) this.channelSevenMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelSevenMin.flip();
+    int channelData = (int) this.channelSevenMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -681,8 +727,8 @@ public class AdamParser {
    * @return channelAverageMin - the 2 bytes of the channelAverageMin data as a float
    */
   public float getChannelAverageMin() {
-    float channelData = 
-      (float) this.channelAverageMin.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    this.channelAverageMin.flip();
+    int channelData = (int) this.channelAverageMin.order(ByteOrder.BIG_ENDIAN).getShort();
     
     return getVoltage(channelData);
   }
@@ -693,36 +739,12 @@ public class AdamParser {
    *
    * @return voltage - the converted decimal voltage as a float
    */
-  private float getVoltage(float channelData) {
-    float voltage = 
-    ( this.voltageSenseRange * ( channelData / this.voltageFullRange ) -
-      this.voltageSenseRange/2 );
-    return voltage;
+  private float getVoltage(int channelData) {    
+    channelData = (channelData & 0x000000000000FFFF);
+    float voltage =
+    ( this.voltageSenseRange * ( channelData / this.voltageFullRange ) ) -
+      ( this.voltageSenseRange/2 );
+    return (float) voltage;
     
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }                                               
