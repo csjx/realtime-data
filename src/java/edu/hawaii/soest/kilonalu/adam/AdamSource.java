@@ -53,6 +53,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
@@ -302,7 +304,7 @@ public class AdamSource extends RBNBSource {
       this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
       
       // Get the sensor channel configuration properties file
-      File xmlConfigFile = new File(this.logConfigurationFile);
+      File xmlConfigFile = new File(this.xmlConfigurationFile);
       XMLConfiguration xmlConfig = new XMLConfiguration(xmlConfigFile);
       // while there are bytes to read from the socket ...
       while ( !failed ) {
@@ -351,10 +353,33 @@ public class AdamSource extends RBNBSource {
         
         );
         
+        // Create a list of sensors from the properties file, and iterate through
+        // the list, matching the datagram IP address to the address in the 
+        // xml configuration file.  If there is a match, find the correct voltage
+        // channel to measurement mappings, create a corresponding RBNB channel
+        // map, and flush the data to the DataTurbine.
+        List addressList = xmlConfig.getList("sensors.sensor.address");
+        
+        for ( Iterator it = addressList.iterator(); it.hasNext();){
+          
+          logger.debug((String) it.next());
+          //String address     = xmlConfig.getProperty("sensors.sensor(" + new Integer(it.next()).toString() + ").address" );
+          //String name        = xmlConfig.getProperty("sensors.sensor(" + new Integer(it.next()).toString() + ").name" );
+          //String description = xmlConfig.getProperty("sensors.sensor(" + new Integer(it.next()).toString() + ").description" );
+          //String type        = xmlConfig.getProperty("sensors.sensor(" + new Integer(it.next()).toString() + ").type" );
+          //
+          //logger.debug("\nSensor details:"    + 
+          //             "\naddress     : " + address +
+          //             "\nname        : " + name +
+          //             "\ndescription : " + name +
+          //             "\ntype        : " + type
+          //);
+        }
         sampleBuffer.clear();
         //logger.debug((new String(Hex.encodeHex(buffer.array()))).toUpperCase());
         
       } // end while (more socket bytes to read)
+      
       this.datagramSocket.close();
         
     } catch ( IOException e ) {
