@@ -446,7 +446,7 @@ public class AdamSource extends RBNBSource {
                 for ( Iterator hit = voltageChannelHashMap.keySet().iterator(); hit.hasNext(); ) {
                   
                   int voltageChannelFromMap = ((Integer) hit.next()).intValue();
-                  String channelPathFromMap = voltageChannelHashMap.get(voltageChannel);
+                  String channelPathFromMap = voltageChannelHashMap.get(voltageChannelFromMap);
                   float voltageValue = -9999.0f;
                   
                   // look up the voltage value from the AdamParser object based
