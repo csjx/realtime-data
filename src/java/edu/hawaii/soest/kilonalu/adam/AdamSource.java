@@ -493,6 +493,10 @@ public class AdamSource extends RBNBSource {
               } //end IP address if() statement
             } // end for each channel
           } // end for each port
+          
+          // now that we've found the correct sensor, exit the sensor loop
+          break;
+          
         } // end for each sensor
         
         // Build the RBNB channel map from the entries in the tree map
