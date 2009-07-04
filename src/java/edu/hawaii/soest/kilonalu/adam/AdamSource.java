@@ -781,6 +781,14 @@ public class AdamSource extends RBNBSource {
       }
     }
 
+    // handle the -C option
+    if ( command.hasOption("C") ) {
+      String channelName = command.getOptionValue("C");
+      if ( channelName != null ) {
+        setChannelName(channelName);
+      }
+    }
+
     return true;
   }
 
@@ -815,6 +823,16 @@ public class AdamSource extends RBNBSource {
   }
 
   /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
+
+  /**
    * A method that sets the command line options for this class.  This method 
    * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
    * properties such as the sourceHostName, sourceHostPort, serverName, and
@@ -838,6 +856,7 @@ public class AdamSource extends RBNBSource {
     // add command line options here
     options.addOption("H", true, "Source host name or IP *" + getHostName());
     options.addOption("P", true, "Source host port number *" + getHostPort());    
+    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
     //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
     return options;
