@@ -141,22 +141,6 @@ public class AdamSource extends RBNBSource {
    */
   private final String DEFAULT_SOURCE_HOST_NAME = "localhost";  
 
-///**
-// * The domain name or IP address of the host machine that this Source 
-// * represents and from which the data will stream. 
-// */
-//private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
-//
-///*
-// *  A default source TCP port for the source sensor data
-// */  
-//private final int DEFAULT_SOURCE_HOST_PORT  = 5168;
-//
-///**
-// * The TCP port to connect to on the Source host machine 
-// */
-//private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
-//
   /*
    *  A default channel name for the source sensor ASCII data
    */  
@@ -166,46 +150,6 @@ public class AdamSource extends RBNBSource {
    * The RBNB channel name for the ASCII data
    */
   private String rbnbChannelName = DEFAULT_CHANNEL_NAME;
-//
-///**
-// * The number of bytes in the ensemble as each byte is read from the stream
-// */
-//private int sampleByteCount = 0;
-//
-///*
-// * An integer value indicating the execution state.  This is used by the 
-// * execute() method while parsing the stream of bytes from the instrument
-// */
-//protected int state = 0;
-//
-///*
-// * A boolean field indicating if the instrument connection is ready to stream
-// */
-//private boolean readyToStream = false;
-//
-//
-///*
-// * The thread that is run for streaming data from the instrument
-// */
-//private Thread streamingThread;
-//
-///*
-// * The socket used to establish UDP communication with the instrument
-// */
-//private DatagramSocket datagramSocket;
-//
-///*
-// * The datagram object used to represent an individual incoming UDP packet
-// */
-//private DatagramPacket datagramPacket;
-//
-///*
-// * An internal Thread setting used to specify how long, in milliseconds, the
-// * execution of the data streaming Thread should wait before re-executing
-// * 
-// * @see execute()
-// */
-//private final int RETRY_INTERVAL = 5000;
   
   /** 
    * The date format for the timestamp applied to the LOOP sample 04 Aug 2008 09:15:01
@@ -292,307 +236,262 @@ public class AdamSource extends RBNBSource {
       ChannelMap rbnbChannelMap     = new ChannelMap(); // used to flush channels
       ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
       int channelIndex = 0;
+        
+      this.adamParser = new AdamParser(sampleBuffer);
       
-      // Create a buffer that will store the sample bytes as they are read
-//      byte[] bufferArray = new byte[getBufferSize()];
+      logger.debug(                                                        "\n" +
+        "channelZero       : "  + this.adamParser.getChannelZero()       + "\n" +
+        "channelOne        : "  + this.adamParser.getChannelOne()        + "\n" +
+        "channelTwo        : "  + this.adamParser.getChannelTwo()        + "\n" +
+        "channelThree      : "  + this.adamParser.getChannelThree()      + "\n" +
+        "channelFour       : "  + this.adamParser.getChannelFour()       + "\n" +
+        "channelFive       : "  + this.adamParser.getChannelFive()       + "\n" +
+        "channelSix        : "  + this.adamParser.getChannelSix()        + "\n" +
+        "channelSeven      : "  + this.adamParser.getChannelSeven()      + "\n" +
+        "channelAverage    : "  + this.adamParser.getChannelAverage()    + "\n" +
+        "channelZeroMax    : "  + this.adamParser.getChannelZeroMax()    + "\n" +
+        "channelOneMax     : "  + this.adamParser.getChannelOneMax()     + "\n" +
+        "channelTwoMax     : "  + this.adamParser.getChannelTwoMax()     + "\n" +
+        "channelThreeMax   : "  + this.adamParser.getChannelThreeMax()   + "\n" +
+        "channelFourMax    : "  + this.adamParser.getChannelFourMax()    + "\n" +
+        "channelFiveMax    : "  + this.adamParser.getChannelFiveMax()    + "\n" +
+        "channelSixMax     : "  + this.adamParser.getChannelSixMax()     + "\n" +
+        "channelSevenMax   : "  + this.adamParser.getChannelSevenMax()   + "\n" +
+        "channelAverageMax : "  + this.adamParser.getChannelAverageMax() + "\n" +
+        "channelZeroMin    : "  + this.adamParser.getChannelZeroMin()    + "\n" +
+        "channelOneMin     : "  + this.adamParser.getChannelOneMin()     + "\n" +
+        "channelTwoMin     : "  + this.adamParser.getChannelTwoMin()     + "\n" +
+        "channelThreeMin   : "  + this.adamParser.getChannelThreeMin()   + "\n" +
+        "channelFourMin    : "  + this.adamParser.getChannelFourMin()    + "\n" +
+        "channelFiveMin    : "  + this.adamParser.getChannelFiveMin()    + "\n" +
+        "channelSixMin     : "  + this.adamParser.getChannelSixMin()     + "\n" +
+        "channelSevenMin   : "  + this.adamParser.getChannelSevenMin()   + "\n" +
+        "channelAverageMin : "  + this.adamParser.getChannelAverageMin() + "\n"
       
-//    // and a ByteBuffer used to transfer the bytes to the parser
-//    ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
+      );
+        
+      // create a TreeMap to hold the voltageChannel and its associated
+      // RBNB ChannelMap channel string.  When the RBNB ChannelMap is
+      // populated, this TreeMap will be consulted
+      TreeMap<Integer, String> voltageChannelTreeMap = new TreeMap();
       
-      // bind to the socket, and create a datagram packet to store incoming packets
-//    this.datagramSocket = new DatagramSocket(getHostPort());
-//    this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
+      // create a character string to store characters from the voltage values
+      StringBuilder decimalASCIISampleData = new StringBuilder();
       
-//    // Get the sensor channel configuration properties file
-//    File xmlConfigFile = new File(this.xmlConfigurationFile);
-//    XMLConfiguration xmlConfig = new XMLConfiguration(xmlConfigFile);
-      // while there are bytes to read from the socket ...
-//    while ( !failed ) {
+      // Create a list of sensors from the properties file, and iterate through
+      // the list, matching the datagram IP address to the address in the 
+      // xml configuration file.  If there is a match, find the correct voltage
+      // channel to measurement mappings, create a corresponding RBNB channel
+      // map, and flush the data to the DataTurbine.        
+      
+      List sensorList  = xmlConfig.getList("sensor.address");
+      
+      // declare the properties that will be pulled from the 
+      // sensor.properties.xml file
+      String address        = "";
+      String sourceName     = "";
+      String description    = "";
+      String type           = "";
+      String cacheSize      = "";
+      String archiveSize    = "";
+      String archiveChannel = "";
+      String portNumber     = "";
+      String voltageChannel = "";
+      String measurement    = "";
+      
+      // evaluate each sensor listed in the sensor.properties.xml file
+      for ( Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
         
-        // receive any incoming UDP packets and parse the data payload
-//      datagramSocket.receive(this.datagramPacket);
+        // get each property value of the sensor
+        int index = sensorList.indexOf(sIterator.next());
+        address     = (String) xmlConfig.getProperty("sensor(" + index + ").address" );
+        sourceName  = (String) xmlConfig.getProperty("sensor(" + index + ").name" );
+        description = (String) xmlConfig.getProperty("sensor(" + index + ").description" );
+        type        = (String) xmlConfig.getProperty("sensor(" + index + ").type" );
         
-//      logger.debug("Host: " + datagramPacket.getAddress() + 
-//                    " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
-//      
-//      // the address seems to be returned with a leading slash (/). Trim it.
-//      String datagramAddress = datagramPacket.getAddress().toString().replaceAll("/", "");
-//      
-//      sampleBuffer.put(datagramPacket.getData());
         
-        this.adamParser = new AdamParser(sampleBuffer);
+        logger.debug("Sensor details:"                      + 
+                     "\n\t\t\t\t\t\t\t\t\t\taddress     : " + address +
+                     "\n\t\t\t\t\t\t\t\t\t\tname        : " + sourceName +
+                     "\n\t\t\t\t\t\t\t\t\t\tdescription : " + description +
+                     "\n\t\t\t\t\t\t\t\t\t\ttype        : " + type
+                     );
         
-        logger.debug(                                                        "\n" +
-          "channelZero       : "  + this.adamParser.getChannelZero()       + "\n" +
-          "channelOne        : "  + this.adamParser.getChannelOne()        + "\n" +
-          "channelTwo        : "  + this.adamParser.getChannelTwo()        + "\n" +
-          "channelThree      : "  + this.adamParser.getChannelThree()      + "\n" +
-          "channelFour       : "  + this.adamParser.getChannelFour()       + "\n" +
-          "channelFive       : "  + this.adamParser.getChannelFive()       + "\n" +
-          "channelSix        : "  + this.adamParser.getChannelSix()        + "\n" +
-          "channelSeven      : "  + this.adamParser.getChannelSeven()      + "\n" +
-          "channelAverage    : "  + this.adamParser.getChannelAverage()    + "\n" +
-          "channelZeroMax    : "  + this.adamParser.getChannelZeroMax()    + "\n" +
-          "channelOneMax     : "  + this.adamParser.getChannelOneMax()     + "\n" +
-          "channelTwoMax     : "  + this.adamParser.getChannelTwoMax()     + "\n" +
-          "channelThreeMax   : "  + this.adamParser.getChannelThreeMax()   + "\n" +
-          "channelFourMax    : "  + this.adamParser.getChannelFourMax()    + "\n" +
-          "channelFiveMax    : "  + this.adamParser.getChannelFiveMax()    + "\n" +
-          "channelSixMax     : "  + this.adamParser.getChannelSixMax()     + "\n" +
-          "channelSevenMax   : "  + this.adamParser.getChannelSevenMax()   + "\n" +
-          "channelAverageMax : "  + this.adamParser.getChannelAverageMax() + "\n" +
-          "channelZeroMin    : "  + this.adamParser.getChannelZeroMin()    + "\n" +
-          "channelOneMin     : "  + this.adamParser.getChannelOneMin()     + "\n" +
-          "channelTwoMin     : "  + this.adamParser.getChannelTwoMin()     + "\n" +
-          "channelThreeMin   : "  + this.adamParser.getChannelThreeMin()   + "\n" +
-          "channelFourMin    : "  + this.adamParser.getChannelFourMin()    + "\n" +
-          "channelFiveMin    : "  + this.adamParser.getChannelFiveMin()    + "\n" +
-          "channelSixMin     : "  + this.adamParser.getChannelSixMin()     + "\n" +
-          "channelSevenMin   : "  + this.adamParser.getChannelSevenMin()   + "\n" +
-          "channelAverageMin : "  + this.adamParser.getChannelAverageMin() + "\n"
+        // move to the next sensor if this doesn't match the RBNB source name
+        if ( !sourceName.equals(getRBNBClientName()) ) {
+          continue;
+        }
         
-        );
-        
-        // create a TreeMap to hold the voltageChannel and its associated
-        // RBNB ChannelMap channel string.  When the RBNB ChannelMap is
-        // populated, this TreeMap will be consulted
-        TreeMap<Integer, String> voltageChannelTreeMap = new TreeMap();
-        
-        // create a character string to store characters from the voltage values
-        StringBuilder decimalASCIISampleData = new StringBuilder();
-        
-        // Create a list of sensors from the properties file, and iterate through
-        // the list, matching the datagram IP address to the address in the 
-        // xml configuration file.  If there is a match, find the correct voltage
-        // channel to measurement mappings, create a corresponding RBNB channel
-        // map, and flush the data to the DataTurbine.        
-        
-        List sensorList  = xmlConfig.getList("sensor.address");
-        
-        // declare the properties that will be pulled from the 
-        // sensor.properties.xml file
-        String address        = "";
-        String sourceName     = "";
-        String description    = "";
-        String type           = "";
-        String cacheSize      = "";
-        String archiveSize    = "";
-        String archiveChannel = "";
-        String portNumber     = "";
-        String voltageChannel = "";
-        String measurement    = "";
-        
-        // evaluate each sensor listed in the sensor.properties.xml file
-        for ( Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+        List   portList  = xmlConfig.getList("sensor(" + index + ").ports.port[@number]");
+        // get each port of the sensor, along with the port properties
+        for ( Iterator pIterator = portList.iterator(); pIterator.hasNext(); ) {
+          int pindex = portList.indexOf(pIterator.next());
           
-          // get each property value of the sensor
-          int index = sensorList.indexOf(sIterator.next());
-          address     = (String) xmlConfig.getProperty("sensor(" + index + ").address" );
-          sourceName  = (String) xmlConfig.getProperty("sensor(" + index + ").name" );
-          description = (String) xmlConfig.getProperty("sensor(" + index + ").description" );
-          type        = (String) xmlConfig.getProperty("sensor(" + index + ").type" );
+          // get the port number value
+          portNumber = (String) xmlConfig.getProperty("sensor("    +
+                                index                              +
+                                ").ports.port("                    +
+                                pindex                             +
+                                ")[@number]");
+                                
+          logger.debug("\tport " + portNumber + " details:");
           
+          List measurementList = xmlConfig.getList("sensor("       +
+                                                   index           +
+                                                   ").ports.port(" +
+                                                   pindex          +
+                                                   ").measurement[@label]");
           
-          logger.debug("Sensor details:"                      + 
-                       "\n\t\t\t\t\t\t\t\t\t\taddress     : " + address +
-                       "\n\t\t\t\t\t\t\t\t\t\tname        : " + sourceName +
-                       "\n\t\t\t\t\t\t\t\t\t\tdescription : " + description +
-                       "\n\t\t\t\t\t\t\t\t\t\ttype        : " + type
-                       );
-          
-          // move to the next sensor if this doesn't match the RBNB source name
-          if ( !sourceName.equals(getRBNBClientName()) ) {
-            continue;
-          }
-          
-          List   portList  = xmlConfig.getList("sensor(" + index + ").ports.port[@number]");
-          // get each port of the sensor, along with the port properties
-          for ( Iterator pIterator = portList.iterator(); pIterator.hasNext(); ) {
-            int pindex = portList.indexOf(pIterator.next());
+          // get each measurement and voltageChannel for the given port
+          for ( Iterator mIterator = measurementList.iterator(); mIterator.hasNext(); ) {
+            int mindex = measurementList.indexOf(mIterator.next());
             
-            // get the port number value
-            portNumber = (String) xmlConfig.getProperty("sensor("    +
-                                  index                              +
-                                  ").ports.port("                    +
-                                  pindex                             +
-                                  ")[@number]");
-                                  
-            logger.debug("\tport " + portNumber + " details:");
+            // build the property paths into the config file
+            String voltagePath      = "sensor("        +
+                                      index            +
+                                      ").ports.port("  +
+                                      pindex           +
+                                      ").measurement(" +
+                                      mindex           +
+                                      ").voltageChannel";
+                                 
+            String measurementPath = "sensor("         +
+                                     index             +
+                                     ").ports.port("   +
+                                     pindex            +
+                                     ").measurement("  +
+                                     mindex            +
+                                     ")[@label]";
             
-            List measurementList = xmlConfig.getList("sensor("       +
-                                                     index           +
-                                                     ").ports.port(" +
-                                                     pindex          +
-                                                     ").measurement[@label]");
+            // get the voltageChannel and measurement label values
+            voltageChannel = (String) xmlConfig.getProperty(voltagePath);
+            measurement    = (String) xmlConfig.getProperty(measurementPath);
+            logger.debug("\t\t"                     + 
+                         "voltageChannel: "         + 
+                         voltageChannel             + 
+                         "\n\t\t\t\t\t\t\t\t\t\t\t" + 
+                         "measurement label: "      + 
+                         measurement
+                         );
             
-            // get each measurement and voltageChannel for the given port
-            for ( Iterator mIterator = measurementList.iterator(); mIterator.hasNext(); ) {
-              int mindex = measurementList.indexOf(mIterator.next());
+            // Match the datagram address with the address in the xmlConfig file
+            if ( datagramAddress.equals(address) ) {
               
-              // build the property paths into the config file
-              String voltagePath      = "sensor("        +
-                                        index            +
-                                        ").ports.port("  +
-                                        pindex           +
-                                        ").measurement(" +
-                                        mindex           +
-                                        ").voltageChannel";
-                                   
-              String measurementPath = "sensor("         +
-                                       index             +
-                                       ").ports.port("   +
-                                       pindex            +
-                                       ").measurement("  +
-                                       mindex            +
-                                       ")[@label]";
-              
-              // get the voltageChannel and measurement label values
-              voltageChannel = (String) xmlConfig.getProperty(voltagePath);
-              measurement    = (String) xmlConfig.getProperty(measurementPath);
-              logger.debug("\t\t"                     + 
-                           "voltageChannel: "         + 
-                           voltageChannel             + 
-                           "\n\t\t\t\t\t\t\t\t\t\t\t" + 
-                           "measurement label: "      + 
-                           measurement
-                           );
-              
-              // Match the datagram address with the address in the xmlConfig file
-              if ( datagramAddress.equals(address) ) {
+              // and only add channel data for this class instance RBNB Source name
+              if ( sourceName.equals(getRBNBClientName()) ) {
                 
-                // and only add channel data for this class instance RBNB Source name
-                if ( sourceName.equals(getRBNBClientName()) ) {
-                  
-                  // create an Integer out of the voltageChannel
-                  Integer voltageChannelInt = new Integer(voltageChannel);
-                  // build the RBNB channel path string
-                  String channelPath = "port" + "/" + portNumber + "/" + measurement;
-                  voltageChannelTreeMap.put(voltageChannelInt, channelPath);
-                  
-                } else {
-                logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
+                // create an Integer out of the voltageChannel
+                Integer voltageChannelInt = new Integer(voltageChannel);
+                // build the RBNB channel path string
+                String channelPath = "port" + "/" + portNumber + "/" + measurement;
+                voltageChannelTreeMap.put(voltageChannelInt, channelPath);
                 
-                } // end sourceName if() statement
-              
               } else {
-                logger.debug("\t\tNo IP address match. " + datagramAddress + " != " + address);
+              logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
               
-              } //end IP address if() statement
-            } // end for each channel
-          } // end for each port
-          
-          // now that we've found the correct sensor, exit the sensor loop
-          break;
-          
-        } // end for each sensor
+              } // end sourceName if() statement
+            
+            } else {
+              logger.debug("\t\tNo IP address match. " + datagramAddress + " != " + address);
+            
+            } //end IP address if() statement
+          } // end for each channel
+        } // end for each port
         
-        // Build the RBNB channel map from the entries in the tree map
-        // by doing a lookup of the ADAM voltage channel values based
-        // on the voltage channel number in the treemap.  Also add the voltages
-        // to the DecimalASCIISampleData string (and then channel)
-        for ( Iterator vcIterator = voltageChannelTreeMap.keySet().iterator(); vcIterator.hasNext(); ) {
+        // now that we've found the correct sensor, exit the sensor loop
+        break;
         
-          int voltageChannelFromMap = ((Integer) vcIterator.next()).intValue();
-          String channelPathFromMap = voltageChannelTreeMap.get(voltageChannelFromMap);
-          float voltageValue = -9999.0f;
+      } // end for each sensor
         
-          // look up the voltage value from the AdamParser object based
-          // on the voltage channel set in the xmlConfig file (via the treemap)
-          switch ( voltageChannelFromMap ) {
-            case 0:
-              voltageValue = this.adamParser.getChannelZero();
-              break;
-            case 1:
-              voltageValue = this.adamParser.getChannelOne();
-              break;
-            case 2:
-              voltageValue = this.adamParser.getChannelTwo();
-              break;
-            case 3:
-              voltageValue = this.adamParser.getChannelThree();
-              break;
-            case 4:
-              voltageValue = this.adamParser.getChannelFour();
-              break;
-            case 5:
-              voltageValue = this.adamParser.getChannelFive();
-              break;
-            case 6:
-              voltageValue = this.adamParser.getChannelSix();
-              break;
-            case 7:
-              voltageValue = this.adamParser.getChannelSeven();
-              break;
-          }
-        
-          // now add the channel and the voltage value to the RBNB channel maps
-        
-          channelIndex = registerChannelMap.Add(channelPathFromMap);
-          registerChannelMap.PutUserInfo(channelIndex, "units=volts");
-          
-          logger.debug("Voltage Channel Tree Map: " + voltageChannelTreeMap.toString());
-          
-          // then the channel and voltage
-          channelIndex = rbnbChannelMap.Add(channelPathFromMap);
-          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-          rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{voltageValue});
-          decimalASCIISampleData.append(String.format("%05.3f", (Object) voltageValue) + ", ");
-          
+      // Build the RBNB channel map from the entries in the tree map
+      // by doing a lookup of the ADAM voltage channel values based
+      // on the voltage channel number in the treemap.  Also add the voltages
+      // to the DecimalASCIISampleData string (and then channel)
+      for ( Iterator vcIterator = voltageChannelTreeMap.keySet().iterator(); vcIterator.hasNext(); ) {
+      
+        int voltageChannelFromMap = ((Integer) vcIterator.next()).intValue();
+        String channelPathFromMap = voltageChannelTreeMap.get(voltageChannelFromMap);
+        float voltageValue = -9999.0f;
+      
+        // look up the voltage value from the AdamParser object based
+        // on the voltage channel set in the xmlConfig file (via the treemap)
+        switch ( voltageChannelFromMap ) {
+          case 0:
+            voltageValue = this.adamParser.getChannelZero();
+            break;
+          case 1:
+            voltageValue = this.adamParser.getChannelOne();
+            break;
+          case 2:
+            voltageValue = this.adamParser.getChannelTwo();
+            break;
+          case 3:
+            voltageValue = this.adamParser.getChannelThree();
+            break;
+          case 4:
+            voltageValue = this.adamParser.getChannelFour();
+            break;
+          case 5:
+            voltageValue = this.adamParser.getChannelFive();
+            break;
+          case 6:
+            voltageValue = this.adamParser.getChannelSix();
+            break;
+          case 7:
+            voltageValue = this.adamParser.getChannelSeven();
+            break;
         }
+      
+        // now add the channel and the voltage value to the RBNB channel maps
+      
+        channelIndex = registerChannelMap.Add(channelPathFromMap);
+        registerChannelMap.PutUserInfo(channelIndex, "units=volts");
         
-        // and only flush data for this class instance RBNB Source name
-        if ( sourceName.equals(getRBNBClientName()) && datagramAddress.equals(address) ) {
+        logger.debug("Voltage Channel Tree Map: " + voltageChannelTreeMap.toString());
         
-          // add the timestamp to the rbnb channel map
-          registerChannelMap.PutTimeAuto("server");
-          rbnbChannelMap.PutTimeAuto("server");
-          
-          // then add a timestamp to the end of the ASCII version of the sample
-          DATE_FORMAT.setTimeZone(TZ);
-          String sampleDateAsString = DATE_FORMAT.format(new Date()).toString();
-          decimalASCIISampleData.append(sampleDateAsString);
-          decimalASCIISampleData.append("\n");
-          
-          // add the DecimalASCIISampleData channel to the channelMap
-          channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-          rbnbChannelMap.PutMime(channelIndex, "text/plain");
-          rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
-          
-          // Now register the RBNB channels, and flush the rbnbChannelMap to the
-          // DataTurbine
-          getSource().Register(registerChannelMap);
-          getSource().Flush(rbnbChannelMap);
-          logger.info("Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
-          registerChannelMap.Clear();
-          rbnbChannelMap.Clear();
-          
-          sampleBuffer.clear();
-        } else {
-          logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
-          registerChannelMap.Clear();
-          rbnbChannelMap.Clear();
-          
-          sampleBuffer.clear();
-        }
+        // then the channel and voltage
+        channelIndex = rbnbChannelMap.Add(channelPathFromMap);
+        rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+        rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{voltageValue});
+        decimalASCIISampleData.append(String.format("%05.3f", (Object) voltageValue) + ", ");
         
-//      
-//    } // end while (more socket bytes to read)
-              
-//  } catch ( IOException e ) {
-//    // handle exceptions
-//    // In the event of an i/o exception, log the exception, and allow execute()
-//    // to return false, which will prompt a retry.
-//    failed = true;
-//    e.printStackTrace();
-//    return !failed;
-//  } catch ( ConfigurationException ce ) {
-//    // handle exceptions
-//    // In the event of an configuration exception, log the exception, and allow execute()
-//    // to return false, which will prompt a retry.
-//    failed = true;
-//    ce.printStackTrace();
-//    return !failed;
-//  
+      }
+      
+      // and only flush data for this class instance RBNB Source name
+      if ( sourceName.equals(getRBNBClientName()) && datagramAddress.equals(address) ) {
+      
+        // add the timestamp to the rbnb channel map
+        registerChannelMap.PutTimeAuto("server");
+        rbnbChannelMap.PutTimeAuto("server");
+        
+        // then add a timestamp to the end of the ASCII version of the sample
+        DATE_FORMAT.setTimeZone(TZ);
+        String sampleDateAsString = DATE_FORMAT.format(new Date()).toString();
+        decimalASCIISampleData.append(sampleDateAsString);
+        decimalASCIISampleData.append("\n");
+        
+        // add the DecimalASCIISampleData channel to the channelMap
+        channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+        rbnbChannelMap.PutMime(channelIndex, "text/plain");
+        rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
+        
+        // Now register the RBNB channels, and flush the rbnbChannelMap to the
+        // DataTurbine
+        getSource().Register(registerChannelMap);
+        getSource().Flush(rbnbChannelMap);
+        logger.info("Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
+        registerChannelMap.Clear();
+        rbnbChannelMap.Clear();
+        
+        sampleBuffer.clear();
+      } else {
+        logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
+        registerChannelMap.Clear();
+        rbnbChannelMap.Clear();
+        
+        sampleBuffer.clear();
+      }
+      
     } catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
@@ -613,22 +512,6 @@ public class AdamSource extends RBNBSource {
      return this.bufferSize;
    }
    
-///**
-// * A method that returns the domain name or IP address of the source 
-// * instrument (i.e. the serial-to-IP converter to which it is attached)
-// */
-//public String getHostName(){
-//  return this.sourceHostName;
-//}
-//
-///**
-// * A method that returns the TCP port of the source 
-// * instrument (i.e. the serial-to-IP converter to which it is attached)
-// */
-//public int getHostPort(){
-//  return this.sourceHostPort;
-//}
-//
   /**
    * A method that returns the name of the RBNB channel that contains the 
    * streaming data from this instrument
@@ -652,86 +535,6 @@ public class AdamSource extends RBNBSource {
     );
   }
 
-///**
-// * A method that returns true if the RBNB connection is established
-// * and if the data streaming Thread has been started
-// */
-//public boolean isRunning() {
-//  // return the connection status and the thread status
-//  return ( isConnected() && readyToStream );
-//}
-//
-///**
-// * The main method for running the code
-// * @ param args[] the command line list of string arguments, none are needed
-// */
-//
-//public static void main (String args[]) {
-//  
-//  logger.info("AdamSource.main() called.");
-//  
-//  try {
-//    // create a new instance of the AdamSource object, and parse the command 
-//    // line arguments as settings for this instance
-//    final AdamSource adamSource = new AdamSource();
-//    
-//    // Set up a simple logger that logs to the console
-//    PropertyConfigurator.configure(adamSource.getLogConfigurationFile());
-//    
-//    // parse the commandline arguments to configure the connection, then 
-//    // start the streaming connection between the source and the RBNB server.
-//    if ( adamSource.parseArgs(args) ) {
-//      adamSource.start();
-//    }
-//    
-//    // Handle ctrl-c's and other abrupt death signals to the process
-//    Runtime.getRuntime().addShutdownHook(new Thread() {
-//      // stop the streaming process
-//      public void run() {
-//        adamSource.stop();
-//      }
-//    }
-//    );
-//    
-//  } catch ( Exception e ) {
-//    logger.info("Error in main(): " + e.getMessage());
-//    e.printStackTrace();
-//  }
-//}
-//
-///*
-// * A method that runs the data streaming work performed by the execute()
-// * by handling execution problems and continuously trying to re-execute after 
-// * a specified retry interval for the thread.
-// */
-//private void runWork() {
-//  
-//  // handle execution problems by retrying if execute() fails
-//  boolean retry = true;
-//  
-//  while ( retry ) {
-//    
-//    // connect to the RBNB server
-//    if ( connect() ) {
-//      // run the data streaming code
-//      retry = !execute();
-//    }
-//    
-//    disconnect();
-//    
-//    if ( retry ) {
-//      try {
-//        Thread.sleep(RETRY_INTERVAL);
-//      } catch ( Exception e ){
-//        logger.info("There was an execution problem. Retrying. Message is: " +
-//        e.getMessage());
-//      }
-//    }
-//  }
-//  // stop the streaming when we are done
-//  stop();
-//}
-//
 
   /**
    * A method that starts the connection with the RBNB DataTurbine
@@ -755,44 +558,6 @@ public class AdamSource extends RBNBSource {
    */
   protected boolean setArgs(CommandLine command) {
     
-//  // first set the base arguments that are included on the command line
-//  if ( !setBaseArgs(command)) {
-//    return false;
-//  }
-//  
-//  // add command line arguments here
-//  
-//  // handle the -H option
-//  if ( command.hasOption("H") ) {
-//    String hostName = command.getOptionValue("H");
-//    if ( hostName != null ) {
-//      setHostName(hostName);
-//    }
-//  }
-//
-//  // handle the -P option, test if it's an integer
-//  if ( command.hasOption("P") ) {
-//    String hostPort = command.getOptionValue("P");
-//    if ( hostPort != null ) {
-//      try {
-//        setHostPort(Integer.parseInt(hostPort));
-//        
-//      } catch ( NumberFormatException nfe ){
-//        logger.info("Error: Enter a numeric value for the host port. " +
-//                           hostPort + " is not a valid number.");
-//        return false;
-//      }
-//    }
-//  }
-//
-//  // handle the -C option
-//  if ( command.hasOption("C") ) {
-//    String channelName = command.getOptionValue("C");
-//    if ( channelName != null ) {
-//      setChannelName(channelName);
-//    }
-//  }
-//
     return true;
   }
 
@@ -806,26 +571,6 @@ public class AdamSource extends RBNBSource {
     this.bufferSize = bufferSize;
   }
   
-///**
-// * A method that sets the domain name or IP address of the source 
-// * instrument (i.e. the serial-to-IP converter to which it is attached)
-// *
-// * @param hostName  the domain name or IP address of the source instrument
-// */
-//public void setHostName(String hostName) {
-//  this.sourceHostName = hostName;
-//}
-//
-///**
-// * A method that sets the TCP port of the source 
-// * instrument (i.e. the serial-to-IP converter to which it is attached)
-// *
-// * @param hostPort  the TCP port of the source instrument
-// */
-//public void setHostPort(int hostPort) {
-//  this.sourceHostPort = hostPort;
-//}
-
   /**
    * A method that sets the RBNB channel name of the source instrument's data
    * stream
@@ -844,101 +589,10 @@ public class AdamSource extends RBNBSource {
    */
   protected Options setOptions() {
     Options options = setBaseOptions(new Options());
-//  
-//  // Note: 
-//  // Command line options already provided by RBNBBase include:
-//  // -h "Print help"
-//  // -s "RBNB Server Hostname"
-//  // -p "RBNB Server Port Number"
-//  // -S "RBNB Source Name"
-//  // -v "Print Version information"
-//  
-//  // Command line options already provided by RBNBSource include:
-//  // -z "Cache size"
-//  // -Z "Archive size"
-//  
-//  // add command line options here
-//  options.addOption("H", true, "Source host name or IP *" + getHostName());
-//  options.addOption("P", true, "Source host port number *" + getHostPort());    
-//  options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
-//  //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
     return options;
   }
 
-///**
-// * A method that starts the streaming of data from the source instrument to
-// * the RBNB server via an established TCP connection.  
-// */
-//public boolean start() {
-//  
-//  // return false if the streaming is running
-//  if ( isRunning() ) {
-//    return false;
-//  }
-//  
-//  // reset the connection to the RBNB server
-//  if ( isConnected() ) {
-//    disconnect();
-//  }
-//  connect();
-//  
-//  // return false if the connection fails
-//  if ( !isConnected() ) {
-//    return false;
-//  }
-//  
-//  // begin the streaming thread to the source
-//  startThread();
-//  
-//  return true;  
-//}
-//
-///**
-// * A method that creates and starts a new Thread with a run() method that 
-// * begins processing the data streaming from the source instrument.
-// */
-//private void startThread() {
-//  
-//  // build the runnable class and implement the run() method
-//  Runnable runner = new Runnable() {
-//    public void run() {
-//      runWork();
-//    }
-//  };
-//  
-//  // build the Thread and start it, indicating that it has been started
-//  readyToStream = true;
-//  streamingThread = new Thread(runner, "StreamingThread");
-//  streamingThread.start();     
-//}
-//
-///**
-// * A method that stops the streaming of data between the source instrument and
-// * the RBNB server.  
-// */ 
-//public boolean stop() {
-//  
-//  // return false if the thread is not running
-//  if ( !isRunning() ) {
-//    return false;
-//  }
-//  
-//  // stop the thread and disconnect from the RBNB server
-//  stopThread();
-//  disconnect();
-//  return true;
-//}
-//
-///**
-// * A method that interrupts the thread created in startThread()
-// */
-//private void stopThread() {
-//  // set the streaming status to false and stop the Thread
-//  readyToStream = false;
-//  streamingThread.interrupt();
-//}
-  
   /**
    * A method that gets the log configuration file location
    *
