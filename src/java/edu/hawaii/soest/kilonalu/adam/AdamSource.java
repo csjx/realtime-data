@@ -77,16 +77,14 @@ import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
- * A simple class used to harvest a decimal ASCII data stream from a Davis
- * Scientif Vantage Pro 2 weather station over a TCP socket connection  to a 
- * serial2ip converter host. The data stream is then converted into RBNB frames 
+ * A simple class used to process a binary data stream from an Advantech
+ * ADAM 6XXX module.  The data stream is converted into RBNB frames 
  * and pushed into the RBNB DataTurbine real time server.  This class extends 
  * org.nees.rbnb.RBNBSource, which in turn extends org.nees.rbnb.RBNBBase, 
  * and therefore follows the API conventions found in the org.nees.rbnb code.  
  *
- * The parsing of the data stream relies on the premise that each sample of data
- * is a comma delimited string of values, and that each sample is terminated
- * by a newline character (\n) followed by a two character prompt (S>).  
+ * The parsing of the data stream is performed by the <code>AdamParser</code>
+ * class.
  *
  */
 public class AdamSource extends RBNBSource {
@@ -107,10 +105,10 @@ public class AdamSource extends RBNBSource {
   private static Logger logger = Logger.getLogger(AdamSource.class);
   
   
-  /**
-   * The XML configuration file location for the list of sensor properties
-   */
-  private String xmlConfigurationFile = "lib/sensor.properties.xml";
+///**
+// * The XML configuration file location for the list of sensor properties
+// */
+//private String xmlConfigurationFile = "lib/sensor.properties.xml";
   
   /*
    *  A default archive mode for the given source connection to the RBNB server.
@@ -143,22 +141,22 @@ public class AdamSource extends RBNBSource {
    */
   private final String DEFAULT_SOURCE_HOST_NAME = "localhost";  
 
-  /**
-   * The domain name or IP address of the host machine that this Source 
-   * represents and from which the data will stream. 
-   */
-  private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
-
-  /*
-   *  A default source TCP port for the source sensor data
-   */  
-  private final int DEFAULT_SOURCE_HOST_PORT  = 5168;
-
-  /**
-   * The TCP port to connect to on the Source host machine 
-   */
-  private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
-  
+///**
+// * The domain name or IP address of the host machine that this Source 
+// * represents and from which the data will stream. 
+// */
+//private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
+//
+///*
+// *  A default source TCP port for the source sensor data
+// */  
+//private final int DEFAULT_SOURCE_HOST_PORT  = 5168;
+//
+///**
+// * The TCP port to connect to on the Source host machine 
+// */
+//private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
+//
   /*
    *  A default channel name for the source sensor ASCII data
    */  
@@ -168,46 +166,46 @@ public class AdamSource extends RBNBSource {
    * The RBNB channel name for the ASCII data
    */
   private String rbnbChannelName = DEFAULT_CHANNEL_NAME;
-  
-  /**
-   * The number of bytes in the ensemble as each byte is read from the stream
-   */
-  private int sampleByteCount = 0;
-  
-  /*
-   * An integer value indicating the execution state.  This is used by the 
-   * execute() method while parsing the stream of bytes from the instrument
-   */
-  protected int state = 0;
-  
-  /*
-   * A boolean field indicating if the instrument connection is ready to stream
-   */
-  private boolean readyToStream = false;
-
-  
-  /*
-   * The thread that is run for streaming data from the instrument
-   */
-  private Thread streamingThread;
-  
-  /*
-   * The socket used to establish UDP communication with the instrument
-   */
-  private DatagramSocket datagramSocket;
-  
-  /*
-   * The datagram object used to represent an individual incoming UDP packet
-   */
-  private DatagramPacket datagramPacket;
-  
-  /*
-   * An internal Thread setting used to specify how long, in milliseconds, the
-   * execution of the data streaming Thread should wait before re-executing
-   * 
-   * @see execute()
-   */
-  private final int RETRY_INTERVAL = 5000;
+//
+///**
+// * The number of bytes in the ensemble as each byte is read from the stream
+// */
+//private int sampleByteCount = 0;
+//
+///*
+// * An integer value indicating the execution state.  This is used by the 
+// * execute() method while parsing the stream of bytes from the instrument
+// */
+//protected int state = 0;
+//
+///*
+// * A boolean field indicating if the instrument connection is ready to stream
+// */
+//private boolean readyToStream = false;
+//
+//
+///*
+// * The thread that is run for streaming data from the instrument
+// */
+//private Thread streamingThread;
+//
+///*
+// * The socket used to establish UDP communication with the instrument
+// */
+//private DatagramSocket datagramSocket;
+//
+///*
+// * The datagram object used to represent an individual incoming UDP packet
+// */
+//private DatagramPacket datagramPacket;
+//
+///*
+// * An internal Thread setting used to specify how long, in milliseconds, the
+// * execution of the data streaming Thread should wait before re-executing
+// * 
+// * @see execute()
+// */
+//private final int RETRY_INTERVAL = 5000;
   
   /** 
    * The date format for the timestamp applied to the LOOP sample 04 Aug 2008 09:15:01
@@ -225,34 +223,14 @@ public class AdamSource extends RBNBSource {
    */
    private AdamParser adamParser = null;
    
-  /**
-   * Constructor - create an empty instance of the AdamSource object, using
-   * default values for the RBNB server name and port, source instrument name
-   * and port, archive mode, archive frame size, and cache frame size. 
-   */
-  public AdamSource() {
-  }
-
-  /**
-   * Constructor - create an instance of the AdamSource object, using the
-   * argument values for the source instrument name and port, and the RBNB 
-   * server name and port.  This constructor will use default values for the
-   * archive mode, archive frame size, and cache frame size. 
-   *
-   * @param sourceHostName  the name or IP address of the source instrument
-   * @param sourceHostPort  the TCP port of the source host instrument
-   * @param serverName      the name or IP address of the RBNB server connection
-   * @param serverPort      the TCP port of the RBNB server
-   */
-  public AdamSource(String sourceHostName, String sourceHostPort, 
-                       String serverName, String serverPort) {
-    
-    setHostName(sourceHostName);
-    setHostPort(Integer.parseInt(sourceHostPort));
-    setServerName(serverName);
-    setServerPort(Integer.parseInt(serverPort));
-  }
-
+   /**
+    * Constructor - create an empty instance of the AdamSource object, using
+    * default values for the RBNB server name and port, source instrument name
+    * and port, archive mode, archive frame size, and cache frame size. 
+    */
+   public AdamSource() {
+   }
+   
   /**
    * Constructor - create an instance of the AdamSource object, using the
    * argument values for the source instrument name and port, and the RBNB 
@@ -270,13 +248,10 @@ public class AdamSource extends RBNBSource {
    * @param cacheFrameSize   the size, in frames, for the RBNB server to cache
    * @param rbnbClientName   the unique name of the source RBNB client
    */
-  public AdamSource(String sourceHostName, String sourceHostPort, 
-                       String serverName, String serverPort, 
-                       String archiveMode, int archiveFrameSize, 
-                       int cacheFrameSize, String rbnbClientName) {
+  public AdamSource(String serverName, String serverPort, 
+                    String archiveMode, int archiveFrameSize, 
+                    int cacheFrameSize, String rbnbClientName) {
     
-    setHostName(sourceHostName);
-    setHostPort(Integer.parseInt(sourceHostPort));
     setServerName(serverName);
     setServerPort(Integer.parseInt(serverPort));
     setArchiveMode(archiveMode);
@@ -286,19 +261,25 @@ public class AdamSource extends RBNBSource {
   }
 
   /**
-   * A method that executes the streaming of data from the source to the RBNB
-   * server after all configuration of settings, connections to hosts, and
-   * thread initiatizing occurs.  This method contains the detailed code for 
-   * streaming the data and interpreting the stream.
+   * A method that processes the data ByteBuffer passed in for the given IP
+   * address of the ADAM sensor, parses the binary ADAM data, and flushes the
+   * data to the DataTurbine given the sensor properties in the XMLConfiguration
+   * passed in.
+   *
+   * @param datagramAddress - the IP address of the datagram of this packet of data
+   * @param xmlConfig       - the XMLConfiguration object containing the list of
+   *                          sensor properties
+   * @param sampleBuffer    - the binary data sample as a ByteBuffer
    */
-  protected boolean execute() {
-    logger.debug("AdamSource.execute() called.");
+  protected boolean process(String datagramAddress, XMLConfiguration xmlConfig,
+                            ByteBuffer sampleBuffer) {
+    
+    logger.debug("AdamSource.process() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
     boolean failed = false;
     
-    // while data are being sent, read them into the buffer
     try {
       
       // add channels of data that will be pushed to the server.  
@@ -310,31 +291,31 @@ public class AdamSource extends RBNBSource {
       int channelIndex = 0;
       
       // Create a buffer that will store the sample bytes as they are read
-      byte[] bufferArray = new byte[getBufferSize()];
+//      byte[] bufferArray = new byte[getBufferSize()];
       
-      // and a ByteBuffer used to transfer the bytes to the parser
-      ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
+//    // and a ByteBuffer used to transfer the bytes to the parser
+//    ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
       
       // bind to the socket, and create a datagram packet to store incoming packets
-      this.datagramSocket = new DatagramSocket(getHostPort());
-      this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
+//    this.datagramSocket = new DatagramSocket(getHostPort());
+//    this.datagramPacket = new DatagramPacket(bufferArray, bufferArray.length);
       
-      // Get the sensor channel configuration properties file
-      File xmlConfigFile = new File(this.xmlConfigurationFile);
-      XMLConfiguration xmlConfig = new XMLConfiguration(xmlConfigFile);
+//    // Get the sensor channel configuration properties file
+//    File xmlConfigFile = new File(this.xmlConfigurationFile);
+//    XMLConfiguration xmlConfig = new XMLConfiguration(xmlConfigFile);
       // while there are bytes to read from the socket ...
-      while ( !failed ) {
+//    while ( !failed ) {
         
         // receive any incoming UDP packets and parse the data payload
-        datagramSocket.receive(this.datagramPacket);
+//      datagramSocket.receive(this.datagramPacket);
         
-        logger.debug("Host: " + datagramPacket.getAddress() + 
-                      " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
-        
-        // the address seems to be returned with a leading slash (/). Trim it.
-        String datagramAddress = datagramPacket.getAddress().toString().replaceAll("/", "");
-        
-        sampleBuffer.put(datagramPacket.getData());
+//      logger.debug("Host: " + datagramPacket.getAddress() + 
+//                    " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
+//      
+//      // the address seems to be returned with a leading slash (/). Trim it.
+//      String datagramAddress = datagramPacket.getAddress().toString().replaceAll("/", "");
+//      
+//      sampleBuffer.put(datagramPacket.getData());
         
         this.adamParser = new AdamParser(sampleBuffer);
         
@@ -391,6 +372,9 @@ public class AdamSource extends RBNBSource {
         String sourceName     = "";
         String description    = "";
         String type           = "";
+        String cacheSize      = "";
+        String archiveSize    = "";
+        String archiveChannel = "";
         String portNumber     = "";
         String voltageChannel = "";
         String measurement    = "";
@@ -588,26 +572,24 @@ public class AdamSource extends RBNBSource {
           sampleBuffer.clear();
         }
         
-        
-      } // end while (more socket bytes to read)
-      
-      this.datagramSocket.close();
-        
-    } catch ( IOException e ) {
-      // handle exceptions
-      // In the event of an i/o exception, log the exception, and allow execute()
-      // to return false, which will prompt a retry.
-      failed = true;
-      e.printStackTrace();
-      return !failed;
-    } catch ( ConfigurationException ce ) {
-      // handle exceptions
-      // In the event of an configuration exception, log the exception, and allow execute()
-      // to return false, which will prompt a retry.
-      failed = true;
-      ce.printStackTrace();
-      return !failed;
-    
+//      
+//    } // end while (more socket bytes to read)
+              
+//  } catch ( IOException e ) {
+//    // handle exceptions
+//    // In the event of an i/o exception, log the exception, and allow execute()
+//    // to return false, which will prompt a retry.
+//    failed = true;
+//    e.printStackTrace();
+//    return !failed;
+//  } catch ( ConfigurationException ce ) {
+//    // handle exceptions
+//    // In the event of an configuration exception, log the exception, and allow execute()
+//    // to return false, which will prompt a retry.
+//    failed = true;
+//    ce.printStackTrace();
+//    return !failed;
+//  
     } catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
@@ -628,22 +610,22 @@ public class AdamSource extends RBNBSource {
      return this.bufferSize;
    }
    
-  /**
-   * A method that returns the domain name or IP address of the source 
-   * instrument (i.e. the serial-to-IP converter to which it is attached)
-   */
-  public String getHostName(){
-    return this.sourceHostName;
-  }
-
-  /**
-   * A method that returns the TCP port of the source 
-   * instrument (i.e. the serial-to-IP converter to which it is attached)
-   */
-  public int getHostPort(){
-    return this.sourceHostPort;
-  }
-
+///**
+// * A method that returns the domain name or IP address of the source 
+// * instrument (i.e. the serial-to-IP converter to which it is attached)
+// */
+//public String getHostName(){
+//  return this.sourceHostName;
+//}
+//
+///**
+// * A method that returns the TCP port of the source 
+// * instrument (i.e. the serial-to-IP converter to which it is attached)
+// */
+//public int getHostPort(){
+//  return this.sourceHostPort;
+//}
+//
   /**
    * A method that returns the name of the RBNB channel that contains the 
    * streaming data from this instrument
@@ -667,86 +649,101 @@ public class AdamSource extends RBNBSource {
     );
   }
 
-  /**
-   * A method that returns true if the RBNB connection is established
-   * and if the data streaming Thread has been started
-   */
-  public boolean isRunning() {
-    // return the connection status and the thread status
-    return ( isConnected() && readyToStream );
-  }
-  
-  /**
-   * The main method for running the code
-   * @ param args[] the command line list of string arguments, none are needed
-   */
+///**
+// * A method that returns true if the RBNB connection is established
+// * and if the data streaming Thread has been started
+// */
+//public boolean isRunning() {
+//  // return the connection status and the thread status
+//  return ( isConnected() && readyToStream );
+//}
+//
+///**
+// * The main method for running the code
+// * @ param args[] the command line list of string arguments, none are needed
+// */
+//
+//public static void main (String args[]) {
+//  
+//  logger.info("AdamSource.main() called.");
+//  
+//  try {
+//    // create a new instance of the AdamSource object, and parse the command 
+//    // line arguments as settings for this instance
+//    final AdamSource adamSource = new AdamSource();
+//    
+//    // Set up a simple logger that logs to the console
+//    PropertyConfigurator.configure(adamSource.getLogConfigurationFile());
+//    
+//    // parse the commandline arguments to configure the connection, then 
+//    // start the streaming connection between the source and the RBNB server.
+//    if ( adamSource.parseArgs(args) ) {
+//      adamSource.start();
+//    }
+//    
+//    // Handle ctrl-c's and other abrupt death signals to the process
+//    Runtime.getRuntime().addShutdownHook(new Thread() {
+//      // stop the streaming process
+//      public void run() {
+//        adamSource.stop();
+//      }
+//    }
+//    );
+//    
+//  } catch ( Exception e ) {
+//    logger.info("Error in main(): " + e.getMessage());
+//    e.printStackTrace();
+//  }
+//}
+//
+///*
+// * A method that runs the data streaming work performed by the execute()
+// * by handling execution problems and continuously trying to re-execute after 
+// * a specified retry interval for the thread.
+// */
+//private void runWork() {
+//  
+//  // handle execution problems by retrying if execute() fails
+//  boolean retry = true;
+//  
+//  while ( retry ) {
+//    
+//    // connect to the RBNB server
+//    if ( connect() ) {
+//      // run the data streaming code
+//      retry = !execute();
+//    }
+//    
+//    disconnect();
+//    
+//    if ( retry ) {
+//      try {
+//        Thread.sleep(RETRY_INTERVAL);
+//      } catch ( Exception e ){
+//        logger.info("There was an execution problem. Retrying. Message is: " +
+//        e.getMessage());
+//      }
+//    }
+//  }
+//  // stop the streaming when we are done
+//  stop();
+//}
+//
 
-  public static void main (String args[]) {
-    
-    logger.info("AdamSource.main() called.");
-    
-    try {
-      // create a new instance of the AdamSource object, and parse the command 
-      // line arguments as settings for this instance
-      final AdamSource adamSource = new AdamSource();
-      
-      // Set up a simple logger that logs to the console
-      PropertyConfigurator.configure(adamSource.getLogConfigurationFile());
-      
-      // parse the commandline arguments to configure the connection, then 
-      // start the streaming connection between the source and the RBNB server.
-      if ( adamSource.parseArgs(args) ) {
-        adamSource.start();
-      }
-      
-      // Handle ctrl-c's and other abrupt death signals to the process
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-        // stop the streaming process
-        public void run() {
-          adamSource.stop();
-        }
-      }
-      );
-      
-    } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
-      e.printStackTrace();
-    }
-  }
-  
-  /*
-   * A method that runs the data streaming work performed by the execute()
-   * by handling execution problems and continuously trying to re-execute after 
-   * a specified retry interval for the thread.
+  /**
+   * A method that starts the connection with the RBNB DataTurbine
    */
-  private void runWork() {
-    
-    // handle execution problems by retrying if execute() fails
-    boolean retry = true;
-    
-    while ( retry ) {
-      
-      // connect to the RBNB server
-      if ( connect() ) {
-        // run the data streaming code
-        retry = !execute();
-      }
-      
-      disconnect();
-      
-      if ( retry ) {
-        try {
-          Thread.sleep(RETRY_INTERVAL);
-        } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
-          e.getMessage());
-        }
-      }
-    }
-    // stop the streaming when we are done
-    stop();
+  public boolean startConnection() {
+    return connect();
   }
-
+   
+  /**
+   * A method that starts the connection with the RBNB DataTurbine
+   */
+  public void stopConnection() {
+    disconnect();
+  }
+   
   /**
    * A method that sets the command line arguments for this class.  This method 
    * calls the <code>RBNBSource.setBaseArgs()</code> method.
@@ -755,44 +752,44 @@ public class AdamSource extends RBNBSource {
    */
   protected boolean setArgs(CommandLine command) {
     
-    // first set the base arguments that are included on the command line
-    if ( !setBaseArgs(command)) {
-      return false;
-    }
-    
-    // add command line arguments here
-    
-    // handle the -H option
-    if ( command.hasOption("H") ) {
-      String hostName = command.getOptionValue("H");
-      if ( hostName != null ) {
-        setHostName(hostName);
-      }
-    }
-
-    // handle the -P option, test if it's an integer
-    if ( command.hasOption("P") ) {
-      String hostPort = command.getOptionValue("P");
-      if ( hostPort != null ) {
-        try {
-          setHostPort(Integer.parseInt(hostPort));
-          
-        } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
-                             hostPort + " is not a valid number.");
-          return false;
-        }
-      }
-    }
-
-    // handle the -C option
-    if ( command.hasOption("C") ) {
-      String channelName = command.getOptionValue("C");
-      if ( channelName != null ) {
-        setChannelName(channelName);
-      }
-    }
-
+//  // first set the base arguments that are included on the command line
+//  if ( !setBaseArgs(command)) {
+//    return false;
+//  }
+//  
+//  // add command line arguments here
+//  
+//  // handle the -H option
+//  if ( command.hasOption("H") ) {
+//    String hostName = command.getOptionValue("H");
+//    if ( hostName != null ) {
+//      setHostName(hostName);
+//    }
+//  }
+//
+//  // handle the -P option, test if it's an integer
+//  if ( command.hasOption("P") ) {
+//    String hostPort = command.getOptionValue("P");
+//    if ( hostPort != null ) {
+//      try {
+//        setHostPort(Integer.parseInt(hostPort));
+//        
+//      } catch ( NumberFormatException nfe ){
+//        logger.info("Error: Enter a numeric value for the host port. " +
+//                           hostPort + " is not a valid number.");
+//        return false;
+//      }
+//    }
+//  }
+//
+//  // handle the -C option
+//  if ( command.hasOption("C") ) {
+//    String channelName = command.getOptionValue("C");
+//    if ( channelName != null ) {
+//      setChannelName(channelName);
+//    }
+//  }
+//
     return true;
   }
 
@@ -806,25 +803,25 @@ public class AdamSource extends RBNBSource {
     this.bufferSize = bufferSize;
   }
   
-  /**
-   * A method that sets the domain name or IP address of the source 
-   * instrument (i.e. the serial-to-IP converter to which it is attached)
-   *
-   * @param hostName  the domain name or IP address of the source instrument
-   */
-  public void setHostName(String hostName) {
-    this.sourceHostName = hostName;
-  }
-
-  /**
-   * A method that sets the TCP port of the source 
-   * instrument (i.e. the serial-to-IP converter to which it is attached)
-   *
-   * @param hostPort  the TCP port of the source instrument
-   */
-  public void setHostPort(int hostPort) {
-    this.sourceHostPort = hostPort;
-  }
+///**
+// * A method that sets the domain name or IP address of the source 
+// * instrument (i.e. the serial-to-IP converter to which it is attached)
+// *
+// * @param hostName  the domain name or IP address of the source instrument
+// */
+//public void setHostName(String hostName) {
+//  this.sourceHostName = hostName;
+//}
+//
+///**
+// * A method that sets the TCP port of the source 
+// * instrument (i.e. the serial-to-IP converter to which it is attached)
+// *
+// * @param hostPort  the TCP port of the source instrument
+// */
+//public void setHostPort(int hostPort) {
+//  this.sourceHostPort = hostPort;
+//}
 
   /**
    * A method that sets the RBNB channel name of the source instrument's data
@@ -844,117 +841,117 @@ public class AdamSource extends RBNBSource {
    */
   protected Options setOptions() {
     Options options = setBaseOptions(new Options());
-    
-    // Note: 
-    // Command line options already provided by RBNBBase include:
-    // -h "Print help"
-    // -s "RBNB Server Hostname"
-    // -p "RBNB Server Port Number"
-    // -S "RBNB Source Name"
-    // -v "Print Version information"
-    
-    // Command line options already provided by RBNBSource include:
-    // -z "Cache size"
-    // -Z "Archive size"
-    
-    // add command line options here
-    options.addOption("H", true, "Source host name or IP *" + getHostName());
-    options.addOption("P", true, "Source host port number *" + getHostPort());    
-    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
-    //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
+//  
+//  // Note: 
+//  // Command line options already provided by RBNBBase include:
+//  // -h "Print help"
+//  // -s "RBNB Server Hostname"
+//  // -p "RBNB Server Port Number"
+//  // -S "RBNB Source Name"
+//  // -v "Print Version information"
+//  
+//  // Command line options already provided by RBNBSource include:
+//  // -z "Cache size"
+//  // -Z "Archive size"
+//  
+//  // add command line options here
+//  options.addOption("H", true, "Source host name or IP *" + getHostName());
+//  options.addOption("P", true, "Source host port number *" + getHostPort());    
+//  options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
+//  //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
     return options;
   }
 
-  /**
-   * A method that starts the streaming of data from the source instrument to
-   * the RBNB server via an established TCP connection.  
-   */
-  public boolean start() {
-    
-    // return false if the streaming is running
-    if ( isRunning() ) {
-      return false;
-    }
-    
-    // reset the connection to the RBNB server
-    if ( isConnected() ) {
-      disconnect();
-    }
-    connect();
-    
-    // return false if the connection fails
-    if ( !isConnected() ) {
-      return false;
-    }
-    
-    // begin the streaming thread to the source
-    startThread();
-    
-    return true;  
-  }
-
-  /**
-   * A method that creates and starts a new Thread with a run() method that 
-   * begins processing the data streaming from the source instrument.
-   */
-  private void startThread() {
-    
-    // build the runnable class and implement the run() method
-    Runnable runner = new Runnable() {
-      public void run() {
-        runWork();
-      }
-    };
-    
-    // build the Thread and start it, indicating that it has been started
-    readyToStream = true;
-    streamingThread = new Thread(runner, "StreamingThread");
-    streamingThread.start();     
-  }
-
-  /**
-   * A method that stops the streaming of data between the source instrument and
-   * the RBNB server.  
-   */ 
-  public boolean stop() {
-    
-    // return false if the thread is not running
-    if ( !isRunning() ) {
-      return false;
-    }
-    
-    // stop the thread and disconnect from the RBNB server
-    stopThread();
-    disconnect();
-    return true;
-  }
-
-  /**
-   * A method that interrupts the thread created in startThread()
-   */
-  private void stopThread() {
-    // set the streaming status to false and stop the Thread
-    readyToStream = false;
-    streamingThread.interrupt();
-  }
-
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-  
+///**
+// * A method that starts the streaming of data from the source instrument to
+// * the RBNB server via an established TCP connection.  
+// */
+//public boolean start() {
+//  
+//  // return false if the streaming is running
+//  if ( isRunning() ) {
+//    return false;
+//  }
+//  
+//  // reset the connection to the RBNB server
+//  if ( isConnected() ) {
+//    disconnect();
+//  }
+//  connect();
+//  
+//  // return false if the connection fails
+//  if ( !isConnected() ) {
+//    return false;
+//  }
+//  
+//  // begin the streaming thread to the source
+//  startThread();
+//  
+//  return true;  
+//}
+//
+///**
+// * A method that creates and starts a new Thread with a run() method that 
+// * begins processing the data streaming from the source instrument.
+// */
+//private void startThread() {
+//  
+//  // build the runnable class and implement the run() method
+//  Runnable runner = new Runnable() {
+//    public void run() {
+//      runWork();
+//    }
+//  };
+//  
+//  // build the Thread and start it, indicating that it has been started
+//  readyToStream = true;
+//  streamingThread = new Thread(runner, "StreamingThread");
+//  streamingThread.start();     
+//}
+//
+///**
+// * A method that stops the streaming of data between the source instrument and
+// * the RBNB server.  
+// */ 
+//public boolean stop() {
+//  
+//  // return false if the thread is not running
+//  if ( !isRunning() ) {
+//    return false;
+//  }
+//  
+//  // stop the thread and disconnect from the RBNB server
+//  stopThread();
+//  disconnect();
+//  return true;
+//}
+//
+///**
+// * A method that interrupts the thread created in startThread()
+// */
+//private void stopThread() {
+//  // set the streaming status to false and stop the Thread
+//  readyToStream = false;
+//  streamingThread.interrupt();
+//}
+//
+///**
+// * A method that gets the log configuration file location
+// *
+// * @return logConfigurationFile  the log configuration file location
+// */
+//public String getLogConfigurationFile() {
+//  return this.logConfigurationFile;
+//}
+//
+///**
+// * A method that sets the log configuration file name
+// *
+// * @param logConfigurationFile  the log configuration file name
+// */
+//public void setLogConfigurationFile(String logConfigurationFile) {
+//  this.logConfigurationFile = logConfigurationFile;
+//}
+//
 }
