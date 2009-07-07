@@ -41,14 +41,20 @@
   <!-- The list of sensors -->
   <!ELEMENT sensors (sensor*)>
   <!-- An individual sensor with each property as an element -->
-  <!ELEMENT sensor (address, name, description, type, ports)>
+  <!ELEMENT sensor (address, name, description, cacheSize, archiveSize, archiveChannel, type, ports)>
   <!-- The IP address of the sensor -->
   <!ELEMENT address (#PCDATA)>
   <!-- The source name of the sensor -->
   <!ELEMENT name (#PCDATA)>
   <!-- The source description of the sensor -->
   <!ELEMENT description (#PCDATA)>
-  <!-- The source type of the sensor (either monitor or control)-->
+  <!-- The source's DataTurbine cache size in frames -->
+  <!ELEMENT cacheSize (#PCDATA)>
+  <!-- The source's DataTurbine archive size in frames -->
+  <!ELEMENT archiveSize (#PCDATA)>
+  <!-- The source's channel to be archived to file -->
+  <!ELEMENT archiveChannel (#PCDATA)>
+  <!-- The source type of the sensor (either monitor or control) -->
   <!ELEMENT type (#PCDATA)>
   <!-- The source ports being monitored -->
   <!ELEMENT ports (port+)>
@@ -67,6 +73,9 @@
     <address>192.168.100.205</address>
     <name>KN00XX_010ADAM010R01</name>
     <description>10m CN ADAM monitor 1</description>
+    <cacheSize>50000</cacheSize>
+    <archiveSize>31536000</archiveSize>
+    <archiveChannel>DecimalASCIISampleData</archiveChannel>
     <type>monitor</type>
     <ports>
       <port number="1">
@@ -107,6 +116,9 @@
     <address>192.168.100.206</address>
     <name>KN00XX_010ADAM010R02</name>
     <description>10m CN ADAM monitor 2</description>
+    <cacheSize>50000</cacheSize>
+    <archiveSize>31536000</archiveSize>
+    <archiveChannel>DecimalASCIISampleData</archiveChannel>
     <type>monitor</type>
     <ports>
       <port number="1">
