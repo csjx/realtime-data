@@ -227,7 +227,7 @@ public class AdamDispatcher {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("AdamDispatcher.execute() called.");
+    logger.info("AdamDispatcher.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -261,6 +261,11 @@ public class AdamDispatcher {
         // Given the IP address of the source UDP packet and the data ByteBuffer,
         // find the correct source in the sourceMap hash and process the data
         AdamSource source = (AdamSource) sourceMap.get(datagramAddress);
+        
+        // process the data using the AdamSource driver
+        source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
+        
+        sampleBuffer.clear();
         
       } // end while (more socket bytes to read)
       
@@ -368,7 +373,7 @@ public class AdamDispatcher {
       
       AdamSource adamSource = (AdamSource) (sourceMap.get(sIterator.next()));
       adamSource.stopConnection();
-      logger.debug("Disconnected from source: " + adamSource.getRBNBClientName());
+      logger.info("Disconnected from source: " + adamSource.getRBNBClientName());
     }
     connected = false;
     
