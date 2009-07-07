@@ -479,7 +479,7 @@ public class AdamSource extends RBNBSource {
         // DataTurbine
         getSource().Register(registerChannelMap);
         getSource().Flush(rbnbChannelMap);
-        logger.info("Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
+        logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
         registerChannelMap.Clear();
         rbnbChannelMap.Clear();
         
