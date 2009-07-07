@@ -252,6 +252,9 @@ public class AdamSource extends RBNBSource {
                     String archiveMode, int archiveFrameSize, 
                     int cacheFrameSize, String rbnbClientName) {
     
+    // Set up a simple logger that logs to the console                   
+    PropertyConfigurator.configure(getLogConfigurationFile());
+    
     setServerName(serverName);
     setServerPort(Integer.parseInt(serverPort));
     setArchiveMode(archiveMode);
@@ -935,23 +938,23 @@ public class AdamSource extends RBNBSource {
 //  readyToStream = false;
 //  streamingThread.interrupt();
 //}
-//
-///**
-// * A method that gets the log configuration file location
-// *
-// * @return logConfigurationFile  the log configuration file location
-// */
-//public String getLogConfigurationFile() {
-//  return this.logConfigurationFile;
-//}
-//
-///**
-// * A method that sets the log configuration file name
-// *
-// * @param logConfigurationFile  the log configuration file name
-// */
-//public void setLogConfigurationFile(String logConfigurationFile) {
-//  this.logConfigurationFile = logConfigurationFile;
-//}
-//
+  
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
 }
