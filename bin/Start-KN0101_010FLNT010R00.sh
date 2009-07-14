@@ -13,7 +13,7 @@ cd $bblHome;
 echo -e "\nStarted $sourceString driver\n";
 echo -e "Starting to view the $sourceString streaming log.\n"; 
 
-for i in $(seq 1 1 5)
+for i in $(seq 1 1 3)
 do # flash instructions on stopping the tail process
  echo -en "\r** Type Control-C to stop viewing the log. **"; 
  sleep 1;
