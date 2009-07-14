@@ -344,6 +344,7 @@ public class CTDSource extends RBNBSource {
                 
                   // send the sample to the data turbine
                   rbnbChannelMap.PutTimeAuto("server");
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");
                   rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                   getSource().Flush(rbnbChannelMap);
                   logger.info("Sent sample to the DataTurbine: " + sampleString);

@@ -425,6 +425,7 @@ public class SBE37Source extends RBNBSource {
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
                 String sampleString = new String(sampleArray, "US-ASCII");
+                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
                 logger.info("Sample: " + sampleString);

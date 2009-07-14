@@ -416,6 +416,7 @@ public class TChainSource extends RBNBSource {
                 rbnbChannelMap.PutTimeAuto("server");
                 String sampleString = new String(sampleArray, "US-ASCII");
                 int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
                 logger.info("Sample: " + 
