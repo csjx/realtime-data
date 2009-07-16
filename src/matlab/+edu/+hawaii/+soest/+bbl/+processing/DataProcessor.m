@@ -696,7 +696,7 @@ classdef DataProcessor < hgsetget & dynamicprops
               ) ...
             };
         % Subset the y axis data based on the duration of the particular figure
-        x = x(find(x > (max(x) - figureDurationInDays)));
+        x = x(find(x > (max(x) - figureDuration)));
         
         % build the Y variable
         yAxisVariableName = char(figureYAxisVariables{1}(plotNumber));
