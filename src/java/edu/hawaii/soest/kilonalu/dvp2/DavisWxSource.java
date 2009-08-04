@@ -439,18 +439,17 @@ public class DavisWxSource extends RBNBSource {
       // reset variables for use with the incoming data
       rbnbChannelMap.Clear();
       channelIndex = 0;
-//
-// CSJ implement this after read-only testing      
-//    // wake the instrument with an initial '\n' command
-//    this.command = this.commandSuffix;
-//    this.sentCommand = queryInstrument(this.command);
-//
-//    // allow time for the instrument response
-//    streamingThread.sleep(2000);
-//    this.command = this.commandPrefix + 
-//                   this.takeSampleCommand +
-//                   this.commandSuffix;
-//    this.sentCommand = queryInstrument(command);        
+
+    // wake the instrument with an initial '\n' command
+    this.command = this.commandSuffix;
+    this.sentCommand = queryInstrument(this.command);
+
+    // allow time for the instrument response
+    streamingThread.sleep(2000);
+    this.command = this.commandPrefix + 
+                   this.takeSampleCommand +
+                   this.commandSuffix;
+    this.sentCommand = queryInstrument(command);        
             
       // while there are bytes to read from the socket ...
       while ( this.socketChannel.read(buffer) != -1 || buffer.position() > 0) {
@@ -839,15 +838,14 @@ public class DavisWxSource extends RBNBSource {
                  rbnbChannelMap.Clear();                      
                  //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                  //state = 0;
-//
-// CSJ implement this after read-only testing                  
-//                // Once the sample is flushed, take a new sample
-//                  // allow time for the instrument response
-//                  streamingThread.sleep(2000);
-//                  this.command = this.commandPrefix + 
-//                                 this.takeSampleCommand +
-//                                 this.commandSuffix;
-//                  this.sentCommand = queryInstrument(command);
+
+                // Once the sample is flushed, take a new sample
+                  // allow time for the instrument response
+                  streamingThread.sleep(2000);
+                  this.command = this.commandPrefix + 
+                                 this.takeSampleCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);
                   
           } // end switch statement
           
@@ -878,6 +876,11 @@ public class DavisWxSource extends RBNBSource {
       failed = true;
       sapie.printStackTrace();
       return !failed;
+    } catch ( java.lang.InterruptedException ine) {
+      failed = true;
+      ine.printStackTrace();
+      return !failed;
+      
     }
     
     return !failed;
