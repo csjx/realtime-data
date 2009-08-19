@@ -228,8 +228,8 @@ set( configuration,                                                    ...
                            [{3.0},{3.0},{3.0}]                       , ... % markerSize
                            [                                           ...
                              {[255/255 0       0      ]}             , ... % red
-                             {[0        0       255/255]}            , ... % blue
-                             {[0        255/255 0      ]}              ... % green
+                             {[0       0       255/255]}             , ... % blue
+                             {[0       0       0      ]}               ... % black
                            ]                                         , ...
                            '0'                                       , ... % include moving avg
                            '1200'                                    , ... % moving avg duration
@@ -249,8 +249,8 @@ set( configuration,                                                    ...
                           [{3.0},{3.0},{3.0}]                        , ... % markerSize
                           [                                            ...
                             {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}               ... % green
+                            {[0       0       255/255]}              , ... % blue
+                            {[0       0       0      ]}                ... % black
                           ]                                          , ...
                           '0'                                        , ... % include moving avg
                           '1200'                                     , ... % moving avg duration
@@ -270,8 +270,8 @@ set( configuration,                                                    ...
                           [{3.0},{3.0},{3.0}]                        , ... % markerSize
                           [                                            ...
                             {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}               ... % green
+                            {[0       0       255/255]}              , ... % blue
+                            {[0       0       0      ]}                ... % black
                           ]                                          , ...
                           '0'                                        , ... % include moving avg
                           '1200'                                     , ... % moving avg duration
@@ -291,8 +291,8 @@ set( configuration,                                                    ...
                           [{3.0},{3.0},{3.0}]                        , ... % markerSize
                           [                                            ...
                             {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}               ... % green
+                            {[0       0       255/255]}              , ... % blue
+                            {[0       0       0      ]}                ... % black
                           ]                                          , ...
                           '0'                                        , ... % include moving avg
                           '1200'                                     , ... % moving avg duration
