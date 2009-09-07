@@ -582,11 +582,12 @@ public class DavisWxSource extends RBNBSource {
                // sample buffer, and place it in the channel map as a 
                // byte array.  Then, send it to the data turbine.
                byte[] sampleArray = new byte[sampleByteCount];
-               sampleBuffer.flip();
-               sampleBuffer.get(sampleArray);
                
-               // parse and send the sample to the data turbine
                try {
+                 sampleBuffer.flip();
+                 sampleBuffer.get(sampleArray);
+                 
+                 // parse and send the sample to the data turbine
                  this.davisWxParser = new DavisWxParser(sampleBuffer);
                  
                } catch (java.lang.Exception e) {
