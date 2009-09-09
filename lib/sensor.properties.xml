@@ -70,7 +70,7 @@
 ]>
 <sensors>
   <sensor>
-    <address>192.168.100.201</address>
+    <address>192.168.100.208</address>
     <name>KN00XX_012ADAM012R01</name>
     <description>12m CN ADAM monitor 1</description>
     <cacheSize>50000</cacheSize>
@@ -98,7 +98,7 @@
         <measurement label="currentImpedance">
           <voltageChannel>2</voltageChannel>
         </measurement>
-        <measurement label="temperature">
+        <measurement label="leak">
           <voltageChannel>6</voltageChannel>
         </measurement>
       </port>
@@ -106,16 +106,16 @@
         <measurement label="currentImpedance">
           <voltageChannel>3</voltageChannel>
         </measurement>
-        <measurement label="leak">
+        <measurement label="temperature">
           <voltageChannel>7</voltageChannel>
         </measurement>
       </port>
     </ports>
   </sensor>
   <sensor>
-    <address>192.168.100.202</address>
+    <address>192.168.100.209</address>
     <name>KN00XX_012ADAM012R02</name>
-    <description>10m CN ADAM monitor 2</description>
+    <description>12m CN ADAM monitor 2</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -151,100 +151,14 @@
         </measurement>
         <measurement label="negativeGroundFault">
           <voltageChannel>7</voltageChannel>
-        </measurement>
-      </port>
-    </ports>
-  </sensor>
-  <sensor>
-    <address>192.168.100.205</address>
-    <name>KN0001_012ADAM012R01</name>
-    <description>12m SN ADAM monitor 1</description>
-    <cacheSize>50000</cacheSize>
-    <archiveSize>31536000</archiveSize>
-    <archiveChannel>DecimalASCIISampleData</archiveChannel>
-    <type>monitor</type>
-    <ports>
-      <port number="1">
-        <measurement label="currentImpedance">
-          <voltageChannel>3</voltageChannel>
-        </measurement>
-        <measurement label="temperature">
-          <voltageChannel>7</voltageChannel>
-        </measurement>
-      </port>
-      <port number="2">
-        <measurement label="currentImpedance">
-          <voltageChannel>1</voltageChannel>
-        </measurement>
-        <measurement label="leak">
-          <voltageChannel>5</voltageChannel>
-        </measurement>
-      </port>
-      <port number="3">
-        <measurement label="currentImpedance">
-          <voltageChannel>2</voltageChannel>
-        </measurement>
-        <measurement label="temperature">
-          <voltageChannel>6</voltageChannel>
-        </measurement>
-      </port>
-      <port number="4">
-        <measurement label="currentImpedance">
-          <voltageChannel>0</voltageChannel>
-        </measurement>
-        <measurement label="temperature">
-          <voltageChannel>4</voltageChannel>
-        </measurement>
-      </port>
-    </ports>
-  </sensor>
-  <sensor>
-    <address>192.168.100.206</address>
-    <name>KN0001_012ADAM012R02</name>
-    <description>12m SN ADAM monitor 2</description>
-    <cacheSize>50000</cacheSize>
-    <archiveSize>31536000</archiveSize>
-    <archiveChannel>DecimalASCIISampleData</archiveChannel>
-    <type>monitor</type>
-    <ports>
-      <port number="1">
-        <measurement label="positiveGroundFault">
-          <voltageChannel>6</voltageChannel>
-        </measurement>
-        <measurement label="negativeGroundFault">
-          <voltageChannel>7</voltageChannel>
-        </measurement>
-      </port>
-      <port number="2">
-        <measurement label="positiveGroundFault">
-          <voltageChannel>2</voltageChannel>
-        </measurement>
-        <measurement label="negativeGroundFault">
-          <voltageChannel>3</voltageChannel>
-        </measurement>
-      </port>
-      <port number="3">
-        <measurement label="positiveGroundFault">
-          <voltageChannel>4</voltageChannel>
-        </measurement>
-        <measurement label="negativeGroundFault">
-          <voltageChannel>5</voltageChannel>
-        </measurement>
-      </port>
-      <port number="4">
-        <measurement label="positiveGroundFault">
-          <voltageChannel>0</voltageChannel>
-        </measurement>
-        <measurement label="negativeGroundFault">
-          <voltageChannel>1</voltageChannel>
         </measurement>
       </port>
     </ports>
   </sensor>
   <sensor>
     <address>192.168.100.221</address>
-    <name>KN0002_020ADAM020R01</name>
-    <description>20m SN ADAM monitor 1</description>
+    <name>KN0001_012ADAM012R01</name>
+    <description>12m SN ADAM monitor 1</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -286,8 +200,8 @@
   </sensor>
   <sensor>
     <address>192.168.100.222</address>
-    <name>KN0002_020ADAM020R02</name>
-    <description>20m SN ADAM monitor 2</description>
+    <name>KN0001_012ADAM012R02</name>
+    <description>12m SN ADAM monitor 2</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
