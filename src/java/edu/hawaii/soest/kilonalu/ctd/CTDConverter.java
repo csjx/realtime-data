@@ -113,6 +113,70 @@ public class CTDConverter {
     
   }
 
+  /*
+   *  A method used to apply all of the conversion formulas to the data matrix
+   *  The converted matrix is populated with the new values.
+   */
+  public void convert() {
+    
+    // For the following conversions, each variable's data vector position
+    // is determined by the position of the variable name as they are listed
+    // in the ctdParser.dataVariableNames list.
+    
+    // convert the temperature vector 
+    if ( this.ctdParser.getDataVariableNames().indexOf(
+           ctdParser.RAW_TEMPERATURE_FIELD_NAME) >= 0 ) {
+      int temperatureVariableIndex = this.ctdParser.getDataVariableNames().indexOf(
+                                       this.ctdParser.RAW_TEMPERATURE_FIELD_NAME);
+      convertTemperature(temperatureVariableIndex);    
+    
+    }
+    
+    // convert the pressure vector (relies on pressure-temp compensation)
+    if ( (this.ctdParser.getDataVariableNames().indexOf(
+           this.ctdParser.RAW_PRESSURE_FIELD_NAME) >= 0) &&
+          ( this.ctdParser.getDataVariableNames().indexOf(
+                  this.ctdParser.RAW_PRESSURE_TEMP_COMP_FIELD_NAME) >= 0) ) {
+      int pressureVariableIndex = 
+        this.ctdParser.getDataVariableNames().indexOf(
+          this.ctdParser.RAW_PRESSURE_FIELD_NAME);
+      int pressureTempCompVariableIndex = 
+        this.ctdParser.getDataVariableNames().indexOf(
+          this.ctdParser.RAW_PRESSURE_TEMP_COMP_FIELD_NAME);
+      convertPressure(pressureVariableIndex, pressureTempCompVariableIndex);    
+  
+    }
+    
+    // convert the conductivity vector (relies on converted temp and pressure)
+    if ( (this.ctdParser.getDataVariableNames().indexOf(
+           this.ctdParser.RAW_CONDUCTIVITY_FIELD_NAME) >= 0) &&
+         (this.ctdParser.getDataVariableNames().indexOf(
+           this.ctdParser.RAW_TEMPERATURE_FIELD_NAME) >= 0) &&
+         (this.ctdParser.getDataVariableNames().indexOf(
+           this.ctdParser.RAW_PRESSURE_FIELD_NAME) >= 0) ) {
+      
+      int conductivityVariableIndex = this.ctdParser.getDataVariableNames().indexOf(
+                                        this.ctdParser.RAW_CONDUCTIVITY_FIELD_NAME);
+      
+      int temperatureVariableIndex  = this.ctdParser.getDataVariableNames().indexOf(
+                                        this.ctdParser.RAW_TEMPERATURE_FIELD_NAME);
+      
+      int pressureVariableIndex     = this.ctdParser.getDataVariableNames().indexOf(
+                                        this.ctdParser.RAW_PRESSURE_FIELD_NAME);
+        
+      convertConductivity(conductivityVariableIndex, 
+                          temperatureVariableIndex, 
+                          pressureVariableIndex);    
+  
+    }
+    
+    System.out.println("Converted Data Matrix is: " + convertedDataValuesMatrix.toString());
+    
+    // TODO: convert voltage channels based on the metadata from the data
+    // type being collected on each channel
+    
+  }    
+  
   /**
    * A method that gets the log configuration file location
    *
