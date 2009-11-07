@@ -304,6 +304,84 @@ public class CTDConverter {
        
   }
   
+  /*
+   *  A method used to apply the temperature conversion formula to the data 
+   *  matrix. The converted matrix is populated with the new values in the given
+   *  vector position.
+   */
+  private void convertPressure(int pressureVectorIndex, int pressureTempCompIndex) {
+  
+    double P_CONTSTANT_ONE = 14.7d;     // atmospheric pressure influence
+    double P_CONTSTANT_TWO = 0.689476d; // psia to decibars factor
+    
+    //get the calibration coefficients from the CTDParser instance
+    double pressureCoefficientPA0     = this.ctdParser.getPressureCoefficientPA0(); 
+    double pressureCoefficientPA1     = this.ctdParser.getPressureCoefficientPA1(); 
+    double pressureCoefficientPA2     = this.ctdParser.getPressureCoefficientPA2(); 
+    double pressureCoefficientPTCA0   = this.ctdParser.getPressureCoefficientPTCA0(); 
+    double pressureCoefficientPTCA1   = this.ctdParser.getPressureCoefficientPTCA1(); 
+    double pressureCoefficientPTCA2   = this.ctdParser.getPressureCoefficientPTCA2(); 
+    double pressureCoefficientPTCB0   = this.ctdParser.getPressureCoefficientPTCB0(); 
+    double pressureCoefficientPTCB1   = this.ctdParser.getPressureCoefficientPTCB1(); 
+    double pressureCoefficientPTCB2   = this.ctdParser.getPressureCoefficientPTCB2(); 
+    double pressureCoefficientPTEMPA0 = this.ctdParser.getPressureCoefficientPTEMPA0(); 
+    double pressureCoefficientPTEMPA1 = this.ctdParser.getPressureCoefficientPTEMPA1(); 
+    double pressureCoefficientPTEMPA2 = this.ctdParser.getPressureCoefficientPTEMPA2(); 
+    double pressureOffsetCoefficient  = this.ctdParser.getPressureOffsetCoefficient(); 
+    
+    // convert raw values ...
+    ArrayRealVector pressureVector = (ArrayRealVector)
+      this.dataValuesMatrix.getColumnVector(pressureVectorIndex);
+    
+    ArrayRealVector pressureTempCompVector = (ArrayRealVector)
+      this.dataValuesMatrix.getColumnVector(pressureTempCompIndex);
+    
+    // to engineering values
+    ArrayRealVector convertedPressureVector = (ArrayRealVector)
+      new ArrayRealVector(pressureVector.getDimension());
+      
+    // iterate through the pressure values and apply the conversion
+    for( int count = 0; count < pressureVector.getDimension(); count++ ) {
+      
+      // calculate the pressure in decibars from the calibration sheet formula
+      double pressureValue  = pressureVector.getEntry(count);
+      double ptCompValue    = pressureTempCompVector.getEntry(count);
+      
+      double t = pressureCoefficientPTEMPA0                + 
+                (pressureCoefficientPTEMPA1 * ptCompValue) +
+                (pressureCoefficientPTEMPA2 * Math.pow(ptCompValue, 2));
+              
+      double x = pressureValue -
+                 pressureCoefficientPTCA0 -
+                 pressureCoefficientPTCA1 * t -
+                 pressureCoefficientPTCA2 * Math.pow(t, 2);
+                 
+      double n = x *
+                 pressureCoefficientPTCB0 /
+                 (
+                   pressureCoefficientPTCB0 + 
+                   pressureCoefficientPTCB1 *
+                   t                        +
+                   pressureCoefficientPTCB2 *
+                   Math.pow(t, 2)
+                 );
+      double pressurePSIA = pressureCoefficientPA0 +
+                            pressureCoefficientPA1 *
+                            n                      +
+                            pressureCoefficientPA2 *
+                            Math.pow(n, 2);
+                 
+      // pressure (decibels) = [pressure (psia) - 14.7] * 0.689476 from the CTD manual
+      double pressureDB = (pressurePSIA - P_CONTSTANT_ONE) * P_CONTSTANT_TWO;
+      convertedPressureVector.setEntry(count, pressureDB);
+      
+    }
+    
+    // set the new vector in the converted values matrix
+    this.convertedDataValuesMatrix.setColumnVector(pressureVectorIndex, convertedPressureVector);
+        
+  }
+
   /**
    * A method that gets the log configuration file location
    *
