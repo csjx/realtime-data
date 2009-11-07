@@ -177,6 +177,65 @@ public class CTDConverter {
     
   }    
   
+  /*
+   *  A method used to apply the temperature conversion formula to the data 
+   *  matrix. The converted matrix is populated with the new values in the given
+   *  vector position.
+   */
+  private void convertTemperature(int temperatureVectorIndex) {
+    
+    // define the constants from the temperature conversion formulas
+    double MV_CONSTANT_ONE  = 524288d;
+    double MV_CONSTANT_TWO  = 1.6e+007;
+                            
+    double R_CONSTANT_ONE   = 2.900e+009;
+    double R_CONSTANT_TWO   = 1.024e+008;
+    double R_CONSTANT_THREE = 2.048e+004;
+    double R_CONSTANT_FOUR  = 2.0e+005;
+    
+    double T_CONSTANT_ONE   = 273.15d;
+    
+    //get the calibration coefficients from the CTDParser instance
+    double temperatureCoefficientTA0 = this.ctdParser.getTemperatureCoefficientTA0(); 
+    double temperatureCoefficientTA1 = this.ctdParser.getTemperatureCoefficientTA1(); 
+    double temperatureCoefficientTA2 = this.ctdParser.getTemperatureCoefficientTA2(); 
+    double temperatureCoefficientTA3 = this.ctdParser.getTemperatureCoefficientTA3(); 
+    
+    ArrayRealVector temperatureVector = (ArrayRealVector)
+      this.dataValuesMatrix.getColumnVector(temperatureVectorIndex);
+    
+    ArrayRealVector convertedTemperatureVector = (ArrayRealVector)
+      new ArrayRealVector(temperatureVector.getDimension());
+      
+    // iterate through the temperature values and apply the conversion
+    for( int count = 0; count < temperatureVector.getDimension(); count++ ) {
+      
+      // calculate the temperature in degrees C from the calibration sheet formula
+      // note: the mv, r, and tDegreesC variables come from the calibration sheet
+      double countValue = temperatureVector.getEntry(count);
+      double mv         = (countValue - MV_CONSTANT_ONE)/MV_CONSTANT_TWO;
+      
+      double r = 
+      (mv * R_CONSTANT_ONE + R_CONSTANT_TWO)/(R_CONSTANT_THREE - mv * R_CONSTANT_FOUR);
+      
+      double tDegreesC = 
+        1/(
+            temperatureCoefficientTA0 + 
+            temperatureCoefficientTA1 * (Math.log(r)) +
+            temperatureCoefficientTA2 * (Math.pow(Math.log(r), 2)) + 
+            temperatureCoefficientTA3 * (Math.pow(Math.log(r), 3)) 
+          ) - T_CONSTANT_ONE;
+      
+      convertedTemperatureVector.setEntry(count, tDegreesC);
+            
+    } 
+    
+    // set the new vector in the converted values matrix
+    this.convertedDataValuesMatrix.setColumnVector(temperatureVectorIndex, 
+                                                   convertedTemperatureVector);
+           
+  }
+  
   /**
    * A method that gets the log configuration file location
    *
