@@ -270,7 +270,7 @@ public class CTDConverter {
     ArrayRealVector convertedPressureVector = (ArrayRealVector)
       this.convertedDataValuesMatrix.getColumnVector(pressureVectorIndex);
     
-    // iterate through the temperature values and apply the conversion
+    // iterate through the conductivity values and apply the conversion
     for( int count = 0; count < conductivityVector.getDimension(); count++ ) {
       
       // calculate the conductivity in Siemens/m from the calibration sheet formula
