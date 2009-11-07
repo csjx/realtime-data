@@ -236,6 +236,74 @@ public class CTDConverter {
            
   }
   
+  /*
+   *  A method used to apply the conductivity conversion formula to the data 
+   *  matrix. The converted matrix is populated with the new values in the given
+   *  vector position.
+   */
+  private void convertConductivity(int conductivityVectorIndex, 
+                                   int temperatureVectorIndex, 
+                                   int pressureVectorIndex) {
+    
+    // define the constants from the conductivity conversion formulas
+    double F_CONSTANT_ONE  = 1000d;
+        
+    //get the calibration coefficients from the CTDParser instance
+    double conductivityCoefficientG      = this.ctdParser.getConductivityCoefficientG(); 
+    double conductivityCoefficientH      = this.ctdParser.getConductivityCoefficientH(); 
+    double conductivityCoefficientI      = this.ctdParser.getConductivityCoefficientI(); 
+    double conductivityCoefficientJ      = this.ctdParser.getConductivityCoefficientJ(); 
+    double conductivityCoefficientCF0    = this.ctdParser.getConductivityCoefficientCF0(); 
+    double conductivityCoefficientCPCOR  = this.ctdParser.getConductivityCoefficientCPCOR(); 
+    double conductivityCoefficientCTCOR  = this.ctdParser.getConductivityCoefficientCTCOR(); 
+    double conductivityCoefficientCSLOPE = this.ctdParser.getConductivityCoefficientCSLOPE(); 
+    
+    ArrayRealVector conductivityVector = (ArrayRealVector)
+      this.dataValuesMatrix.getColumnVector(conductivityVectorIndex);
+    
+    ArrayRealVector convertedConductivityVector = (ArrayRealVector)
+      new ArrayRealVector(conductivityVector.getDimension());
+    
+    ArrayRealVector convertedTemperatureVector = (ArrayRealVector)
+      this.convertedDataValuesMatrix.getColumnVector(temperatureVectorIndex);
+    
+    ArrayRealVector convertedPressureVector = (ArrayRealVector)
+      this.convertedDataValuesMatrix.getColumnVector(pressureVectorIndex);
+    
+    // iterate through the temperature values and apply the conversion
+    for( int count = 0; count < conductivityVector.getDimension(); count++ ) {
+      
+      // calculate the conductivity in Siemens/m from the calibration sheet formula
+      double frequencyValue = conductivityVector.getEntry(count);
+      double tDegreesC      = convertedTemperatureVector.getEntry(count);
+      double pressureDB     = convertedPressureVector.getEntry(count);
+      double f              = frequencyValue/F_CONSTANT_ONE;
+      double cSiemensPerM = (
+                              conductivityCoefficientG      +
+                              (conductivityCoefficientH     *
+                                Math.pow(f, 2))             +
+                              (conductivityCoefficientI     *
+                                Math.pow(f, 3))             +
+                              (conductivityCoefficientJ     *
+                                Math.pow(f, 4))             
+                            )                               /
+                            (                               
+                              1                             +
+                              (conductivityCoefficientCTCOR *
+                               tDegreesC)                   +
+                              (conductivityCoefficientCPCOR *
+                               pressureDB)
+                            );
+      convertedConductivityVector.setEntry(count, cSiemensPerM);
+            
+    } 
+    
+    // set the new vector in the converted values matrix
+    this.convertedDataValuesMatrix.setColumnVector(conductivityVectorIndex, 
+                                                   convertedConductivityVector);      
+       
+  }
+  
   /**
    * A method that gets the log configuration file location
    *
