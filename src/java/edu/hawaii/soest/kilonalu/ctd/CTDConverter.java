@@ -383,6 +383,16 @@ public class CTDConverter {
   }
   
   /**
+   *  A method that returns the converted data values matrix as a RealMatrix 
+   *
+   * @return convertedDataValuesMatrix - the matrix of converted data values
+   */
+  public RealMatrix getConvertedDataValuesMatrix(){
+    return this.convertedDataValuesMatrix;
+    
+  }
+  
+  /**
    *  The main method
    */   
   public static void main(String[] args) {
