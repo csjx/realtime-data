@@ -154,6 +154,20 @@ public class CTDParser {
    *  A field used to keep track of the current data variable offset
    */
    private int currentOffset;
-
+   
+  /**
+   *  A field that stores the metadata field delimiter as a String
+   */
+  public final String METADATA_FIELD_DELIMITER = ",";
+  
+  /**
+   *  A field that stores the primary name/value pair delimiter as a String
+   */
+  public final String PRIMARY_PAIR_DELIMITER = ":";
+  
+  /**
+   *  A field that stores the primary name/value pair delimiter as a String
+   */
+  public final String SECONDARY_PAIR_DELIMITER = "=";
   
 }                                               
