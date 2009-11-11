@@ -1443,4 +1443,684 @@ public class CTDParser {
     }
     
   }
+  
+  /*
+   *  A method used to set each of the metadata fields found in the output of
+   *  the DS and DCAL commands.  The method handles both profile and moored
+   *  modes, and builds metadata fields based on the data output format.
+   */
+  private void setMetadata() throws ParseException {
+    logger.debug("CTDParser.setMetadata() called.");
+    
+    // Are we in profile or moored mode?
+    if ( this.SAMPLING_MODE != null ) {
+      this.samplingMode = this.metadataValuesMap.get(this.SAMPLING_MODE);
+      logger.info("Sampling mode is: " + this.samplingMode);
+  
+    } else {
+      throw new ParseException("There was an error parsing the data string. "  +
+                               "The sampling mode is not stated correctly in " +
+                               "the metadata from the DS command. Please "     +
+                               "check the output.", 0);
+  
+    }
+  
+    // Determine the output format
+    if ( this.OUTPUT_FORMAT != null ) {
+      this.outputFormat = this.metadataValuesMap.get(this.OUTPUT_FORMAT);
+      logger.info("Data output format is: " + this.outputFormat);
+  
+    } else {
+      throw new ParseException("There was an error parsing the data string. "  +
+                               "The output format is not stated correctly in " +
+                               "the metadata from the DS command. Please "     +
+                               "check the output.", 0);
+  
+    }
+  
+    // Is there a pressure sensor?  If so, what type?
+    if ( this.PRESSURE_SENSOR_TYPE != null ) {
+      this.pressureSensorType = 
+        this.metadataValuesMap.get(this.PRESSURE_SENSOR_TYPE).trim();
+      this.hasPressure = true;
+  
+      if ( this.pressureSensorType.equals("strain gauge") ) {
+        this.hasStrainGaugePressure = true;
+  
+      }
+  
+      if ( this.PRESSURE_SENSOR_RANGE != null ) {
+        this.pressureSensorRange = 
+          this.metadataValuesMap.get(this.PRESSURE_SENSOR_RANGE).trim();
+      }
+  
+    } else {
+      logger.info("There is no pressure sensor.");
+  
+    }
+  
+    // Determine if there are external voltages to read
+  
+    // channel 0
+    if ( this.EXTERNAL_VOLTAGE_CHANNEL_ZERO != null ) {
+      this.externalVoltageChannelZero = 
+        this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_ZERO).trim();
+      if ( this.externalVoltageChannelZero.equals("yes") ) {
+        this.hasVoltageChannelZero = true;
+        logger.info("There is a channel 0 voltage.");
+  
+      } else {
+        logger.info("There is no channel 0 voltage.");
+  
+      }
+    }
+  
+    // channel 1
+    if ( this.EXTERNAL_VOLTAGE_CHANNEL_ONE != null ) {
+      this.externalVoltageChannelOne = 
+        this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_ONE).trim();
+      if ( this.externalVoltageChannelOne.equals("yes") ) {
+        this.hasVoltageChannelOne = true;
+        logger.info("There is a channel 1 voltage.");
+  
+      } else {
+        logger.info("There is no channel 1 voltage.");
+  
+      }
+    }
+  
+    // channel 2
+    if ( this.EXTERNAL_VOLTAGE_CHANNEL_TWO != null ) {
+      this.externalVoltageChannelTwo = 
+        this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_TWO).trim();
+      if ( this.externalVoltageChannelTwo.equals("yes") ) {
+        this.hasVoltageChannelTwo = true;
+        logger.info("There is a channel 2 voltage.");
+  
+      } else {
+        logger.info("There is no channel 2 voltage.");
+  
+      }
+    }
+  
+    // channel 3
+    if ( this.EXTERNAL_VOLTAGE_CHANNEL_THREE != null ) {
+      this.externalVoltageChannelThree = 
+        this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_THREE).trim();
+      if ( this.externalVoltageChannelThree.equals("yes") ) {
+        this.hasVoltageChannelThree = true;
+        logger.info("There is a channel 3 voltage.");
+  
+      } else {
+        logger.info("There is no channel 3 voltage.");
+  
+      }
+    }
+  
+    // Determine if there is an SBE38 secondary temperature to read
+    if ( this.SBE38_TEMPERATURE_SENSOR != null ) {
+      this.sbe38TemperatureSensor = 
+        this.metadataValuesMap.get(this.SBE38_TEMPERATURE_SENSOR).trim();
+      if ( this.sbe38TemperatureSensor.equals("yes") ) {
+        this.hasSBE38TemperatureSensor = true;
+  
+      }
+    }
+  
+    // Determine if there is a gas tension device to read
+    if ( this.GAS_TENSION_DEVICE != null ) {
+      this.gasTensionDevice = 
+        this.metadataValuesMap.get(this.GAS_TENSION_DEVICE).trim();
+      if ( this.gasTensionDevice.equals("yes") ) {
+        this.hasGasTensionDevice = true;
+  
+      }
+    }
+  
+    // set each of the metadata fields
+    
+    // set the first sample time field
+    if ( this.FIRST_SAMPLE_TIME != null ) {
+      this.firstSampleTime = this.metadataValuesMap.get(this.FIRST_SAMPLE_TIME);
+      logger.info("First sample time is: " + this.firstSampleTime);
+  
+    }
+    
+    // set the file name time field
+    if ( this.FILE_NAME != null ) {
+      this.fileName = this.metadataValuesMap.get(this.FILE_NAME);
+      logger.info("File name is: " + this.fileName);
+  
+    }
+    
+    // set the temperature serial number field
+    if ( this.TEMPERATURE_SERIAL_NUMBER != null ) {
+      this.temperatureSerialNumber = this.metadataValuesMap.get(this.TEMPERATURE_SERIAL_NUMBER);
+      logger.info("Temperature serial number is: " + this.temperatureSerialNumber);
+  
+    }
+    
+    // set the conductivity serial number field
+    if ( this.CONDUCTIVITY_SERIAL_NUMBER != null ) {
+      this.conductivitySerialNumber = this.metadataValuesMap.get(this.CONDUCTIVITY_SERIAL_NUMBER);
+      logger.info("Conductivity serial number is: " + this.conductivitySerialNumber);
+  
+    }
+    
+    // set the system upload time field
+    if ( this.SYSTEM_UPLOAD_TIME != null ) {
+      this.systemUpLoadTime = this.metadataValuesMap.get(this.SYSTEM_UPLOAD_TIME);
+      logger.info("System upload time is: " + this.systemUpLoadTime);
+  
+    }
+    
+    // set the cruise information field
+    if ( this.CRUISE_INFORMATION != null ) {
+      this.cruiseInformation = this.metadataValuesMap.get(this.CRUISE_INFORMATION);
+      logger.info("Cruise information is: " + this.cruiseInformation);
+  
+    }
+    
+    // set the station information field
+    if ( this.STATION_INFORMATION != null ) {
+      this.stationInformation = this.metadataValuesMap.get(this.STATION_INFORMATION);
+      logger.info("Station information is: " + this.stationInformation);
+  
+    }
+    
+    // set the ship information field
+    if ( this.SHIP_INFORMATION != null ) {
+      this.shipInformation = this.metadataValuesMap.get(this.SHIP_INFORMATION);
+      logger.info("Ship information is: " + this.shipInformation);
+  
+    }
+    
+    // set the chief scientist field
+    if ( this.CHIEF_SCIENTIST != null ) {
+      this.chiefScientist = this.metadataValuesMap.get(this.CHIEF_SCIENTIST);
+      logger.info("Chief scientist is: " + this.chiefScientist);
+  
+    }
+    
+    // set the organization field
+    if ( this.ORGANIZATION != null ) {
+      this.organization = this.metadataValuesMap.get(this.ORGANIZATION);
+      logger.info("Organization is: " + this.organization);
+  
+    }
+    
+    // set the area of operation field
+    if ( this.AREA_OF_OPERATION != null ) {
+      this.areaOfOperation = this.metadataValuesMap.get(this.AREA_OF_OPERATION);
+      logger.info("Area of operation is: " + this.areaOfOperation);
+  
+    }
+    
+    // set the instrument package field
+    if ( this.INSTRUMENT_PACKAGE != null ) {
+      this.instrumentPackage = this.metadataValuesMap.get(this.INSTRUMENT_PACKAGE);
+      logger.info("Instrument package is: " + this.instrumentPackage);
+  
+    }
+    
+    // set the mooring number field
+    if ( this.MOORING_NUMBER != null ) {
+      this.mooringNumber = this.metadataValuesMap.get(this.MOORING_NUMBER);
+      logger.info("Mooring number is: " + this.mooringNumber);
+  
+    }
+    
+    // set the instrument latitude field
+    if ( this.INSTRUMENT_LATITUDE != null ) {
+      this.instrumentLatitude = this.metadataValuesMap.get(this.INSTRUMENT_LATITUDE);
+      logger.info("Instrument latitude is: " + this.instrumentLatitude);
+  
+    }
+    
+    // set the instrument longitude field
+    if ( this.INSTRUMENT_LONGITUDE != null ) {
+      this.instrumentLongitude = this.metadataValuesMap.get(this.INSTRUMENT_LONGITUDE);
+      logger.info("Instrument longitude is: " + this.instrumentLongitude);
+  
+    }
+    
+    // set the depth sounding field
+    if ( this.DEPTH_SOUNDING != null ) {
+      this.depthSounding = this.metadataValuesMap.get(this.DEPTH_SOUNDING);
+      logger.info("Depth sounding is: " + this.depthSounding);
+  
+    }
+    
+    // set the profile number field
+    if ( this.PROFILE_NUMBER != null ) {
+      this.profileNumber = this.metadataValuesMap.get(this.PROFILE_NUMBER);
+      logger.info("Profile number is: " + this.profileNumber);
+  
+    }
+    
+    // set the profile direction field
+    if ( this.PROFILE_DIRECTION != null ) {
+      this.profileDirection = this.metadataValuesMap.get(this.PROFILE_DIRECTION);
+      logger.info("Profile direction is: " + this.profileDirection);
+  
+    }
+    
+    // set the deployment notes field
+    if ( this.DEPLOYMENT_NOTES != null ) {
+      this.deploymentNotes = this.metadataValuesMap.get(this.DEPLOYMENT_NOTES);
+      logger.info("Deployment notes are: " + this.deploymentNotes);
+  
+    }
+    
+    // set the main battery voltage field
+    if ( this.MAIN_BATTERY_VOLTAGE != null ) {
+      this.mainBatteryVoltage = this.metadataValuesMap.get(this.MAIN_BATTERY_VOLTAGE);
+      logger.info("Main battery voltage is: " + this.mainBatteryVoltage);
+  
+    }
+    
+    // set the lithium battery voltage field
+    if ( this.LITHIUM_BATTERY_VOLTAGE != null ) {
+      this.lithiumBatteryVoltage = 
+        this.metadataValuesMap.get(this.LITHIUM_BATTERY_VOLTAGE);
+      logger.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
+  
+    }
+    
+    // set the operating current field
+    if ( this.OPERATING_CURRENT != null ) {
+      this.operatingCurrent = this.metadataValuesMap.get(this.OPERATING_CURRENT);
+      logger.info("Operating current is: " + this.operatingCurrent);
+  
+    }
+    
+    // set the pump current field
+    if ( this.PUMP_CURRENT != null ) {
+      this.pumpCurrent = this.metadataValuesMap.get(this.PUMP_CURRENT);
+      logger.info("Pump current is: " + this.pumpCurrent);
+  
+    }
+    
+    // set the channels 0 and 1 external current field
+    if ( this.CHANNELS_01_EXTERNAL_CURRENT != null ) {
+      this.channels01ExternalCurrent = 
+      this.metadataValuesMap.get(this.CHANNELS_01_EXTERNAL_CURRENT);
+      logger.info("Channels 0 and 1 external current is: " + 
+                  this.channels01ExternalCurrent);
+  
+    }
+    
+    // set the channels 2 and 3 external current field
+    if ( this.CHANNELS_23_EXTERNAL_CURRENT != null ) {
+      this.channels23ExternalCurrent = 
+      this.metadataValuesMap.get(this.CHANNELS_23_EXTERNAL_CURRENT);
+      logger.info("Channels 2 and 3 external current is: " + 
+                  this.channels23ExternalCurrent);
+  
+    }
+    
+    // set the logging status field
+    if ( this.LOGGING_STATUS != null ) {
+      this.loggingStatus = this.metadataValuesMap.get(this.LOGGING_STATUS);
+      logger.info("Logging status is: " + this.loggingStatus);
+  
+    }
+    
+    // set the number of scans to average field
+    if ( this.NUMBER_OF_SCANS_TO_AVERAGE != null ) {
+      this.numberOfScansToAverage = 
+        this.metadataValuesMap.get(this.NUMBER_OF_SCANS_TO_AVERAGE);
+      logger.info("Number of scans to average is: " + 
+                  this.numberOfScansToAverage);
+  
+    }
+    
+    // set the number of samples field
+    if ( this.NUMBER_OF_SAMPLES != null ) {
+      this.numberOfSamples = this.metadataValuesMap.get(this.NUMBER_OF_SAMPLES);
+      logger.info("Number of samples is: " + this.numberOfSamples);
+  
+    }
+    
+    // set the number of available samples field
+    if ( this.NUMBER_OF_AVAILABLE_SAMPLES != null ) {
+      this.numberOfAvailableSamples = 
+        this.metadataValuesMap.get(this.NUMBER_OF_AVAILABLE_SAMPLES);
+      logger.info("Number of available samples is: " + 
+                  this.numberOfAvailableSamples);
+  
+    }
+    
+    // set the sample interval field
+    if ( this.SAMPLE_INTERVAL != null ) {
+      this.sampleInterval = this.metadataValuesMap.get(this.SAMPLE_INTERVAL);
+      logger.info("Sample interval is: " + this.sampleInterval);
+  
+    }
+    
+    // set the measurements per sample field
+    if ( this.MEASUREMENTS_PER_SAMPLE != null ) {
+      this.measurementsPerSample = this.metadataValuesMap.get(this.MEASUREMENTS_PER_SAMPLE);
+      logger.info("Measurements per sample is: " + this.measurementsPerSample);
+  
+    }
+    
+    // set the transmit real time field
+    if ( this.TRANSMIT_REALTIME != null ) {
+      this.transmitRealtime = this.metadataValuesMap.get(this.TRANSMIT_REALTIME);
+      logger.info("Transmit real time state is: " + this.transmitRealtime);
+  
+    }
+    
+    // set the number of casts field
+    if ( this.NUMBER_OF_CASTS != null ) {
+      this.numberOfCasts = this.metadataValuesMap.get(this.NUMBER_OF_CASTS);
+      logger.info("Number of casts is: " + this.numberOfCasts);
+  
+    }
+    
+    // set the minimum conductivity frequency field
+    if ( this.MINIMUM_CONDUCTIVITY_FREQUENCY != null ) {
+      this.minimumConductivityFrequency = 
+        this.metadataValuesMap.get(this.MINIMUM_CONDUCTIVITY_FREQUENCY);
+      logger.info("Minimum conductivity frequency is: " + 
+                  this.minimumConductivityFrequency);
+  
+    }
+    
+    // set the pump delay field
+    if ( this.PUMP_DELAY != null ) {
+      this.pumpDelay = this.metadataValuesMap.get(this.PUMP_DELAY);
+      logger.info("Pump delay is: " + this.pumpDelay);
+  
+    }
+    
+    // set the automatic logging field
+    if ( this.AUTOMATIC_LOGGING != null ) {
+      this.automaticLogging = this.metadataValuesMap.get(this.AUTOMATIC_LOGGING);
+      logger.info("Automatic logging is: " + this.automaticLogging);
+  
+    }
+    
+    // set the ignore magnetic switch field
+    if ( this.IGNORE_MAGNETIC_SWITCH != null ) {
+      this.ignoreMagneticSwitch = this.metadataValuesMap.get(this.IGNORE_MAGNETIC_SWITCH);
+      logger.info("Ignore magnetic switch is: " + this.ignoreMagneticSwitch);
+  
+    }
+    
+    // set the battery type field
+    if ( this.BATTERY_TYPE != null ) {
+      this.batteryType = this.metadataValuesMap.get(this.BATTERY_TYPE);
+      logger.info("Battery type is: " + this.batteryType);
+  
+    }
+    
+    // set the echo commands field
+    if ( this.ECHO_COMMANDS != null ) {
+      this.echoCommands = this.metadataValuesMap.get(this.ECHO_COMMANDS);
+      logger.info("Echo commands state is: " + this.echoCommands);
+  
+    }
+    
+    // set the temperature calibration date field
+    if ( this.TEMPERATURE_CALIBRATION_DATE != null ) {
+      this.temperatureCalibrationDate = 
+        this.metadataValuesMap.get(this.TEMPERATURE_CALIBRATION_DATE);
+      logger.info("Temperature calibration date is: " + 
+                  this.temperatureCalibrationDate);
+  
+    }
+    
+    // set the temperature coefficient TA0 field
+    if ( this.TEMPERATURE_COEFFICIENT_TA0 != null ) {
+      this.temperatureCoefficientTA0 = 
+        this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA0);
+      logger.info("Temperature coefficient TA0 is: " + 
+                  this.temperatureCoefficientTA0);
+  
+    }
+  
+    // set the temperature coefficient TA1 field
+    if ( this.TEMPERATURE_COEFFICIENT_TA1 != null ) {
+      this.temperatureCoefficientTA1 = 
+        this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA1);
+      logger.info("Temperature coefficient TA1 is: " + 
+                  this.temperatureCoefficientTA1);
+  
+    }
+    
+    // set the temperature coefficient TA2 field
+    if ( this.TEMPERATURE_COEFFICIENT_TA2 != null ) {
+      this.temperatureCoefficientTA2 = 
+        this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA2);
+      logger.info("Temperature coefficient TA2 is: " + 
+                  this.temperatureCoefficientTA2);
+  
+    }
+    
+    // set the temperature coefficient TA3 field
+    if ( this.TEMPERATURE_COEFFICIENT_TA3 != null ) {
+      this.temperatureCoefficientTA3 = 
+        this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA3);
+      logger.info("Temperature coefficient TA3 is: " + 
+                  this.temperatureCoefficientTA3);
+  
+    }
+    
+    // set the temperature offset coefficient field
+    if ( this.TEMPERATURE_OFFSET_COEFFICIENT != null ) {
+      this.temperatureOffsetCoefficient = 
+        this.metadataValuesMap.get(this.TEMPERATURE_OFFSET_COEFFICIENT);
+      logger.info("Temperature offset coefficient is: " + 
+                  this.temperatureOffsetCoefficient);
+  
+    }
+    
+    // set the conductivity calibration date field
+    if ( this.CONDUCTIVITY_CALIBRATION_DATE != null ) {
+      this.conductivityCalibrationDate = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_CALIBRATION_DATE);
+      logger.info("Conductivity calibration date is: " + 
+                  this.conductivityCalibrationDate);
+  
+    }
+    
+    // set the conductivity coefficient G field
+    if ( this.CONDUCTIVITY_COEFFICIENT_G != null ) {
+      this.conductivityCoefficientG = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_G);
+      logger.info("Conductivity coefficient G is: " + 
+                  this.conductivityCoefficientG);
+  
+    }
+  
+    // set the conductivity coefficient H field
+    if ( this.CONDUCTIVITY_COEFFICIENT_H != null ) {
+      this.conductivityCoefficientH = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_H);
+      logger.info("Conductivity coefficient H is: " + 
+                  this.conductivityCoefficientH);
+  
+    }
+    
+    // set the conductivity coefficient I field
+    if ( this.CONDUCTIVITY_COEFFICIENT_I != null ) {
+      this.conductivityCoefficientI = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_I);
+      logger.info("Conductivity coefficient I is: " + 
+                  this.conductivityCoefficientI);
+  
+    }
+    
+    // set the conductivity coefficient J field
+    if ( this.CONDUCTIVITY_COEFFICIENT_J != null ) {
+      this.conductivityCoefficientJ = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_J);
+      logger.info("Conductivity coefficient J is: " + 
+                  this.conductivityCoefficientJ);
+  
+    }
+    
+    // set the conductivity coefficient CF0 field
+    if ( this.CONDUCTIVITY_COEFFICIENT_CF0 != null ) {
+      this.conductivityCoefficientCF0 = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CF0);
+      logger.info("Conductivity coefficient CF0 is: " + 
+                  this.conductivityCoefficientCF0);
+  
+    }
+  
+    // set the conductivity coefficient CPCOR field
+    if ( this.CONDUCTIVITY_COEFFICIENT_CPCOR != null ) {
+      this.conductivityCoefficientCPCOR = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CPCOR);
+      logger.info("Conductivity coefficient CPCOR is: " + 
+                  this.conductivityCoefficientCPCOR);
+  
+    }
+    
+    // set the conductivity coefficient CTCOR field
+    if ( this.CONDUCTIVITY_COEFFICIENT_CTCOR != null ) {
+      this.conductivityCoefficientCTCOR = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CTCOR);
+      logger.info("Conductivity coefficient CTCOR is: " + 
+                  this.conductivityCoefficientCTCOR);
+  
+    }
+    
+    // set the conductivity coefficient CSLOPE field
+    if ( this.CONDUCTIVITY_COEFFICIENT_CSLOPE != null ) {
+      this.conductivityCoefficientCSLOPE = 
+        this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CSLOPE);
+      logger.info("Conductivity coefficient CSLOPE is: " + 
+                  this.conductivityCoefficientCSLOPE);
+  
+    }
+         
+    // set the pressure serial number field
+    if ( this.PRESSURE_SERIAL_NUMBER != null ) {
+      this.pressureSerialNumber = this.metadataValuesMap.get(this.PRESSURE_SERIAL_NUMBER);
+      logger.info("Pressure serial number is: " + this.pressureSerialNumber);
+  
+    }
+    
+    // set the pressure coefficient PA0 field
+    if ( this.PRESSURE_COEFFICIENT_PA0 != null ) {
+      this.pressureCoefficientPA0 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA0);
+      logger.info("Pressure coefficient PA0 is: " + 
+                  this.pressureCoefficientPA0);
+  
+    }
+    
+    // set the pressure coefficient PA1 field
+    if ( this.PRESSURE_COEFFICIENT_PA1 != null ) {
+      this.pressureCoefficientPA1 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA1);
+      logger.info("Pressure coefficient PA1 is: " + 
+                  this.pressureCoefficientPA1);
+  
+    }
+    
+    // set the pressure coefficient PA2 field
+    if ( this.PRESSURE_COEFFICIENT_PA2 != null ) {
+      this.pressureCoefficientPA2 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA2);
+      logger.info("Pressure coefficient PA2 is: " + 
+                  this.pressureCoefficientPA2);
+  
+    }
+    
+    // set the pressure coefficient PTCA0 field
+    if ( this.PRESSURE_COEFFICIENT_PTCA0 != null ) {
+      this.pressureCoefficientPTCA0 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA0);
+      logger.info("Pressure coefficient PTCA0 is: " + 
+                  this.pressureCoefficientPTCA0);
+  
+    }
+    
+    // set the pressure coefficient PTCA1 field
+    if ( this.PRESSURE_COEFFICIENT_PTCA1 != null ) {
+      this.pressureCoefficientPTCA1 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA1);
+      logger.info("Pressure coefficient PTCA1 is: " + 
+                  this.pressureCoefficientPTCA1);
+  
+    }
+    
+    // set the pressure coefficient PTCA2 field
+    if ( this.PRESSURE_COEFFICIENT_PTCA2 != null ) {
+      this.pressureCoefficientPTCA2 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA2);
+      logger.info("Pressure coefficient PTCA2 is: " + 
+                  this.pressureCoefficientPTCA2);
+  
+    }
+    
+    // set the pressure coefficient PTCB0 field
+    if ( this.PRESSURE_COEFFICIENT_PTCB0 != null ) {
+      this.pressureCoefficientPTCB0 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB0);
+      logger.info("Pressure coefficient PTCB0 is: " + 
+                  this.pressureCoefficientPTCB0);
+  
+    }
+    
+    // set the pressure coefficient PTCB1 field
+    if ( this.PRESSURE_COEFFICIENT_PTCB1 != null ) {
+      this.pressureCoefficientPTCB1 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB1);
+      logger.info("Pressure coefficient PTCB1 is: " + 
+                  this.pressureCoefficientPTCB1);
+  
+    }
+    
+    // set the pressure coefficient PTCB2 field
+    if ( this.PRESSURE_COEFFICIENT_PTCB2 != null ) {
+      this.pressureCoefficientPTCB2 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB2);
+      logger.info("Pressure coefficient PTCB2 is: " + 
+                  this.pressureCoefficientPTCB2);
+  
+    }
+    
+    // set the pressure coefficient PTEMPA0 field
+    if ( this.PRESSURE_COEFFICIENT_PTEMPA0 != null ) {
+      this.pressureCoefficientPTEMPA0 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA0);
+      logger.info("Pressure coefficient PTEMPA0 is: " + 
+                  this.pressureCoefficientPTEMPA0);
+  
+    }
+    
+    // set the pressure coefficient PTEMPA1 field
+    if ( this.PRESSURE_COEFFICIENT_PTEMPA1 != null ) {
+      this.pressureCoefficientPTEMPA1 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA1);
+      logger.info("Pressure coefficient PTEMPA1 is: " + 
+                  this.pressureCoefficientPTEMPA1);
+  
+    }
+    
+    // set the pressure coefficient PTEMPA2 field
+    if ( this.PRESSURE_COEFFICIENT_PTEMPA2 != null ) {
+      this.pressureCoefficientPTEMPA2 = 
+        this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA2);
+      logger.info("Pressure coefficient PTEMPA2 is: " + 
+                  this.pressureCoefficientPTEMPA2);
+  
+    }
+    
+    // set the pressure offset coefficient field
+    if ( this.PRESSURE_OFFSET_COEFFICIENT != null ) {
+      this.pressureOffsetCoefficient = 
+        this.metadataValuesMap.get(this.PRESSURE_OFFSET_COEFFICIENT);
+      logger.info("Pressure offset coefficient is: " + 
+                  this.pressureOffsetCoefficient);
+  
+    }
+           
+  }  
 }                                               
