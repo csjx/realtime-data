@@ -842,4 +842,151 @@ public class CTDParser {
    */
   public final String CONDUCTIVITY_COEFFICIENT_CSLOPE = "CSLOPE";
   
+  /*
+   *  A field that stores the pressure serial number as a String
+   */
+  private String pressureSerialNumber;
+  
+  /**
+   *  A field that stores the pressure serial number key as a String
+   */
+  public final String PRESSURE_SERIAL_NUMBER = "pressure S/N";
+  
+  /*
+   *  A field that stores the pressure coefficient PA0 as a String
+   */
+  private String pressureCoefficientPA0;
+  
+  /**
+   *  A field that stores the pressure coefficient PA0 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PA0 = "PA0";
+  
+  /*
+   *  A field that stores the pressure coefficient PA1 as a String
+   */
+  private String pressureCoefficientPA1;
+  
+  /**
+   *  A field that stores the pressure coefficient PA1 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PA1 = "PA1";
+  
+  /*
+   *  A field that stores the pressure coefficient PA2 as a String
+   */
+  private String pressureCoefficientPA2;
+  
+  /**
+   *  A field that stores the pressure coefficient PA2 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PA2 = "PA2";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCA0 as a String
+   */
+  private String pressureCoefficientPTCA0;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCA0 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCA0 = "PTCA0";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCA1 as a String
+   */
+  private String pressureCoefficientPTCA1;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCA1 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCA1 = "PTCA1";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCA2 as a String
+   */
+  private String pressureCoefficientPTCA2;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCA2 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCA2 = "PTCA2";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCB0 as a String
+   */
+  private String pressureCoefficientPTCB0;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCB0 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCB0 = "PTCB0";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCB1 as a String
+   */
+  private String pressureCoefficientPTCB1;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCB1 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCB1 = "PTCB1";
+  
+  /*
+   *  A field that stores the pressure coefficient PTCB2 as a String
+   */
+  private String pressureCoefficientPTCB2;
+  
+  /**
+   *  A field that stores the pressure coefficient PTCB2 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTCB2 = "PTCB2";
+  
+  /*
+   *  A field that stores the pressure coefficient PTEMPA0 as a String
+   */
+  private String pressureCoefficientPTEMPA0;
+  
+  /**
+   *  A field that stores the pressure coefficient PTEMPA0 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTEMPA0 = "PTEMPA0";
+  
+  /*
+   *  A field that stores the pressure coefficient PTEMPA1 as a String
+   */
+  private String pressureCoefficientPTEMPA1;
+  
+  /**
+   *  A field that stores the pressure coefficient PTEMPA1 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTEMPA1 = "PTEMPA1";
+  
+  /*
+   *  A field that stores the pressure coefficient PTEMPA2 as a String
+   */
+  private String pressureCoefficientPTEMPA2;
+  
+  /**
+   *  A field that stores the pressure coefficient PTEMPA2 key as a String
+   */
+  public final String PRESSURE_COEFFICIENT_PTEMPA2 = "PTEMPA2";
+  
+  /*
+   *  A field that stores the pressure offset coefficient as a String
+   */
+  private String pressureOffsetCoefficient;
+  
+  /**
+   *  A field that stores the pressure offset coefficient key as a String
+   */
+  public final String PRESSURE_OFFSET_COEFFICIENT = "POFFSET";
+
+  // TODO: add voltage offset fields.  What are they used for?
+  // * volt 0: offset = -4.678210e-02, slope = 1.248624e+00
+  // * volt 1: offset = -4.696105e-02, slope = 1.248782e+00
+  // * volt 2: offset = -4.683263e-02, slope = 1.249537e+00
+  // * volt 3: offset = -4.670842e-02, slope = 1.249841e+00
+  // * EXTFREQSF = 1.000012e+00
+  
 }                                               
