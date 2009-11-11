@@ -1122,4 +1122,37 @@ public class CTDParser {
     
   }
   
+  /*
+   *  A method used to convert hex data to their raw output units based on per
+   * variable conversions found in the SBE19plus user manual under the 
+   * OUTPUTFORMAT = 0 section (raw Hex).   
+   */
+  private double convert(double value, String variableName) {
+    
+    double returnValue = 0d;
+    
+    // temperature has no conversion
+    if ( variableName.equals(this.RAW_TEMPERATURE_FIELD_NAME) ) {
+      returnValue = value;
+    
+    // conductivity    
+    } else if ( variableName.equals(this.RAW_CONDUCTIVITY_FIELD_NAME) ) {
+      returnValue = value / 256d;
+    
+    // pressure    
+    } else if ( variableName.equals(this.RAW_PRESSURE_FIELD_NAME) ) {
+      returnValue = value;
+    
+    // voltages    
+    } else if ( variableName.equals(this.RAW_PRESSURE_TEMP_COMP_FIELD_NAME)   ||
+                variableName.equals(this.RAW_VOLTAGE_CHANNEL_ZERO_FIELD_NAME) || 
+                variableName.equals(this.RAW_VOLTAGE_CHANNEL_ONE_FIELD_NAME)  || 
+                variableName.equals(this.RAW_VOLTAGE_CHANNEL_TWO_FIELD_NAME)  || 
+                variableName.equals(this.RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME)) {
+      returnValue = value / 13107d;
+                
+    }
+    return returnValue;  
+  }
+  
 }                                               
