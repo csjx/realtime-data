@@ -387,4 +387,249 @@ public class CTDParser {
    */
   private String deploymentNotes;
   
+  /**
+   *  A field that stores the instrument deployment notes key as a String
+   */
+  public final String DEPLOYMENT_NOTES = "Notes";
+  
+  /*
+   *  A field that stores the main battery voltage as a String
+   */
+  private String mainBatteryVoltage;
+  
+  /**
+   *  A field that stores the main battery voltage key as a String
+   */
+  public final String MAIN_BATTERY_VOLTAGE = "vbatt";
+  
+  /*
+   *  A field that stores the lithium battery voltage as a String
+   */
+  private String lithiumBatteryVoltage;
+  
+  /**
+   *  A field that stores the lithium battery voltage key as a String
+   */
+  public final String LITHIUM_BATTERY_VOLTAGE = "vlith";
+  
+  /*
+   *  A field that stores the operating current as a String
+   */
+  private String operatingCurrent;
+  
+  /**
+   *  A field that stores the operating current key as a String
+   */
+  public final String OPERATING_CURRENT = "ioper";
+  
+  /*
+   *  A field that stores the pump current as a String
+   */
+  private String pumpCurrent;
+  
+  /**
+   *  A field that stores the pump current key as a String
+   */
+  public final String PUMP_CURRENT = "ipump";
+  
+  /*
+   *  A field that stores the channel 0 and 1 external voltage currents as a String
+   */
+  private String channels01ExternalCurrent;
+  
+  /**
+   *  A field that stores the channel 0 and 1 external voltage currents key as a String
+   */
+  public final String CHANNELS_01_EXTERNAL_CURRENT = "iext01";
+  
+  /*
+   *  A field that stores the channel 2 and 3 external voltage currents as a String
+   */
+  private String channels23ExternalCurrent;
+  
+  /**
+   *  A field that stores the channel 2 and 3 external voltage currents key as a String
+   */
+  public final String CHANNELS_23_EXTERNAL_CURRENT = "iext23";
+  
+  /*
+   *  A field that stores the logging status as a String
+   */
+  private String loggingStatus;
+  
+  /**
+   *  A field that stores the logging status key as a String
+   */
+  public final String LOGGING_STATUS = "status";
+  
+  /*
+   *  A field that stores the number of scans to average as a String
+   */
+  private String numberOfScansToAverage;
+  
+  /**
+   *  A field that stores the number of scans to average key as a String
+   */
+  public final String NUMBER_OF_SCANS_TO_AVERAGE = "number of scans to average";
+  
+  /*
+   *  A field that stores the number of samples as a String
+   */
+  private String numberOfSamples;
+  
+  /**
+   *  A field that stores the number of samples key as a String
+   */
+  public final String NUMBER_OF_SAMPLES = "samples";
+  
+  /*
+   *  A field that stores the number of available samples as a String
+   */
+  private String numberOfAvailableSamples;
+  
+  /**
+   *  A field that stores the number of available samples key as a String
+   */
+  public final String NUMBER_OF_AVAILABLE_SAMPLES = "free";
+  
+  /*
+   *  A field that stores the sample interval as a String
+   */
+  private String sampleInterval;
+  
+  /**
+   *  A field that stores the sample interval key as a String
+   */
+  public final String SAMPLE_INTERVAL = "sample interval";
+  
+  /*
+   *  A field that stores the number of measurements per sample as a String
+   */
+  private String measurementsPerSample;
+  
+  /**
+   *  A field that stores the number of measurements per sample key as a String
+   */
+  public final String MEASUREMENTS_PER_SAMPLE = "number of measurements per sample";
+  
+  /*
+   *  A field that stores the transmit real-time state as a String
+   */
+  private String transmitRealtime;
+  
+  /**
+   *  A field that stores the transmit real-time state key as a String
+   */
+  public final String TRANSMIT_REALTIME = "transmit real-time";
+  
+  /*
+   *  A field that stores the number of casts as a String
+   */
+  private String numberOfCasts;
+  
+  /**
+   *  A field that stores the number of casts key as a String
+   */
+  public final String NUMBER_OF_CASTS = "casts";
+  
+  /*
+   *  A field that stores the minimum conductivity frequency as a String
+   */
+  private String minimumConductivityFrequency;
+  
+  /**
+   *  A field that stores the minimum conductivity frequency key as a String
+   */
+  public final String MINIMUM_CONDUCTIVITY_FREQUENCY = "minimum cond freq";
+  
+  /*
+   *  A field that stores the pump delay as a String
+   */
+  private String pumpDelay;
+  
+  /**
+   *  A field that stores the pump delay key as a String
+   */
+  public final String PUMP_DELAY = "pump delay";
+  
+  /*
+   *  A field that stores the automatic logging state as a String
+   */
+  private String automaticLogging;
+  
+  /**
+   *  A field that stores the automatic logging state key as a String
+   */
+  public final String AUTOMATIC_LOGGING = "autorun";
+  
+  /*
+   *  A field that stores the ignore magnetic switch state as a String
+   */
+  private String ignoreMagneticSwitch;
+  
+  /**
+   *  A field that stores the ignore magnetic switch state key as a String
+   */
+  public final String IGNORE_MAGNETIC_SWITCH = "ignore magnetic switch";
+  
+  /*
+   *  A field that stores the battery type as a String
+   */
+  private String batteryType;
+  
+  /**
+   *  A field that stores the battery type key as a String
+   */
+  public final String BATTERY_TYPE = "battery type";
+  
+  /*
+   *  A field that stores the battery cutoff as a String
+   */
+  private String batteryCutoff;
+  
+  /**
+   *  A field that stores the battery cutoff key as a String
+   */
+  public final String BATTERY_CUTOFF = "battery cutoff";
+  
+  /*
+   *  A field that stores the pressure sensor type as a String
+   */
+  private String pressureSensorType;
+  
+  /**
+   *  A field that stores the pressure sensor type key as a String
+   */
+  public final String PRESSURE_SENSOR_TYPE = "pressure sensor";
+  
+  /*
+   *  A field that stores the pressure sensor range as a String
+   */
+  private String pressureSensorRange;
+  
+  /**
+   *  A field that stores the pressure sensor range key as a String
+   */
+  public final String PRESSURE_SENSOR_RANGE = "range";
+  
+  /*
+   *  A field that stores the SBE38 temperature sensor state as a String
+   */
+  private String sbe38TemperatureSensor;
+  
+  /**
+   *  A field that stores the SBE38 temperature sensor state key as a String
+   */
+  public final String SBE38_TEMPERATURE_SENSOR = "SBE 38";
+  
+  /*
+   *  A field that stores the gas tension device state as a String
+   */
+  private String gasTensionDevice;
+  
+  /**
+   *  A field that stores the gas tension device state key as a String
+   */
+  public final String GAS_TENSION_DEVICE = "Gas Tension Device";
+  
 }                                               
