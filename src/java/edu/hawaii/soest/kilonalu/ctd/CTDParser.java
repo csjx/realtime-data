@@ -1154,5 +1154,103 @@ public class CTDParser {
     }
     return returnValue;  
   }
-  
+
+  /*
+   *  A method used to parse the input data string. The data file is split 
+   *  into metadata and data sections, and each section is then tokenized into 
+   *  lines.  The metadata section is tokenized into field pairs 
+   *  (e.g. battery type = alkaline) based on the "," delimiter, and the pairs 
+   *  are split based on "=" and ":" delimiters and placed into a SortedMap for
+   *  later retrieval.  The data section is split into its component 
+   *  observations, based on the presence/absence of certain data or voltages.
+   */
+  private void parse() throws ParseException {
+    logger.debug("CTDParser.parse() called.");
+        
+    // create the two sections
+    String[] sections = this.dataString.split(metadataDelimiter);
+    String[] nameValueArray = {"", ""};  //used later for splitting name/value pairs
+    
+    if ( sections.length > 1) {
+      this.metadataString     = sections[0];  
+      this.observationsString = sections[1];
+      
+      // tokenize the file into lines
+      StringTokenizer lineTokenizer = 
+        new StringTokenizer(this.metadataString, this.recordDelimiter);
+     
+      while( lineTokenizer.hasMoreTokens() ) {
+
+        String line = lineTokenizer.nextToken();
+        StringTokenizer fieldTokenizer = 
+          new StringTokenizer(line, this.METADATA_FIELD_DELIMITER);
+
+        // tokenize the lines into field pairs
+        while ( fieldTokenizer.hasMoreTokens() ) {
+          
+          // remove leading "*" characters and trim whitespace
+          String nameValuePair = 
+            fieldTokenizer.nextToken().replaceAll("^\\**", "").trim();
+
+          // check for pairs delimited by a colon
+          if ( nameValuePair.indexOf(this.PRIMARY_PAIR_DELIMITER) > 0 ) {
+            nameValueArray = nameValuePair.split(this.PRIMARY_PAIR_DELIMITER, 2);
+
+            // add the pair to the metadata map
+            if ( nameValueArray.length > 1) {
+              this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
+
+            // otherwise add an empty pair to the metadata map
+            } else {
+              this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+
+            }  
+
+          // check for pairs delimited by an equals sign
+          } else if ( nameValuePair.indexOf(this.SECONDARY_PAIR_DELIMITER) > 0  ) {
+            nameValueArray = nameValuePair.split(this.SECONDARY_PAIR_DELIMITER, 2);
+            
+            // add the pair to the metadata map
+            if ( nameValueArray.length > 1) {
+              this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
+              
+            // otherwise add an empty pair to the metadata map
+            } else {
+              this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+
+            }  
+
+          // otherwise add an empty pair to the metadata map
+          } else {
+            this.metadataValuesMap.put(nameValuePair.trim(), "");
+
+          } //if   
+                 
+        } //while
+        
+      } //while
+      
+      StringTokenizer dataTokenizer = 
+        new StringTokenizer(observationsString, this.recordDelimiter);
+      
+      // tokenize the lines into observations strings, place them in sequential
+      // order into the 
+      while ( dataTokenizer.hasMoreTokens() ) {
+        String dataLine = dataTokenizer.nextToken();
+        //logger.debug("|" + dataLine + "|");
+        this.dataValuesMap.put(dataValuesMap.size() + 1, dataLine);  
+
+      }
+        
+    } else {
+      
+      throw new ParseException(
+      "Parsing of the CTD data input failed. The header " + 
+      "and data sections do not appear to be delimited "  +
+      "correctly.  Please be sure that the output of the" +
+      "'DS' and 'DCAL' commands are followed by "         +
+      "'*END*\\r\\n' and then the data observation lines.", 0);
+    }
+    
+  }                                                  
 }                                               
