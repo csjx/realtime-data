@@ -752,4 +752,94 @@ public class CTDParser {
    */
   public final String TEMPERATURE_OFFSET_COEFFICIENT = "TOFFSET";
   
+  /*
+   *  A field that stores the conductivity calibration date as a String
+   */
+  private String conductivityCalibrationDate;
+  
+  /**
+   *  A field that stores the conductivity calibration date key as a String
+   */
+  public final String CONDUCTIVITY_CALIBRATION_DATE = "conductivity";
+  
+  /*
+   *  A field that stores the conductivity coefficient G as a String
+   */
+  private String conductivityCoefficientG;
+  
+  /**
+   *  A field that stores the conductivity coefficient G key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_G = "G";
+  
+  /*
+   *  A field that stores the conductivity coefficient H as a String
+   */
+  private String conductivityCoefficientH;
+  
+  /**
+   *  A field that stores the conductivity coefficient H key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_H = "H";
+  
+  /*
+   *  A field that stores the conductivity coefficient I as a String
+   */
+  private String conductivityCoefficientI;
+  
+  /**
+   *  A field that stores the conductivity coefficient I key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_I = "I";
+  
+  /*
+   *  A field that stores the conductivity coefficient J as a String
+   */
+  private String conductivityCoefficientJ;
+  
+  /**
+   *  A field that stores the conductivity coefficient J key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_J = "J";
+  
+  /*
+   *  A field that stores the conductivity coefficient CF0 as a String
+   */
+  private String conductivityCoefficientCF0;
+  
+  /**
+   *  A field that stores the conductivity coefficient CF0 key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_CF0 = "CF0";
+  
+  /*
+   *  A field that stores the conductivity coefficient CPCOR as a String
+   */
+  private String conductivityCoefficientCPCOR;
+  
+  /**
+   *  A field that stores the conductivity coefficient CPCOR key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_CPCOR = "CPCOR";
+  
+  /*
+   *  A field that stores the conductivity coefficient CTCOR as a String
+   */
+  private String conductivityCoefficientCTCOR;
+  
+  /**
+   *  A field that stores the conductivity coefficient CTCOR key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_CTCOR = "CTCOR";
+  
+  /*
+   *  A field that stores the conductivity coefficient CSLOPE as a String
+   */
+  private String conductivityCoefficientCSLOPE;
+  
+  /**
+   *  A field that stores the conductivity coefficient CSLOPE key as a String
+   */
+  public final String CONDUCTIVITY_COEFFICIENT_CSLOPE = "CSLOPE";
+  
 }                                               
