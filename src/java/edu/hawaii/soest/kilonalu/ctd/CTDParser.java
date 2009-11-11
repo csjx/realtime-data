@@ -87,6 +87,73 @@ public class CTDParser {
    * The Logger instance used to log system messages 
    */
   static Logger logger = Logger.getLogger(CTDParser.class);
+  
+  /*
+   *  A field that stores the data file string input as a String
+   */
+  private String dataString = "";
+  
+  /*
+   *  A field that stores the metadata string input as a String.  This will be
+   *  the results of the DS and DCAL commands
+   */
+  private String metadataString = "";
+  
+  /*
+   *  A field that stores the data file string input as a String. This will be
+   *  the actually data observations in the given OUTPUTFORMAT (Hex, decimal, etc.)
+   */
+  private String observationsString = "";
+  
+  /*
+   *  A field that stores the metadata values as a SortedMap.  Each metadata key
+   *  corresponds to the value given by the instrument.
+   */
+  private SortedMap<String,String> metadataValuesMap;
+  
+  /*
+   *  A field that stores the data values (lines) as a SortedMap.  Each string 
+   *  represents the data observation values for a given CTD scan.
+   */
+  private SortedMap<Integer,String> dataValuesMap;
+  
+  /*
+   *  A field that stores the converted data values as a RealMatrix.  Each row 
+   *  represents the data observation values for a given CTD scan.
+   */
+  private RealMatrix convertedDataValuesMatrix;
+  
+  /*
+   *  A field that stores the ordered data variable names as a List.
+   *  Each name represents a single data variable taken in a given scan.
+   */
+  private List<String> dataVariableNames;
+  
+  /*
+   *  A field that stores the ordered data variable units as a List.
+   *  Each unit represents a single data variable unit taken in a given scan.
+   */
+  private List<String> dataVariableUnits;
+  
+  /*
+   *  A field that stores the ordered data variable offsets as a List. This
+   *  vector is used to parse raw Hex strings of data from the CTD.
+   *  Each offset represents the ending Hex character for the variable.  The
+   *  offsets can be seen as:
+   *
+   *       6     12     18   22   26   30   34   38
+   *  A1B2C3 D4E5F6 A7B8C9 D0E1 F2A3 B4C5 D6E7 F8A9
+   *
+   *  where the first variable (temperature) is taken from characters 1-6, the 
+   *  second (conductivity) is 7-12, etc.
+   
+   */
+  private List<Integer> dataVariableOffsets;
+  
+  /*
+   *  A field used to keep track of the current data variable offset
+   */
+   private int currentOffset;
 
   
 }                                               
