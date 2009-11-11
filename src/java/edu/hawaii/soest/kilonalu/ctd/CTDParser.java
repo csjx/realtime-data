@@ -169,5 +169,222 @@ public class CTDParser {
    *  A field that stores the primary name/value pair delimiter as a String
    */
   public final String SECONDARY_PAIR_DELIMITER = "=";
+
+  /*
+   *  A field that stores the CTD sampling mode as a String
+   */
+  private String samplingMode;
+  
+  /**
+   *  A field that stores the CTD sampling mode key as a String
+   */
+  public final String SAMPLING_MODE = "mode";
+
+  /*
+   *  A field that stores the CTD first sample time as a String
+   */
+  private String firstSampleTime;
+  
+  /**
+   *  A field that stores the CTD first sample time key as a String
+   */
+  public final String FIRST_SAMPLE_TIME = "First Sample Time";
+
+  /**
+   *  A field that stores the default record delimiter in a String.
+   */
+  public final String DEFAULT_RECORD_DELIMITER = "\r\n";
+  
+  /*
+   *  A field that stores the record delimiter in a String.
+   */
+  private String recordDelimiter = DEFAULT_RECORD_DELIMITER;
+  
+  /**
+   *  A field that stores the default metadata delimiter pattern in a String. 
+   *  Usually "\\*END\\*\r\n"
+   */
+  public final String DEFAULT_METADATA_DELIMITER = "\\*END\\*\r\n";
+  
+  /*
+   *  A field that stores the metadata delimiter pattern in a String. 
+   *  Usually "\\*END\\*\r\n"
+   */
+  private String metadataDelimiter = DEFAULT_METADATA_DELIMITER;
+  
+  /**
+   *  A field that stores the file name as a String
+   */
+  private String fileName;
+  
+  /**
+   *  A field that stores the file name key as a String
+   */
+  public final String FILE_NAME = "FileName";
+  
+  /*
+   *  A field that stores the temperature sensor serial number as a String
+   */
+  private String temperatureSerialNumber;
+  
+  /**
+   *  A field that stores the temperature sensor serial number key as a String
+   */
+  public final String TEMPERATURE_SERIAL_NUMBER = "Temperature SN";
+  
+  /*
+   *  A field that stores the conductivity sensor serial number as a String
+   */
+  private String conductivitySerialNumber;
+  
+  /**
+   *  A field that stores the conductivity sensor serial number key as a String
+   */
+  public final String CONDUCTIVITY_SERIAL_NUMBER = "Conductivity SN";
+  
+  /*
+   *  A field that stores the System UpLoad Time as a String
+   */
+  private String systemUpLoadTime;
+  
+  /**
+   *  A field that stores the System UpLoad Time key as a String
+   */
+  public final String SYSTEM_UPLOAD_TIME = "System UpLoad Time";
+  
+  /*
+   *  A field that stores the cruise information as a String
+   */
+  private String cruiseInformation;
+  
+  /**
+   *  A field that stores the cruise information key as a String
+   */
+  public final String CRUISE_INFORMATION = "Cruise";
+  
+  /*
+   *  A field that stores the station information as a String
+   */
+  private String stationInformation;
+  
+  /**
+   *  A field that stores the station information key as a String
+   */
+  public final String STATION_INFORMATION = "Station";
+  
+  /*
+   *  A field that stores the ship information as a String
+   */
+  private String shipInformation;
+  
+  /**
+   *  A field that stores the ship information key as a String
+   */
+  public final String SHIP_INFORMATION = "Ship";
+  
+  /*
+   *  A field that stores the chief scientist information as a String
+   */
+  private String chiefScientist;
+  
+  /**
+   *  A field that stores the chief scientist information key as a String
+   */
+  public final String CHIEF_SCIENTIST = "Chief_Scientist";
+  
+  /*
+   *  A field that stores the organization information as a String
+   */
+  private String organization;
+  
+  /**
+   *  A field that stores the organization information key as a String
+   */
+  public final String ORGANIZATION = "Organization";
+  
+  /*
+   *  A field that stores the area of operation information as a String
+   */
+  private String areaOfOperation;
+  
+  /**
+   *  A field that stores the area of operation information key as a String
+   */
+  public final String AREA_OF_OPERATION = "Area_of_Operation";
+  
+  /*
+   *  A field that stores the instrument package information as a String
+   */
+  private String instrumentPackage;
+  
+  /**
+   *  A field that stores the instrument package information key as a String
+   */
+  public final String INSTRUMENT_PACKAGE = "Package";
+  
+  /*
+   *  A field that stores the mooring number as a String
+   */
+  private String mooringNumber;
+  
+  /**
+   *  A field that stores the mooring number key as a String
+   */
+  public final String MOORING_NUMBER = "Mooring_Number";
+  
+  /*
+   *  A field that stores the instrument latitude as a String
+   */
+  private String instrumentLatitude;
+  
+  /**
+   *  A field that stores the instrument latitude key as a String
+   */
+  public final String INSTRUMENT_LATITUDE = "Latitude";
+  
+  /*
+   *  A field that stores the instrument longitude as a String
+   */
+  private String instrumentLongitude;
+  
+  /**
+   *  A field that stores the instrument longitude key as a String
+   */
+  public final String INSTRUMENT_LONGITUDE = "Longitude";
+  
+  /*
+   *  A field that stores the instrument depth sounding as a String
+   */
+  private String depthSounding;
+  
+  /**
+   *  A field that stores the instrument depth sounding key as a String
+   */
+  public final String DEPTH_SOUNDING = "Sounding";
+  
+  /*
+   *  A field that stores the instrument profile number as a String
+   */
+  private String profileNumber;
+  
+  /**
+   *  A field that stores the instrument profile number key as a String
+   */
+  public final String PROFILE_NUMBER = "Profile_Number";
+  
+  /*
+   *  A field that stores the instrument profile direction as a String
+   */
+  private String profileDirection;
+  
+  /**
+   *  A field that stores the instrument profile direction key as a String
+   */
+  public final String PROFILE_DIRECTION = "Profile_Direction";
+  
+  /*
+   *  A field that stores the instrument deployment notes as a String
+   */
+  private String deploymentNotes;
   
 }                                               
