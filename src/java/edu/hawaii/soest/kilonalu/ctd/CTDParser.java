@@ -1079,5 +1079,47 @@ public class CTDParser {
    */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
     
+  /**
+   *  Constructor:  Builds all of the components of the CTD data object from
+   *  the String data being passed in.  The data string must contain the results 
+   *  of the 'DS' command and the 'DCAL' command in order to inform the parser
+   *  which data fields should be expected, and which CTD output format to expect.
+   *  The data observations should follow the output of the 'DS' and 'DCAL' commands.
+   *
+   *  @param dataString The String that contains the data and metadata output 
+   *                    from the instrument
+   */
+  public CTDParser(String dataString) throws ParseException{
+    
+    // Prepare the string for parsing.  The data file is split into metadata
+    // and data sections, and each section is then tokenized into lines. 
+    // The metadata section is tokenized into field pairs 
+    // (e.g. battery type = alkaline) based on the "," delimiter, and the pairs 
+    // are split based on "=" and ":" delimiters and placed into a SortedMap for
+    // later retrieval.  The data section is split into its component 
+    // observations, based on the presence/absence of certain data or voltages.
+    this.dataString = dataString;
+    this.metadataValuesMap = new TreeMap<String, String>();
+    this.dataValuesMap     = new TreeMap<Integer, String>();
+    
+    try {
+      // Parse the data input string.  Two sorted hashmaps are populated in the
+      // class, one for metadata name/value pairs, and one for data observation
+      // lines.  The latter is then converted into a common data structure after
+      // transformations are applied using the calibration coefficients.
+      parse();
+      
+      // Set the individual metadata fields found in the DS and DCAL output
+      setMetadata();
+      
+      // set the data structures from the incoming text lines (Hex or decimal ...)
+      setData();
+      
+    } catch (ParseException pe) {
+      throw pe;
+      
+    }
+    
+  }
   
 }                                               
