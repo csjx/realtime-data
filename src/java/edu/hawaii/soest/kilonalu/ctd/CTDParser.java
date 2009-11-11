@@ -3160,4 +3160,36 @@ public class CTDParser {
       System.exit(0);
     }
   }
+  
+  /**
+   *  A method that returns the converted data matrix as a RealMatrix
+   */
+  public RealMatrix getConvertedMatrix() {
+    return this.convertedDataValuesMatrix;
+      
+  } 
+  
+  /**
+   *  A method that returns the converted data matrix as a double array
+   */
+  public double[][] getConvertedMatrixAsArray() {
+    return this.convertedDataValuesMatrix.getData();
+      
+  } 
+  
+  /**
+   *  A method that returns the ordered data variable names as a List
+   */
+  public List<String> getDataVariableNames() {
+    return this.dataVariableNames;
+      
+  } 
+  
+  /**
+   *  A method that returns the ordered data variable units as a List
+   */
+  public List<String> getDataVariableUnits() {
+    return this.dataVariableUnits;
+      
+  } 
 }                                               
