@@ -632,4 +632,44 @@ public class CTDParser {
    */
   public final String GAS_TENSION_DEVICE = "Gas Tension Device";
   
+  /*
+   *  A field that stores the external voltage channel 0 state as a String
+   */
+  private String externalVoltageChannelZero;
+  
+  /**
+   *  A field that stores the external voltage channel 0 state key as a String
+   */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_ZERO = "Ext Volt 0";
+  
+  /*
+   *  A field that stores the external voltage channel 1 state as a String
+   */
+  private String externalVoltageChannelOne;
+  
+  /**
+   *  A field that stores the external voltage channel 1 state key as a String
+   */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_ONE = "Ext Volt 1";
+  
+  /*
+   *  A field that stores the external voltage channel 2 state as a String
+   */
+  private String externalVoltageChannelTwo;
+  
+  /**
+   *  A field that stores the external voltage channel 2 state key as a String
+   */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_TWO = "Ext Volt 2";
+  
+  /*
+   *  A field that stores the external voltage channel 3 state as a String
+   */
+  private String externalVoltageChannelThree;
+  
+  /**
+   *  A field that stores the external voltage channel 3 state key as a String
+   */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_THREE = "Ext Volt 3";
+  
 }                                               
