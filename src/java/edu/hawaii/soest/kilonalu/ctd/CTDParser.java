@@ -1028,5 +1028,45 @@ public class CTDParser {
    * A boolean field indicating if there is a gas tension device
    */
   private boolean hasGasTensionDevice = false;
+
+  /*
+   * A field that stores the raw temperature field name as a string
+   */
+  public final String RAW_TEMPERATURE_FIELD_NAME = "temperatureCounts";  
+  
+  /*
+   * A field that stores the raw conductivity field name as a string
+   */
+  public final String RAW_CONDUCTIVITY_FIELD_NAME = "conductivityFrequency";  
+  
+  /*
+   * A field that stores the raw pressure field name as a string
+   */
+  public final String RAW_PRESSURE_FIELD_NAME = "pressureCounts";  
+  
+  /*
+   * A field that stores the raw pressure temperature compensation field name as a string
+   */
+  public final String RAW_PRESSURE_TEMP_COMP_FIELD_NAME = "pressureTemperatureCompensationCounts";  
+  
+  /*
+   * A field that stores the raw voltage channel zero field name as a string
+   */
+  public final String RAW_VOLTAGE_CHANNEL_ZERO_FIELD_NAME = "voltageChannelZero";  
+  
+  /*
+   * A field that stores the raw voltage channel one field name as a string
+   */
+  public final String RAW_VOLTAGE_CHANNEL_ONE_FIELD_NAME = "voltageChannelOne";  
+  
+  /*
+   * A field that stores the raw voltage channel two field name as a string
+   */
+  public final String RAW_VOLTAGE_CHANNEL_TWO_FIELD_NAME = "voltageChannelTwo";  
+  
+  /*
+   * A field that stores the raw voltage channel zero field name as a string
+   */
+  public final String RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME = "voltageChannelThree";  
   
 }                                               
