@@ -692,4 +692,64 @@ public class CTDParser {
    */
   public final String OUTPUT_FORMAT = "output format";
   
+  /*
+   *  A field that stores the temperature calibration date as a String
+   */
+  private String temperatureCalibrationDate;
+  
+  /**
+   *  A field that stores the temperature calibration date key as a String
+   */
+  public final String TEMPERATURE_CALIBRATION_DATE = "temperature";
+  
+  /*
+   *  A field that stores the temperature coefficient TA0 as a String
+   */
+  private String temperatureCoefficientTA0;
+  
+  /**
+   *  A field that stores the temperature coefficient TA0 key as a String
+   */
+  public final String TEMPERATURE_COEFFICIENT_TA0 = "TA0";
+  
+  /*
+   *  A field that stores the temperature coefficient TA1 as a String
+   */
+  private String temperatureCoefficientTA1;
+  
+  /**
+   *  A field that stores the temperature coefficient TA1 key as a String
+   */
+  public final String TEMPERATURE_COEFFICIENT_TA1 = "TA1";
+  
+  /*
+   *  A field that stores the temperature coefficient TA2 as a String
+   */
+  private String temperatureCoefficientTA2;
+  
+  /**
+   *  A field that stores the temperature coefficient TA2 key as a String
+   */
+  public final String TEMPERATURE_COEFFICIENT_TA2 = "TA2";
+  
+  /*
+   *  A field that stores the temperature coefficient TA3 as a String
+   */
+  private String temperatureCoefficientTA3;
+  
+  /**
+   *  A field that stores the temperature coefficient TA3 key as a String
+   */
+  public final String TEMPERATURE_COEFFICIENT_TA3 = "TA3";
+  
+  /*
+   *  A field that stores the temperature offset coefficient as a String
+   */
+  private String temperatureOffsetCoefficient;
+  
+  /**
+   *  A field that stores the temperature offset coefficient key as a String
+   */
+  public final String TEMPERATURE_OFFSET_COEFFICIENT = "TOFFSET";
+  
 }                                               
