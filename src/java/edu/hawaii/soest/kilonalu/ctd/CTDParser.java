@@ -1069,4 +1069,15 @@ public class CTDParser {
    */
   public final String RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME = "voltageChannelThree";  
   
+   /** 
+    * The date format for the timestamp applied to the TChain sample 04 Aug 2008 09:15:01
+    */
+   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  
+  /**
+   * The timezone used for the sample date
+   */
+  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    
+  
 }                                               
