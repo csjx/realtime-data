@@ -672,4 +672,24 @@ public class CTDParser {
    */
   public final String EXTERNAL_VOLTAGE_CHANNEL_THREE = "Ext Volt 3";
   
+  /*
+   *  A field that stores the echo commands state as a String
+   */
+  private String echoCommands;
+  
+  /**
+   *  A field that stores the echo commands state key as a String
+   */
+  public final String ECHO_COMMANDS = "echo commands";
+  
+  /*
+   *  A field that stores the output format as a String
+   */
+  private String outputFormat;
+  
+  /**
+   *  A field that stores the output format key as a String
+   */
+  public final String OUTPUT_FORMAT = "output format";
+  
 }                                               
