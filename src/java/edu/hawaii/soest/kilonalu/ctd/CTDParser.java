@@ -72,6 +72,21 @@ import org.apache.log4j.PropertyConfigurator;
  *  methods for accessing those fields.
  */
 public class CTDParser {
+    
+  /*
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /*
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+  
+  /**
+   * The Logger instance used to log system messages 
+   */
+  static Logger logger = Logger.getLogger(CTDParser.class);
 
   
 }                                               
