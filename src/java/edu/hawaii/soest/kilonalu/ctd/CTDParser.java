@@ -2123,4 +2123,557 @@ public class CTDParser {
     }
            
   }  
+  
+  /**
+   * A method that returns the SamplingMode field
+   */
+  public String getSamplingMode() {
+    return this.samplingMode;
+  }
+  
+  /**
+   * A method that returns the FirstSampleTime field
+   */
+  public String getFirstSampleTime() {
+    return this.firstSampleTime;
+  }
+  
+  /**
+   * A method that returns the FileName field
+   */
+  public String getFileName() {
+    return this.fileName;
+  }
+  
+  /**
+   * A method that returns the TemperatureSerialNumber field
+   */
+  public String getTemperatureSerialNumber() {
+    return this.temperatureSerialNumber;
+  }
+  
+  /**
+   * A method that returns the ConductivitySerialNumber field
+   */
+  public String getConductivitySerialNumber() {
+    return this.conductivitySerialNumber;
+  }
+  
+  /**
+   * A method that returns the SystemUpLoadTime field
+   */
+  public String getSystemUpLoadTime() {
+    return this.systemUpLoadTime;
+  }
+  
+  /**
+   * A method that returns the CruiseInformation field
+   */
+  public String getCruiseInformation() {
+    return this.cruiseInformation;
+  }
+  
+  /**
+   * A method that returns the StationInformation field
+   */
+  public String getStationInformation() {
+    return this.stationInformation;
+  }
+  
+  /**
+   * A method that returns the ShipInformation field
+   */
+  public String getShipInformation() {
+    return this.shipInformation;
+  }
+  
+  /**
+   * A method that returns the ChiefScientist field
+   */
+  public String getChiefScientist() {
+    return this.chiefScientist;
+  }
+  
+  /**
+   * A method that returns the Organization field
+   */
+  public String getOrganization() {
+    return this.organization;
+  }
+  
+  /**
+   * A method that returns the AreaOfOperation field
+   */
+  public String getAreaOfOperation() {
+    return this.areaOfOperation;
+  }
+  
+  /**
+   * A method that returns the InstrumentPackage field
+   */
+  public String getInstrumentPackage() {
+    return this.instrumentPackage;
+  }
+  
+  /**
+   * A method that returns the MooringNumber field
+   */
+  public String getMooringNumber() {
+    return this.mooringNumber;
+  }
+  
+  /**
+   * A method that returns the InstrumentLatitude field
+   */
+  public String getInstrumentLatitude() {
+    return this.instrumentLatitude;
+  }
+  
+  /**
+   * A method that returns the InstrumentLongitude field
+   */
+  public String getInstrumentLongitude() {
+    return this.instrumentLongitude;
+  }
+  
+  /**
+   * A method that returns the DepthSounding field
+   */
+  public String getDepthSounding() {
+    return this.depthSounding;
+  }
+  
+  /**
+   * A method that returns the ProfileNumber field
+   */
+  public String getProfileNumber() {
+    return this.profileNumber;
+  }
+  
+  /**
+   * A method that returns the ProfileDirection field
+   */
+  public String getProfileDirection() {
+    return this.profileDirection;
+  }
+  
+  /**
+   * A method that returns the DeploymentNotes field
+   */
+  public String getDeploymentNotes() {
+    return this.deploymentNotes;
+  }
+  
+  /**
+   * A method that returns the MainBatteryVoltage field
+   */
+  public String getMainBatteryVoltage() {
+    return this.mainBatteryVoltage;
+  }
+  
+  /**
+   * A method that returns the LithiumBatteryVoltage field
+   */
+  public String getLithiumBatteryVoltage() {
+    return this.lithiumBatteryVoltage;
+  }
+  
+  /**
+   * A method that returns the OperatingCurrent field
+   */
+  public String getOperatingCurrent() {
+    return this.operatingCurrent;
+  }
+  
+  /**
+   * A method that returns the PumpCurrent field
+   */
+  public String getPumpCurrent() {
+    return this.pumpCurrent;
+  }
+  
+  /**
+   * A method that returns the Channels01ExternalCurrent field
+   */
+  public String getChannels01ExternalCurrent() {
+    return this.channels01ExternalCurrent;
+  }
+  
+  /**
+   * A method that returns the Channels23ExternalCurrent field
+   */
+  public String getChannels23ExternalCurrent() {
+    return this.channels23ExternalCurrent;
+  }
+  
+  /**
+   * A method that returns the LoggingStatus field
+   */
+  public String getLoggingStatus() {
+    return this.loggingStatus;
+  }
+  
+  /**
+   * A method that returns the NumberOfScansToAverage field
+   */
+  public String getNumberOfScansToAverage() {
+    return this.numberOfScansToAverage;
+  }
+  
+  /**
+   * A method that returns the NumberOfSamples field
+   */
+  public String getNumberOfSamples() {
+    return this.numberOfSamples;
+  }
+  
+  /**
+   * A method that returns the NumberOfAvailableSamples field
+   */
+  public String getNumberOfAvailableSamples() {
+    return this.numberOfAvailableSamples;
+  }
+  
+  /**
+   * A method that returns the SampleInterval field
+   */
+  public String getSampleInterval() {
+    return this.sampleInterval;
+  }
+  
+  /**
+   * A method that returns the MeasurementsPerSample field
+   */
+  public String getMeasurementsPerSample() {
+    return this.measurementsPerSample;
+  }
+  
+  /**
+   * A method that returns the TransmitRealtime field
+   */
+  public String getTransmitRealtime() {
+    return this.transmitRealtime;
+  }
+  
+  /**
+   * A method that returns the NumberOfCasts field
+   */
+  public String getNumberOfCasts() {
+    return this.numberOfCasts;
+  }
+  
+  /**
+   * A method that returns the MinimumConductivityFrequency field
+   */
+  public String getMinimumConductivityFrequency() {
+    return this.minimumConductivityFrequency;
+  }
+  
+  /**
+   * A method that returns the PumpDelay field
+   */
+  public String getPumpDelay() {
+    return this.pumpDelay;
+  }
+  
+  /**
+   * A method that returns the AutomaticLogging field
+   */
+  public String getAutomaticLogging() {
+    return this.automaticLogging;
+  }
+  
+  /**
+   * A method that returns the IgnoreMagneticSwitch field
+   */
+  public String getIgnoreMagneticSwitch() {
+    return this.ignoreMagneticSwitch;
+  }
+  
+  /**
+   * A method that returns the BatteryType field
+   */
+  public String getBatteryType() {
+    return this.batteryType;
+  }
+  
+  /**
+   * A method that returns the BatteryCutoff field
+   */
+  public String getBatteryCutoff() {
+    return this.batteryCutoff;
+  }
+  
+  /**
+   * A method that returns the PressureSensorType field
+   */
+  public String getPressureSensorType() {
+    return this.pressureSensorType;
+  }
+  
+  /**
+   * A method that returns the PressureSensorRange field
+   */
+  public String getPressureSensorRange() {
+    return this.pressureSensorRange;
+  }
+  
+  /**
+   * A method that returns the Sbe38TemperatureSensor field
+   */
+  public String getSbe38TemperatureSensor() {
+    return this.sbe38TemperatureSensor;
+  }
+  
+  /**
+   * A method that returns the GasTensionDevice field
+   */
+  public String getGasTensionDevice() {
+    return this.gasTensionDevice;
+  }
+  
+  /**
+   * A method that returns the ExternalVoltageChannelZero field
+   */
+  public String getExternalVoltageChannelZero() {
+    return this.externalVoltageChannelZero;
+  }
+  
+  /**
+   * A method that returns the ExternalVoltageChannelOne field
+   */
+  public String getExternalVoltageChannelOne() {
+    return this.externalVoltageChannelOne;
+  }
+  
+  /**
+   * A method that returns the ExternalVoltageChannelTwo field
+   */
+  public String getExternalVoltageChannelTwo() {
+    return this.externalVoltageChannelTwo;
+  }
+  
+  /**
+   * A method that returns the ExternalVoltageChannelThree field
+   */
+  public String getExternalVoltageChannelThree() {
+    return this.externalVoltageChannelThree;
+  }
+  
+  /**
+   * A method that returns the EchoCommands field
+   */
+  public String getEchoCommands() {
+    return this.echoCommands;
+  }
+  
+  /**
+   * A method that returns the OutputFormat field
+   */
+  public String getOutputFormat() {
+    return this.outputFormat;
+  }
+  
+  /**
+   * A method that returns the TemperatureCalibrationDate field
+   */
+  public String getTemperatureCalibrationDate() {
+    return this.temperatureCalibrationDate;
+  }
+  
+  /**
+   * A method that returns the TemperatureCoefficientTA0 field
+   */
+  public double getTemperatureCoefficientTA0() {
+    return new Double(this.temperatureCoefficientTA0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the TemperatureCoefficientTA1 field
+   */
+  public double getTemperatureCoefficientTA1() {
+    return new Double(this.temperatureCoefficientTA1).doubleValue();
+  }
+  
+  /**
+   * A method that returns the TemperatureCoefficientTA2 field
+   */
+  public double getTemperatureCoefficientTA2() {
+    return new Double(this.temperatureCoefficientTA2).doubleValue();
+  }
+  
+  /**
+   * A method that returns the TemperatureCoefficientTA3 field
+   */
+  public double getTemperatureCoefficientTA3() {
+    return new Double(this.temperatureCoefficientTA3).doubleValue();
+  }
+  
+  /**
+   * A method that returns the TemperatureOffsetCoefficient field
+   */
+  public double getTemperatureOffsetCoefficient() {
+    return new Double(this.temperatureOffsetCoefficient).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCalibrationDate field
+   */
+  public String getConductivityCalibrationDate() {
+    return this.conductivityCalibrationDate;
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientG field
+   */
+  public double getConductivityCoefficientG() {
+    return new Double(this.conductivityCoefficientG).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientH field
+   */
+  public double getConductivityCoefficientH() {
+    return new Double(this.conductivityCoefficientH).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientI field
+   */
+  public double getConductivityCoefficientI() {
+    return new Double(this.conductivityCoefficientI).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientJ field
+   */
+  public double getConductivityCoefficientJ() {
+    return new Double(this.conductivityCoefficientJ).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientCF0 field
+   */
+  public double getConductivityCoefficientCF0() {
+    return new Double(this.conductivityCoefficientCF0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientCPCOR field
+   */
+  public double getConductivityCoefficientCPCOR() {
+    return new Double(this.conductivityCoefficientCPCOR).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientCTCOR field
+   */
+  public double getConductivityCoefficientCTCOR() {
+    return new Double(this.conductivityCoefficientCTCOR).doubleValue();
+  }
+  
+  /**
+   * A method that returns the ConductivityCoefficientCSLOPE field
+   */
+  public double getConductivityCoefficientCSLOPE() {
+    return new Double(this.conductivityCoefficientCSLOPE).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureSerialNumber field
+   */
+  public int getPressureSerialNumber() {
+    return new Integer(this.pressureSerialNumber).intValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPA0 field
+   */
+  public double getPressureCoefficientPA0() {
+    return new Double(this.pressureCoefficientPA0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPA1 field
+   */
+  public double getPressureCoefficientPA1() {
+    return new Double(this.pressureCoefficientPA1).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPA2 field
+   */
+  public double getPressureCoefficientPA2() {
+    return new Double(this.pressureCoefficientPA2).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCA0 field
+   */
+  public double getPressureCoefficientPTCA0() {
+    return new Double(this.pressureCoefficientPTCA0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCA1 field
+   */
+  public double getPressureCoefficientPTCA1() {
+    return new Double(this.pressureCoefficientPTCA1).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCA2 field
+   */
+  public double getPressureCoefficientPTCA2() {
+    return new Double(this.pressureCoefficientPTCA2).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCB0 field
+   */
+  public double getPressureCoefficientPTCB0() {
+    return new Double(this.pressureCoefficientPTCB0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCB1 field
+   */
+  public double getPressureCoefficientPTCB1() {
+    return new Double(this.pressureCoefficientPTCB1).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTCB2 field
+   */
+  public double getPressureCoefficientPTCB2() {
+    return new Double(this.pressureCoefficientPTCB2).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTEMPA0 field
+   */
+  public double getPressureCoefficientPTEMPA0() {
+    return new Double(this.pressureCoefficientPTEMPA0).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTEMPA1 field
+   */
+  public double getPressureCoefficientPTEMPA1() {
+    return new Double(this.pressureCoefficientPTEMPA1).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureCoefficientPTEMPA2 field
+   */
+  public double getPressureCoefficientPTEMPA2() {
+    return new Double(this.pressureCoefficientPTEMPA2).doubleValue();
+  }
+  
+  /**
+   * A method that returns the PressureOffsetCoefficient field
+   */
+  public double getPressureOffsetCoefficient() {
+    return new Double(this.pressureOffsetCoefficient).doubleValue();
+  }
 }                                               
