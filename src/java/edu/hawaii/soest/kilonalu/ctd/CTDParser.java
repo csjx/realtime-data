@@ -988,5 +988,45 @@ public class CTDParser {
   // * volt 2: offset = -4.683263e-02, slope = 1.249537e+00
   // * volt 3: offset = -4.670842e-02, slope = 1.249841e+00
   // * EXTFREQSF = 1.000012e+00
+   
+  /*
+   * A boolean field indicating if a pressure sensor is present on the instrument
+   */
+  private boolean hasPressure = false;
+  
+  /*
+   * A boolean field indicating if the pressure sensor is a strain gauge sensor
+   */
+  private boolean hasStrainGaugePressure = false;
+  
+  /*
+   * A boolean field indicating if external voltage channel zero is sampling
+   */
+  private boolean hasVoltageChannelZero = false;
+  
+  /*
+   * A boolean field indicating if external voltage channel one is sampling
+   */
+  private boolean hasVoltageChannelOne = false;
+  
+  /*
+   * A boolean field indicating if external voltage channel two is sampling
+   */
+  private boolean hasVoltageChannelTwo = false;
+  
+  /*
+   * A boolean field indicating if external voltage channel three is sampling
+   */
+  private boolean hasVoltageChannelThree = false;
+  
+  /*
+   * A boolean field indicating if there is an SBE38 temperature sensor
+   */
+  private boolean hasSBE38TemperatureSensor = false;
+  
+  /*
+   * A boolean field indicating if there is a gas tension device
+   */
+  private boolean hasGasTensionDevice = false;
   
 }                                               
