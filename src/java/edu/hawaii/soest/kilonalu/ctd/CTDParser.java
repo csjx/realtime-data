@@ -1253,4 +1253,194 @@ public class CTDParser {
     }
     
   }                                                  
+
+  /*
+   *  A method used to set the data structure based on the sampling mode,
+   *  data output format, and pertinent metadata fields.
+   */
+  private void setData() throws ParseException {
+    logger.debug("CTDParser.setData() called.");
+      
+    // build the list of data variable names and offsets
+  
+    // handle profile mode
+    if ( this.samplingMode.equals("profile") ) {
+  
+      // handle the raw frquencies and voltages in Hex OUTPUTFORMAT (0)
+      if ( this.outputFormat.equals("raw HEX") ) {
+        this.dataVariableNames = new ArrayList<String>();
+        this.dataVariableNames.add(this.RAW_TEMPERATURE_FIELD_NAME);
+        this.dataVariableNames.add(this.RAW_CONDUCTIVITY_FIELD_NAME);
+        
+        this.dataVariableUnits = new ArrayList<String>();
+        this.dataVariableUnits.add("counts");
+        this.dataVariableUnits.add("Hz");
+        
+        this.currentOffset = 6;
+        this.dataVariableOffsets = new ArrayList<Integer>();
+        this.dataVariableOffsets.add(currentOffset);
+        this.currentOffset = currentOffset + 6;
+        this.dataVariableOffsets.add(currentOffset);
+  
+        // Is pressure present?
+        if ( this.hasPressure ) {
+          this.dataVariableNames.add(this.RAW_PRESSURE_FIELD_NAME);
+          this.dataVariableUnits.add("counts");
+          this.currentOffset = this.currentOffset + 6;
+          this.dataVariableOffsets.add(this.currentOffset);
+  
+          // And is it a strain gauge sensor?
+          if ( this.hasStrainGaugePressure ) {
+            dataVariableNames.add(this.RAW_PRESSURE_TEMP_COMP_FIELD_NAME);
+            dataVariableUnits.add("counts");
+            currentOffset = currentOffset + 4;
+            dataVariableOffsets.add(currentOffset);
+  
+          }
+  
+        } else {
+          logger.info("There is no pressure sensor.");
+        }
+  
+        // Is there a channel zero voltage present?
+        if ( this.hasVoltageChannelZero ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_ZERO_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+          this.currentOffset = this.currentOffset + 4;
+          this.dataVariableOffsets.add(this.currentOffset);
+  
+        }
+  
+        // Is there a channel one voltage present?
+        if ( this.hasVoltageChannelOne ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_ONE_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+          this.currentOffset = this.currentOffset + 4;
+          this.dataVariableOffsets.add(this.currentOffset);
+  
+        }
+  
+        // Is there a channel two voltage present?
+        if ( this.hasVoltageChannelTwo ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_TWO_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+          this.currentOffset = this.currentOffset + 4;
+          this.dataVariableOffsets.add(this.currentOffset);
+  
+        }
+  
+        // Is there a channel three voltage present?
+        if ( this.hasVoltageChannelThree ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+          this.currentOffset = this.currentOffset + 4;
+          this.dataVariableOffsets.add(this.currentOffset);
+  
+        }
+        
+        /*
+         * @todo - handle SBE38 and/or gasTensionDevice data
+         */
+          
+        // We now know the data variable names, units, and corresponding
+        // character offsets for each Hex data string found in the 
+        // dataValuesMap.  Build a raw matrix from the dataValuesMap by only
+        // applying output factors.  Conversion to useful variable units
+        // will happen in the calling source driver since voltage channel
+        // semantics are unknown to the parser
+        int beginIndex       = 0;
+        int endIndex         = 0;
+        int offsetIndex      = 0;
+        String hexSubstring  = "";
+        String hexDataString = "";
+        Hex decoder          = new Hex();
+        double value         = 0d;
+        convertedDataValuesMatrix = 
+          new Array2DRowRealMatrix(this.dataValuesMap.size() - 1, dataVariableOffsets.size());
+  
+        for ( int rowIndex = 1; rowIndex < this.dataValuesMap.size(); rowIndex++ ) {
+          hexDataString = this.dataValuesMap.get(rowIndex);
+          logger.debug(rowIndex + ") hexDataString is: " + hexDataString);
+          
+          for ( offsetIndex = 0; offsetIndex < dataVariableOffsets.size(); offsetIndex++ ) {
+            endIndex = dataVariableOffsets.get(offsetIndex);
+            hexSubstring = hexDataString.substring(beginIndex, endIndex);
+            
+            try {
+              // convert the hex characters to bytes
+              byte[] hexAsBytes = decoder.decodeHex(hexSubstring.toCharArray());
+                  
+              BigInteger bigInteger = new BigInteger(hexAsBytes);
+              int intValue = bigInteger.intValue();
+              
+              // the hex values are either 2 or 3 bytes long (AABBCC or AABB)
+              // BigInteger fills in missing bits with 0xFF. Remove them.  This
+              // is only a problem with large bytes that cause the value to 
+              // become negative.
+              if ( hexAsBytes.length < 3 ) {
+                intValue = (intValue & 0x0000FFFF);
+                
+              } else {
+                intValue = (intValue & 0x00FFFFFF);
+                
+              }
+              value = new Integer(intValue).doubleValue();
+              
+              // convert the value based on the CTD User manual conversion using
+              // the corresponding data variable name to determine which conversion
+              double convertedValue = convert(value, dataVariableNames.get(offsetIndex));                                           
+              
+              convertedDataValuesMatrix.setEntry(rowIndex - 1, offsetIndex, convertedValue);
+              logger.debug("\t"                               + 
+                           dataVariableNames.get(offsetIndex) + 
+                           " is:\t"                           + 
+                           value                              + 
+                           "\tConverted: "                    + 
+                           convertedValue);
+              // set the beginIndex to start at the endIndex
+              beginIndex = endIndex;  
+            
+            } catch ( DecoderException de ){
+              logger.debug("Could not decode the Hex string: " + hexSubstring); 
+            }
+            
+          } // for
+          
+          // reset the offsetIndex for the next hexDataString
+          offsetIndex = 0;
+          beginIndex  = 0;
+        } // for
+                 
+      // handle the engineering units in Hex OUTPUTFORMAT (1)
+      } else if ( this.outputFormat.equals("converted Hex") ) {
+        
+        /*
+         * @todo - handle OUTPUTFORMAT (1)
+         */
+      
+      // handle the raw frquencies and voltages in decimal OUTPUTFORMAT (2)
+      } else if ( this.outputFormat.equals("raw decimal") ) {
+      
+        /*
+         * @todo - handle OUTPUTFORMAT (2)
+         */
+      
+      // handle the engineering units in decimal OUTPUTFORMAT (3)
+      } else if ( this.outputFormat.equals("converted decimal") ) { 
+      
+        /*
+         * @todo - handle OUTPUTFORMAT (3)
+         */
+      }
+    
+    // handle moored mode
+    } else if ( this.samplingMode.equals("moored") ) {
+  
+    } else {
+      throw new ParseException("There was an error parsing the data string. "  +
+                               "The sampling mode is not recognized.", 0);
+  
+    }
+    
+  }
 }                                               
