@@ -1540,5 +1540,13 @@ public class SeahorseSource extends RBNBSource {
    public int getBufferSize() {
      return this.bufferSize;
    }
+   
+  /**
+   * A method that returns the domain name or IP address of the source 
+   * instrument (i.e. the serial-to-IP converter to which it is attached)
+   */
+  public String getHostName(){
+    return this.sourceHostName;
+  }
 
 }
