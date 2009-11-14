@@ -342,5 +342,22 @@ public class SeahorseSource extends RBNBSource {
   private boolean readyToStream = false;
   
   private Thread streamingThread;
+  
+  /*
+   * An internal Thread setting used to specify how long, in milliseconds, the
+   * execution of the data streaming Thread should wait before re-executing
+   * 
+   * @see execute()
+   */
+  private final int RETRY_INTERVAL = 5000;
+    
+  /*
+   * An internal Thread setting used to specify how long, in milliseconds, the
+   * execution of the data streaming Thread should sleep before continuing
+   * 
+   * @see execute()
+   */
+  private final int SLEEP_INTERVAL = 2000;
+  
 
 }
