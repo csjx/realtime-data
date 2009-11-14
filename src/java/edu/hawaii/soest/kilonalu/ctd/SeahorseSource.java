@@ -367,4 +367,24 @@ public class SeahorseSource extends RBNBSource {
   public SeahorseSource() {
   }
 
+  /**
+   * Constructor - create an instance of the SeahorseSource object, using the
+   * argument values for the source instrument name and port, and the RBNB 
+   * server name and port.  This constructor will use default values for the
+   * archive mode, archive frame size, and cache frame size. 
+   *
+   * @param sourceHostName  the name or IP address of the source instrument
+   * @param sourceHostPort  the TCP port of the source host instrument
+   * @param serverName      the name or IP address of the RBNB server connection
+   * @param serverPort      the TCP port of the RBNB server
+   */
+  public SeahorseSource(String sourceHostName, String sourceHostPort, 
+                      String serverName, String serverPort) {
+    
+    setHostName(sourceHostName);
+    setHostPort(Integer.parseInt(sourceHostPort));
+    setServerName(serverName);
+    setServerPort(Integer.parseInt(serverPort));
+  }
+
 }
