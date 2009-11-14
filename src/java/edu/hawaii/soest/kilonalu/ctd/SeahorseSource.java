@@ -419,4 +419,1074 @@ public class SeahorseSource extends RBNBSource {
     setRBNBClientName(rbnbClientName);
   }
 
+  /**
+   * A method that executes the streaming of data from the source to the RBNB
+   * server after all configuration of settings, connections to hosts, and
+   * thread initiatizing occurs.  This method contains the detailed code for 
+   * streaming the data and interpreting the stream.
+   */
+  protected boolean execute() {
+    logger.debug("SeahorseSource.execute() called.");
+    // do not execute the stream if there is no connection
+    if (  !isConnected() ) return false;
+    
+      boolean failed = false;
+    
+      this.socketChannel = getSocketConnection();
+    
+    // while data are being sent, read them into the buffer
+    try {
+      // create four byte placeholders used to evaluate up to a four-byte 
+      // window.  The FIFO layout looks like:
+      //           -------------------------
+      //   in ---> | One | Two |Three|Four |  ---> out
+      //           -------------------------
+      byte byteOne   = 0x00,   // set initial placeholder values
+           byteTwo   = 0x00,
+           byteThree = 0x00,
+           byteFour  = 0x00;
+      
+      // define a byte array that will be used to manipulate the incoming bytes
+      byte[] resultArray;
+      String resultString;
+      
+      // Create a buffer that will store the result bytes as they are read
+      ByteBuffer resultBuffer = ByteBuffer.allocate(getBufferSize());
+      
+      // create a byte buffer to store bytes from the TCP stream
+      ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
+      
+      // add a channel of data that will be pushed to the server.  
+      // Each sample will be sent to the Data Turbine as an rbnb frame.
+      ChannelMap rbnbChannelMap = new ChannelMap();
+      int channelIndex = 0;
+      
+      // Add the sample data channel as ASCII Hex
+      channelIndex = rbnbChannelMap.Add(this.rbnbChannelName);
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // Add the cast data as ASCII
+      channelIndex = rbnbChannelMap.Add("ASCIICastData");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
+      // register the channel map of variables and units with the DataTurbine
+      getSource().Register(rbnbChannelMap);
+      // reset variables for use with the incoming data
+      rbnbChannelMap.Clear();
+      channelIndex = 0;
+      
+      // initiate the session with the modem, test if is network registered
+      this.command = this.MODEM_COMMAND_PREFIX +
+                     this.REGISTRATION_STATUS_COMMAND +
+                     this.MODEM_COMMAND_SUFFIX;
+      this.sentCommand = queryInstrument(this.command);
+      
+      // allow time for the modem to respond
+      streamingThread.sleep(this.SLEEP_INTERVAL);
+      
+      // while there are bytes to read from the socketChannel ...
+      while ( socketChannel.read(buffer) != -1 || buffer.position() > 0) {
+
+        // prepare the buffer for reading
+        buffer.flip();          
+    
+        // while there are unread bytes in the ByteBuffer
+        while ( buffer.hasRemaining() ) {
+          byteOne = buffer.get();
+
+          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+          //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
+          //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
+          //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
+          //             "result pos: "   + resultBuffer.position()                  + "\t" +
+          //             "result rem: "   + resultBuffer.remaining()                 + "\t" +
+          //             "result cnt: "   + resultByteCount                          + "\t" +
+          //             "buffer pos: "   + buffer.position()                        + "\t" +
+          //             "buffer rem: "   + buffer.remaining()                       + "\t" +
+          //             "state: "        + state
+          //);
+          
+          // Use a State Machine to process the byte stream.
+          // Start building an rbnb frame for the entire sample, first by 
+          // inserting a timestamp into the channelMap.  This time is merely
+          // the time of insert into the data turbine, not the time of
+          // observations of the measurements.  That time should be parsed out
+          // of the sample in the Sink client code
+    
+          switch( state ) {
+    
+            case 0:
+              
+              // the network registration status should end in OK\r\n
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
+                   byteThree == 0x4B && byteFour == 0x4F ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }
+                
+                // report the network registration status string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Network Registration Result: " +
+                             resultString.trim());
+                
+                resultBuffer.clear();
+                resultByteCount = 0;
+                resultArray = new byte[0];
+                resultString = "";
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                // send a request for the signal strength
+                this.command = this.MODEM_COMMAND_PREFIX +
+                               this.SIGNAL_STRENGTH_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                state = 1;
+                break;
+    
+              } else {
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }
+                
+                break;                
+              }
+            
+            case 1: // report the signal strength of the Iridium modem
+              
+              // the signal strength status should end in OK\r\n
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
+                   byteThree == 0x4B && byteFour == 0x4F ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                  
+                }                
+
+                // report the signal strength status string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Signal Strength Result: " +
+                             resultString.trim());
+                
+                int signalStrengthIndex = resultString.indexOf(
+                                          this.SIGNAL_STRENGTH) + 5;
+                                          
+                int signalStrength = 
+                  new Integer(resultString.substring(
+                    signalStrengthIndex, signalStrengthIndex + 1)).intValue();
+                    
+                // test if the signal strength is above the threshold
+                if ( signalStrength > SIGNAL_THRESHOLD ) {
+                  
+                  resultBuffer.clear();
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  state = 2;
+                  break;
+                  
+                // the signal strength is too low, check again
+                } else {
+                  
+                  resultBuffer.clear();
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  // resend a request for the signal strength
+                  this.command = this.MODEM_COMMAND_PREFIX +
+                                 this.SIGNAL_STRENGTH_COMMAND +
+                                 this.MODEM_COMMAND_SUFFIX;
+                  this.sentCommand = queryInstrument(this.command);
+                  // allow time for the modem to respond
+                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  
+                  state = 1;
+                  break;
+                  
+                }
+                
+              } else {
+
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+                  
+                }
+                
+                break;
+              }
+          
+            case 2: // handle the RING command from the instrument
+              
+              // the signal strength status should end in OK\r\n
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne   == 0x47 && byteTwo  == 0x4E && 
+                   byteThree == 0x49 && byteFour == 0x52 ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                resultBuffer.clear();
+                resultByteCount = 0;
+                resultArray = new byte[0];
+                resultString = "";
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                // answer the call
+                this.command = this.MODEM_COMMAND_PREFIX +
+                               this.ANSWER_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                state = 3;
+                break;
+                
+              } else {
+                
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+                  
+                }
+                
+                break;
+                
+              }
+            
+            case 3: // acknowledge the connection
+            
+              // the ready status string should end in READY\r
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne   == 0x0D && byteTwo  == 0x59 && 
+                   byteThree == 0x44 && byteFour == 0x41) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the connect rate and ready status string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                
+                // test the connect rate
+                if ( resultString.indexOf(this.CONNECT_RATE) > 0 ) {
+                  logger.debug("Connect Rate Result: " +
+                               this.CONNECT_RATE);
+                  
+                  // test the ready status
+                  if ( resultString.indexOf(this.READY_STATUS) > 0 ) {
+                    logger.debug("Connect Rate Result: " +
+                                 this.READY_STATUS);
+                  
+                    resultBuffer.clear();
+                    resultByteCount = 0;
+                    resultArray = new byte[0];
+                    resultString = "";
+                    byteOne   = 0x00;
+                    byteTwo   = 0x00;
+                    byteThree = 0x00;
+                    byteFour  = 0x00;
+
+                    // acknowledge the ready status
+                    this.command = this.ACKNOWLEDGE_COMMAND +
+                                   this.MODEM_COMMAND_SUFFIX;
+                    this.sentCommand = queryInstrument(this.command);
+
+                    // allow time for the modem to receive the ACK
+                    streamingThread.sleep(this.SLEEP_INTERVAL);
+                    
+                    // query the instrument id
+                    this.command = this.ID_COMMAND +
+                                   this.MODEM_COMMAND_SUFFIX;
+                    this.sentCommand = queryInstrument(this.command);
+                    
+                    // allow time for the modem to respond
+                    streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                    state = 4;
+                    break;
+                    
+                  } else {
+                    logger.debug("The ready status differs from: " +
+                                 this.READY_STATUS);
+                  
+                    // throw an exception here?
+                    break;
+                  }
+                  
+                } else {
+                  logger.debug("The connect rate differs from: " +
+                               this.CONNECT_RATE);
+                  
+                  // throw an exception here?
+                  break;
+                }
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+              
+            case 4: // get the instrument id
+              
+              // the instrument ID string should end in \r
+              if ( byteOne == 0x0D ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the instrument ID string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Seahorse Instrument ID: " + resultString.trim());
+                
+                // set the platformID variable
+                this.platformID = resultString.substring(0, resultString.length() - 1);
+                
+                resultBuffer.clear();
+                resultByteCount = 0;
+                resultArray = new byte[0];
+                resultString = "";
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                // query the battery voltage
+                this.command = this.BATTERY_VOLTAGE_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+                
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                state = 5;
+                break;
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+              
+            case 5: // get the seahorse battery voltage
+              
+              // the battery voltage string should end in \r
+              if ( byteOne == 0x0D ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the battery voltage string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Seahorse Battery Voltage: " + resultString.trim());
+                
+                resultBuffer.clear();
+                resultByteCount = 0;
+                resultArray = new byte[0];
+                resultString = "";
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                // query the GPS location
+                this.command = this.GPRMC_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+                
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                state = 6;
+                break;
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+              
+            case 6:
+              
+              // the GPRMC string should end in END\r
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne == 0x0D && byteTwo ==  0x44 && 
+                   byteThree == 0x4E && byteFour == 0x45 ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the GPRMC string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Seahorse GPRMC string: " + resultString.trim());
+                
+                resultBuffer.clear();
+                resultByteCount = 0;
+                resultArray = new byte[0];
+                resultString = "";
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                // query the file name for transfer
+                this.command = this.FILENAME_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+                
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                state = 7;
+                break;
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+              
+            case 7:
+              
+              // the file name string should end in .Z\r
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne == 0x0D && byteTwo == 0x5A && byteThree == 0x2E) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the file name string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("File name result: " + resultString.trim());
+                
+                resultString = resultString.trim();
+                int fileNameIndex = resultString.indexOf(this.FILENAME_PREFIX);
+                
+                //extract just the filename from the result (excise the "FILE=")
+                this.fileNameToDownload = 
+                  resultString.substring(
+                    (fileNameIndex + (this.FILENAME_PREFIX).length() + 1), 
+                    resultString.length());
+                
+                logger.debug("File name to download: " + this.fileNameToDownload);
+                
+                // test to see if the GFN command returns FILES=NONE
+                if ( !(resultString.indexOf(this.END_OF_FILES) > 0) ) {
+                  
+                  // there is a file to download. parse the file name,
+                  // get the number of blocks to transfer
+                  this.command = this.NUMBER_OF_BLOCKS_COMMAND +
+                                 this.MODEM_COMMAND_SUFFIX;
+                  this.sentCommand = queryInstrument(this.command);
+
+                  // allow time for the modem to respond
+                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  
+                  resultBuffer.clear();
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  state = 8;
+                  break;
+                  
+                } else {
+                  
+                  // We have downloaded all files. Flush the channel map to the RBNB
+                  rbnbChannelMap.PutTimeAuto("server");
+                  getSource().Flush(rbnbChannelMap);
+
+                  logger.info("Flushed data to the DataTurbine.");
+
+                  // there are no more files to read. close the Tx session.
+                  this.command = this.CLOSE_TRANSFER_SESSION_COMMAND +
+                                 this.MODEM_COMMAND_SUFFIX;
+                  this.sentCommand = queryInstrument(this.command);
+
+                  // allow time for the modem to respond
+                  streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                  // clean up
+                  resultBuffer.clear();
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  rbnbChannelMap.Clear();                      
+                  
+                  state = 10;
+                  break;
+                  
+                }
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+              
+            case 8:
+              
+              // the number of blocks string should end in \r
+              if ( byteOne == 0x0D ) {
+                
+                resultByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the result buffer
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                
+                } else {
+                  resultBuffer.compact();
+                  resultBuffer.put(byteOne);
+                
+                }                
+                
+                // report the number of blocks string
+                resultArray = new byte[resultByteCount];
+                resultBuffer.flip();
+                resultBuffer.get(resultArray);
+                resultString = new String(resultArray, "US-ASCII");
+                logger.debug("Number of bytes reported: " + resultString.trim());
+                
+                int lineEndIndex = resultString.indexOf(this.MODEM_COMMAND_SUFFIX);
+                int numberOfBlocksIndex = resultString.indexOf(this.FILENAME_PREFIX);
+                
+                logger.debug("Number of bytes to download: " + this.numberOfBlocks);
+                
+                // convert the string to an integer
+                try {
+                  this.numberOfBlocks = new Integer(resultString.trim()).intValue();
+                
+                } catch ( java.lang.NumberFormatException nfe ) {
+                  failed = true;
+                  nfe.printStackTrace();
+                  logger.debug("Failed to convert returned string value " + 
+                  "to an integer value.  The returned string is: " + this.numberOfBlocks);
+                      
+                }
+                                
+                // test to see if the GNB command returns DONE\r
+                if ( !(resultString.indexOf(this.TRANSFER_COMPLETE) > 0) ) {
+                  
+                  // there are bytes to transfer. send the transfer command
+                  
+                  this.command = this.TRANSFER_BLOCKS_COMMAND +
+                                 this.MODEM_COMMAND_SUFFIX;
+                  this.sentCommand = queryInstrument(this.command);
+
+                  // allow time for the modem to respond
+                  streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                  //resultBuffer.clear(); dont clear the buffer
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  state = 9;
+                  break;
+                  
+                } else {
+                  
+                  // there are no more bytes to transfer.  
+                  
+                  // Decompress the file, which is under zlib compression.  
+                  Inflater inflater = new Inflater();
+                  inflater.setInput(resultBuffer.array());
+                  byte[] output = new byte[resultBuffer.capacity()];
+                  
+                  int numDecompressed = inflater.inflate(output);
+                  String fileString = new String(output);
+                  
+                  //report the file contents to the log
+                  logger.debug("File " + this.fileNameToDownload + ": ");                   
+                  logger.debug(fileString);                   
+                  
+                  // Parse the data file, not the cast file.
+                  try {
+                    if ( this.fileNameToDownload.indexOf(DATA_FILE_PREFIX) > 0 ) {
+                      this.ctdParser = new CTDParser(fileString);
+                      
+                      // TODO: insert the individual data channels into the map.
+                      
+                    } 
+
+                  } catch ( Exception e ) {
+                    logger.debug("Failed to parse the CTD data file: " + 
+                                  e.getMessage());
+                                  
+                  }
+                  
+                  // Insert the file into the channel map. 
+                  if ( fileNameToDownload.indexOf(DATA_FILE_PREFIX) > 0) {
+                    channelIndex = rbnbChannelMap.Add(this.rbnbChannelName);
+                    rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                    rbnbChannelMap.PutDataAsString(channelIndex, fileString);
+                      
+                  } else if ( fileNameToDownload.indexOf(CAST_FILE_PREFIX) > 0 ) {
+                    channelIndex = rbnbChannelMap.Add("ASCIICastData");
+                    rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                    rbnbChannelMap.PutDataAsString(channelIndex, fileString);
+                      
+                  }
+                  
+                  // Ask for the next file.
+                  this.command = this.FILENAME_COMMAND +
+                                 this.MODEM_COMMAND_SUFFIX;
+                  this.sentCommand = queryInstrument(this.command);
+
+                  // allow time for the modem to respond
+                  streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                  //resultBuffer.clear(); dont clear the buffer
+                  resultByteCount = 0;
+                  resultArray = new byte[0];
+                  resultString = "";
+                  byteOne   = 0x00;
+                  byteTwo   = 0x00;
+                  byteThree = 0x00;
+                  byteFour  = 0x00;
+                  
+                  state = 7; //back to the file name state
+                  break;
+                  
+                }
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+          
+            case 9:
+            
+              // transfer up to the reported number of bytes
+              if ( resultByteCount == this.numberOfBlocks ) {
+              
+                // we have downloaded the reported bytes. get the next section.
+                // get the number of blocks to transfer
+                this.command = this.NUMBER_OF_BLOCKS_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+                
+                //resultBuffer.clear();
+                resultByteCount = 0;
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                state = 8;
+                break;
+                 
+              
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+            
+            case 10:
+              
+              // the response from the modem should end in BYE\r
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne == 0x0D && byteTwo == 0x45 && 
+                   byteThree == 0x59 && byteFour == 0x42 ) {
+                
+                // continue to disconnect. send the escape sequence
+                this.command = this.ESCAPE_SEQUENCE_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                resultBuffer.clear();
+                resultByteCount = 0;
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                state = 11;
+                break; 
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+            
+            case 11:
+            
+              // the response from the modem should end in OK\r\n
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne == 0x0D && byteTwo == 0x0A && 
+                   byteThree == 0x4B && byteFour == 0x4F ) {
+                
+                // now hang up.
+                this.command = this.MODEM_COMMAND_PREFIX +
+                               this.HANGUP_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                resultBuffer.clear();
+                resultByteCount = 0;
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                state = 12;
+                break; 
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+            
+            case 12:
+            
+              // the response from the modem should end in OK\r\n
+              // note bytes are in reverse order in the FIFO window
+              if ( byteOne == 0x0D && byteTwo == 0x0A && 
+                   byteThree == 0x4B && byteFour == 0x4F ) {
+                
+                // we are done. re-test if is network registered
+                this.command = this.MODEM_COMMAND_PREFIX +
+                               this.REGISTRATION_STATUS_COMMAND +
+                               this.MODEM_COMMAND_SUFFIX;
+                this.sentCommand = queryInstrument(this.command);
+
+                // allow time for the modem to respond
+                streamingThread.sleep(this.SLEEP_INTERVAL);
+
+                resultBuffer.clear();
+                resultByteCount = 0;
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                
+                state = 0;
+                break; 
+                
+              } else {
+              
+                // still in the middle of the result, keep adding bytes
+                resultByteCount++; // add each byte found
+              
+                if ( resultBuffer.remaining() > 0 ) {
+                  resultBuffer.put(byteOne);
+                } else {
+                  resultBuffer.compact();
+                  logger.debug("Compacting resultBuffer ...");
+                  resultBuffer.put(byteOne);
+              
+                }
+              
+                break;
+              
+              }
+                            
+          } // end switch statement
+          
+          // shift the bytes in the FIFO window
+          byteFour = byteThree;
+          byteThree = byteTwo;
+          byteTwo = byteOne;
+
+        } //end while (more unread bytes)
+    
+        // prepare the buffer to read in more bytes from the stream
+        buffer.compact();
+    
+    
+      } // end while (more socketChannel bytes to read)
+      socketChannel.close();
+        
+    } catch ( IOException e ) {
+      // handle exceptions
+      // In the event of an i/o exception, log the exception, and allow execute()
+      // to return false, which will prompt a retry.
+      failed = true;
+      e.printStackTrace();
+      return !failed;
+    } catch ( SAPIException sapie ) {
+      // In the event of an RBNB communication  exception, log the exception, 
+      // and allow execute() to return false, which will prompt a retry.
+      failed = true;
+      sapie.printStackTrace();
+      return !failed;
+    } catch ( java.lang.InterruptedException ine) {
+      failed = true;
+      ine.printStackTrace();
+      return !failed;
+    } catch ( java.util.zip.DataFormatException dfe ) {
+      failed = true;
+      dfe.printStackTrace();
+      return !failed;
+    }
+    
+    return !failed;
+  } // end if (  !isConnected() ) 
+
 }
