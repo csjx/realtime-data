@@ -387,4 +387,36 @@ public class SeahorseSource extends RBNBSource {
     setServerPort(Integer.parseInt(serverPort));
   }
 
+  /**
+   * Constructor - create an instance of the SeahorseSource object, using the
+   * argument values for the source instrument name and port, and the RBNB 
+   * server name and port, the archive mode, archive frame size, and cache 
+   * frame size.  A frame is created at each call to flush() to an RBNB server,
+   * and so the frame sizes below are relative to the number of bytes of data
+   * loaded in the ChannelMap that is flushed to the RBNB server.
+   *
+   * @param sourceHostName   the name or IP address of the source instrument
+   * @param sourceHostPort   the TCP port of the source host instrument
+   * @param serverName       the name or IP address of the RBNB server 
+   * @param serverPort       the TCP port of the RBNB server
+   * @param archiveMode      the RBNB archive mode: append, load, create, none
+   * @param archiveFrameSize the size, in frames, for the RBNB server to archive
+   * @param cacheFrameSize   the size, in frames, for the RBNB server to cache
+   * @param rbnbClientName   the unique name of the source RBNB client
+   */
+  public SeahorseSource(String sourceHostName, String sourceHostPort, 
+                      String serverName, String serverPort, 
+                      String archiveMode, int archiveFrameSize, 
+                      int cacheFrameSize, String rbnbClientName) {
+    
+    setHostName(sourceHostName);
+    setHostPort(Integer.parseInt(sourceHostPort));
+    setServerName(serverName);
+    setServerPort(Integer.parseInt(serverPort));
+    setArchiveMode(archiveMode);
+    setArchiveSize(archiveFrameSize);
+    setCacheSize(cacheFrameSize);
+    setRBNBClientName(rbnbClientName);
+  }
+
 }
