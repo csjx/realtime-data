@@ -1488,5 +1488,48 @@ public class SeahorseSource extends RBNBSource {
     
     return !failed;
   } // end if (  !isConnected() ) 
+  
+   /**
+   * A method used to the TCP socket of the remote source host for communication
+   * @param host       the name or IP address of the host to connect to for the
+   *                   socket connection (reading)
+   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
+   */
+  protected SocketChannel getSocketConnection() {
+    
+    
+    String host = getHostName();
+    int portNumber = new Integer(getHostPort()).intValue();
+    SocketChannel dataSocket = null;
+    
+    try {  
+      
+      // create the socket channel connection to the data source via the 
+      // converter serial2IP converter      
+      dataSocket = SocketChannel.open();
+      dataSocket.connect( new InetSocketAddress(host, portNumber));
+      
+      // if the connection to the source fails, also disconnect from the RBNB
+      // server and return null
+      if ( !dataSocket.isConnected()) {
+        dataSocket.close();
+        disconnect();
+        dataSocket = null;
+      }      
+    }  catch ( UnknownHostException ukhe ) {
+      System.err.println("Unable to look up host: " + host + "\n");
+      disconnect();
+      dataSocket = null;
+    } catch (IOException nioe ) {
+      System.err.println("Couldn't get I/O connection to: " + host);
+      disconnect();
+      dataSocket = null;
+    } catch (Exception e) {
+      disconnect();
+      dataSocket = null;            
+    }
+    return dataSocket;
+    
+  }
 
 }
