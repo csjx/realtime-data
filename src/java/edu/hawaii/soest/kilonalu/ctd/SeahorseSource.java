@@ -359,5 +359,12 @@ public class SeahorseSource extends RBNBSource {
    */
   private final int SLEEP_INTERVAL = 2000;
   
+  /**
+   * Constructor - create an empty instance of the SeahorseSource object, using
+   * default values for the RBNB server name and port, source instrument name
+   * and port, archive mode, archive frame size, and cache frame size. 
+   */
+  public SeahorseSource() {
+  }
 
 }
