@@ -76,5 +76,74 @@ import org.nees.rbnb.RBNBSource;
  */
 public class SeahorseSource extends RBNBSource {
 
+  /*
+   *  A default archive mode for the given source connection to the RBNB server.
+   * Valid modes include 'append', 'create', 'load' and 'none'.
+   */
+  private final String DEFAULT_ARCHIVE_MODE = "append";
+  
+  /*
+   * The mode in which the source interacts with the RBNB archive. Valid modes 
+   * include 'append', 'create', 'load' and 'none', however, Kilo Nalu 
+   * instruments should append to an archive, which will create one if none 
+   * exist.
+   *
+   * @see setArchiveMode()
+   * @see getArchiveMode()
+   */
+  private String archiveMode = DEFAULT_ARCHIVE_MODE;
+
+  /*
+   * The default size of the ByteBuffer used to beffer the TCP stream from the
+   * source instrument.
+   */  
+  private int DEFAULT_BUFFER_SIZE = 8096; // 8K
+
+  /**
+   * The size of the ByteBuffer used to beffer the TCP stream from the 
+   * instrument.
+   */
+  private int bufferSize = DEFAULT_BUFFER_SIZE;
+  
+  /*
+   *  A default RBNB channel name for the given source instrument
+   */  
+  private String DEFAULT_RBNB_CHANNEL = "HexadecimalASCIISampleData";
+
+  /**
+   * The name of the RBNB channel for this data stream
+   */
+  private String rbnbChannelName = DEFAULT_RBNB_CHANNEL;
+  
+  /*
+   *  A default source IP address for the given source instrument
+   */
+  private final String DEFAULT_SOURCE_HOST_NAME = "127.0.0.1";  
+
+  /**
+   * The domain name or IP address of the host machine that this Source 
+   * represents and from which the data will stream. 
+   */
+  private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
+
+  /*
+   *  A default source TCP port for the given source instrument
+   */  
+  private final int DEFAULT_SOURCE_HOST_PORT  = 2101;
+
+  /**
+   * The TCP port to connect to on the Source host machine 
+   */
+  private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
+
+  /*
+   * The socket channel used to establish TCP communication with the instrument
+   */
+  private SocketChannel socketChannel;
+  
+  /**
+   * The number of bytes in the ensemble as each byte is read from the stream
+   */
+  private int resultByteCount = 0;
 
 }
