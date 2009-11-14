@@ -1532,4 +1532,13 @@ public class SeahorseSource extends RBNBSource {
     
   }
 
+  
+  /**
+   * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   */
+   public int getBufferSize() {
+     return this.bufferSize;
+   }
+
 }
