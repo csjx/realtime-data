@@ -305,5 +305,42 @@ public class SeahorseSource extends RBNBSource {
    * The session closed string expected from the instrument
    */ 
   private final String SESSION_CLOSED = "BYE";
+  
+  /**
+   *The command sent to the instrument
+   */ 
+  private String command;  
+  
+  /*
+   * A boolean field indicating if a command has been sent to the instrument
+   */
+  private boolean sentCommand = false;
+  
+  /*
+   * The instance of the CTDParser object used to parse the CTD
+   * data file and retrieve each of the data fields
+   */
+   private CTDParser ctdParser = null;
+   
+  /**
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /**
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+  
+  /**
+   * The Logger instance used to log system messages 
+   */
+  private static Logger logger = Logger.getLogger(SeahorseSource.class);
+
+  protected int state = 0;
+  
+  private boolean readyToStream = false;
+  
+  private Thread streamingThread;
 
 }
