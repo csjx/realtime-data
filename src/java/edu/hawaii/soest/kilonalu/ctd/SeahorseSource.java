@@ -1806,4 +1806,32 @@ public class SeahorseSource extends RBNBSource {
     return options;
   }
 
+  /**
+   * A method that starts the streaming of data from the source instrument to
+   * the RBNB server via an established TCP connection.  
+   */
+  public boolean start() {
+    
+    // return false if the streaming is running
+    if ( isRunning() ) {
+      return false;
+    }
+    
+    // reset the connection to the RBNB server
+    if ( isConnected() ) {
+      disconnect();
+    }
+    connect();
+    
+    // return false if the connection fails
+    if ( !isConnected() ) {
+      return false;
+    }
+    
+    // begin the streaming thread to the source
+    startThread();
+    
+    return true;  
+  }
+
 }
