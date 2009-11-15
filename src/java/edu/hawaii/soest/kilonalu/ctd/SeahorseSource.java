@@ -1549,4 +1549,12 @@ public class SeahorseSource extends RBNBSource {
     return this.sourceHostName;
   }
 
+  /**
+   * A method that returns the name of the RBNB channel that contains the 
+   * streaming data from this instrument
+   */
+  public String getRBNBChannelName(){
+    return this.rbnbChannelName;
+  }
+
 }
