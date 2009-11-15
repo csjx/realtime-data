@@ -1745,5 +1745,15 @@ public class SeahorseSource extends RBNBSource {
   public void setBuffersize(int bufferSize) {
     this.bufferSize = bufferSize;
   }
+  
+  /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
 
 }
