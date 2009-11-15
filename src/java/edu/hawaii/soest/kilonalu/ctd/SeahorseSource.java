@@ -1592,4 +1592,19 @@ public class SeahorseSource extends RBNBSource {
     return this.sourceHostPort;
   }
 
+  /**
+   * A method that returns the versioning info for this file.  In this case, 
+   * it returns a String that includes the Subversion LastChangedDate, 
+   * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   */
+
+  public String getCVSVersionString(){
+    return (
+    "$LastChangedDate: 2009-07-14 06:25:25 -0600 (Tue, 14 Jul 2009) $" +
+    "$LastChangedBy: cjones $" +
+    "$LastChangedRevision: 454 $" +
+    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/SeahorseSource.java $"
+    );
+  }
+
 }
