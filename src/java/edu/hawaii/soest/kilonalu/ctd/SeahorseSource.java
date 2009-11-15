@@ -1687,4 +1687,53 @@ public class SeahorseSource extends RBNBSource {
     stop();
   }
 
+  /**
+   * A method that sets the command line arguments for this class.  This method 
+   * calls the <code>RBNBSource.setBaseArgs()</code> method.
+   * 
+   * @param command  The CommandLine object being passed in from the command
+   */
+  protected boolean setArgs(CommandLine command) {
+    
+    // first set the base arguments that are included on the command line
+    if ( !setBaseArgs(command)) {
+      return false;
+    }
+    
+    // add command line arguments here
+    
+    // handle the -H option
+    if ( command.hasOption("H") ) {
+      String hostName = command.getOptionValue("H");
+      if ( hostName != null ) {
+        setHostName(hostName);
+      }
+    }
+
+    // handle the -P option, test if it's an integer
+    if ( command.hasOption("P") ) {
+      String hostPort = command.getOptionValue("P");
+      if ( hostPort != null ) {
+        try {
+          setHostPort(Integer.parseInt(hostPort));
+          
+        } catch ( NumberFormatException nfe ){
+          logger.info("Error: Enter a numeric value for the host port. " +
+                             hostPort + " is not a valid number.");
+          return false;
+        }
+      }
+    }
+
+    // handle the -C option
+    if ( command.hasOption("C") ) {
+      String channelName = command.getOptionValue("C");
+      if ( channelName != null ) {
+        setChannelName(channelName);
+      }
+    }
+
+    return true;
+  }
+
 }
