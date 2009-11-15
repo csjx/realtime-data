@@ -1557,4 +1557,31 @@ public class SeahorseSource extends RBNBSource {
     return this.rbnbChannelName;
   }
 
+  /**
+   * A method that queries the instrument with a command
+   */
+  public boolean queryInstrument(String command) {
+    
+    // the result of the query
+    boolean result = false;
+    
+    // only send the command if the socket is connected
+    if ( this.socketChannel.isConnected() ) {
+      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 10);
+      commandBuffer.put(command.getBytes());
+      commandBuffer.flip();
+      
+      try {
+        this.socketChannel.write(commandBuffer);
+        logger.debug("Wrote " + command + " to the socket channel.");
+        result = true;
+        
+      } catch (IOException ioe ) {
+        ioe.printStackTrace();
+        result = false;
+      }
+    }
+    return result;
+  }
+
 }
