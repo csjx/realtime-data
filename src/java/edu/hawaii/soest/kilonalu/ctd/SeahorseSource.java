@@ -1584,4 +1584,12 @@ public class SeahorseSource extends RBNBSource {
     return result;
   }
 
+  /**
+   * A method that returns the TCP port of the source 
+   * instrument (i.e. the serial-to-IP converter to which it is attached)
+   */
+  public int getHostPort(){
+    return this.sourceHostPort;
+  }
+
 }
