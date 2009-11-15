@@ -1756,4 +1756,14 @@ public class SeahorseSource extends RBNBSource {
     this.rbnbChannelName = channelName;
   }
 
+  /**
+   * A method that sets the domain name or IP address of the source 
+   * instrument (i.e. the serial-to-IP converter to which it is attached)
+   *
+   * @param hostName  the domain name or IP address of the source instrument
+   */
+  public void setHostName(String hostName) {
+    this.sourceHostName = hostName;
+  }
+
 }
