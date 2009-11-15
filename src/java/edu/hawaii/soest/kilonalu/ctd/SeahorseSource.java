@@ -1776,4 +1776,34 @@ public class SeahorseSource extends RBNBSource {
     this.sourceHostPort = hostPort;
   }
 
+  /**
+   * A method that sets the command line options for this class.  This method 
+   * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+   * properties such as the sourceHostName, sourceHostPort, serverName, and
+   * serverPort.
+   */
+  protected Options setOptions() {
+    Options options = setBaseOptions(new Options());
+    
+    // Note: 
+    // Command line options already provided by RBNBBase include:
+    // -h "Print help"
+    // -s "RBNB Server Hostname"
+    // -p "RBNB Server Port Number"
+    // -S "RBNB Source Name"
+    // -v "Print Version information"
+    
+    // Command line options already provided by RBNBSource include:
+    // -z "Cache size"
+    // -Z "Archive size"
+    
+    // add command line options here
+    options.addOption("H", true, "Source host name or IP *" + getHostName());
+    options.addOption("P", true, "Source host port number *" + getHostPort());    
+    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
+    //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
+                      
+    return options;
+  }
+
 }
