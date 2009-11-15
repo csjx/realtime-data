@@ -1607,4 +1607,13 @@ public class SeahorseSource extends RBNBSource {
     );
   }
 
+  /**
+   * A method that returns true if the RBNB connection is established
+   * and if the data streaming Thread has been started
+   */
+  public boolean isRunning() {
+    // return the connection status and the thread status
+    return ( isConnected() && readyToStream );
+  }
+
 }
