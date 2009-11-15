@@ -1766,4 +1766,14 @@ public class SeahorseSource extends RBNBSource {
     this.sourceHostName = hostName;
   }
 
+  /**
+   * A method that sets the TCP port of the source 
+   * instrument (i.e. the serial-to-IP converter to which it is attached)
+   *
+   * @param hostPort  the TCP port of the source instrument
+   */
+  public void setHostPort(int hostPort) {
+    this.sourceHostPort = hostPort;
+  }
+
 }
