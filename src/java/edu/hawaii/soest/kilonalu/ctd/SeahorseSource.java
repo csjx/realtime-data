@@ -1653,5 +1653,38 @@ public class SeahorseSource extends RBNBSource {
       e.printStackTrace();
     }
   }
+  
+  /*
+   * A method that runs the data streaming work performed by the execute()
+   * by handling execution problems and continuously trying to re-execute after 
+   * a specified retry interval for the thread.
+   */
+  private void runWork() {
+    
+    // handle execution problems by retrying if execute() fails
+    boolean retry = true;
+    
+    while ( retry ) {
+      
+      // connect to the RBNB server
+      if ( connect() ) {
+        // run the data streaming code
+        retry = !execute();
+      }
+      
+      disconnect();
+      
+      if ( retry ) {
+        try {
+          Thread.sleep(RETRY_INTERVAL);
+        } catch ( Exception e ){
+          logger.info("There was an execution problem. Retrying. Message is: " +
+          e.getMessage());
+        }
+      }
+    }
+    // stop the streaming when we are done
+    stop();
+  }
 
 }
