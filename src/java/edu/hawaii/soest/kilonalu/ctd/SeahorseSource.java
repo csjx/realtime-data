@@ -1615,5 +1615,43 @@ public class SeahorseSource extends RBNBSource {
     // return the connection status and the thread status
     return ( isConnected() && readyToStream );
   }
+  
+  /**
+   * The main method for running the code
+   * @ param args[] the command line list of string arguments, none are needed
+   */
+
+  public static void main (String args[]) {
+    
+    logger.info("SeahorseSource.main() called.");
+    
+    try {
+      // create a new instance of the SeahorseSource object, and parse the command 
+      // line arguments as settings for this instance
+      final SeahorseSource seahorseSource = new SeahorseSource();
+      
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(seahorseSource.getLogConfigurationFile());
+      
+      // parse the commandline arguments to configure the connection, then 
+      // start the streaming connection between the source and the RBNB server.
+      if ( seahorseSource.parseArgs(args) ) {
+        seahorseSource.start();
+      }
+      
+      // Handle ctrl-c's and other abrupt death signals to the process
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        // stop the streaming process
+        public void run() {
+          seahorseSource.stop();
+        }
+      }
+      );
+      
+    } catch ( Exception e ) {
+      logger.info("Error in main(): " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
 
 }
