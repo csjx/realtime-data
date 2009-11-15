@@ -1834,4 +1834,23 @@ public class SeahorseSource extends RBNBSource {
     return true;  
   }
 
+  /**
+   * A method that creates and starts a new Thread with a run() method that 
+   * begins processing the data streaming from the source instrument.
+   */
+  private void startThread() {
+    
+    // build the runnable class and implement the run() method
+    Runnable runner = new Runnable() {
+      public void run() {
+        runWork();
+      }
+    };
+    
+    // build the Thread and start it, indicating that it has been started
+    readyToStream = true;
+    streamingThread = new Thread(runner, "StreamingThread");
+    streamingThread.start();     
+  }
+
 }
