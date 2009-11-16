@@ -1879,4 +1879,13 @@ public class SeahorseSource extends RBNBSource {
     streamingThread.interrupt();
   }
 
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+
 }
