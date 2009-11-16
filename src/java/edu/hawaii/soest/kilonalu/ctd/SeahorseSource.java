@@ -1870,4 +1870,13 @@ public class SeahorseSource extends RBNBSource {
     return true;
   }
 
+  /**
+   * A method that interrupts the thread created in startThread()
+   */
+  private void stopThread() {
+    // set the streaming status to false and stop the Thread
+    readyToStream = false;
+    streamingThread.interrupt();
+  }
+
 }
