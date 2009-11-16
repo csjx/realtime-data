@@ -1853,4 +1853,21 @@ public class SeahorseSource extends RBNBSource {
     streamingThread.start();     
   }
 
+  /**
+   * A method that stops the streaming of data between the source instrument and
+   * the RBNB server.  
+   */ 
+  public boolean stop() {
+    
+    // return false if the thread is not running
+    if ( !isRunning() ) {
+      return false;
+    }
+    
+    // stop the thread and disconnect from the RBNB server
+    stopThread();
+    disconnect();
+    return true;
+  }
+
 }
