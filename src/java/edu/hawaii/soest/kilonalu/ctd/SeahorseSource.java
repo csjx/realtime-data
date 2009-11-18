@@ -357,7 +357,7 @@ public class SeahorseSource extends RBNBSource {
    * 
    * @see execute()
    */
-  private final int SLEEP_INTERVAL = 2000;
+  private final int SLEEP_INTERVAL = 5000;
   
   /**
    * Constructor - create an empty instance of the SeahorseSource object, using
