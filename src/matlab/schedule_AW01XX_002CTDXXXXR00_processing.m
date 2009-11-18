@@ -217,98 +217,98 @@ set(configuration,                                                     ...
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
                           % Figure 1                                 
-                          {'Ala Wai Canal, 1 Day Water Quality'      , ... % titlePrefix
-                           '86400'                                   , ... % duration
-                           {'temperature'                            , ... % xAxisVars
-                            'salinity'                               , ... 
-                            'chlorophyll'                            , ... 
-                            'turbidity'}                             , ... 
-                           {'serialdate'}                            , ... % yAxisVar
-                           '.3'                                      , ... % xTickStep
-                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}] , ... % tickFormat
-                           [{'.'},{'.'},{'.'},{'.'}]                 , ... % marker
-                           [{3.0},{3.0},{3.0},{3.0}]                 , ... % markerSize
-                           [                                          ...
-                             {[255/255 0       0      ]}             , ... % red
-                             {[0        0       255/255]}            , ... % blue
-                             {[0        255/255 0      ]}            , ... % green
-                             {[102/255  047/255 0      ]}              ... % brown
-                           ]                                         , ...
-                           '0'                                       , ... % include moving avg
-                           '1200'                                    , ... % moving avg duration
-                           [128/255 128/255 128/255]                 , ... % moving avg color: gray
-                           '1'                                         ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 2                                  
-                         {'Ala Wai Canal, 3 Day Water Quality'       , ... % titlePrefix
-                          '259200'                                   , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'chlorophyll'                             , ... 
-                           'turbidity'}                              , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '1'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]  , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'}]                  , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0}]                  , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}             , ... % green
-                            {[102/255  047/255 0      ]}               ... % brown
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 3                                  
-                         {'Ala Wai Canal, 7 Day Water Quality'       , ... % titlePrefix
-                          '604800'                                   , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'chlorophyll'                             , ... 
-                           'turbidity'}                              , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '1'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]  , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'}]                  , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0}]                  , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}             , ... % green
-                            {[102/255  047/255 0      ]}               ... % brown
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 4                                  
-                         {'Ala Wai Canal, 21 Day Water Quality'      , ... % titlePrefix
-                          '1814400'                                  , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'chlorophyll'                             , ... 
-                           'turbidity'}                              , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '3'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]  , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'}]                  , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0}]                  , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0        0       255/255]}             , ... % blue
-                            {[0        255/255 0      ]}             , ... % green
-                            {[102/255  047/255 0      ]}               ... % brown
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                       }                                               ...
+                          {'Ala Wai Canal (NS01), 1 Day Water Quality' , ... % titlePrefix
+                           '86400'                                     , ... % duration
+                           {'temperature'                              , ... % xAxisVars
+                            'salinity'                                 , ... 
+                            'chlorophyll'                              , ... 
+                            'turbidity'}                               , ... 
+                           {'serialdate'}                              , ... % yAxisVar
+                           '.3'                                        , ... % xTickStep
+                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]   , ... % tickFormat
+                           [{'.'},{'.'},{'.'},{'.'}]                   , ... % marker
+                           [{3.0},{3.0},{3.0},{3.0}]                   , ... % markerSize
+                           [                                            ...
+                             {[255/255 0       0      ]}               , ... % red
+                             {[0        0       255/255]}              , ... % blue
+                             {[0        255/255 0      ]}              , ... % green
+                             {[102/255  047/255 0      ]}                ... % brown
+                           ]                                           , ...
+                           '0'                                         , ... % include moving avg
+                           '1200'                                      , ... % moving avg duration
+                           [128/255 128/255 128/255]                   , ... % moving avg color: gray
+                           '1'                                           ... % moving avg linewidth
+                         }                                             , ...
+                         % Figure 2                                    
+                         {'Ala Wai Canal (NS01), 3 Day Water Quality'  , ... % titlePrefix
+                          '259200'                                     , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'}                                , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '1'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
+                          [{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}                 ... % brown
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
+                         % Figure 3                                    
+                         {'Ala Wai Canal (NS01), 7 Day Water Quality'  , ... % titlePrefix
+                          '604800'                                     , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'}                                , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '1'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
+                          [{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}                 ... % brown
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
+                         % Figure 4                                    
+                         {'Ala Wai Canal (NS01), 21 Day Water Quality' , ... % titlePrefix
+                          '1814400'                                    , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'}                                , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '3'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
+                          [{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}                 ... % brown
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
+                       }                                                 ...
 );
 
 % Set the timer specific configuration details for periodically running the code
