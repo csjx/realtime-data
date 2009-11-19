@@ -759,11 +759,46 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
         
         % Add the figure title to the top of the figure only
+        
+        % find the serialdate vector index from its position in dataVariableNames
+        serialDateArrayIndex =                        ...
+          find(                                       ...
+            strcmp(                                   ...
+              self.configuration.serialdateFieldName, ...
+              self.configuration.dataVariableNames    ...
+              )                                       ...
+            );
+
+        latestObservationTime = max(self.dataCellArray{serialDateArrayIndex});
+        
+        % round the observation period to the nearest timerInterval (i.e even 20 minute periods)
+        latestSeconds = str2num(datestr(latestObservationTime, 'SS'));
+        latestMinutes = str2num(datestr(latestObservationTime, 'MM'));
+        latestHour    = str2num(datestr(latestObservationTime, 'HH'));
+        latestDay     = str2num(datestr(latestObservationTime, 'dd'));
+        latestMonth   = str2num(datestr(latestObservationTime, 'mm'));
+        latestYear    = str2num(datestr(latestObservationTime, 'yyyy'));
+        if ( latestMinutes < 5)
+          latestMinutes = latestMinutes + 10;
+        end
+        
+        latestMinutes = round(latestMinutes/10) * 10;
+        remainder = mod(latestMinutes, self.configuration.timerInterval);
+        latestMinutes = latestMinutes + remainder;
+        
+        if ( latestMinutes == 60 )
+          latestMinutes = 0;
+          latestHour = latestHour + 1;
+        end
+        
+        % reset the latest observation time to the time rounded to the timerInterval
+        latestObservationTime = datenum([latestYear latestMonth latestDay latestHour latestMinutes 0]);
+        
         if ( plotNumber == 1 )
           titleText = [figureTitlePrefix ' : latest observation period: ' ...
-                      datestr(self.processTime - self.configuration.timerInterval/60/24, ...
+                      datestr(latestObservationTime - self.configuration.timerInterval/60/24, ...
                       'mm-dd-yyyy HH:MM') ' to ' ...
-                      datestr(self.processTime,'HH:MM')];
+                      datestr(latestObservationTime,'HH:MM')];
           title(titleText);
         end
         grid on; axhan = gca; 
