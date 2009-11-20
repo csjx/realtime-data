@@ -302,7 +302,7 @@ public class AdamDispatcher {
       // the list, creating an RBNB Source object for each sensor listed. Store
       // these objects in a HashMap for later referral.
       
-      this.sourceMap = new HashMap();
+      this.sourceMap = new HashMap<String, AdamSource>();
       
       List sensorList  = this.xmlConfiguration.getList("sensor.address");
       

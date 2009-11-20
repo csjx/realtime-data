@@ -273,7 +273,7 @@ public class AdamSource extends RBNBSource {
       // create a TreeMap to hold the voltageChannel and its associated
       // RBNB ChannelMap channel string.  When the RBNB ChannelMap is
       // populated, this TreeMap will be consulted
-      TreeMap<Integer, String> voltageChannelTreeMap = new TreeMap();
+      TreeMap<Integer, String> voltageChannelTreeMap = new TreeMap<Integer, String>();
       
       // create a character string to store characters from the voltage values
       StringBuilder decimalASCIISampleData = new StringBuilder();
