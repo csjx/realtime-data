@@ -55,6 +55,9 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.DecoderException;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
 
@@ -87,6 +90,11 @@ public class CTDParser {
    * The Logger instance used to log system messages 
    */
   static Logger logger = Logger.getLogger(CTDParser.class);
+  
+  /**
+   * An XML configuration object used to access CTD metadata reported in XML syntax
+   */
+  private XMLConfiguration xmlConfiguration;
   
   /*
    *  A field that stores the data file string input as a String
@@ -1079,6 +1087,15 @@ public class CTDParser {
    */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
     
+  /**
+   *  Constructor:  Builds an empty CTDParser object that can be populated manually.
+   *  This can be used to gradually build the CTDParser object from independent sections
+   *  of metadata gethered from the CTD using commands such as GetCD, GetSD, GetCC, GetEC,
+   *  and GetHD.  These commands are available in the Seabird firmare > 3.0f.
+   */
+  public CTDParser() {
+  }
+  
   /**
    *  Constructor:  Builds all of the components of the CTD data object from
    *  the String data being passed in.  The data string must contain the results 
