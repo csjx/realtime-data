@@ -1094,7 +1094,7 @@ public class CTDParser {
    *  the DS and DCAL commands.  The method handles both profile and moored
    *  modes, and builds metadata fields based on the data output format.
    */
-  private void setMetadata() throws ParseException {
+  public void setMetadata() throws ParseException {
     logger.debug("CTDParser.setMetadata() called.");
     
     // Are we in profile or moored mode?
