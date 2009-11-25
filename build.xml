@@ -71,6 +71,7 @@
         <not><available file="lib/RXTXcomm.jar"/></not>
         <not><available file="lib/turbine-3.9.0.jar"/></not>
         <not><available file="lib/utilities.jar"/></not>
+        <not><available file="lib/xercesImpl.jar"/></not>
       </or>
     </condition>
 
@@ -89,9 +90,10 @@
     <property name="rxtxjar"        value="${libdir}/RXTXcomm.jar"/>
     <property name="turbinejar"     value="${libdir}/turbine-3.9.0.jar"/>
     <property name="utiljar"        value="${libdir}/utilities.jar"/>
+    <property name="xercesjar"      value="${libdir}/utilities.jar"/>
     <!-- CLASSPATH -->
     <property name="cpath"      
-            value="${clijar}:${commhttpjar}:${mathjar}:${langjar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${turbinejar}:${utiljar}" />
+      value="${clijar}:${commhttpjar}:${mathjar}:${langjar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${turbinejar}:${utiljar}:${xercesjar}" />
     <echo message="classpath is:   ${cpath}"/>
   </target>
 
