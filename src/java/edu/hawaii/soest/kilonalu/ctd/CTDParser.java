@@ -559,6 +559,12 @@ public class CTDParser {
   /**  A field that stores the output format key as a String */
   public final String OUTPUT_FORMAT = "output format";
   
+  /*  A field that stores the temperature calibration format as a String */
+  private String temperatureCalibrationFormat;
+  
+  /**  A field that stores the temperature calibration format key as a String */
+  public final String TEMPERATURE_CALIBRATION_FORMAT = "@format";
+  
   /*  A field that stores the temperature calibration date as a String */
   private String temperatureCalibrationDate;
   
@@ -594,6 +600,12 @@ public class CTDParser {
   
   /**  A field that stores the temperature offset coefficient key as a String */
   public final String TEMPERATURE_OFFSET_COEFFICIENT = "TOFFSET";
+  
+  /*  A field that stores the conductivity calibration format as a String */
+  private String conductivityCalibrationFormat;
+  
+  /**  A field that stores the conductivity calibration format key as a String */
+  public final String CONDUCTIVITY_CALIBRATION_FORMAT = "@format";
   
   /*  A field that stores the conductivity calibration date as a String */
   private String conductivityCalibrationDate;
@@ -649,11 +661,29 @@ public class CTDParser {
   /**  A field that stores the conductivity coefficient CSLOPE key as a String */
   public final String CONDUCTIVITY_COEFFICIENT_CSLOPE = "CSLOPE";
   
+  /*  A field that stores the conductivity coefficient WBOTC as a String */
+  private String conductivityCoefficientWBOTC;
+  
+  /**  A field that stores the conductivity coefficient WBOTC key as a String */
+  public final String CONDUCTIVITY_COEFFICIENT_WBOTC = "WBOTC";
+  
   /*  A field that stores the pressure serial number as a String */
   private String pressureSerialNumber;
   
   /**  A field that stores the pressure serial number key as a String */
   public final String PRESSURE_SERIAL_NUMBER = "pressure S/N";
+  
+  /*  A field that stores the pressure calibration date as a String */
+  private String pressureCalibrationDate;
+  
+  /**  A field that stores the pressure calibration date key as a String */
+  public final String PRESSURE_CALIBRATION_DATE = "pressure";
+  
+  /*  A field that stores the pressure calibration format as a String */
+  private String pressureCalibrationFormat;
+  
+  /**  A field that stores the pressure calibration format key as a String */
+  public final String PRESSURE_CALIBRATION_FORMAT = "@format";
   
   /*  A field that stores the pressure coefficient PA0 as a String */
   private String pressureCoefficientPA0;
@@ -1883,7 +1913,8 @@ public class CTDParser {
       logger.debug(xmlUtil.getDOMTreeAsXPathMap(xmlMetadata.getDocumentElement()));
       
       // set the configuration metadata fields
-      if ( this.xmlMetadata.getDocumentElement().getTagName().equals("ConfigurationData") ) {
+      if ( this.xmlMetadata.getDocumentElement().getTagName()
+           .equals("ConfigurationData") ) {
         
         // Extract the metadata fields from the XML and populate the fields
         
@@ -1981,7 +2012,8 @@ public class CTDParser {
         logger.info("Synchronization mode state state is: " + this.synchronizationMode);
         
       // add the status metadata fields to the metadataValuesMap
-      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("StatusData") ) {
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName()
+                  .equals("StatusData") ) {
          
          this.deviceType = 
            xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
@@ -2006,7 +2038,8 @@ public class CTDParser {
            xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_INSTRUMENT_EVENTS)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of instrument events is: " + this.numberOfInstrumentEvents);
+         logger.info("Number of instrument events is: " + 
+                     this.numberOfInstrumentEvents);
          
          // set the main battery voltage field
          this.mainBatteryVoltage = 
@@ -2041,14 +2074,16 @@ public class CTDParser {
            xmlUtil.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_AVAILABLE_SAMPLES)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of available samples in memory is: " + this.numberOfAvailableSamples);
+         logger.info("Number of available samples in memory is: " + 
+                     this.numberOfAvailableSamples);
       
          // set the number of bytes per sample in memory field
          this.sampleByteLength = 
            xmlUtil.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.SAMPLE_BYTE_LENGTH)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of bytes per sample in memory is: " + this.sampleByteLength);
+         logger.info("Number of bytes per sample in memory is: " + 
+                     this.sampleByteLength);
       
          // set the autonomous sampling state field
          this.autonomousSampling = 
@@ -2058,11 +2093,274 @@ public class CTDParser {
          logger.info("Autonomous sampling state is: " + this.autonomousSampling);
       
       // add the calibration metadata fields to the metadataValuesMap
-      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("CalibrationCoefficients") ) {
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName()
+                    .equals("CalibrationCoefficients") ) {
         
         NodeList calibrationList = 
           xmlUtil.getNodeListWithXPath(this.xmlMetadata.getDocumentElement(), 
-                                       "/CalibrationCoefficients/Calibration");
+                                       "//CalibrationCoefficients/Calibration");
+        
+        // iterate through each calibration and set the metadata fields
+        for (int itemNumber = 0; 
+                 itemNumber < calibrationList.getLength(); 
+                 itemNumber++ ) {
+          Node calibrationNode = calibrationList.item(itemNumber);
+          String idString = 
+            xmlUtil.getAttributeNodeWithXPath(calibrationNode, "@id")
+              .getNodeValue().trim();
+          
+          if ( idString.equals("Temperature") ) {
+            
+            // set the temperature calibration format field
+            this.temperatureCalibrationFormat = 
+              xmlUtil.getAttributeNodeWithXPath(calibrationNode, 
+                this.TEMPERATURE_CALIBRATION_FORMAT).getNodeValue().trim();
+            logger.info("Temperature calibration format is: " + 
+                        this.temperatureCalibrationFormat);
+            
+            // set the temperature serial number field
+            this.temperatureSerialNumber = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "SerialNum").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature serial number is: " + 
+                        this.temperatureSerialNumber);
+            
+            // set the temperature calibration date field
+            this.temperatureCalibrationDate = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "CalDate").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature calibration date is: " + 
+                        this.temperatureCalibrationDate);
+            
+            // set the temperature calibration A0 field
+            this.temperatureCoefficientTA0 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "A0").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature calibration A0 is: " + 
+                        this.temperatureCoefficientTA0);
+            
+            // set the temperature calibration A1 field
+            this.temperatureCoefficientTA1 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "A1").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature calibration A1 is: " + 
+                        this.temperatureCoefficientTA1);
+            
+            // set the temperature calibration A2 field
+            this.temperatureCoefficientTA2 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "A2").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature calibration A2 is: " + 
+                        this.temperatureCoefficientTA2);
+            
+            // set the temperature calibration A3 field
+            this.temperatureCoefficientTA3 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "A3").getFirstChild().getNodeValue().trim();
+            logger.info("Temperature calibration A3 is: " + 
+                        this.temperatureCoefficientTA3);
+            
+          } else if ( idString.equals("Conductivity") ) {
+            
+            // set the conductivity calibration format field
+            this.conductivityCalibrationFormat = 
+              xmlUtil.getAttributeNodeWithXPath(calibrationNode, 
+                this.CONDUCTIVITY_CALIBRATION_FORMAT).getNodeValue().trim();
+            logger.info("Conductivity calibration format is: " + 
+                        this.conductivityCalibrationFormat);
+            
+            // set the conductivity serial number field
+            this.conductivitySerialNumber = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "SerialNum").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity serial number is: " + 
+                        this.conductivitySerialNumber);
+            
+            // set the conductivity calibration date field
+            this.conductivityCalibrationDate = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "CalDate").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration date is: " + 
+                        this.conductivityCalibrationDate);
+            
+            // set the conductivity calibration G field
+            this.conductivityCoefficientG = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "G").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration G is: " + 
+                        this.conductivityCoefficientG);
+            
+            // set the conductivity calibration H field
+            this.conductivityCoefficientH = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "H").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration H is: " + 
+                        this.conductivityCoefficientH);
+            
+            // set the conductivity calibration I field
+            this.conductivityCoefficientI = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "I").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration I is: " + 
+                        this.conductivityCoefficientI);
+            
+            // set the conductivity calibration J field
+            this.conductivityCoefficientJ = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "J").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration J is: " + 
+                        this.conductivityCoefficientJ);
+            
+            // set the conductivity calibration PCOR field
+            this.conductivityCoefficientCPCOR = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PCOR").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration PCOR is: " + 
+                        this.conductivityCoefficientCPCOR);
+
+            // set the conductivity calibration TCOR field
+            this.conductivityCoefficientCTCOR = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "TCOR").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration TCOR is: " + 
+                        this.conductivityCoefficientCTCOR);
+            
+            // set the conductivity calibration WBOTC field
+            this.conductivityCoefficientWBOTC = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "WBOTC").getFirstChild().getNodeValue().trim();
+            logger.info("Conductivity calibration WBOTC is: " + 
+                        this.conductivityCoefficientWBOTC);
+
+          } else if ( idString.equals("Pressure") ) {
+            
+            // set the pressure calibration format field
+            this.pressureCalibrationFormat = 
+              xmlUtil.getAttributeNodeWithXPath(calibrationNode, 
+                this.PRESSURE_CALIBRATION_FORMAT).getNodeValue().trim();
+            logger.info("Pressure calibration format is: " + 
+                        this.pressureCalibrationFormat);
+            
+            // set the pressure serial number field
+            this.pressureSerialNumber = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "SerialNum").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure serial number is: " + 
+                        this.pressureSerialNumber);
+            
+            // set the pressure calibration date field
+            this.pressureCalibrationDate = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "CalDate").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration date is: " + 
+                        this.pressureCalibrationDate);
+            
+            // set the pressure calibration PA0 field
+            this.pressureCoefficientPA0 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PA0").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PA0 is: " + 
+                        this.pressureCoefficientPA0);
+            
+            // set the pressure calibration PA1 field
+            this.pressureCoefficientPA1 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PA1").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PA1 is: " + 
+                        this.pressureCoefficientPA1);
+            
+            // set the pressure calibration PA2 field
+            this.pressureCoefficientPA2 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PA2").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PA2 is: " + 
+                        this.pressureCoefficientPA2);
+            
+            // set the pressure calibration PTCA0 field
+            this.pressureCoefficientPTCA0 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCA0").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCA0 is: " + 
+                        this.pressureCoefficientPTCA0);
+            
+            // set the pressure calibration PTCA1 field
+            this.pressureCoefficientPTCA1 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCA1").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCA1 is: " + 
+                        this.pressureCoefficientPTCA1);
+
+            // set the pressure calibration PTCA2 field
+            this.pressureCoefficientPTCA2 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCA2").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCA2 is: " + 
+                        this.pressureCoefficientPTCA2);
+            
+            // set the pressure calibration PTCB0 field
+            this.pressureCoefficientPTCB0 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCB0").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCB0 is: " + 
+                        this.pressureCoefficientPTCB0);
+            
+            // set the pressure calibration PTCB1 field
+            this.pressureCoefficientPTCB1 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCB1").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCB1 is: " + 
+                        this.pressureCoefficientPTCB1);
+            
+            // set the pressure calibration PTCB2 field
+            this.pressureCoefficientPTCB2 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTCB2").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTCB2 is: " + 
+                        this.pressureCoefficientPTCB2);
+
+            // set the pressure calibration PTEMPA0 field
+            this.pressureCoefficientPTEMPA0 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTEMPA0").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTEMPA0 is: " + 
+                        this.pressureCoefficientPTEMPA0);
+            
+            // set the pressure calibration PTEMPA1 field
+            this.pressureCoefficientPTEMPA1 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTEMPA1").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTEMPA1 is: " + 
+                        this.pressureCoefficientPTEMPA1);
+            
+            // set the pressure calibration PTEMPA2 field
+            this.pressureCoefficientPTEMPA2 = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PTEMPA2").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure calibration PTEMPA2 is: " + 
+                        this.pressureCoefficientPTEMPA2);
+
+            // set the pressure calibration POFFSET field
+            this.pressureOffsetCoefficient = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "POFFSET").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure offset calibration is: " + 
+                        this.pressureOffsetCoefficient);
+            
+            // set the pressure sensor range field
+            this.pressureSensorRange = 
+              xmlUtil.getNodeWithXPath(calibrationNode, 
+                "PRANGE").getFirstChild().getNodeValue().trim();
+            logger.info("Pressure sensor range is: " + 
+                        this.pressureSensorRange);
+
+          } else {
+            throw new ParseException(
+              "There was an error parsing the XML string. "   +
+              "The calibration coefficient was not recognized. " +
+              "The identifier was: " + idString, 0);
+            
+          }
+        }
         
       // add the event metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("EventCounters") ) {
