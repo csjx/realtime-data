@@ -29,6 +29,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */ 
 package edu.hawaii.soest.kilonalu.ctd;
+
+import edu.ucsb.nceas.utilities.XMLUtilities;
+
+import java.io.IOException;
+import java.io.StringReader;
+
 import java.math.BigInteger;
 
 import java.nio.ByteBuffer;
@@ -52,6 +58,8 @@ import java.util.regex.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.DecoderException;
 
@@ -64,6 +72,10 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 /**
  *  A class that represents a sample of data produced by
@@ -84,9 +96,6 @@ public class CTDParser {
   
   /**  The Logger instance used to log system messages  */
   static Logger logger = Logger.getLogger(CTDParser.class);
-  
-  /**  An XML configuration object used to access CTD metadata reported in XML syntax */
-  private XMLConfiguration xmlConfiguration;
   
   /*  A field that stores the data file string input as a String */
   private String dataString = "";
@@ -159,6 +168,12 @@ public class CTDParser {
   
   /**  A field that stores the primary name/value pair delimiter as a String */
   public final String SECONDARY_PAIR_DELIMITER = "=";
+
+  /*  A field that stores the CTD synchronization mode as a String */
+  private String synchronizationMode;
+  
+  /**  A field that stores the CTD synchronization mode key as a String */
+  public final String SYNCHRONIZATION_MODE = "SyncMode";
 
   /*  A field that stores the CTD sampling mode as a String */
   private String samplingMode;
@@ -298,6 +313,30 @@ public class CTDParser {
   /**  A field that stores the instrument deployment notes key as a String */
   public final String DEPLOYMENT_NOTES = "Notes";
   
+  /*  A field that stores the instrument device type as a String */
+  private String deviceType;
+  
+  /**  A field that stores the instrument device type key as a String */
+  public final String DEVICE_TYPE = "DeviceType";
+  
+  /*  A field that stores the instrument serial number as a String */
+  private String instrumentSerialNumber;
+  
+  /**  A field that stores the instrument serial number key as a String */
+  public final String INSTRUMENT_SERIAL_NUMBER = "InstrumentSerialNumber";
+  
+  /*  A field that stores the pressure installed value as a String */
+  private String pressureInstalled;
+  
+  /**  A field that stores the pressure installed key as a String */
+  public final String PRESSURE_INSTALLED = "PressureInstalled";
+  
+  /*  A field that stores the pump installed value as a String */
+  private String pumpInstalled;
+  
+  /**  A field that stores the pump installed key as a String */
+  public final String PUMP_INSTALLED = "PumpInstalled";
+  
   /*  A field that stores the main battery voltage as a String */
   private String mainBatteryVoltage;
   
@@ -369,6 +408,18 @@ public class CTDParser {
   
   /**  A field that stores the number of measurements per sample key as a String */
   public final String MEASUREMENTS_PER_SAMPLE = "number of measurements per sample";
+  
+  /*  A field that stores the output salinity state as a String */
+  private String outputSalinity;
+  
+  /**  A field that stores the output salinity state key as a String */
+  public final String OUTPUT_SALINITY = "OutputSalinity";
+  
+  /*  A field that stores the output sound velocity state as a String */
+  private String outputSoundVelocity;
+  
+  /**  A field that stores the output salinity state key as a String */
+  public final String OUTPUT_SOUND_VELOCITY = "OutputSV";
   
   /*  A field that stores the transmit real-time state as a String */
   private String transmitRealtime;
@@ -662,6 +713,9 @@ public class CTDParser {
   /*  A boolean field indicating if a pressure sensor is present on the instrument */
   private boolean hasPressure = false;
   
+  /*  A boolean field indicating if a pump is present on the instrument */
+  private boolean hasPump = false;
+  
   /*  A boolean field indicating if the pressure sensor is a strain gauge sensor */
   private boolean hasStrainGaugePressure = false;
   
@@ -707,10 +761,13 @@ public class CTDParser {
   /*  A field that stores the raw voltage channel zero field name as a string */
   public final String RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME = "voltageChannelThree";  
   
-   /** 
-    * The date format for the timestamp applied to the TChain sample 04 Aug 2008 09:15:01
-    */
-   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  /** An XML document object used to access CTD metadata reported in XML syntax */
+  private Document xmlMetadata;
+  
+  /** 
+   * The date format for the timestamp applied to the TChain sample 04 Aug 2008 09:15:01
+   */
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
   
   /**  The timezone used for the sample date */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
@@ -722,6 +779,9 @@ public class CTDParser {
    *  and GetHD.  These commands are available in the Seabird firmare > 3.0f.
    */
   public CTDParser() {
+    this.metadataValuesMap = new TreeMap<String, String>();
+    this.dataValuesMap     = new TreeMap<Integer, String>();
+    
   }
   
   /**
@@ -1080,7 +1140,13 @@ public class CTDParser {
     
     // handle moored mode
     } else if ( this.samplingMode.equals("moored") ) {
-  
+      
+      // handle converted engineering data
+      if ( this.outputFormat.equals("converted engineering") ) {
+      
+        // TODO: process engineering data
+      }
+      
     } else {
       throw new ParseException("There was an error parsing the data string. "  +
                                "The sampling mode is not recognized.", 0);
@@ -1768,6 +1834,156 @@ public class CTDParser {
     }
            
   }  
+  
+  /*
+   *  A method used to parse the various XML metadata formats from the instrument.
+   *  This method parses the output of the following instrument commands:
+   *  GetCD, GetSD, GetCC, GetEC, and GetHD.
+   *
+   * @param xmlString - the CTD's XML output string containing the metadata values
+   */
+  public void setMetadata(String xmlString) throws ParseException {
+    logger.debug("CTDParser.parseXMLMetadata() called.");
+    
+    try {
+      // create an XML Document object from the instrument XML string
+      XMLUtilities xmlUtil   = new XMLUtilities();
+      StringReader xmlReader = new StringReader(xmlString);
+      this.xmlMetadata = xmlUtil.getXMLReaderAsDOMDocument(xmlReader);
+      logger.debug(xmlUtil.getDOMTreeAsXPathMap(xmlMetadata.getDocumentElement()));
+      
+      // set the configuration metadata fields
+      if ( this.xmlMetadata.getDocumentElement().getTagName().equals("ConfigurationData") ) {
+        
+        // Extract the metadata fields from the XML and populate the fields
+        
+        // set the device type field
+        this.deviceType = 
+          xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/@" + this.DEVICE_TYPE).getNodeValue().trim();
+        logger.info("Device type is: " + this.deviceType);
+        
+        // set the instrument serial number field
+        this.instrumentSerialNumber = 
+          xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/@" + this.INSTRUMENT_SERIAL_NUMBER).getNodeValue().trim();
+        logger.info("Instrument serial number is: " + this.instrumentSerialNumber);
+        
+        // set the pressure installed field
+        this.pressureInstalled = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/" + this.PRESSURE_INSTALLED)
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Pressure installed is: " + this.pressureInstalled);
+          
+        if (this.pressureInstalled.equals("yes") ) {
+          this.hasPressure = true;
+          
+        }
+
+        // set the pump installed field
+        this.pumpInstalled = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/" + this.PUMP_INSTALLED)
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Pump installed is: " + this.pumpInstalled);
+        
+        if (this.pumpInstalled.equals("yes") ) {
+          this.hasPump = true;
+        
+        }
+      
+        // set the minimum conductivity frequency field
+        this.minimumConductivityFrequency = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/" + this.MINIMUM_CONDUCTIVITY_FREQUENCY)
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Minimum conductivity frequency is: " + this.minimumConductivityFrequency);
+        
+        // set the output format field
+        this.outputFormat = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/SampleDataFormat")
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Output format is: " + this.outputFormat);
+        
+        // set the output salinity state field
+        this.outputSalinity = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/" + this.OUTPUT_SALINITY)
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Output salinity state is: " + this.outputSalinity);
+        
+        // set the output sound velocity state field
+        this.outputSoundVelocity = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/" + this.OUTPUT_SOUND_VELOCITY)
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Output sound velocity state is: " + this.outputSoundVelocity);
+        
+        // set the output transmit real time state field
+        this.transmitRealtime = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/TxRealTime")
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Transmit real time state is: " + this.transmitRealtime);
+        
+        if (this.transmitRealtime.equals("yes") ) {
+          
+          // set the sampling mode to moored since profile mode doesn't support this
+          this.samplingMode = "moored";
+          logger.info("Sampling mode is: " + this.samplingMode);
+          
+        }
+        
+        // set the sample interval field
+        this.sampleInterval = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/SampleInterval")
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Sample interval is: " + this.sampleInterval);
+        
+        // set the synchronization mode state field
+        this.synchronizationMode = 
+          xmlUtil.getNodeWithXPath(xmlMetadata, 
+          "//ConfigurationData/SyncMode")
+          .getFirstChild().getNodeValue().trim();
+        logger.info("Synchronization mode state state is: " + this.synchronizationMode);
+        
+      // add the status metadata fields to the metadataValuesMap
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("StatusData") ) {
+         
+         
+      // add the calibration metadata fields to the metadataValuesMap
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("CalibrationCoefficients") ) {
+        
+        NodeList calibrationList = 
+          xmlUtil.getNodeListWithXPath(this.xmlMetadata.getDocumentElement(), 
+                                       "/CalibrationCoefficients/Calibration");
+        
+      // add the event metadata fields to the metadataValuesMap
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("EventCounters") ) {
+        
+      // add the hardware metadata fields to the metadataValuesMap
+      } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("HardwareData") ) {
+        
+      } else {
+        throw new ParseException("The XML metadata is not recognized.", 0);
+      }
+    
+    } catch ( IOException ioe ) {
+      logger.info("There was an error reading the XML metadata. " +
+        "The error message was: " + ioe.getMessage());
+      throw new ParseException(ioe.getMessage(), 0);
+      
+    } catch ( TransformerException te ) {
+      logger.info("There was an error creating the XML configuration. " +
+        "The error message was: " + te.getMessage());
+        throw new ParseException(te.getMessage(), 0);
+      
+    }
+    
+  }                                                  
   
   /**¬
    * A method that returns the SamplingMode field
