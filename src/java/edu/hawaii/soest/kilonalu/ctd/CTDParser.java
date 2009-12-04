@@ -325,6 +325,18 @@ public class CTDParser {
   /**  A field that stores the instrument serial number key as a String */
   public final String INSTRUMENT_SERIAL_NUMBER = "InstrumentSerialNumber";
   
+  /*  A field that stores the instrument date time as a String */
+  private String instrumentDateTime;
+  
+  /**  A field that stores the instrument date time key as a String */
+  public final String INSTRUMENT_DATE_TIME = "DateTime";
+  
+  /*  A field that stores the number of instrument events as a String */
+  private String numberOfInstrumentEvents;
+  
+  /**  A field that stores the number of instrument events key as a String */
+  public final String NUMBER_OF_INSTRUMENT_EVENTS = "EventSummary/@numEvents";
+  
   /*  A field that stores the pressure installed value as a String */
   private String pressureInstalled;
   
@@ -385,6 +397,12 @@ public class CTDParser {
   /**  A field that stores the number of scans to average key as a String */
   public final String NUMBER_OF_SCANS_TO_AVERAGE = "number of scans to average";
   
+  /*  A field that stores the number of bytes in memory as a String */
+  private String numberOfBytes;
+  
+  /**  A field that stores the number of samples key as a String */
+  public final String NUMBER_OF_BYTES = "MemorySummary/Bytes";
+  
   /*  A field that stores the number of samples as a String */
   private String numberOfSamples;
   
@@ -396,6 +414,12 @@ public class CTDParser {
   
   /**  A field that stores the number of available samples key as a String */
   public final String NUMBER_OF_AVAILABLE_SAMPLES = "free";
+  
+  /*  A field that stores the sample length in bytes as a String */
+  private String sampleByteLength;
+  
+  /**  A field that stores the sample length in bytes key as a String */
+  public final String SAMPLE_BYTE_LENGTH = "MemorySummary/SampleLength";
   
   /*  A field that stores the sample interval as a String */
   private String sampleInterval;
@@ -450,6 +474,12 @@ public class CTDParser {
   
   /**  A field that stores the automatic logging state key as a String */
   public final String AUTOMATIC_LOGGING = "autorun";
+  
+  /**  A field that stores the autonomous sampling state as a String */
+  private String autonomousSampling;
+  
+  /**  A field that stores the autonomous sampling state key as a String */
+  public final String AUTONOMOUS_SAMPLING = "AutonomousSampling";
   
   /*  A field that stores the ignore magnetic switch state as a String */
   private String ignoreMagneticSwitch;
@@ -1953,7 +1983,80 @@ public class CTDParser {
       // add the status metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("StatusData") ) {
          
+         this.deviceType = 
+           xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
+           "//StatusData/@" + this.DEVICE_TYPE).getNodeValue().trim();
+         logger.info("Device type is: " + this.deviceType);
+
+         // set the instrument serial number field
+         this.instrumentSerialNumber = 
+           xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
+           "//StatusData/@" + this.INSTRUMENT_SERIAL_NUMBER).getNodeValue().trim();
+         logger.info("Instrument serial number is: " + this.instrumentSerialNumber);
+
+         // set the instrument date time field
+         this.instrumentDateTime = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.INSTRUMENT_DATE_TIME)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Instrument date time is: " + this.instrumentDateTime);
          
+         // set the number of instrument events field
+         this.numberOfInstrumentEvents = 
+           xmlUtil.getAttributeNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.NUMBER_OF_INSTRUMENT_EVENTS)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Number of instrument events is: " + this.numberOfInstrumentEvents);
+         
+         // set the main battery voltage field
+         this.mainBatteryVoltage = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/Power/vMain")
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Main battery voltage is: " + this.mainBatteryVoltage);
+      
+         // set the lithium battery voltage field
+         this.lithiumBatteryVoltage = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/Power/vLith")
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
+      
+         // set the number of bytes in memory field
+         this.numberOfBytes = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.NUMBER_OF_BYTES)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Number of bytes in memory is: " + this.numberOfBytes);
+      
+         // set the number of samples in memory field
+         this.numberOfSamples = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.NUMBER_OF_SAMPLES)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Number of samples in memory is: " + this.numberOfSamples);
+      
+         // set the number of available samples in memory field
+         this.numberOfAvailableSamples = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.NUMBER_OF_AVAILABLE_SAMPLES)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Number of available samples in memory is: " + this.numberOfAvailableSamples);
+      
+         // set the number of bytes per sample in memory field
+         this.sampleByteLength = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.SAMPLE_BYTE_LENGTH)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Number of bytes per sample in memory is: " + this.sampleByteLength);
+      
+         // set the autonomous sampling state field
+         this.autonomousSampling = 
+           xmlUtil.getNodeWithXPath(xmlMetadata, 
+           "//StatusData/" + this.AUTONOMOUS_SAMPLING)
+           .getFirstChild().getNodeValue().trim();
+         logger.info("Autonomous sampling state is: " + this.autonomousSampling);
+      
       // add the calibration metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("CalibrationCoefficients") ) {
         
