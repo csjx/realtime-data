@@ -2487,22 +2487,22 @@ public class CTDParser {
   /**
    * A method that returns the InstrumentLatitude field
    */
-  public String getInstrumentLatitude() {
-    return this.instrumentLatitude;
+  public double getInstrumentLatitude() {
+    return new Double(this.instrumentLatitude).doubleValue();
   }
   
   /**
    * A method that returns the InstrumentLongitude field
    */
-  public String getInstrumentLongitude() {
-    return this.instrumentLongitude;
+  public double getInstrumentLongitude() {
+    return new Double(this.instrumentLongitude).doubleValue();
   }
   
   /**
    * A method that returns the DepthSounding field
    */
-  public String getDepthSounding() {
-    return this.depthSounding;
+  public double getDepthSounding() {
+    return new Double(this.depthSounding).doubleValue();
   }
   
   /**
@@ -2529,43 +2529,130 @@ public class CTDParser {
   /**
    * A method that returns the MainBatteryVoltage field
    */
-  public String getMainBatteryVoltage() {
-    return this.mainBatteryVoltage;
+  public double getMainBatteryVoltage() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.mainBatteryVoltage.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.mainBatteryVoltage.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the mainBatteryVoltage " + 
+                   "value.  The value is: " + this.mainBatteryVoltage);
+      return value;
+    
+    }
   }
   
   /**
    * A method that returns the LithiumBatteryVoltage field
    */
-  public String getLithiumBatteryVoltage() {
-    return this.lithiumBatteryVoltage;
+  public double getLithiumBatteryVoltage() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.lithiumBatteryVoltage.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.lithiumBatteryVoltage.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the lithiumBatteryVoltage " + 
+                   "value.  The value is: " + this.lithiumBatteryVoltage);
+      return value;
+      
+    }
   }
   
   /**
    * A method that returns the OperatingCurrent field
    */
-  public String getOperatingCurrent() {
-    return this.operatingCurrent;
+  public double getOperatingCurrent() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.operatingCurrent.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.operatingCurrent.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the operatingCurrent " + 
+                   "value.  The value is: " + this.operatingCurrent);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PumpCurrent field
    */
-  public String getPumpCurrent() {
-    return this.pumpCurrent;
+  public double getPumpCurrent() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.pumpCurrent).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pumpCurrent.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pumpCurrent " + 
+                   "value.  The value is: " + this.pumpCurrent);
+      return value;
+    }
   }
   
   /**
    * A method that returns the Channels01ExternalCurrent field
    */
-  public String getChannels01ExternalCurrent() {
-    return this.channels01ExternalCurrent;
+  public double getChannels01ExternalCurrent() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.channels01ExternalCurrent).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.channels01ExternalCurrent.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the channels01ExternalCurrent " + 
+                   "value.  The value is: " + this.channels01ExternalCurrent);
+      return value;
+    }
   }
   
   /**
    * A method that returns the Channels23ExternalCurrent field
    */
-  public String getChannels23ExternalCurrent() {
-    return this.channels23ExternalCurrent;
+  public double getChannels23ExternalCurrent() {
+    double value =0d;
+    
+    try {
+      value = new Double(this.channels23ExternalCurrent).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.channels23ExternalCurrent.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the channels23ExternalCurrent " + 
+                   "value.  The value is: " + this.channels23ExternalCurrent);
+      return value;
+    
+    }
   }
   
   /**
@@ -2578,36 +2665,106 @@ public class CTDParser {
   /**
    * A method that returns the NumberOfScansToAverage field
    */
-  public String getNumberOfScansToAverage() {
-    return this.numberOfScansToAverage;
+  public int getNumberOfScansToAverage() {
+    int value = 0;
+    try {
+      value = new Integer(this.numberOfScansToAverage.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the numberOfScansToAverage " + 
+                   "value.  The value is: " + this.numberOfScansToAverage);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the numberOfScansToAverage " + 
+                   "value.  The value is: " + this.numberOfScansToAverage);
+      return value;
+    }
   }
   
   /**
    * A method that returns the NumberOfSamples field
    */
-  public String getNumberOfSamples() {
-    return this.numberOfSamples;
+  public int getNumberOfSamples() {
+    int value = 0;
+    try {
+      value = new Integer(this.numberOfSamples.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the numberOfSamples " + 
+                   "value.  The value is: " + this.numberOfSamples);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the numberOfSamples " + 
+                   "value.  The value is: " + this.numberOfSamples);
+      return value;
+    }
   }
   
   /**
    * A method that returns the NumberOfAvailableSamples field
    */
-  public String getNumberOfAvailableSamples() {
-    return this.numberOfAvailableSamples;
+  public int getNumberOfAvailableSamples() {
+    int value = 0;
+    try {
+      value = new Integer(this.numberOfAvailableSamples.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the numberOfAvailableSamples " + 
+                   "value.  The value is: " + this.numberOfAvailableSamples);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the numberOfAvailableSamples " + 
+                   "value.  The value is: " + this.numberOfAvailableSamples);
+      return value;
+    }
   }
   
   /**
    * A method that returns the SampleInterval field
    */
-  public String getSampleInterval() {
-    return this.sampleInterval;
+  public int getSampleInterval() {
+    int value = 0;
+    try {
+      value = new Integer(this.sampleInterval.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the sampleInterval " + 
+                   "value.  The value is: " + this.sampleInterval);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the sampleInterval " + 
+                   "value.  The value is: " + this.sampleInterval);
+      return value;
+    }
   }
   
   /**
    * A method that returns the MeasurementsPerSample field
    */
-  public String getMeasurementsPerSample() {
-    return this.measurementsPerSample;
+  public int getMeasurementsPerSample() {
+    int value = 0;
+    try {
+      value = new Integer(this.measurementsPerSample.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the measurementsPerSample " + 
+                   "value.  The value is: " + this.measurementsPerSample);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the measurementsPerSample " + 
+                   "value.  The value is: " + this.measurementsPerSample);
+      return value;
+    }
   }
   
   /**
@@ -2620,22 +2777,64 @@ public class CTDParser {
   /**
    * A method that returns the NumberOfCasts field
    */
-  public String getNumberOfCasts() {
-    return this.numberOfCasts;
+  public int getNumberOfCasts() {
+    int value = 0;
+    try {
+      value = new Integer(this.numberOfCasts.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the numberOfCasts " + 
+                   "value.  The value is: " + this.numberOfCasts);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the numberOfCasts " + 
+                   "value.  The value is: " + this.numberOfCasts);
+      return value;
+    }
   }
   
   /**
    * A method that returns the MinimumConductivityFrequency field
    */
-  public String getMinimumConductivityFrequency() {
-    return this.minimumConductivityFrequency;
+  public int getMinimumConductivityFrequency() {
+    int value = 0;
+    try {
+      value = new Integer(this.minimumConductivityFrequency.trim()).intValue();
+      return value;
+      
+    } catch ( NumberFormatException nfe ) {
+      logger.debug("There was a problem parsing the minimumConductivityFrequency " + 
+                   "value.  The value is: " + this.minimumConductivityFrequency);
+      return value;
+    
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the minimumConductivityFrequency " + 
+                   "value.  The value is: " + this.minimumConductivityFrequency);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PumpDelay field
    */
-  public String getPumpDelay() {
-    return this.pumpDelay;
+  public int getPumpDelay() {
+    int value =0;
+    
+    try {
+      value = new Integer(this.pumpDelay.trim()).intValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pumpDelay.trim().split(" ");
+      return new Integer(strParts[0]).intValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pumpDelay " + 
+                   "value.  The value is: " + this.pumpDelay);
+      return value;
+    }
   }
   
   /**
@@ -2747,35 +2946,105 @@ public class CTDParser {
    * A method that returns the TemperatureCoefficientTA0 field
    */
   public double getTemperatureCoefficientTA0() {
-    return new Double(this.temperatureCoefficientTA0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.temperatureCoefficientTA0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.temperatureCoefficientTA0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the temperatureCoefficientTA0 " + 
+                   "value.  The value is: " + this.temperatureCoefficientTA0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the TemperatureCoefficientTA1 field
    */
   public double getTemperatureCoefficientTA1() {
-    return new Double(this.temperatureCoefficientTA1).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.temperatureCoefficientTA1.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.temperatureCoefficientTA1.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the temperatureCoefficientTA1 " + 
+                   "value.  The value is: " + this.temperatureCoefficientTA1);
+      return value;
+    }
   }
   
   /**
    * A method that returns the TemperatureCoefficientTA2 field
    */
   public double getTemperatureCoefficientTA2() {
-    return new Double(this.temperatureCoefficientTA2).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.temperatureCoefficientTA2.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.temperatureCoefficientTA2.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the temperatureCoefficientTA2 " + 
+                   "value.  The value is: " + this.temperatureCoefficientTA2);
+      return value;
+    }
   }
   
   /**
    * A method that returns the TemperatureCoefficientTA3 field
    */
   public double getTemperatureCoefficientTA3() {
-    return new Double(this.temperatureCoefficientTA3).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.temperatureCoefficientTA3.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.temperatureCoefficientTA3.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the temperatureCoefficientTA3 " + 
+                   "value.  The value is: " + this.temperatureCoefficientTA3);
+      return value;
+    }
   }
   
   /**
    * A method that returns the TemperatureOffsetCoefficient field
    */
   public double getTemperatureOffsetCoefficient() {
-    return new Double(this.temperatureOffsetCoefficient).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.temperatureOffsetCoefficient.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.temperatureOffsetCoefficient.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the temperatureOffsetCoefficient " + 
+                   "value.  The value is: " + this.temperatureOffsetCoefficient);
+      return value;
+    }
   }
   
   /**
@@ -2789,56 +3058,168 @@ public class CTDParser {
    * A method that returns the ConductivityCoefficientG field
    */
   public double getConductivityCoefficientG() {
-    return new Double(this.conductivityCoefficientG).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientG.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientG.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientG " + 
+                   "value.  The value is: " + this.conductivityCoefficientG);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientH field
    */
   public double getConductivityCoefficientH() {
-    return new Double(this.conductivityCoefficientH).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientH.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientH.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientH " + 
+                   "value.  The value is: " + this.conductivityCoefficientH);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientI field
    */
   public double getConductivityCoefficientI() {
-    return new Double(this.conductivityCoefficientI).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientI.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientI.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientI " + 
+                   "value.  The value is: " + this.conductivityCoefficientI);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientJ field
    */
   public double getConductivityCoefficientJ() {
-    return new Double(this.conductivityCoefficientJ).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientJ.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientJ.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientJ " + 
+                   "value.  The value is: " + this.conductivityCoefficientJ);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientCF0 field
    */
   public double getConductivityCoefficientCF0() {
-    return new Double(this.conductivityCoefficientCF0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientCF0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientCF0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientCF0 " + 
+                   "value.  The value is: " + this.conductivityCoefficientCF0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientCPCOR field
    */
   public double getConductivityCoefficientCPCOR() {
-    return new Double(this.conductivityCoefficientCPCOR).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientCPCOR.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientCPCOR.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientCPCOR " + 
+                   "value.  The value is: " + this.conductivityCoefficientCPCOR);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientCTCOR field
    */
   public double getConductivityCoefficientCTCOR() {
-    return new Double(this.conductivityCoefficientCTCOR).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientCTCOR.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientCTCOR.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientCTCOR " + 
+                   "value.  The value is: " + this.conductivityCoefficientCTCOR);
+      return value;
+    }
   }
   
   /**
    * A method that returns the ConductivityCoefficientCSLOPE field
    */
   public double getConductivityCoefficientCSLOPE() {
-    return new Double(this.conductivityCoefficientCSLOPE).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.conductivityCoefficientCSLOPE.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.conductivityCoefficientCSLOPE.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the conductivityCoefficientCSLOPE " + 
+                   "value.  The value is: " + this.conductivityCoefficientCSLOPE);
+      return value;
+    }
   }
   
   /**
@@ -2852,91 +3233,273 @@ public class CTDParser {
    * A method that returns the PressureCoefficientPA0 field
    */
   public double getPressureCoefficientPA0() {
-    return new Double(this.pressureCoefficientPA0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPA0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPA0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPA0 " + 
+                   "value.  The value is: " + this.pressureCoefficientPA0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPA1 field
    */
   public double getPressureCoefficientPA1() {
-    return new Double(this.pressureCoefficientPA1).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPA1.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPA1.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPA1 " + 
+                   "value.  The value is: " + this.pressureCoefficientPA1);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPA2 field
    */
   public double getPressureCoefficientPA2() {
-    return new Double(this.pressureCoefficientPA2).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPA2.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPA2.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPA2 " + 
+                   "value.  The value is: " + this.pressureCoefficientPA2);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCA0 field
    */
   public double getPressureCoefficientPTCA0() {
-    return new Double(this.pressureCoefficientPTCA0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCA0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCA0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCA0 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCA0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCA1 field
    */
   public double getPressureCoefficientPTCA1() {
-    return new Double(this.pressureCoefficientPTCA1).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCA1.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCA1.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCA1 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCA1);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCA2 field
    */
   public double getPressureCoefficientPTCA2() {
-    return new Double(this.pressureCoefficientPTCA2).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCA2.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCA2.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCA2 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCA2);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCB0 field
    */
   public double getPressureCoefficientPTCB0() {
-    return new Double(this.pressureCoefficientPTCB0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCB0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCB0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCB0 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCB0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCB1 field
    */
   public double getPressureCoefficientPTCB1() {
-    return new Double(this.pressureCoefficientPTCB1).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCB1.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCB1.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCB1 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCB1);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTCB2 field
    */
   public double getPressureCoefficientPTCB2() {
-    return new Double(this.pressureCoefficientPTCB2).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTCB2.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTCB2.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTCB2 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTCB2);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTEMPA0 field
    */
   public double getPressureCoefficientPTEMPA0() {
-    return new Double(this.pressureCoefficientPTEMPA0).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTEMPA0.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTEMPA0.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA0 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTEMPA0);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTEMPA1 field
    */
   public double getPressureCoefficientPTEMPA1() {
-    return new Double(this.pressureCoefficientPTEMPA1).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTEMPA1.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTEMPA1.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA1 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTEMPA1);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureCoefficientPTEMPA2 field
    */
   public double getPressureCoefficientPTEMPA2() {
-    return new Double(this.pressureCoefficientPTEMPA2).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureCoefficientPTEMPA2.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureCoefficientPTEMPA2.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA2 " + 
+                   "value.  The value is: " + this.pressureCoefficientPTEMPA2);
+      return value;
+    }
   }
   
   /**
    * A method that returns the PressureOffsetCoefficient field
    */
   public double getPressureOffsetCoefficient() {
-    return new Double(this.pressureOffsetCoefficient).doubleValue();
+    double value =0d;
+    
+    try {
+      value = new Double(this.pressureOffsetCoefficient.trim()).doubleValue();
+      return value;
+    
+    } catch (NumberFormatException nfe) {
+      String [] strParts = this.pressureOffsetCoefficient.trim().split(" ");
+      return new Double(strParts[0]).doubleValue();
+      
+    } catch ( NullPointerException npe ) {
+      logger.debug("There was a problem parsing the pressureOffsetCoefficient " + 
+                   "value.  The value is: " + this.pressureOffsetCoefficient);
+      return value;
+    }
   }
   
   /**
