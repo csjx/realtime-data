@@ -522,6 +522,8 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
                    byteThree == 0x4B && byteFour == 0x4F ) {
                 
+                logger.debug("Received the registration status result.");
+                
                 resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
@@ -584,6 +586,8 @@ public class SeahorseSource extends RBNBSource {
               // note bytes are in reverse order in the FIFO window
               if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
                    byteThree == 0x4B && byteFour == 0x4F ) {
+                
+                logger.debug("Received the signal strength result.");
                 
                 resultByteCount++; // add the last byte found to the count
                 
@@ -671,10 +675,12 @@ public class SeahorseSource extends RBNBSource {
           
             case 2: // handle the RING command from the instrument
               
-              // the signal strength status should end in OK\r\n
+              // listen for the RING command 
               // note bytes are in reverse order in the FIFO window
               if ( byteOne   == 0x47 && byteTwo  == 0x4E && 
                    byteThree == 0x49 && byteFour == 0x52 ) {
+                
+                logger.debug("Received the RING command.");
                 
                 resultByteCount++; // add the last byte found to the count
                 
@@ -733,6 +739,8 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x0D && byteTwo  == 0x59 && 
                    byteThree == 0x44 && byteFour == 0x41) {
                 
+                logger.debug("Received the ready status result.");
+                
                 resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
@@ -752,6 +760,8 @@ public class SeahorseSource extends RBNBSource {
                 resultString = new String(resultArray, "US-ASCII");
                 
                 // test the connect rate
+                logger.debug("Result from ATA: " + resultString);
+                
                 if ( resultString.indexOf(this.CONNECT_RATE) > 0 ) {
                   logger.debug("Connect Rate Result: " +
                                this.CONNECT_RATE);
@@ -828,6 +838,8 @@ public class SeahorseSource extends RBNBSource {
               // the instrument ID string should end in \r
               if ( byteOne == 0x0D ) {
                 
+                logger.debug("Received the instrument ID result.");
+                
                 resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
@@ -893,6 +905,8 @@ public class SeahorseSource extends RBNBSource {
               // the battery voltage string should end in \r
               if ( byteOne == 0x0D ) {
                 
+                logger.debug("Received the instrument battery voltage result.");
+                
                 resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
@@ -957,6 +971,8 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne == 0x0D && byteTwo ==  0x44 && 
                    byteThree == 0x4E && byteFour == 0x45 ) {
                 
+                logger.debug("Received the GPRMS result.");
+                
                 resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
@@ -1019,6 +1035,8 @@ public class SeahorseSource extends RBNBSource {
               // the file name string should end in .Z\r
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0D && byteTwo == 0x5A && byteThree == 0x2E) {
+                
+                logger.debug("Received the file name result.");
                 
                 resultByteCount++; // add the last byte found to the count
                 
@@ -1128,6 +1146,8 @@ public class SeahorseSource extends RBNBSource {
               
               // the number of blocks string should end in \r
               if ( byteOne == 0x0D ) {
+                
+                logger.debug("Received the number of blocks result.");
                 
                 resultByteCount++; // add the last byte found to the count
                 
@@ -1322,6 +1342,8 @@ public class SeahorseSource extends RBNBSource {
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0D && byteTwo == 0x45 && 
                    byteThree == 0x59 && byteFour == 0x42 ) {
+                
+                logger.debug("Received the BYE command.");
                 
                 // continue to disconnect. send the escape sequence
                 this.command = this.ESCAPE_SEQUENCE_COMMAND +
