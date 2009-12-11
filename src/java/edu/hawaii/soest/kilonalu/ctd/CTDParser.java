@@ -3225,7 +3225,7 @@ public class CTDParser {
   /**
    * A method that returns the PressureSerialNumber field
    */
-  public int getPressureSerialNumber() {
+  public String getPressureSerialNumber() {
     return this.pressureSerialNumber;
   }
   
