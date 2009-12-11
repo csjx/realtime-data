@@ -112,19 +112,13 @@ public class SeahorseSource extends RBNBSource {
    */
   private int bufferSize = DEFAULT_BUFFER_SIZE;
   
-  /*
-   *  A default RBNB channel name for the given source instrument
-   */  
+  /*  A default RBNB channel name for the given source instrument */  
   private String DEFAULT_RBNB_CHANNEL = "HexadecimalASCIISampleData";
 
-  /**
-   * The name of the RBNB channel for this data stream
-   */
+  /** The name of the RBNB channel for this data stream */
   private String rbnbChannelName = DEFAULT_RBNB_CHANNEL;
   
-  /*
-   *  A default source IP address for the given source instrument
-   */
+  /*  A default source IP address for the given source instrument */
   private final String DEFAULT_SOURCE_HOST_NAME = "127.0.0.1";  
 
   /**
@@ -133,204 +127,124 @@ public class SeahorseSource extends RBNBSource {
    */
   private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
 
-  /*
-   *  A default source TCP port for the given source instrument
-   */  
+  /*  A default source TCP port for the given source instrument */  
   private final int DEFAULT_SOURCE_HOST_PORT  = 2101;
 
-  /**
-   * The TCP port to connect to on the Source host machine 
-   */
+  /** The TCP port to connect to on the Source host machine  */
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
 
-  /*
-   * The socket channel used to establish TCP communication with the instrument
-   */
+  /* The socket channel used to establish TCP communication with the instrument */
   private SocketChannel socketChannel;
   
-  /**
-   * The number of bytes in the ensemble as each byte is read from the stream
-   */
+  /** The number of bytes in the ensemble as each byte is read from the stream */
   private int resultByteCount = 0;
   
-  /**
-   * The command prefix used to send commands to the microcontroller
-   */ 
+  /** The command prefix used to send commands to the microcontroller */ 
   private String MODEM_COMMAND_PREFIX = "AT";
 
-  /**
-   * The command suffix used to send commands to the microcontroller
-   */ 
+  /** The command suffix used to send commands to the microcontroller */ 
   private final String MODEM_COMMAND_SUFFIX = "\r";
 
-  /**
-   * The command used to get the network registration status from the Iridium modem
-   */ 
+  /** The command used to get the network registration status from the Iridium modem */ 
   private final String REGISTRATION_STATUS_COMMAND = "+CREG?";
 
-  /**
-   * The command used to get the signal strength from the Iridium modem
-   */ 
+  /** The command used to get the signal strength from the Iridium modem */ 
   private final String SIGNAL_STRENGTH_COMMAND = "+CSQ";
 
-  /**
-   * The command used to answer a RING call from the Iridium modem
-   */ 
+  /** The command used to answer a RING call from the Iridium modem */ 
   private final String ANSWER_COMMAND = "A";
 
-  /**
-   * The command used to acknowledge the connection from the instrument
-   */ 
+  /**  The command used to acknowledge the connection from the instrument */ 
   private final String ACKNOWLEDGE_COMMAND = "ACK";
 
-  /**
-   *The command used to get the ID from the instrument
-   */ 
+  /** The command used to get the ID from the instrument */ 
   private final String ID_COMMAND = "GID";
 
-  /**
-   *The platform ID of the instrument (i.e. the SeahHorse identifier, not the CTD)
-   */ 
+  /** The platform ID of the instrument (i.e. the SeahHorse identifier, not the CTD) */ 
   private  String platformID = "";
   
-  /**
-   *The command used to get the battery voltage from the instrument
-   */ 
+  /** The command used to get the battery voltage from the instrument */ 
   private final String BATTERY_VOLTAGE_COMMAND = "GBV";
   
-  /**
-   *The command used to get the GPRMC data string from the instrument
-   */ 
+  /** The command used to get the GPRMC data string from the instrument */ 
   private final String GPRMC_COMMAND = "GPS";
 
-  /**
-   *The command used to get the name of the file to be downloaded from the instrument
-   */ 
+  /** The command used to get the name of the file to be downloaded from the instrument */ 
   private final String FILENAME_COMMAND = "GFN";
 
-  /**
-   *The command used to get the remaining number of blocks (bytes) from the instrument
-   */ 
+  /** The command used to get the remaining number of blocks (bytes) from the instrument */ 
   private final String NUMBER_OF_BLOCKS_COMMAND = "GNB";
 
-  /**
-   *The remaining number of blocks (bytes) to download from the instrument
-   */ 
+  /** The remaining number of blocks (bytes) to download from the instrument */ 
   private int numberOfBlocks = 0;
   
-  /**
-   *The command used to transfer blocks (bytes) from the instrument
-   */ 
+  /** The command used to transfer blocks (bytes) from the instrument */ 
   private final String TRANSFER_BLOCKS_COMMAND = "TXB";
 
-  /**
-   *The command used to disconnect (hang up) with the Iridium modem
-   */ 
+  /** The command used to disconnect (hang up) with the Iridium modem */ 
   private final String HANGUP_COMMAND = "H0";
 
-  /**
-   * The command used to close the transfer session with the instrument
-   */ 
+  /**  The command used to close the transfer session with the instrument */ 
   private final String CLOSE_TRANSFER_SESSION_COMMAND = "REL";
 
-  /**
-   *The command used to escape to command mode with the Iridium modem
-   */ 
+  /** The command used to escape to command mode with the Iridium modem */ 
   private final String ESCAPE_SEQUENCE_COMMAND = "+++";
 
-  /**
-   * The okay status string expected from the instrument
-   */ 
+  /**  The okay status string expected from the instrument */ 
   private final String OKAY_STATUS = "OK";
   
-  /**
-   * The signal strength string expected from Iridium modem
-   */ 
+  /**  The signal strength string expected from Iridium modem */ 
   private final String SIGNAL_STRENGTH = "+CSQ:";
   
-  /**
-   * The signal strength threshold string needed from Iridium modem (0 - 5)
-   */ 
+  /**  The signal strength threshold string needed from Iridium modem (0 - 5) */ 
   private final int SIGNAL_THRESHOLD = 3;
   
-  /**
-   * The registration status string expected from the instrument
-   */ 
+  /**  The registration status string expected from the instrument */ 
   private final String REGISTRATION_STATUS = "+CREG:";
   
-  /**
-   * The call ring string expected from the instrument
-   */ 
+  /**  The call ring string expected from the instrument */ 
   private final String CALL_RING = "RING";
   
-  /**
-   * The connect rate string expected from the instrument
-   */ 
+  /**  The connect rate string expected from the instrument */ 
   private final String CONNECT_RATE = "CONNECT 19200";
   
-  /**
-   * The ready status string expected from the instrument
-   */ 
+  /**  The ready status string expected from the instrument */ 
   private final String READY_STATUS = "READY";
   
-  /**
-   * The file name prefix string expected from the instrument
-   */ 
+  /**  The file name prefix string expected from the instrument */ 
   private final String FILENAME_PREFIX = "FILE=";
     
-  /**
-   * The file name to be downloaded from the instrument
-   */ 
+  /**  The file name to be downloaded from the instrument */ 
   private String fileNameToDownload = "";
   
-  /**
-   * The prefix string expected at the beginning of the data file name
-   */ 
+  /**  The prefix string expected at the beginning of the data file name */ 
   private final String DATA_FILE_PREFIX = "SH__";
   
-  /**
-   * The prefix string expected at the beginning of the cast file name
-   */ 
+  /**  The prefix string expected at the beginning of the cast file name */ 
   private final String CAST_FILE_PREFIX = "CAST";
   
-  /**
-   * The blocksize prefix string expected from the instrument
-   */ 
+  /**  The blocksize prefix string expected from the instrument */ 
   private final String BLOCKSIZE_PREFIX = "BLOCKSIZE=";
   
-  /**
-   * The transfer complete string expected from the instrument
-   */ 
+  /**  The transfer complete string expected from the instrument */ 
   private final String TRANSFER_COMPLETE = "DONE";
   
-  /**
-   * The end of files string expected from the instrument
-   */ 
+  /**  The end of files string expected from the instrument */ 
   private final String END_OF_FILES = "NONE";
   
-  /**
-   * The session closed string expected from the instrument
-   */ 
+  /**  The session closed string expected from the instrument */ 
   private final String SESSION_CLOSED = "BYE";
   
-  /**
-   * The data file string downloaded from the instrument
-   */ 
+  /**  The data file string downloaded from the instrument */ 
   private String dataFileString = "";
   
-  /**
-   * The cast file string downloaded from the instrument
-   */ 
+  /**  The cast file string downloaded from the instrument */ 
   private String castFileString = "";
   
-  /**
-   *The command sent to the instrument
-   */ 
+  /** The command sent to the instrument */ 
   private String command;  
   
-  /*
-   * A boolean field indicating if a command has been sent to the instrument
-   */
+  /* A boolean field indicating if a command has been sent to the instrument */
   private boolean sentCommand = false;
   
   /*
@@ -339,19 +253,13 @@ public class SeahorseSource extends RBNBSource {
    */
    private CTDParser ctdParser = null;
    
-  /**
-   * The default log configuration file location
-   */
+  /** The default log configuration file location */
   private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
 
-  /**
-   * The log configuration file location
-   */
+  /** The log configuration file location */
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
-  /**
-   * The Logger instance used to log system messages 
-   */
+  /** The Logger instance used to log system messages  */
   private static Logger logger = Logger.getLogger(SeahorseSource.class);
 
   protected int state = 0;
@@ -2348,9 +2256,7 @@ public class SeahorseSource extends RBNBSource {
     return this.rbnbChannelName;
   }
 
-  /**
-   * A method that queries the instrument with a command
-   */
+  /** A method that queries the instrument with a command */
   public boolean queryInstrument(String command) {
     
     // the result of the query
@@ -2661,9 +2567,7 @@ public class SeahorseSource extends RBNBSource {
     return true;
   }
 
-  /**
-   * A method that interrupts the thread created in startThread()
-   */
+  /** A method that interrupts the thread created in startThread() */
   private void stopThread() {
     // set the streaming status to false and stop the Thread
     readyToStream = false;
