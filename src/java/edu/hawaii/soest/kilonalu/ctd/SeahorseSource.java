@@ -26,6 +26,9 @@
  */ 
 package edu.hawaii.soest.kilonalu.ctd;
 
+import edu.hawaii.soest.kilonalu.ctd.CTDConverter;
+import edu.hawaii.soest.kilonalu.ctd.CTDParser;
+
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
@@ -51,6 +54,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
+
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math.linear.RealMatrix;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -307,6 +314,16 @@ public class SeahorseSource extends RBNBSource {
   private final String SESSION_CLOSED = "BYE";
   
   /**
+   * The data file string downloaded from the instrument
+   */ 
+  private String dataFileString = "";
+  
+  /**
+   * The cast file string downloaded from the instrument
+   */ 
+  private String castFileString = "";
+  
+  /**
    *The command sent to the instrument
    */ 
   private String command;  
@@ -469,6 +486,323 @@ public class SeahorseSource extends RBNBSource {
       channelIndex = rbnbChannelMap.Add("ASCIICastData");
       rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
       
+      
+      // Add the samplingMode data to the channel map
+      channelIndex = rbnbChannelMap.Add("samplingMode");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the firstSampleTime data to the channel map
+      channelIndex = rbnbChannelMap.Add("firstSampleTime");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the fileName data to the channel map
+      channelIndex = rbnbChannelMap.Add("fileName");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureSerialNumber data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureSerialNumber");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivitySerialNumber data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivitySerialNumber");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the systemUpLoadTime data to the channel map
+      channelIndex = rbnbChannelMap.Add("systemUpLoadTime");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the cruiseInformation data to the channel map
+      channelIndex = rbnbChannelMap.Add("cruiseInformation");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the stationInformation data to the channel map
+      channelIndex = rbnbChannelMap.Add("stationInformation");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the shipInformation data to the channel map
+      channelIndex = rbnbChannelMap.Add("shipInformation");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the chiefScientist data to the channel map
+      channelIndex = rbnbChannelMap.Add("chiefScientist");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the organization data to the channel map
+      channelIndex = rbnbChannelMap.Add("organization");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the areaOfOperation data to the channel map
+      channelIndex = rbnbChannelMap.Add("areaOfOperation");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the instrumentPackage data to the channel map
+      channelIndex = rbnbChannelMap.Add("instrumentPackage");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the mooringNumber data to the channel map
+      channelIndex = rbnbChannelMap.Add("mooringNumber");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the instrumentLatitude data to the channel map
+      channelIndex = rbnbChannelMap.Add("instrumentLatitude");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees");
+
+      // Add the instrumentLongitude data to the channel map
+      channelIndex = rbnbChannelMap.Add("instrumentLongitude");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=degrees");
+
+      // Add the depthSounding data to the channel map
+      channelIndex = rbnbChannelMap.Add("depthSounding");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=m");
+
+      // Add the profileNumber data to the channel map
+      channelIndex = rbnbChannelMap.Add("profileNumber");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the profileDirection data to the channel map
+      channelIndex = rbnbChannelMap.Add("profileDirection");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the deploymentNotes data to the channel map
+      channelIndex = rbnbChannelMap.Add("deploymentNotes");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the mainBatteryVoltage data to the channel map
+      channelIndex = rbnbChannelMap.Add("mainBatteryVoltage");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=v");
+
+      // Add the lithiumBatteryVoltage data to the channel map
+      channelIndex = rbnbChannelMap.Add("lithiumBatteryVoltage");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=v");
+
+      // Add the operatingCurrent data to the channel map
+      channelIndex = rbnbChannelMap.Add("operatingCurrent");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=ma");
+
+      // Add the pumpCurrent data to the channel map
+      channelIndex = rbnbChannelMap.Add("pumpCurrent");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=ma");
+
+      // Add the channels01ExternalCurrent data to the channel map
+      channelIndex = rbnbChannelMap.Add("channels01ExternalCurrent");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=ma");
+
+      // Add the channels23ExternalCurrent data to the channel map
+      channelIndex = rbnbChannelMap.Add("channels23ExternalCurrent");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=ma");
+
+      // Add the loggingStatus data to the channel map
+      channelIndex = rbnbChannelMap.Add("loggingStatus");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the numberOfScansToAverage data to the channel map
+      channelIndex = rbnbChannelMap.Add("numberOfScansToAverage");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the numberOfSamples data to the channel map
+      channelIndex = rbnbChannelMap.Add("numberOfSamples");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the numberOfAvailableSamples data to the channel map
+      channelIndex = rbnbChannelMap.Add("numberOfAvailableSamples");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the sampleInterval data to the channel map
+      channelIndex = rbnbChannelMap.Add("sampleInterval");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the measurementsPerSample data to the channel map
+      channelIndex = rbnbChannelMap.Add("measurementsPerSample");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the transmitRealtime data to the channel map
+      channelIndex = rbnbChannelMap.Add("transmitRealtime");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the numberOfCasts data to the channel map
+      channelIndex = rbnbChannelMap.Add("numberOfCasts");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the minimumConductivityFrequency data to the channel map
+      channelIndex = rbnbChannelMap.Add("minimumConductivityFrequency");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=Hz");
+
+      // Add the pumpDelay data to the channel map
+      channelIndex = rbnbChannelMap.Add("pumpDelay");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=s");
+
+      // Add the automaticLogging data to the channel map
+      channelIndex = rbnbChannelMap.Add("automaticLogging");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the ignoreMagneticSwitch data to the channel map
+      channelIndex = rbnbChannelMap.Add("ignoreMagneticSwitch");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the batteryType data to the channel map
+      channelIndex = rbnbChannelMap.Add("batteryType");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the batteryCutoff data to the channel map
+      channelIndex = rbnbChannelMap.Add("batteryCutoff");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureSensorType data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureSensorType");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureSensorRange data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureSensorRange");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the sbe38TemperatureSensor data to the channel map
+      channelIndex = rbnbChannelMap.Add("sbe38TemperatureSensor");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the gasTensionDevice data to the channel map
+      channelIndex = rbnbChannelMap.Add("gasTensionDevice");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the externalVoltageChannelZero data to the channel map
+      channelIndex = rbnbChannelMap.Add("externalVoltageChannelZero");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the externalVoltageChannelOne data to the channel map
+      channelIndex = rbnbChannelMap.Add("externalVoltageChannelOne");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the externalVoltageChannelTwo data to the channel map
+      channelIndex = rbnbChannelMap.Add("externalVoltageChannelTwo");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the externalVoltageChannelThree data to the channel map
+      channelIndex = rbnbChannelMap.Add("externalVoltageChannelThree");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the echoCommands data to the channel map
+      channelIndex = rbnbChannelMap.Add("echoCommands");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the outputFormat data to the channel map
+      channelIndex = rbnbChannelMap.Add("outputFormat");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureCalibrationDate data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureCalibrationDate");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureCoefficientTA0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureCoefficientTA1 data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA1");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureCoefficientTA2 data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA2");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureCoefficientTA3 data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA3");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the temperatureOffsetCoefficient data to the channel map
+      channelIndex = rbnbChannelMap.Add("temperatureOffsetCoefficient");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCalibrationDate data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCalibrationDate");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientG data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientG");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientH data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientH");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientI data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientI");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientJ data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientJ");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientCF0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientCF0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientCPCOR data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientCPCOR");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientCTCOR data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientCTCOR");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the conductivityCoefficientCSLOPE data to the channel map
+      channelIndex = rbnbChannelMap.Add("conductivityCoefficientCSLOPE");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureSerialNumber data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureSerialNumber");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPA0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPA0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPA1 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPA1");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPA2 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPA2");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCA0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCA1 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA1");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCA2 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA2");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCB0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCB1 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB1");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTCB2 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB2");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTEMPA0 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA0");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTEMPA1 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA1");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureCoefficientPTEMPA2 data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA2");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+
+      // Add the pressureOffsetCoefficient data to the channel map
+      channelIndex = rbnbChannelMap.Add("pressureOffsetCoefficient");
+      rbnbChannelMap.PutUserInfo(channelIndex, "units=none");
+      
       // register the channel map of variables and units with the DataTurbine
       getSource().Register(rbnbChannelMap);
       // reset variables for use with the incoming data
@@ -524,7 +858,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the registration status result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -537,7 +871,7 @@ public class SeahorseSource extends RBNBSource {
                 }
                 
                 // report the network registration status string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
@@ -545,7 +879,7 @@ public class SeahorseSource extends RBNBSource {
                              resultString.trim());
                 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 resultArray = new byte[0];
                 resultString = "";
                 byteOne   = 0x00;
@@ -565,7 +899,7 @@ public class SeahorseSource extends RBNBSource {
                 break;
     
               } else {
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -589,7 +923,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the signal strength result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -602,7 +936,7 @@ public class SeahorseSource extends RBNBSource {
                 }                
 
                 // report the signal strength status string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
@@ -620,7 +954,7 @@ public class SeahorseSource extends RBNBSource {
                 if ( signalStrength > SIGNAL_THRESHOLD ) {
                   
                   resultBuffer.clear();
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
@@ -635,7 +969,7 @@ public class SeahorseSource extends RBNBSource {
                 } else {
                   
                   resultBuffer.clear();
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
@@ -659,7 +993,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
 
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
 
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -682,7 +1016,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the RING command.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -695,7 +1029,7 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 resultArray = new byte[0];
                 resultString = "";
                 byteOne   = 0x00;
@@ -717,7 +1051,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
                 
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
 
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -741,7 +1075,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the ready status result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -754,7 +1088,7 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the connect rate and ready status string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
@@ -772,7 +1106,7 @@ public class SeahorseSource extends RBNBSource {
                                  this.READY_STATUS);
                   
                     resultBuffer.clear();
-                    resultByteCount = 0;
+                    this.resultByteCount = 0;
                     resultArray = new byte[0];
                     resultString = "";
                     byteOne   = 0x00;
@@ -818,7 +1152,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -840,7 +1174,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the instrument ID result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -853,7 +1187,7 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the instrument ID string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
@@ -863,7 +1197,7 @@ public class SeahorseSource extends RBNBSource {
                 this.platformID = resultString.substring(0, resultString.length() - 1);
                 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 resultArray = new byte[0];
                 resultString = "";
                 byteOne   = 0x00;
@@ -885,7 +1219,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -907,7 +1241,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the instrument battery voltage result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -920,14 +1254,14 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the battery voltage string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
                 logger.debug("Seahorse Battery Voltage: " + resultString.trim());
                 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 resultArray = new byte[0];
                 resultString = "";
                 byteOne   = 0x00;
@@ -949,7 +1283,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -973,7 +1307,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the GPRMS result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -986,14 +1320,14 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the GPRMC string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
                 logger.debug("Seahorse GPRMC string: " + resultString.trim());
                 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 resultArray = new byte[0];
                 resultString = "";
                 byteOne   = 0x00;
@@ -1015,7 +1349,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1038,7 +1372,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the file name result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -1051,7 +1385,7 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the file name string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
@@ -1063,7 +1397,7 @@ public class SeahorseSource extends RBNBSource {
                 //extract just the filename from the result (excise the "FILE=")
                 this.fileNameToDownload = 
                   resultString.substring(
-                    (fileNameIndex + (this.FILENAME_PREFIX).length() + 1), 
+                    (fileNameIndex + (this.FILENAME_PREFIX).length()), 
                     resultString.length());
                 
                 logger.debug("File name to download: " + this.fileNameToDownload);
@@ -1081,7 +1415,7 @@ public class SeahorseSource extends RBNBSource {
                   streamingThread.sleep(this.SLEEP_INTERVAL);
                   
                   resultBuffer.clear();
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
@@ -1094,12 +1428,454 @@ public class SeahorseSource extends RBNBSource {
                   
                 } else {
                   
-                  // We have downloaded all files. Flush the channel map to the RBNB
-                  rbnbChannelMap.PutTimeAuto("server");
-                  getSource().Flush(rbnbChannelMap);
+                  // We have downloaded all files. Parse the data string,
+                  // build the channel map, and flush the data to the Dataturbine
+                  // by iterating through the data matrix.  The metadata and
+                  // ASCII data strings are flushed once with the first matrix
+                  // row.
+                  
+                  // Parse the data file, not the cast file.
+                  try {
+                    
+                    // parse the CTD data file
+                    this.ctdParser = new CTDParser(this.dataFileString);
+                    
+                    // convert the raw frequencies and voltages to engineering
+                    // units and return the data as a matrix
+                    CTDConverter ctdConverter = new CTDConverter(this.ctdParser);
+                    ctdConverter.convert();
+                    RealMatrix convertedDataMatrix =
+                      ctdConverter.getConvertedDataValuesMatrix();
+                    
+                    for (int row = 0; row < convertedDataMatrix.getRowDimension(); row++) {
+                      
+                      // Only insert the metadata fields and full ASCII text strings
+                      // with the first row of data
+                      if ( row == 0 ) {
+                          // Add the samplingMode data to the channel map
+                          channelIndex = rbnbChannelMap.Add("samplingMode");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getSamplingMode());
+                          
+                          // Add the firstSampleTime data to the channel map
+                          channelIndex = rbnbChannelMap.Add("firstSampleTime");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getFirstSampleTime());
+                          
+                          // Add the fileName data to the channel map
+                          channelIndex = rbnbChannelMap.Add("fileName");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getFileName());
+                          
+                          // Add the temperatureSerialNumber data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureSerialNumber");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTemperatureSerialNumber());
+                          
+                          // Add the conductivitySerialNumber data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivitySerialNumber");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getConductivitySerialNumber());
+                          
+                          // Add the systemUpLoadTime data to the channel map
+                          channelIndex = rbnbChannelMap.Add("systemUpLoadTime");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getSystemUpLoadTime());
+                          
+                          // Add the cruiseInformation data to the channel map
+                          channelIndex = rbnbChannelMap.Add("cruiseInformation");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getCruiseInformation());
+                          
+                          // Add the stationInformation data to the channel map
+                          channelIndex = rbnbChannelMap.Add("stationInformation");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getStationInformation());
+                          
+                          // Add the shipInformation data to the channel map
+                          channelIndex = rbnbChannelMap.Add("shipInformation");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getShipInformation());
+                          
+                          // Add the chiefScientist data to the channel map
+                          channelIndex = rbnbChannelMap.Add("chiefScientist");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getChiefScientist());
+                          
+                          // Add the organization data to the channel map
+                          channelIndex = rbnbChannelMap.Add("organization");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getOrganization());
+                          
+                          // Add the areaOfOperation data to the channel map
+                          channelIndex = rbnbChannelMap.Add("areaOfOperation");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getAreaOfOperation());
+                          
+                          // Add the instrumentPackage data to the channel map
+                          channelIndex = rbnbChannelMap.Add("instrumentPackage");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getInstrumentPackage());
+                          
+                          // Add the mooringNumber data to the channel map
+                          channelIndex = rbnbChannelMap.Add("mooringNumber");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getMooringNumber());
+                          
+                          // Add the instrumentLatitude data to the channel map
+                          channelIndex = rbnbChannelMap.Add("instrumentLatitude");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getInstrumentLatitude()});
+                          
+                          // Add the instrumentLongitude data to the channel map
+                          channelIndex = rbnbChannelMap.Add("instrumentLongitude");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getInstrumentLongitude()});
+                          
+                          // Add the depthSounding data to the channel map
+                          channelIndex = rbnbChannelMap.Add("depthSounding");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getDepthSounding()});
+                          
+                          // Add the profileNumber data to the channel map
+                          channelIndex = rbnbChannelMap.Add("profileNumber");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getProfileNumber());
+                          
+                          // Add the profileDirection data to the channel map
+                          channelIndex = rbnbChannelMap.Add("profileDirection");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getProfileDirection());
+                          
+                          // Add the deploymentNotes data to the channel map
+                          channelIndex = rbnbChannelMap.Add("deploymentNotes");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getDeploymentNotes());
+                          
+                          // Add the mainBatteryVoltage data to the channel map
+                          channelIndex = rbnbChannelMap.Add("mainBatteryVoltage");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getMainBatteryVoltage()});
+                          
+                          // Add the lithiumBatteryVoltage data to the channel map
+                          channelIndex = rbnbChannelMap.Add("lithiumBatteryVoltage");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getLithiumBatteryVoltage()});
+                          
+                          // Add the operatingCurrent data to the channel map
+                          channelIndex = rbnbChannelMap.Add("operatingCurrent");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getOperatingCurrent()});
+                          
+                          // Add the pumpCurrent data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pumpCurrent");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPumpCurrent()});
+                          
+                          // Add the channels01ExternalCurrent data to the channel map
+                          channelIndex = rbnbChannelMap.Add("channels01ExternalCurrent");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getChannels01ExternalCurrent()});
+                          
+                          // Add the channels23ExternalCurrent data to the channel map
+                          channelIndex = rbnbChannelMap.Add("channels23ExternalCurrent");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getChannels23ExternalCurrent()});
+                          
+                          // Add the loggingStatus data to the channel map
+                          channelIndex = rbnbChannelMap.Add("loggingStatus");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getLoggingStatus());
+                          
+                          // Add the numberOfScansToAverage data to the channel map
+                          channelIndex = rbnbChannelMap.Add("numberOfScansToAverage");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getNumberOfScansToAverage()});
+                          
+                          // Add the numberOfSamples data to the channel map
+                          channelIndex = rbnbChannelMap.Add("numberOfSamples");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getNumberOfSamples()});
+                          
+                          // Add the numberOfAvailableSamples data to the channel map
+                          channelIndex = rbnbChannelMap.Add("numberOfAvailableSamples");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getNumberOfAvailableSamples()});
+                          
+                          // Add the sampleInterval data to the channel map
+                          channelIndex = rbnbChannelMap.Add("sampleInterval");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getSampleInterval()});
+                          
+                          // Add the measurementsPerSample data to the channel map
+                          channelIndex = rbnbChannelMap.Add("measurementsPerSample");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getMeasurementsPerSample()});
+                          
+                          // Add the transmitRealtime data to the channel map
+                          channelIndex = rbnbChannelMap.Add("transmitRealtime");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTransmitRealtime());
+                          
+                          // Add the numberOfCasts data to the channel map
+                          channelIndex = rbnbChannelMap.Add("numberOfCasts");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getNumberOfCasts()});
+                          
+                          // Add the minimumConductivityFrequency data to the channel map
+                          channelIndex = rbnbChannelMap.Add("minimumConductivityFrequency");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getMinimumConductivityFrequency()});
+                          
+                          // Add the pumpDelay data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pumpDelay");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsInt32(channelIndex, new int []{this.ctdParser.getPumpDelay()});
+                          
+                          // Add the automaticLogging data to the channel map
+                          channelIndex = rbnbChannelMap.Add("automaticLogging");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getAutomaticLogging());
+                          
+                          // Add the ignoreMagneticSwitch data to the channel map
+                          channelIndex = rbnbChannelMap.Add("ignoreMagneticSwitch");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getIgnoreMagneticSwitch());
+                          
+                          // Add the batteryType data to the channel map
+                          channelIndex = rbnbChannelMap.Add("batteryType");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getBatteryType());
+                          
+                          // Add the batteryCutoff data to the channel map
+                          channelIndex = rbnbChannelMap.Add("batteryCutoff");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getBatteryCutoff());
+                          
+                          // Add the pressureSensorType data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureSensorType");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSensorType());
+                          
+                          // Add the pressureSensorRange data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureSensorRange");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSensorRange());
+                          
+                          // Add the sbe38TemperatureSensor data to the channel map
+                          channelIndex = rbnbChannelMap.Add("sbe38TemperatureSensor");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getSbe38TemperatureSensor());
+                          
+                          // Add the gasTensionDevice data to the channel map
+                          channelIndex = rbnbChannelMap.Add("gasTensionDevice");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getGasTensionDevice());
+                          
+                          // Add the externalVoltageChannelZero data to the channel map
+                          channelIndex = rbnbChannelMap.Add("externalVoltageChannelZero");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelZero());
+                          
+                          // Add the externalVoltageChannelOne data to the channel map
+                          channelIndex = rbnbChannelMap.Add("externalVoltageChannelOne");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelOne());
+                          
+                          // Add the externalVoltageChannelTwo data to the channel map
+                          channelIndex = rbnbChannelMap.Add("externalVoltageChannelTwo");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelTwo());
+                          
+                          // Add the externalVoltageChannelThree data to the channel map
+                          channelIndex = rbnbChannelMap.Add("externalVoltageChannelThree");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelThree());
+                          
+                          // Add the echoCommands data to the channel map
+                          channelIndex = rbnbChannelMap.Add("echoCommands");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getEchoCommands());
+                          
+                          // Add the outputFormat data to the channel map
+                          channelIndex = rbnbChannelMap.Add("outputFormat");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getOutputFormat());
+                          
+                          // Add the temperatureCalibrationDate data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureCalibrationDate");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTemperatureCalibrationDate());
+                          
+                          // Add the temperatureCoefficientTA0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getTemperatureCoefficientTA0()});
+                          
+                          // Add the temperatureCoefficientTA1 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA1");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getTemperatureCoefficientTA1()});
+                          
+                          // Add the temperatureCoefficientTA2 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA2");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getTemperatureCoefficientTA2()});
+                          
+                          // Add the temperatureCoefficientTA3 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA3");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getTemperatureCoefficientTA3()});
+                          
+                          // Add the temperatureOffsetCoefficient data to the channel map
+                          channelIndex = rbnbChannelMap.Add("temperatureOffsetCoefficient");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getTemperatureOffsetCoefficient()});
+                          
+                          // Add the conductivityCalibrationDate data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCalibrationDate");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getConductivityCalibrationDate());
+                          
+                          // Add the conductivityCoefficientG data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientG");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientG()});
+                          
+                          // Add the conductivityCoefficientH data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientH");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientH()});
+                          
+                          // Add the conductivityCoefficientI data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientI");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientI()});
+                          
+                          // Add the conductivityCoefficientJ data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientJ");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientJ()});
+                          
+                          // Add the conductivityCoefficientCF0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientCF0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientCF0()});
+                          
+                          // Add the conductivityCoefficientCPCOR data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientCPCOR");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientCPCOR()});
+                          
+                          // Add the conductivityCoefficientCTCOR data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientCTCOR");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientCTCOR()});
+                          
+                          // Add the conductivityCoefficientCSLOPE data to the channel map
+                          channelIndex = rbnbChannelMap.Add("conductivityCoefficientCSLOPE");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getConductivityCoefficientCSLOPE()});
+                          
+                          // Add the pressureSerialNumber data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureSerialNumber");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSerialNumber());
+                          
+                          // Add the pressureCoefficientPA0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPA0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPA0()});
+                          
+                          // Add the pressureCoefficientPA1 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPA1");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPA1()});
+                          
+                          // Add the pressureCoefficientPA2 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPA2");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPA2()});
+                          
+                          // Add the pressureCoefficientPTCA0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCA0()});
+                          
+                          // Add the pressureCoefficientPTCA1 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA1");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCA1()});
+                          
+                          // Add the pressureCoefficientPTCA2 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA2");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCA2()});
+                          
+                          // Add the pressureCoefficientPTCB0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCB0()});
+                          
+                          // Add the pressureCoefficientPTCB1 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB1");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCB1()});
+                          
+                          // Add the pressureCoefficientPTCB2 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB2");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTCB2()});
+                          
+                          // Add the pressureCoefficientPTEMPA0 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA0");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTEMPA0()});
+                          
+                          // Add the pressureCoefficientPTEMPA1 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA1");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTEMPA1()});
+                          
+                          // Add the pressureCoefficientPTEMPA2 data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA2");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureCoefficientPTEMPA2()});
+                          
+                          // Add the pressureOffsetCoefficient data to the channel map
+                          channelIndex = rbnbChannelMap.Add("pressureOffsetCoefficient");
+                          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+                          rbnbChannelMap.PutDataAsFloat64(channelIndex, new double []{this.ctdParser.getPressureOffsetCoefficient()});
+                          
+                          // Insert the file into the channel map. 
+                          channelIndex = rbnbChannelMap.Add(this.rbnbChannelName);
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.dataFileString);
+                          
+                          channelIndex = rbnbChannelMap.Add("ASCIICastData");
+                          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                          rbnbChannelMap.PutDataAsString(channelIndex, this.castFileString);
+                          
+                      } 
+                      
+                      // todo: add in the data row to the map here
+                      
+                      // Flush the channel map to the RBNB
+                      rbnbChannelMap.PutTimeAuto("server");
+                      getSource().Flush(rbnbChannelMap);
 
-                  logger.info("Flushed data to the DataTurbine.");
+                      logger.info("Flushed data to the DataTurbine.");
+                      rbnbChannelMap.Clear();                      
 
+                      
+                    } // for loop 
+
+                  } catch ( Exception e ) {
+                    logger.debug("Failed to parse the CTD data file: " + 
+                                  e.getMessage());
+                                  
+                  }
+                  
                   // there are no more files to read. close the Tx session.
                   this.command = this.CLOSE_TRANSFER_SESSION_COMMAND +
                                  this.MODEM_COMMAND_SUFFIX;
@@ -1110,14 +1886,13 @@ public class SeahorseSource extends RBNBSource {
 
                   // clean up
                   resultBuffer.clear();
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
                   byteThree = 0x00;
                   byteFour  = 0x00;
-                  rbnbChannelMap.Clear();                      
                   
                   state = 10;
                   break;
@@ -1127,7 +1902,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1149,7 +1924,7 @@ public class SeahorseSource extends RBNBSource {
                 
                 logger.debug("Received the number of blocks result.");
                 
-                resultByteCount++; // add the last byte found to the count
+                this.resultByteCount++; // add the last byte found to the count
                 
                 // add the last byte found to the result buffer
                 if ( resultBuffer.remaining() > 0 ) {
@@ -1162,20 +1937,29 @@ public class SeahorseSource extends RBNBSource {
                 }                
                 
                 // report the number of blocks string
-                resultArray = new byte[resultByteCount];
+                resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
                 logger.debug("Number of bytes reported: " + resultString.trim());
                 
-                int lineEndIndex = resultString.indexOf(this.MODEM_COMMAND_SUFFIX);
-                int numberOfBlocksIndex = resultString.indexOf(this.FILENAME_PREFIX);
+                int numberOfBlocksIndex = resultString.indexOf(this.BLOCKSIZE_PREFIX);
                 
-                logger.debug("Number of bytes to download: " + this.numberOfBlocks);
+                // If 'BLOCKSIZE=' is not found, set the index to 0
+                if ( numberOfBlocksIndex == -1 ) {
+                  numberOfBlocksIndex = 0;
+                  
+                }
                 
+                resultString = 
+                  resultString.substring(
+                    (numberOfBlocksIndex + (this.BLOCKSIZE_PREFIX).length()), 
+                    resultString.length());
+                                
                 // convert the string to an integer
                 try {
                   this.numberOfBlocks = new Integer(resultString.trim()).intValue();
+                  logger.debug("Number of bytes to download: " + this.numberOfBlocks);
                 
                 } catch ( java.lang.NumberFormatException nfe ) {
                   failed = true;
@@ -1198,7 +1982,7 @@ public class SeahorseSource extends RBNBSource {
                   streamingThread.sleep(this.SLEEP_INTERVAL);
 
                   //resultBuffer.clear(); dont clear the buffer
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
@@ -1219,40 +2003,25 @@ public class SeahorseSource extends RBNBSource {
                   byte[] output = new byte[resultBuffer.capacity()];
                   
                   int numDecompressed = inflater.inflate(output);
-                  String fileString = new String(output);
                   
-                  //report the file contents to the log
-                  logger.debug("File " + this.fileNameToDownload + ": ");                   
-                  logger.debug(fileString);                   
-                  
-                  // Parse the data file, not the cast file.
-                  try {
-                    if ( this.fileNameToDownload.indexOf(DATA_FILE_PREFIX) > 0 ) {
-                      this.ctdParser = new CTDParser(fileString);
-                      
-                      // TODO: insert the individual data channels into the map.
-                      
-                    } 
-
-                  } catch ( Exception e ) {
-                    logger.debug("Failed to parse the CTD data file: " + 
-                                  e.getMessage());
-                                  
+                  // set the appropriate string variable
+                  if ( this.fileNameToDownload.indexOf(DATA_FILE_PREFIX) > 0 ) {
+                    this.dataFileString = new String(output);
+                    
+                    //report the file contents to the log
+                    logger.debug("File " + this.fileNameToDownload + ": ");                   
+                    logger.debug(this.dataFileString);                   
+                    
+                  } else {
+                    this.castFileString = new String(output);
+                    
+                    //report the file contents to the log
+                    logger.debug("File " + this.fileNameToDownload + ": ");                   
+                    logger.debug(this.castFileString);                   
+                    
+                    
                   }
-                  
-                  // Insert the file into the channel map. 
-                  if ( fileNameToDownload.indexOf(DATA_FILE_PREFIX) > 0) {
-                    channelIndex = rbnbChannelMap.Add(this.rbnbChannelName);
-                    rbnbChannelMap.PutMime(channelIndex, "text/plain");
-                    rbnbChannelMap.PutDataAsString(channelIndex, fileString);
-                      
-                  } else if ( fileNameToDownload.indexOf(CAST_FILE_PREFIX) > 0 ) {
-                    channelIndex = rbnbChannelMap.Add("ASCIICastData");
-                    rbnbChannelMap.PutMime(channelIndex, "text/plain");
-                    rbnbChannelMap.PutDataAsString(channelIndex, fileString);
-                      
-                  }
-                  
+                                    
                   // Ask for the next file.
                   this.command = this.FILENAME_COMMAND +
                                  this.MODEM_COMMAND_SUFFIX;
@@ -1262,7 +2031,7 @@ public class SeahorseSource extends RBNBSource {
                   streamingThread.sleep(this.SLEEP_INTERVAL);
 
                   //resultBuffer.clear(); dont clear the buffer
-                  resultByteCount = 0;
+                  this.resultByteCount = 0;
                   resultArray = new byte[0];
                   resultString = "";
                   byteOne   = 0x00;
@@ -1278,7 +2047,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1296,7 +2065,7 @@ public class SeahorseSource extends RBNBSource {
             case 9:
             
               // transfer up to the reported number of bytes
-              if ( resultByteCount == this.numberOfBlocks ) {
+              if ( this.resultByteCount == this.numberOfBlocks ) {
               
                 // we have downloaded the reported bytes. get the next section.
                 // get the number of blocks to transfer
@@ -1308,7 +2077,7 @@ public class SeahorseSource extends RBNBSource {
                 streamingThread.sleep(this.SLEEP_INTERVAL);
                 
                 //resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 byteOne   = 0x00;
                 byteTwo   = 0x00;
                 byteThree = 0x00;
@@ -1321,7 +2090,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1354,7 +2123,7 @@ public class SeahorseSource extends RBNBSource {
                 streamingThread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 byteOne   = 0x00;
                 byteTwo   = 0x00;
                 byteThree = 0x00;
@@ -1366,7 +2135,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1398,7 +2167,7 @@ public class SeahorseSource extends RBNBSource {
                 streamingThread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 byteOne   = 0x00;
                 byteTwo   = 0x00;
                 byteThree = 0x00;
@@ -1410,7 +2179,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
@@ -1442,7 +2211,7 @@ public class SeahorseSource extends RBNBSource {
                 streamingThread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
-                resultByteCount = 0;
+                this.resultByteCount = 0;
                 byteOne   = 0x00;
                 byteTwo   = 0x00;
                 byteThree = 0x00;
@@ -1454,7 +2223,7 @@ public class SeahorseSource extends RBNBSource {
               } else {
               
                 // still in the middle of the result, keep adding bytes
-                resultByteCount++; // add each byte found
+                this.resultByteCount++; // add each byte found
               
                 if ( resultBuffer.remaining() > 0 ) {
                   resultBuffer.put(byteOne);
