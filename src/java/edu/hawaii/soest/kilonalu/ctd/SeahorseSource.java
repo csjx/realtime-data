@@ -47,6 +47,11 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
 
@@ -283,6 +288,17 @@ public class SeahorseSource extends RBNBSource {
    * @see execute()
    */
   private final int SLEEP_INTERVAL = 5000;
+  
+  /** 
+   * The date format for the timestamp applied to the CTD sample e.g. "23 Sep 2009  11:29:15"
+   */
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy  HH:mm:ss");
+  
+  /**  The timezone used for the sample date */
+  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  
+  /* The sample datetime reported by the parsed CTD data file as a Calendar */
+  private Calendar sampleDateTime;
   
   /**
    * Constructor - create an empty instance of the SeahorseSource object, using
@@ -1355,6 +1371,15 @@ public class SeahorseSource extends RBNBSource {
                     RealMatrix convertedDataMatrix =
                       ctdConverter.getConvertedDataValuesMatrix();
                     
+                    // format the first sample date and use it as the first insert
+                    // date.  Add the sampleInterval on each iteration to insert
+                    // subsequent data rows.  Sample interval is by default 
+                    // 4 scans/second for the CTD.
+                    DATE_FORMAT.setTimeZone(TZ);
+                    this.sampleDateTime = Calendar.getInstance();
+                    this.sampleDateTime.setTime(
+                      DATE_FORMAT.parse(ctdParser.getFirstSampleTime()));
+                    
                     for (int row = 0; row < convertedDataMatrix.getRowDimension(); row++) {
                       
                       // Only insert the metadata fields and full ASCII text strings
@@ -1766,15 +1791,20 @@ public class SeahorseSource extends RBNBSource {
                           
                       } 
                       
-                      // todo: add in the data row to the map here
+                      // Add in the matrix data row to the map here
                       
                       // Flush the channel map to the RBNB
-                      rbnbChannelMap.PutTimeAuto("server");
+                      double sampleTimeAsSecondsSinceEpoch = (double)
+                        (this.sampleDateTime.getTimeInMillis()/1000);
+                      rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
                       getSource().Flush(rbnbChannelMap);
 
                       logger.info("Flushed data to the DataTurbine.");
-                      rbnbChannelMap.Clear();                      
-
+                      rbnbChannelMap.Clear(); 
+                      
+                      // samples are taken 4x per second, so increment the
+                      // sample time by 250 milliseconds for the next insert                     
+                      this.sampleDateTime.add(Calendar.MILLISECOND, 250);
                       
                     } // for loop 
 
