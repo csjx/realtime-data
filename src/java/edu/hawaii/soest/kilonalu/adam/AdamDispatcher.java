@@ -260,10 +260,19 @@ public class AdamDispatcher {
         
         // Given the IP address of the source UDP packet and the data ByteBuffer,
         // find the correct source in the sourceMap hash and process the data
-        AdamSource source = (AdamSource) sourceMap.get(datagramAddress);
-        
-        // process the data using the AdamSource driver
-        source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
+        if (sourceMap.get(datagramAddress) != null ) {
+          
+          AdamSource source = (AdamSource) sourceMap.get(datagramAddress);
+
+          // process the data using the AdamSource driver
+          source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
+            
+        } else {
+          logger.info("There is no configuration information for " +
+                      "the ADAM module at " + datagramAddress      +
+                      ". Please add the configuration to the "     +
+                      "sensor.properties.xml configuration file.");
+        }
         
         sampleBuffer.clear();
         
