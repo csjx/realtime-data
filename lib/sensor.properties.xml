@@ -241,4 +241,115 @@
       </port>
     </ports>
   </sensor>
+  <sensor>
+    <address>192.168.100.210</address>
+    <name>KN00XX_010ADAM010R04</name>
+    <description>12m CN Micronode Relay</description>
+    <cacheSize>50000</cacheSize>
+    <archiveSize>31536000</archiveSize>
+    <archiveChannel>DecimalASCIISampleData</archiveChannel>
+    <type>control</type>
+    <ports>
+      <port number="1">
+        <measurement label="onOffState">
+          <voltageChannel>0</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>1</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>2</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>3</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>4</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>5</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>6</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>7</voltageChannel>
+        </measurement>
+      </port>
+    </ports>
+  </sensor>
+  <sensor>
+    <address>192.168.100.214</address>
+    <name>KN01XX_010ADAM010R03</name>
+    <description>12m SN Geochem Relay</description>
+    <cacheSize>50000</cacheSize>
+    <archiveSize>31536000</archiveSize>
+    <archiveChannel>DecimalASCIISampleData</archiveChannel>
+    <type>control</type>
+    <ports>
+      <port number="1">
+        <measurement label="onOffState">
+          <voltageChannel>0</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>1</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>2</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>3</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>4</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>5</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>6</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>7</voltageChannel>
+        </measurement>
+      </port>
+    </ports>
+  </sensor>
+  <sensor>
+    <address>192.168.100.224</address>
+    <name>KN01XX_010ADAM010R04</name>
+    <description>12m SN Geochem Laser Relay</description>
+    <cacheSize>50000</cacheSize>
+    <archiveSize>31536000</archiveSize>
+    <archiveChannel>DecimalASCIISampleData</archiveChannel>
+    <type>control</type>
+    <ports>
+      <port number="1">
+        <measurement label="onOffState">
+          <voltageChannel>0</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>1</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>2</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>3</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>4</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>5</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>6</voltageChannel>
+        </measurement>
+        <measurement label="onOffState">
+          <voltageChannel>7</voltageChannel>
+        </measurement>
+      </port>
+    </ports>
+  </sensor>
 </sensors>
