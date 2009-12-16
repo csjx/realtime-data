@@ -268,7 +268,7 @@ public class AdamDispatcher {
           source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
             
         } else {
-          logger.info("There is no configuration information for " +
+          logger.debug("There is no configuration information for " +
                       "the ADAM module at " + datagramAddress      +
                       ". Please add the configuration to the "     +
                       "sensor.properties.xml configuration file.");
