@@ -241,6 +241,7 @@
       </port>
     </ports>
   </sensor>
+  <!--
   <sensor>
     <address>192.168.100.210</address>
     <name>KN00XX_010ADAM010R04</name>
@@ -352,4 +353,5 @@
       </port>
     </ports>
   </sensor>
+  -->
 </sensors>
