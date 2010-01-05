@@ -72,7 +72,7 @@
   <sensor>
     <address>192.168.100.208</address>
     <name>KN00XX_012ADAM012R01</name>
-    <description>12m CN ADAM monitor 1</description>
+    <description>12m Central Node ADAM monitor 1</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -115,7 +115,7 @@
   <sensor>
     <address>192.168.100.209</address>
     <name>KN00XX_012ADAM012R02</name>
-    <description>12m CN ADAM monitor 2</description>
+    <description>12m Central Node ADAM monitor 2</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -158,7 +158,7 @@
   <sensor>
     <address>192.168.100.221</address>
     <name>KN0001_012ADAM012R01</name>
-    <description>12m SN ADAM monitor 1</description>
+    <description>12m Sub Node ADAM monitor 1</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -201,7 +201,7 @@
   <sensor>
     <address>192.168.100.222</address>
     <name>KN0001_012ADAM012R02</name>
-    <description>12m SN ADAM monitor 2</description>
+    <description>12m Sub Node ADAM monitor 2</description>
     <cacheSize>50000</cacheSize>
     <archiveSize>31536000</archiveSize>
     <archiveChannel>DecimalASCIISampleData</archiveChannel>
