@@ -446,6 +446,7 @@ public class AdamSource extends RBNBSource {
       
         channelIndex = registerChannelMap.Add(channelPathFromMap);
         registerChannelMap.PutUserInfo(channelIndex, "units=volts");
+        registerChannelMap.PutUserInfo(channelIndex, "description=" + description);
         
         logger.debug("Voltage Channel Tree Map: " + voltageChannelTreeMap.toString());
         
