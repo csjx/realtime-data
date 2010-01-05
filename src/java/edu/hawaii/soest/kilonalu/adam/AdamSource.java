@@ -472,8 +472,9 @@ public class AdamSource extends RBNBSource {
         decimalASCIISampleData.append("\n");
         
         // add the DecimalASCIISampleData channel to the channelMap
-        channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+        channelIndex = registerChannelMap.Add(getRBNBChannelName());
         registerChannelMap.PutUserInfo(channelIndex, "description=" + description);
+        channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
         rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
         
