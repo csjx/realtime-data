@@ -238,8 +238,31 @@ public class FileArchiverSink extends RBNBBase {
     Date sDate; // intermediate start date variable
     long sTime; // intermediate start time variable
     
+    if ( getArchiveInterval() == 120 ) {
+      
+      // set the execution time to be every two minutes (debug mode)    
+      endArchiveCal = Calendar.getInstance();
+      endArchiveCal.clear(Calendar.MILLISECOND);
+      endArchiveCal.clear(Calendar.SECOND);
+      endArchiveCal.add(Calendar.MINUTE, 2);
+      
+      eTime = (endArchiveCal.getTime()).getTime();
+      endTime = ((double) eTime) / 1000.0;
+
+      /** the Calendar representation of the FileArchiver begin time **/
+      beginArchiveCal = (Calendar) endArchiveCal.clone();
+      
+      // set the begin time of the duration 2 minutes prior to the execution time
+      beginArchiveCal.add(Calendar.MINUTE, -2);  
+      endArchiveCal.add(Calendar.SECOND, -1);
+      sDate = beginArchiveCal.getTime();
+      sTime = sDate.getTime();
+      startTime = ((double) sTime) / 1000.0;
+      logger.debug("Next archive time will be " + endArchiveCal.getTime().toString());
+      logger.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+      
     // schedule hourly on the hour
-    if ( getArchiveInterval() == 3600 ) {
+    } else if ( getArchiveInterval() == 3600 ) {
       // set the execution time to be on the upcoming hour    
       endArchiveCal = Calendar.getInstance();
       endArchiveCal.clear(Calendar.MILLISECOND);
@@ -342,9 +365,9 @@ public class FileArchiverSink extends RBNBBase {
     fileArchiverSink.addTimeProgressListener(new TimeProgressListener() {
       public void progressUpdate(double estimatedDuration, double consumedTime) {
         if (estimatedDuration == Double.MAX_VALUE) {
-          writeProgressMessage("Exported " + Math.round(consumedTime) + " seconds of data...");          
+          logger.info("Exported " + Math.round(consumedTime) + " seconds of data...");          
         } else {
-          writeProgressMessage("Export of data " + Math.round(100*consumedTime/estimatedDuration) + "% complete...");
+          logger.info("Export of data " + Math.round(100*consumedTime/estimatedDuration) + "% complete...");
         }
       }          
     });
@@ -502,6 +525,9 @@ public class FileArchiverSink extends RBNBBase {
           } else if ( interval.equals("weekly") ) {
             setArchiveInterval(604800);
             
+          } else if ( interval.equals("debug") ) {
+            setArchiveInterval(120);
+
           } else {
             logger.debug("Please enter either hourly, daily, or weekly for the archiving interval.");
             
@@ -909,8 +935,24 @@ public class FileArchiverSink extends RBNBBase {
             frameCount++;
           }
         }
+        
         out.close();
         doExport = false;
+        
+        // test the file write success
+        String newFileName = output.getPath();
+        File latestDataFile = new File(newFileName);
+        
+        if ( latestDataFile.length() > 0L ) {
+          logger.info("Successful export to " + latestDataFile.getPath());
+        
+        } else {
+          logger.info("Unsuccessful export. File " + 
+                      latestDataFile.getPath() +
+                      " was " + latestDataFile.length() + " bytes.");
+        
+        }
+        
       }
     
     }
