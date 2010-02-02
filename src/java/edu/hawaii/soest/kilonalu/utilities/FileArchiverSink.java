@@ -209,7 +209,7 @@ public class FileArchiverSink extends RBNBBase {
         };
 
         Timer archiveTimer = new Timer();
-        // run the archiveData timer task on the hour, every hour
+        // run the archiveData timer task on the hour, every hour (or every day)
         archiveTimer.scheduleAtFixedRate(archiveData, 
           endArchiveCal.getTime(), fileArchiverSink.getArchiveInterval() * 1000);
       
@@ -263,8 +263,10 @@ public class FileArchiverSink extends RBNBBase {
       
     // schedule hourly on the hour
     } else if ( getArchiveInterval() == 3600 ) {
-      // set the execution time to be on the upcoming hour    
+      // set the execution time to be on the upcoming hour.  Add a minute to
+      // now() to be sure the next interval is in the next hour   
       endArchiveCal = Calendar.getInstance();
+      endArchiveCal.add(Calendar.MINUTE, 1);
       endArchiveCal.clear(Calendar.MILLISECOND);
       endArchiveCal.clear(Calendar.SECOND);
       endArchiveCal.clear(Calendar.MINUTE);
@@ -287,8 +289,9 @@ public class FileArchiverSink extends RBNBBase {
       
     // else schedule daily on the day
     } else if ( getArchiveInterval() == 86400 ) {
-      // set the execution time to be on the upcoming hour    
+      // set the execution time to be on the upcoming day    
       endArchiveCal = Calendar.getInstance();
+      endArchiveCal.add(Calendar.MINUTE, 1);
       endArchiveCal.clear(Calendar.MILLISECOND);
       endArchiveCal.clear(Calendar.SECOND);
       endArchiveCal.clear(Calendar.MINUTE);
@@ -314,6 +317,7 @@ public class FileArchiverSink extends RBNBBase {
       } else if ( getArchiveInterval() == 604800 ) {
         // set the execution time to be on the upcoming hour    
         endArchiveCal = Calendar.getInstance();
+        endArchiveCal.add(Calendar.MINUTE, 1);
         endArchiveCal.clear(Calendar.MILLISECOND);
         endArchiveCal.clear(Calendar.SECOND);
         endArchiveCal.clear(Calendar.MINUTE);
