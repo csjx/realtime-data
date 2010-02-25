@@ -498,11 +498,12 @@ public class CTDSource extends RBNBSource {
         dataSocket = null;
       }      
     }  catch ( UnknownHostException ukhe ) {
-      System.err.println("Unable to look up host: " + host + "\n");
+      
+      logger.info("Unable to look up host: " + host + "\n");
       disconnect();
       dataSocket = null;
     } catch (IOException nioe ) {
-      System.err.println("Couldn't get I/O connection to: " + host);
+      logger.info("Couldn't get I/O connection to: " + host);
       disconnect();
       dataSocket = null;
     } catch (Exception e) {
