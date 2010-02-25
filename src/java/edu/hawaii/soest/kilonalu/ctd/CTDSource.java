@@ -30,18 +30,28 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+
 import java.lang.StringBuffer;
 
 import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.ByteChannel;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 
 import org.apache.commons.cli.Options;
@@ -58,8 +68,9 @@ import org.nees.rbnb.RBNBSource;
 
 /**
  * A simple class used to harvest a decimal ASCII data stream from a Seacat 
- * 16plus CTD) over a TCP socket connection with a Raven XT cellular modem and 
- * serial2ip converter host. The data stream is then converted into RBNB frames 
+ * 16plus CTD) over either 1) a TCP socket connection with a Raven XT cellular 
+ * modem and serial2ip converter host or, 2) a local serial port. 
+ * The data stream is then converted into RBNB frames 
  * and pushed into the RBNB DataTurbine real time server.  This class extends 
  * org.nees.rbnb.RBNBSource, which in turn extends org.nees.rbnb.RBNBBase, 
  * and therefore follows the API conventions found in the org.nees.rbnb code.  
@@ -69,9 +80,6 @@ import org.nees.rbnb.RBNBSource;
  * by two newline characters (\n\n).  Each line is also prefixed by the pound (#)
  * character.
  *
- * Each line of data is parsed by an instance of the SeabirdParser code, 
- * contributed to the Open Source Data Turbine (OSDT) initiative, found at
- * http://dataturbine.org.
  */
 public class CTDSource extends RBNBSource {
 
@@ -135,6 +143,12 @@ public class CTDSource extends RBNBSource {
    */
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
 
+  /** The default serial port name used for serial communications */
+  private static String DEFAULT_SERIAL_PORT = "/dev/ttyS0";
+  
+  /** The  serial port name used for serial communications */
+  private String serialPortName = DEFAULT_SERIAL_PORT;
+  
   /**
    * The number of bytes in the ensemble as each byte is read from the stream
    */
@@ -160,6 +174,13 @@ public class CTDSource extends RBNBSource {
   private boolean readyToStream = false;
   
   private Thread streamingThread;
+  
+  /** A boolean stating if the connection is serial vs socket */
+  private boolean isSerial;
+  
+  /** The socket or file channel used for instrument communication */
+  private ByteChannel channel;
+  
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
    * execution of the data streaming Thread should wait before re-executing
@@ -236,12 +257,26 @@ public class CTDSource extends RBNBSource {
    */
   protected boolean execute() {
     logger.debug("CTDSource.execute() called.");
+    
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
-      boolean failed = false;
+    boolean failed = false;
     
-      SocketChannel socket = getSocketConnection();
+    this.isSerial = true;
+    
+    // test the connection type
+    if ( this.isSerial ) {
+      
+      // create a serial connection to the local serial port
+      this.channel = getSerialConnection();
+      
+    } else {
+      
+      // otherwise create a TCP or UDP socket connection to the remote host
+      this.channel = getSocketConnection();
+      
+    }
     
     // while data are being sent, read them into the buffer
     try {
@@ -266,8 +301,8 @@ public class CTDSource extends RBNBSource {
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
             
-      // while there are bytes to read from the socket ...
-      while ( socket.read(buffer) != -1 || buffer.position() > 0) {
+      // while there are bytes to read from the channel ...
+      while ( this.channel.read(buffer) != -1 || buffer.position() > 0) {
 
         // prepare the buffer for reading
         buffer.flip();          
@@ -412,19 +447,21 @@ public class CTDSource extends RBNBSource {
         buffer.compact();
     
     
-      } // end while (more socket bytes to read)
-      socket.close();
+      } // end while (more channel bytes to read)
+      this.channel.close();
         
     } catch ( IOException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
+      //this.channel.close();
       failed = true;
       e.printStackTrace();
       return !failed;
     } catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
+      //this.channel.close();
       failed = true;
       sapie.printStackTrace();
       return !failed;
@@ -476,7 +513,79 @@ public class CTDSource extends RBNBSource {
     
   }
 
-  
+   /**
+   * A method used to get a serial connection for communication
+   */
+  protected FileChannel getSerialConnection() {
+    
+    String           portName = getSerialPort();
+    FileChannel      fileChannel = null;
+    FileOutputStream outStream = null;
+    SerialPort serialPort = null;
+    
+    try {  
+      
+      // create the socket channel connection to the data source via the 
+      // converter serial2IP converter      
+      CommPortIdentifier portIdentifier = 
+        CommPortIdentifier.getPortIdentifier(portName);
+      
+      // check if the port is busy
+      if ( portIdentifier.isCurrentlyOwned() ) {
+        logger.info("Error: Port " + portName + "is currently in use.");
+
+      } else {
+
+        //if not busy, open the serial port for communication
+        CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
+
+        if ( commPort instanceof SerialPort ) {
+          serialPort = (SerialPort) commPort;
+          serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+          serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8,
+                                                 SerialPort.STOPBITS_1,
+                                                 SerialPort.PARITY_NONE);
+
+          outStream = (FileOutputStream) serialPort.getOutputStream();
+          fileChannel = outStream.getChannel();
+
+        } else {
+          
+          commPort.close();
+          disconnect();
+          fileChannel = null;
+          logger.info("Error: Port " + portName + " is not a serial port.");
+          
+        }
+        
+      }
+
+      // if the connection to the source fails, also disconnect from the RBNB
+      // server and return null
+      if ( !fileChannel.isOpen()) {
+        //if (fileChannel  != null) fileChannel.close();
+        if (outStream  != null) outStream.close();
+        if (serialPort != null) serialPort.close();
+        disconnect();
+        fileChannel = null;
+      }      
+
+    } catch (NoSuchPortException nspe ) {
+      disconnect();
+      fileChannel = null;
+    
+    } catch (IOException ioe ) {
+      disconnect();
+      fileChannel = null;
+    
+    } catch (Exception e) {
+      disconnect();
+      fileChannel = null;            
+    }
+    return fileChannel;
+    
+  }
+
   /**
    * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
    * data from a source instrument via a TCP connection
@@ -515,6 +624,28 @@ public class CTDSource extends RBNBSource {
    * LastChangedBy, LastChangedRevision, and HeadURL fields.
    */
 
+  /**
+   * A method that returns the name of the serial port used for serial
+   * communication.  This defaults to "/dev/ttyS0".  On Windows, this
+   * should be set to the appropriate comm port (e.g. COM1).  For use with 
+   * FTDI serial-to-USB adapters on Linux, use "/dev/ttyUSB0".
+   *
+   * @return serialPort - the name of the serial port
+   */
+  public String getSerialPort() {
+    return this.serialPortName;
+    
+  }
+  
+  /**
+   * A method used to set the name of the serial port used for serial
+   * communication.
+   */
+  private void setSerialPort(String serialPortName) {
+    this.serialPortName = serialPortName;
+      
+  }
+    
   public String getCVSVersionString(){
     return (
     "$LastChangedDate$" +
@@ -547,15 +678,6 @@ public class CTDSource extends RBNBSource {
       // line arguments as settings for this instance
       final CTDSource ctdSource = new CTDSource();
       
-      // Set up a simple logger that logs to the console
-      PropertyConfigurator.configure(ctdSource.getLogConfigurationFile());
-      
-      // parse the commandline arguments to configure the connection, then 
-      // start the streaming connection between the source and the RBNB server.
-      if ( ctdSource.parseArgs(args) ) {
-        ctdSource.start();
-      }
-      
       // Handle ctrl-c's and other abrupt death signals to the process
       Runtime.getRuntime().addShutdownHook(new Thread() {
         // stop the streaming process
@@ -565,6 +687,15 @@ public class CTDSource extends RBNBSource {
       }
       );
       
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(ctdSource.getLogConfigurationFile());
+      
+      // parse the commandline arguments to configure the connection, then 
+      // start the streaming connection between the source and the RBNB server.
+      if ( ctdSource.parseArgs(args) ) {
+        ctdSource.start();
+      }
+            
     } catch ( Exception e ) {
       logger.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
