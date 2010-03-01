@@ -478,6 +478,9 @@ public class AdamSource extends RBNBSource {
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
         rbnbChannelMap.PutDataAsString(channelIndex, decimalASCIISampleData.toString());
         
+        logger.debug("Register Channel Map: " + registerChannelMap.toString());
+        logger.debug("Data Channel Map    : " + rbnbChannelMap.toString());
+        
         // Now register the RBNB channels, and flush the rbnbChannelMap to the
         // DataTurbine
         getSource().Register(registerChannelMap);
