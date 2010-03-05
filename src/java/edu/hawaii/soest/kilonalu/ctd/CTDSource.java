@@ -30,12 +30,14 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import edu.hawaii.soest.kilonalu.ctd.CTDParser;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 
+import java.lang.InterruptedException;
 import java.lang.StringBuffer;
 
 import java.io.PrintWriter;
@@ -53,6 +55,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -112,19 +121,13 @@ public class CTDSource extends RBNBSource {
    */
   private int bufferSize = DEFAULT_BUFFER_SIZE;
   
-  /*
-   *  A default RBNB channel name for the given source instrument
-   */  
+  /* A default RBNB channel name for the given source instrument */  
   private String DEFAULT_RBNB_CHANNEL = "DecimalASCIISampleData";
 
-  /**
-   * The name of the RBNB channel for this data stream
-   */
+  /* The name of the RBNB channel for this data stream */
   private String rbnbChannelName = DEFAULT_RBNB_CHANNEL;
   
-  /*
-   *  A default source IP address for the given source instrument
-   */
+  /* A default source IP address for the given source instrument */
   private final String DEFAULT_SOURCE_HOST_NAME = "68.25.65.111";  
 
   /**
@@ -133,14 +136,10 @@ public class CTDSource extends RBNBSource {
    */
   private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
 
-  /*
-   *  A default source TCP port for the given source instrument
-   */  
+  /* A default source TCP port for the given source instrument */  
   private final int DEFAULT_SOURCE_HOST_PORT  = 5111;
 
-  /**
-   * The TCP port to connect to on the Source host machine 
-   */
+  /* The TCP port to connect to on the Source host machine */
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
 
   /** The default serial port name used for serial communications */
@@ -149,24 +148,16 @@ public class CTDSource extends RBNBSource {
   /** The  serial port name used for serial communications */
   private String serialPortName = DEFAULT_SERIAL_PORT;
   
-  /**
-   * The number of bytes in the ensemble as each byte is read from the stream
-   */
+  /* The number of bytes in the ensemble as each byte is read from the stream */
   private int sampleByteCount = 0;
   
-  /**
-   * The default log configuration file location
-   */
+  /* The default log configuration file location */
   private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
 
-  /**
-   * The log configuration file location
-   */
+  /* The log configuration file location */
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
-  /**
-   * The Logger instance used to log system messages 
-   */
+  /* The Logger instance used to log system messages */
   private static Logger logger = Logger.getLogger(CTDSource.class);
 
   protected int state = 0;
@@ -175,11 +166,78 @@ public class CTDSource extends RBNBSource {
   
   private Thread streamingThread;
   
-  /** A boolean stating if the connection is serial vs socket */
+  /* A boolean field stating if the connection is serial vs socket */
   private boolean isSerial;
   
-  /** The socket or file channel used for instrument communication */
+  /* A boolean field indicating if a command has been sent to the instrument */
+  private boolean sentCommand = false;
+  
+  /* The command prefix used to send commands to the instrument */ 
+  private String commandPrefix = "";
+  
+  /* The command suffix used to send commands to the instrument */ 
+  private String commandSuffix = "\r\n";
+  
+  /* The default sampling interval in samples per hour (i.e every 4 minutes) */
+  private final String DEFAULT_SAMPLE_INTERVAL = "15";
+  
+  /* The sampling interval in samples per hour */
+  private final String sampleInterval = DEFAULT_SAMPLE_INTERVAL;
+  
+  /* The command used to set the sampling interval on the instrument */ 
+  private String sampleIntervalCommand = "SampleInterval=";
+  
+  /* The command used to start the autonomous sampling on the instrument */ 
+  private String startSamplingCommand = "StartNow";
+  
+  /* The command used to stop the autonomous sampling on the instrument */ 
+  private String stopSamplingCommand = "Stop";
+  
+  /* The command used to set the observation datetime on the instrument */ 
+  private String setDateTimeCommand = "DateTime="; // use mmddyyyyhhmmss
+  
+  /* The command get status information from the instrument */ 
+  private String getStatusCommand = "GetSD";
+  
+  /* The command get configuration information from the instrument */ 
+  private String getConfigurationCommand = "GetCD";
+  
+  /* The command get calibration information from the instrument */ 
+  private String getCalibrationCommand = "GetCC";
+  
+  /* The command get event information from the instrument */ 
+  private String getEventsCommand = "GetED";
+  
+  /* The command get hardware information from the instrument */ 
+  private String getHardwareCommand = "GetHD";
+  
+  /* A boolean field that indicates if all CTDParser metadata fields are set */
+  private boolean hasMetadata = false;
+  
+  /* A boolean field that indicates if sampling has been stopped on the instrument */
+  private boolean samplingIsStopped = false;
+  
+  /* The command used to query or command the instrument */
+  private String command;
+  
+  /* A boolean stating if the instrument clock is synced to NTP time */
+  private boolean clockIsSynced = false;
+  
+  /* The datetime when the instrument clock was last synced to NTP time */
+  private Date clockSyncDate;
+  
+  /* The date format for the timestamp applied to instrument clock */
+  private static final SimpleDateFormat DATE_FORMAT = 
+    new SimpleDateFormat("ddMMyyyyHHmmss");
+  
+  /* The timezone used for the sample date */
+  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    
+  /* The socket or file channel used for instrument communication */
   private ByteChannel channel;
+  
+  /* The instance of the CTD Parser class used to parse CTD output */
+  private CTDParser ctdParser;
   
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
@@ -263,8 +321,6 @@ public class CTDSource extends RBNBSource {
     
     boolean failed = false;
     
-    this.isSerial = true;
-    
     // test the connection type
     if ( this.isSerial ) {
       
@@ -293,6 +349,10 @@ public class CTDSource extends RBNBSource {
       // Create a buffer that will store the sample bytes as they are read
       ByteBuffer sampleBuffer = ByteBuffer.allocate(getBufferSize());
       
+      // Declare sample variables to be used in the response parsing
+      byte[] sampleArray;
+      String sampleString;
+      
       // create a byte buffer to store bytes from the TCP stream
       ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
       
@@ -300,7 +360,10 @@ public class CTDSource extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-            
+      
+      // create the CTD parser instance used to parse CTD output
+      this.ctdParser = new CTDParser();
+      
       // while there are bytes to read from the channel ...
       while ( this.channel.read(buffer) != -1 || buffer.position() > 0) {
 
@@ -310,16 +373,17 @@ public class CTDSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
-                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
-                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
-                       "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
-                       "sample pos: "   + sampleBuffer.position()                  + "\t" +
-                       "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
-                       "sample cnt: "   + sampleByteCount                          + "\t" +
-                       "buffer pos: "   + buffer.position()                        + "\t" +
-                       "buffer rem: "   + buffer.remaining()                       + "\t" +
-                       "state: "        + state
+          logger.debug(
+            "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+            "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
+            "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
+            "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
+            "sample pos: "   + sampleBuffer.position()                  + "\t" +
+            "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
+            "sample cnt: "   + sampleByteCount                          + "\t" +
+            "buffer pos: "   + buffer.position()                        + "\t" +
+            "buffer rem: "   + buffer.remaining()                       + "\t" +
+            "state: "        + state
           );
           
           // Use a State Machine to process the byte stream.
@@ -330,21 +394,478 @@ public class CTDSource extends RBNBSource {
           // of the sample in the Sink client code
     
           switch( state ) {
-    
-            case 0:
+            
+            case 0:  // wake up the instrument
+              
+              // check for instrument metadata fields
+              if ( this.hasMetadata ) {
+                state = 10;
+                break;
+                
+              } else {
+                
+                // wake the instrument with an initial '\r\n' command
+                this.command = this.commandSuffix;
+                this.sentCommand = queryInstrument(this.command);
+                
+                state = 1;
+                break;
+                
+              }
+            
+            case 1: // stop the sampling
+              
+              // allow time for the instrument response
+              streamingThread.sleep(2000);
+              this.command = this.commandPrefix     + 
+                             this.stopSamplingCommand +
+                             this.commandSuffix;
+              this.sentCommand = queryInstrument(command);        
+              
+              if ( this.sentCommand ) {
+                
+                this.samplingIsStopped = true;
+                state = 2;
+                break;
+                
+              } else {
+                break; // try stopping the instrument sampling again
+                
+              }
+              
+            case 2: // get the instrument status metadata
+              
+              if ( !this.ctdParser.getHasStatusMetadata() ) {
+                
+                this.command = this.commandPrefix    +
+                               this.getStatusCommand +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                streamingThread.sleep(5000);
+                state = 3;
+                break;
+                
+              } else {
+                
+                // get the configuration metadata
+                this.command = this.commandPrefix           + 
+                               this.getConfigurationCommand +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                streamingThread.sleep(5000);
+                state = 4;
+                break;
+                
+              }
+              
+            case 3: // handle instrument status response
+              
+              // command response ends with <Executed/> (so find: ed/>)
+              if ( byteOne == 0x3E   && byteTwo == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65 ) {
+                
+                // handle instrument status response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount];
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                sampleString = new String(sampleArray, "US-ASCII");
+                
+                // set the CTD metadata
+                int executedIndex = sampleString.indexOf("<Executed/>");
+                sampleString = sampleString.substring(0, executedIndex - 1);
+                
+                this.ctdParser.setMetadata(sampleString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // then get the instrument configuration metadata
+                if ( !this.ctdParser.getHasConfigurationMetadata() ) {
+
+                  this.command = this.commandPrefix           + 
+                                 this.getConfigurationCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 4;
+                  break;
+
+                } else {
+                  
+                  // get the calibration metadata
+                  this.command = this.commandPrefix         + 
+                                 this.getCalibrationCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 5;
+                  break;
+
+                }
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 4: // handle the instrument configuration metadata
+              
+              // command response ends with <Executed/> (so find: ed/>)
+              if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65 ) {
+                
+                // handle instrument configration response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount];
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                sampleString = new String(sampleArray, "US-ASCII");
+                
+                // set the CTD metadata
+                int executedIndex = sampleString.indexOf("<Executed/>");
+                sampleString = sampleString.substring(0, executedIndex - 1);
+                
+                this.ctdParser.setMetadata(sampleString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // then get the instrument calibration metadata
+                if ( !this.ctdParser.getHasCalibrationMetadata() ) {
+
+                  this.command = this.commandPrefix         + 
+                                 this.getCalibrationCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 5;
+                  break;
+
+                } else {
+
+                  this.command = this.commandPrefix    + 
+                                 this.getEventsCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 6;
+                  break;
+
+                }
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 5: // handle the instrument calibration metadata
+              
+              // command response ends with <Executed/> (so find: ed/>)
+              if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65 ) {
+                
+                // handle instrument calibration response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount];
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                sampleString = new String(sampleArray, "US-ASCII");
+                
+                // set the CTD metadata
+                int executedIndex = sampleString.indexOf("<Executed/>");
+                sampleString = sampleString.substring(0, executedIndex - 1);
+                
+                this.ctdParser.setMetadata(sampleString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // then get the instrument event metadata
+                if ( !this.ctdParser.getHasEventMetadata() ) {
+
+                  this.command = this.commandPrefix    + 
+                                 this.getEventsCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 6;
+                  break;
+
+                } else {
+
+                  this.command = this.commandPrefix      +
+                                 this.getHardwareCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 7;
+                  break;
+
+                }
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 6: // handle instrument event metadata
+              
+              // command response ends with <Executed/> (so find: ed/>)
+              if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65 ) {
+                
+                // handle instrument events response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount];
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                sampleString = new String(sampleArray, "US-ASCII");
+                
+                // set the CTD metadata
+                int executedIndex = sampleString.indexOf("<Executed/>");
+                sampleString = sampleString.substring(0, executedIndex - 1);
+                
+                this.ctdParser.setMetadata(sampleString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // then get the instrument hardware metadata
+                if ( !this.ctdParser.getHasHardwareMetadata() ) {
+
+                  this.command = this.commandPrefix      +
+                                 this.getHardwareCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);        
+                  streamingThread.sleep(5000);
+                  state = 7;
+                  break;
+
+                } else {
+
+                  state = 8;
+                  break;
+
+                }
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 7: // handle the instrument hardware response
+            
+              // command response ends with <Executed/> (so find: ed/>)
+              if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65 ) {
+                
+                // handle instrument hardware response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount];
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                sampleString = new String(sampleArray, "US-ASCII");
+                
+                // set the CTD metadata
+                int executedIndex = sampleString.indexOf("<Executed/>");
+                sampleString = sampleString.substring(0, executedIndex - 1);
+                
+                this.ctdParser.setMetadata(sampleString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // sync the clock if it is not synced
+                if ( !this.clockIsSynced ){
+                  
+                  state = 8;
+                  break;
+                  
+                } else {
+                  state = 9;
+                  break;
+                  
+                }
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 8: // set the instrument clock
+              
+              // is sampling stopped?
+              if ( !this.samplingIsStopped ) {
+                // wake the instrument with an initial '\r\n' command
+                this.command = this.commandSuffix;
+                this.sentCommand = queryInstrument(this.command);
+                streamingThread.sleep(2000);
+                
+                // then stop the sampling
+                this.command = this.commandPrefix     + 
+                               this.stopSamplingCommand +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                this.samplingIsStopped = true;
+                
+              }
+              
+              // now set the clock
+              if ( this.sentCommand ) {
+                this.clockSyncDate = new Date();
+                DATE_FORMAT.setTimeZone(TZ);
+                String dateAsString = DATE_FORMAT.format(this.clockSyncDate);
+                
+                this.command = this.commandPrefix      +
+                               this.setDateTimeCommand +
+                               dateAsString            +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                streamingThread.sleep(5000);
+                this.clockIsSynced = true;
+                logger.info("The instrument clock has bee synced at " + 
+                            this.clockSyncDate.toString());
+                state = 9;
+                break;
+                
+              } else {
+                
+                break; // try the clock sync again due to failure
+                
+              }
+              
+              
+            case 9: // restart the instrument sampling
+              
+              if ( this.samplingIsStopped ) {
+                
+                this.hasMetadata = true;
+                
+                this.command = this.commandPrefix        +
+                               this.startSamplingCommand +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                streamingThread.sleep(5000);
+                
+                if (this.sentCommand ) {
+                  state = 10;
+                  break;
+                  
+                } else {
+                  break; // try starting the sampling again due to failure
+                }
+
+              } else {
+
+                break;
+
+              }
+              
+            case 10:
               
               // sample line is begun by \r\n
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0A && byteTwo == 0x0D ) {
                 // we've found the beginning of a sample, move on
-                state = 1;
+                state = 11;
                 break;
     
               } else {
                 break;                
               }
             
-            case 1: // read the rest of the bytes to the next EOL characters
+            case 11: // read the rest of the bytes to the next EOL characters
               
               // sample line is terminated by \r\n
               // note bytes are in reverse order in the FIFO window
@@ -365,12 +886,12 @@ public class CTDSource extends RBNBSource {
                 // extract just the length of the sample bytes out of the
                 // sample buffer, and place it in the channel map as a 
                 // byte array.  Then, send it to the data turbine.
-                byte[] sampleArray = new byte[sampleByteCount];
+                sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
-                String sampleString = new String(sampleArray, "US-ASCII");
+                sampleString = new String(sampleArray, "US-ASCII");
                 
                 // test if the sample is not just an instrument message
                 if ( sampleString.matches("^# [0-9].*\r\n" ) ||
@@ -394,7 +915,31 @@ public class CTDSource extends RBNBSource {
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
-                  state = 0;
+                  // check if the clock need syncing (daily)
+                  Calendar currentCalendar = Calendar.getInstance();
+                  currentCalendar.setTime(new Date());
+                  Calendar lastSyncedCalendar = Calendar.getInstance();
+                  lastSyncedCalendar.setTime(this.clockSyncDate);
+                  
+                  currentCalendar.clear(Calendar.MILLISECOND);
+                  currentCalendar.clear(Calendar.SECOND);
+                  currentCalendar.clear(Calendar.MINUTE);
+                  currentCalendar.clear(Calendar.HOUR);
+                  
+                  lastSyncedCalendar.clear(Calendar.MILLISECOND);
+                  lastSyncedCalendar.clear(Calendar.SECOND);
+                  lastSyncedCalendar.clear(Calendar.MINUTE);
+                  lastSyncedCalendar.clear(Calendar.HOUR);
+                  
+                  // sync the clock daily
+                  if ( currentCalendar.before(lastSyncedCalendar) ) {
+                    state = 8;
+                    
+                  } else {
+                    state = 10;
+                    
+                  }
+                  
                 
                 // the sample looks more like an instrument message, don't flush
                 } else {
@@ -413,7 +958,7 @@ public class CTDSource extends RBNBSource {
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
-                  state = 0;
+                  state = 10;
                   
                 }
                 
@@ -458,6 +1003,13 @@ public class CTDSource extends RBNBSource {
       failed = true;
       e.printStackTrace();
       return !failed;
+    
+    } catch ( InterruptedException intde ) {
+      // in the event that the streamingThread is interrupted
+      failed = true;
+      intde.printStackTrace();
+      return !failed;
+    
     } catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
@@ -465,6 +1017,25 @@ public class CTDSource extends RBNBSource {
       failed = true;
       sapie.printStackTrace();
       return !failed;
+    
+    } catch (ParseException pe ) {
+      failed = true;
+      logger.info("There was an error parsing the metadata response. " +
+                  "The error message was: " + pe.getMessage());
+      return !failed;
+      
+    } finally {
+      
+      if (this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
     }
     
     return !failed;
@@ -736,6 +1307,37 @@ public class CTDSource extends RBNBSource {
     stop();
   }
 
+  /**
+   * A method that queries the instrument to obtain its ID 
+   *
+   * @return result - a boolean result, true if the command succeeds
+   */
+  public boolean queryInstrument(String command) {
+    
+    // the result of the query
+    boolean result = false;
+    
+    // only send the command if the socket is connected
+    if ( this.channel.isOpen() ) {
+      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 10);
+      commandBuffer.put(command.getBytes());
+      commandBuffer.flip();
+      
+      try {
+        this.channel.write(commandBuffer);
+        logger.debug("Wrote " + command + " to the instrument channel.");
+        result = true;
+        
+      } catch (IOException ioe ) {
+        logger.info("There was a problem sending the command to the " + 
+                    "instrument. The error message was: " +
+                    ioe.getMessage());
+        result = false;
+      }
+    }
+    return result;
+  }
+  
   /**
    * A method that sets the command line arguments for this class.  This method 
    * calls the <code>RBNBSource.setBaseArgs()</code> method.
