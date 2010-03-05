@@ -824,6 +824,21 @@ public class CTDParser {
   /** An XML document object used to access CTD metadata reported in XML syntax */
   private Document xmlMetadata;
   
+  /** A boolean field indicating the existence of status metadata (from GetSD) */
+  private boolean hasStatusMetadata = false;
+  
+  /** A boolean field indicating the existence of configuration metadata (from GetCD) */
+  private boolean hasConfigurationMetadata = false;
+  
+  /** A boolean field indicating the existence of calibration metadata (from GetCC) */
+  private boolean hasCalibrationMetadata = false;
+  
+  /** A boolean field indicating the existence of event metadata (from GetED) */
+  private boolean hasEventMetadata = false;
+  
+  /** A boolean field indicating the existence of hardware metadata (from GetHD) */
+  private boolean hasHardwareMetadata = false;
+  
   /** 
    * The date format for the timestamp applied to the TChain sample 04 Aug 2008 09:15:01
    */
@@ -2010,6 +2025,8 @@ public class CTDParser {
           "//ConfigurationData/SyncMode")
           .getFirstChild().getNodeValue().trim();
         logger.info("Synchronization mode state state is: " + this.synchronizationMode);
+      
+        this.hasConfigurationMetadata = true;
         
       // add the status metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName()
@@ -2092,6 +2109,8 @@ public class CTDParser {
            .getFirstChild().getNodeValue().trim();
          logger.info("Autonomous sampling state is: " + this.autonomousSampling);
       
+        this.hasStatusMetadata = true;
+        
       // add the calibration metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName()
                     .equals("CalibrationCoefficients") ) {
@@ -2362,11 +2381,17 @@ public class CTDParser {
           }
         }
         
+        this.hasCalibrationMetadata = true;
+        
       // add the event metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("EventCounters") ) {
         
+        this.hasEventMetadata = true;
+        
       // add the hardware metadata fields to the metadataValuesMap
       } else if ( this.xmlMetadata.getDocumentElement().getTagName().equals("HardwareData") ) {
+        
+        this.hasHardwareMetadata = true;
         
       } else {
         throw new ParseException("The XML metadata is not recognized.", 0);
@@ -4017,6 +4042,56 @@ public class CTDParser {
     return this.dataVariableUnits;
       
   } 
+  
+  /**
+   *  A method indicating whether or not status metadata have been set
+   *
+   * @return hasStatusMetadata - a boolean indicating the metadata state
+   */
+   public boolean getHasStatusMetadata() {
+     return this.hasStatusMetadata;
+     
+   }
+  
+  /**
+   *  A method indicating whether or not configuration metadata have been set
+   *
+   * @return hasConfigurationMetadata - a boolean indicating the metadata state
+   */
+   public boolean getHasConfigurationMetadata() {
+     return this.hasConfigurationMetadata;
+     
+   }
+  
+  /**
+   *  A method indicating whether or not calibration metadata have been set
+   *
+   * @return hasCalibrationMetadata - a boolean indicating the metadata state
+   */
+   public boolean getHasCalibrationMetadata() {
+     return this.hasCalibrationMetadata;
+     
+   }
+  
+  /**
+   *  A method indicating whether or not event metadata have been set
+   *
+   * @return hasEventMetadata - a boolean indicating the the metadata state
+   */
+   public boolean getHasEventMetadata() {
+     return this.hasEventMetadata;
+     
+   }
+  
+  /**
+   *  A method indicating whether or not hardware metadata have been set
+   *
+   * @return hasHardwareMetadata - a boolean indicating the the metadata state
+   */
+   public boolean getHasHardwareMetadata() {
+     return this.hasHardwareMetadata;
+     
+   }
   
   /**
    * A method that gets the log configuration file location
