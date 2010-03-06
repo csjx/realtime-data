@@ -166,8 +166,8 @@ public class CTDSource extends RBNBSource {
   
   private Thread streamingThread;
   
-  /* A boolean field stating if the connection is serial vs socket */
-  private boolean isSerial;
+  /* A field indicating if the connection is serial or socket */
+  private String connectionType;
   
   /* A boolean field indicating if a command has been sent to the instrument */
   private boolean sentCommand = false;
@@ -322,16 +322,21 @@ public class CTDSource extends RBNBSource {
     boolean failed = false;
     
     // test the connection type
-    if ( this.isSerial ) {
+    if ( this.connectionType.equals("serial") ) {
       
       // create a serial connection to the local serial port
       this.channel = getSerialConnection();
       
-    } else {
+    } else if ( this.connectionType.equals("socket") ) {
       
       // otherwise create a TCP or UDP socket connection to the remote host
       this.channel = getSocketConnection();
       
+    } else {
+      logger.info("There was an error establishing either a serial or " +
+                  "socket connection to the instrument.  Please be sure " +
+                  "the connection type is set to either 'serial' or 'socket'.");
+      return false;
     }
     
     // while data are being sent, read them into the buffer
@@ -1218,6 +1223,24 @@ public class CTDSource extends RBNBSource {
       
   }
     
+  /**
+   * A method used to set the connection type, either serial or socket.
+   */
+  private void setConnectionType(String connectionType) {
+    this.connectionType = connectionType;
+      
+  }
+  
+  /**
+   * A method used to get the connection type, either serial or socket.
+   *
+   * @return connectionType - the connection type as a string.
+   */
+  public String getConnectionType() {
+    return this.connectionType;
+      
+  }
+  
   public String getCVSVersionString(){
     return (
     "$LastChangedDate$" +
@@ -1383,6 +1406,43 @@ public class CTDSource extends RBNBSource {
         setChannelName(channelName);
       }
     }
+    
+    // handle the -c option
+    if ( command.hasOption("c") ) {
+      String communicationPort = command.getOptionValue("c");
+      if ( communicationPort != null ) {
+        setSerialPort(communicationPort);
+      }
+    }
+    
+    // handle the -t option
+    if ( command.hasOption("t") ) {
+      String connectionType = command.getOptionValue("t");
+      if ( connectionType != null ) {
+        if ( connectionType.equals("serial") ) {
+          setConnectionType(connectionType);
+        
+        } else if ( connectionType.equals("socket") ) {
+          setConnectionType(connectionType);
+          
+        } else {
+          logger.info("The connection type was not recognized.  Please " +
+                      "use either 'serial' or 'socket' for the '-t' option.");
+          return false;
+          
+        }
+      }
+    }
+    
+    if ( (command.hasOption("H") || command.hasOption("P")) &&
+          command.hasOption("c") && (!command.hasOption("t")) ) {
+      logger.info("There was a configuration error.  The '-H' and '-P' " +
+                  "options are mutually exclusive of the '-c' option "   +
+                  "(socket vs. serial connection type).  You must "      +
+                  "include the '-t' option designating the connection "  +
+                  "type, with either 'serial' or 'socket'.");
+      return false;
+    }
 
     return true;
   }
@@ -1449,10 +1509,11 @@ public class CTDSource extends RBNBSource {
     // -Z "Archive size"
     
     // add command line options here
-    options.addOption("H", true, "Source host name or IP *" + getHostName());
-    options.addOption("P", true, "Source host port number *" + getHostPort());    
-    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
-    //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
+    options.addOption("H", true, "Source host name or IP e.g." + getHostName());
+    options.addOption("P", true, "Source host port number e.g." + getHostPort());    
+    options.addOption("C", true, "RBNB source channel name e.g." + getRBNBChannelName());
+    options.addOption("c", true, "communication serial port, e.g. /dev/ttyUSB0");
+    options.addOption("t", true, "connection type, either 'serial' or 'socket'");
                       
     return options;
   }
