@@ -197,6 +197,10 @@ classdef Configure < hgsetget & dynamicprops
     % A boolean property indicating whether or not figures should be exported
     exportFigures = true;
     
+    % Astring indicating the type of figure to produce.  This is currently
+    % limited to 'timeSeries' and 'temperatureSalinity'
+    currentFigureType = '';
+    
     % A cell array property that gives the details needed to produce multiple
     % time series figures, each potentially with subplots.  The cell fields are:
     % 1) figure title prefix (string)
@@ -214,13 +218,9 @@ classdef Configure < hgsetget & dynamicprops
       {'7 Day' , '604800', {'temperature', 'salinity', 'depth'}, {'serialdate'}} ...
     };
     
-    
-    tsFigures = { ...
-      {'3 Day'  , '259200', {'temperature'}, {'salinity'}}, ...
-      {'7 Day'  , '604800', {'temperature'}, {'salinity'}}, ...
-      {'21 Day' , '604800', {'temperature'}, {'salinity'}}, ...
-      {'365 Day', '604800', {'temperature'}, {'salinity'}}  ...
-    };
+    % A cell array property that gives the details needed to produce multiple
+    % temperature-salinity plots
+    tsFigures = {};
     
     % The format string used to parse the columns of data.  The order is critical
     % because it must match the order of the data in the ASCII data string
@@ -264,8 +264,11 @@ classdef Configure < hgsetget & dynamicprops
     % The time reference of the channel data query
     reference = 'newest';
     
-    % The start time channel data query
+    % The start time of the channel data query
     startTime = 0;
+    
+    % The start date of the channel data query
+    dataStartDate = '';
     
     % The timer interval for scheduled processing in minutes
     timerInterval = 20;
