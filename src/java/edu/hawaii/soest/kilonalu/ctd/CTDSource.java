@@ -169,6 +169,9 @@ public class CTDSource extends RBNBSource {
   /* A field indicating if the connection is serial or socket */
   private String connectionType;
   
+  /* A field indicating if the CTD query output type is xml or text */
+  private String outputType;
+  
   /* A boolean field indicating if a command has been sent to the instrument */
   private boolean sentCommand = false;
   
@@ -196,19 +199,25 @@ public class CTDSource extends RBNBSource {
   /* The command used to set the observation datetime on the instrument */ 
   private String setDateTimeCommand = "DateTime="; // use mmddyyyyhhmmss
   
-  /* The command get status information from the instrument */ 
+  /* The legacy command to display status information from the instrument */ 
+  private String displayStatusCommand = "DS";
+  
+  /* The legacy command to display calibration information from the instrument */ 
+  private String displayCalibrationCommand = "DCal";
+  
+  /* The command to get status information from the instrument */ 
   private String getStatusCommand = "GetSD";
   
-  /* The command get configuration information from the instrument */ 
+  /* The command to get configuration information from the instrument */ 
   private String getConfigurationCommand = "GetCD";
   
-  /* The command get calibration information from the instrument */ 
+  /* The command to get calibration information from the instrument */ 
   private String getCalibrationCommand = "GetCC";
   
-  /* The command get event information from the instrument */ 
+  /* The command to get event information from the instrument */ 
   private String getEventsCommand = "GetED";
   
-  /* The command get hardware information from the instrument */ 
+  /* The command to get hardware information from the instrument */ 
   private String getHardwareCommand = "GetHD";
   
   /* A boolean field that indicates if all CTDParser metadata fields are set */
@@ -238,6 +247,9 @@ public class CTDSource extends RBNBSource {
   
   /* The instance of the CTD Parser class used to parse CTD output */
   private CTDParser ctdParser;
+  
+  /* The response string used as the output variable from the CTD */
+  String responseString;
   
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
@@ -356,7 +368,6 @@ public class CTDSource extends RBNBSource {
       
       // Declare sample variables to be used in the response parsing
       byte[] sampleArray;
-      String sampleString;
       
       // create a byte buffer to store bytes from the TCP stream
       ByteBuffer buffer = ByteBuffer.allocateDirect(getBufferSize());
@@ -365,9 +376,6 @@ public class CTDSource extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-      
-      // create the CTD parser instance used to parse CTD output
-      this.ctdParser = new CTDParser();
       
       // while there are bytes to read from the channel ...
       while ( this.channel.read(buffer) != -1 || buffer.position() > 0) {
@@ -409,7 +417,10 @@ public class CTDSource extends RBNBSource {
                 
               } else {
                 
-                // wake the instrument with an initial '\r\n' command
+                // wake the instrument with two initial '\r\n' commands
+                this.command = this.commandSuffix;
+                this.sentCommand = queryInstrument(this.command);
+                streamingThread.sleep(2000);
                 this.command = this.commandSuffix;
                 this.sentCommand = queryInstrument(this.command);
                 
@@ -422,7 +433,7 @@ public class CTDSource extends RBNBSource {
               
               // allow time for the instrument response
               streamingThread.sleep(2000);
-              this.command = this.commandPrefix     + 
+              this.command = this.commandPrefix       + 
                              this.stopSamplingCommand +
                              this.commandSuffix;
               this.sentCommand = queryInstrument(command);        
@@ -430,8 +441,27 @@ public class CTDSource extends RBNBSource {
               if ( this.sentCommand ) {
                 
                 this.samplingIsStopped = true;
-                state = 2;
-                break;
+                
+                // for newer firmware CTDs, use xml-based query commands
+                if ( getOutputType().equals("xml") ) {
+                  // create the CTD parser instance used to parse CTD output
+                  this.ctdParser = new CTDParser();
+                  state = 2;
+                  break;
+                
+                // otherwise, use text-based query commands
+                } else if ( getOutputType().equals("text") ) {
+                  state = 12; // process DS and DCal commands
+                  break;
+                  
+                } else {
+                  logger.info("The CTD output type is not recognized. " +
+                              "Please set the output type to either "   +
+                              "'xml' or 'text'.");
+                  failed = true;
+                  return !failed;
+                  
+                }
                 
               } else {
                 break; // try stopping the instrument sampling again
@@ -439,7 +469,7 @@ public class CTDSource extends RBNBSource {
               }
               
             case 2: // get the instrument status metadata
-              
+               
               if ( !this.ctdParser.getHasStatusMetadata() ) {
                 
                 this.command = this.commandPrefix    +
@@ -487,13 +517,13 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // set the CTD metadata
-                int executedIndex = sampleString.indexOf("<Executed/>");
-                sampleString = sampleString.substring(0, executedIndex - 1);
+                int executedIndex = this.responseString.indexOf("<Executed/>");
+                this.responseString = this.responseString.substring(0, executedIndex - 1);
                 
-                this.ctdParser.setMetadata(sampleString);
+                this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
                 byteOne   = 0x00;
@@ -556,13 +586,13 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // set the CTD metadata
-                int executedIndex = sampleString.indexOf("<Executed/>");
-                sampleString = sampleString.substring(0, executedIndex - 1);
+                int executedIndex = this.responseString.indexOf("<Executed/>");
+                this.responseString = this.responseString.substring(0, executedIndex - 1);
                 
-                this.ctdParser.setMetadata(sampleString);
+                this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
                 byteOne   = 0x00;
@@ -624,13 +654,13 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // set the CTD metadata
-                int executedIndex = sampleString.indexOf("<Executed/>");
-                sampleString = sampleString.substring(0, executedIndex - 1);
+                int executedIndex = this.responseString.indexOf("<Executed/>");
+                this.responseString = this.responseString.substring(0, executedIndex - 1);
                 
-                this.ctdParser.setMetadata(sampleString);
+                this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
                 byteOne   = 0x00;
@@ -692,13 +722,13 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // set the CTD metadata
-                int executedIndex = sampleString.indexOf("<Executed/>");
-                sampleString = sampleString.substring(0, executedIndex - 1);
+                int executedIndex = this.responseString.indexOf("<Executed/>");
+                this.responseString = this.responseString.substring(0, executedIndex - 1);
                 
-                this.ctdParser.setMetadata(sampleString);
+                this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
                 byteOne   = 0x00;
@@ -755,13 +785,13 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.flip();
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // set the CTD metadata
-                int executedIndex = sampleString.indexOf("<Executed/>");
-                sampleString = sampleString.substring(0, executedIndex - 1);
+                int executedIndex = this.responseString.indexOf("<Executed/>");
+                this.responseString = this.responseString.substring(0, executedIndex - 1);
                 
-                this.ctdParser.setMetadata(sampleString);
+                this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
                 byteOne   = 0x00;
@@ -896,19 +926,19 @@ public class CTDSource extends RBNBSource {
                 logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
-                sampleString = new String(sampleArray, "US-ASCII");
+                this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // test if the sample is not just an instrument message
-                if ( sampleString.matches("^# [0-9].*\r\n" ) ||
-                     sampleString.matches("^#  [0-9].*\r\n") ||
-                     sampleString.matches("^ [0-9].*\r\n") ) {
+                if ( this.responseString.matches("^# [0-9].*\r\n" ) ||
+                     this.responseString.matches("^#  [0-9].*\r\n") ||
+                     this.responseString.matches("^ [0-9].*\r\n") ) {
                 
                   // send the sample to the data turbine
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutMime(channelIndex, "text/plain");
-                  rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.responseString);
                   getSource().Flush(rbnbChannelMap);
-                  logger.info("Sent sample to the DataTurbine: " + sampleString);
+                  logger.info("Sent sample to the DataTurbine: " + this.responseString);
                   
                   // reset variables for the next sample
                   byteOne   = 0x00;
@@ -920,6 +950,7 @@ public class CTDSource extends RBNBSource {
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                  
                   // check if the clock need syncing (daily)
                   Calendar currentCalendar = Calendar.getInstance();
                   currentCalendar.setTime(new Date());
@@ -951,7 +982,7 @@ public class CTDSource extends RBNBSource {
                   
                   logger.info("This string does not look like a sample, " +
                               "and was not sent to the DataTurbine.");
-                  logger.info("Skipping sample: " + sampleString);
+                  logger.info("Skipping sample: " + this.responseString);
 
                   // reset variables for the next sample
                   byteOne   = 0x00;
@@ -984,6 +1015,115 @@ public class CTDSource extends RBNBSource {
                 break;
               } // end if for 0x0A0D EOL
           
+            case 12: // alternatively use legacy DS and DCal commands
+              
+              // start by getting the DS status output
+              this.command = this.commandPrefix        +
+                             this.displayStatusCommand +
+                             this.commandSuffix;
+              this.sentCommand = queryInstrument(command);        
+              streamingThread.sleep(5000);
+              state = 13;
+              break;
+              
+              
+            case 13: // handle the DS command response
+              
+              // command should end with the S> prompt
+              if ( byteOne == 0x7E   && byteTwo == 0x53 ) {
+                
+                // handle instrument status response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount - 2]; //subtract "S>"
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                this.responseString = new String(sampleArray, "US-ASCII");
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                // then get the instrument calibration metadata
+                  this.command = this.commandPrefix             +
+                                 this.displayCalibrationCommand +
+                                 this.commandSuffix;
+                  this.sentCommand = queryInstrument(command);
+                  streamingThread.sleep(5000);
+                  state = 14;
+                  break;
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+              
+            case 14: // handle the DCal command response
+              
+              // command should end with the S> prompt
+              if ( byteOne == 0x7E   && byteTwo == 0x53 ) {
+                
+                // handle instrument status response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }
+                
+                // extract the sampleByteCount length from the sampleBuffer
+                sampleArray = new byte[sampleByteCount - 2]; // subtract "S>"
+                sampleBuffer.flip();
+                logger.debug("sampleBuffer: " + sampleBuffer.toString());
+                sampleBuffer.get(sampleArray);
+                
+                // append the DCal output to the DS output
+                this.responseString = 
+                  this.responseString.concat(new String(sampleArray, "US-ASCII"));
+                
+                // and add the data delimiter expected in the CTDParser
+                this.responseString = this.responseString.concat("*END*\r\n\r\n");
+                
+                // build the CTDParser object with legacy DS and DCal metadata
+                this.ctdParser = new CTDParser(this.responseString);
+                
+                // reset variables for the next sample
+                byteOne   = 0x00;
+                byteTwo   = 0x00;
+                byteThree = 0x00;
+                byteFour  = 0x00;
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                
+                state = 8; // set the clock and start sampling
+                break;
+                
+              } else {
+                break; // continue reading bytes
+                
+              }
+            
           } // end switch statement
           
           // shift the bytes in the FIFO window
@@ -1044,7 +1184,7 @@ public class CTDSource extends RBNBSource {
     }
     
     return !failed;
-  } // end if (  !isConnected() ) 
+  }
   
    /**
    * A method used to the TCP socket of the remote source host for communication
@@ -1241,6 +1381,27 @@ public class CTDSource extends RBNBSource {
       
   }
   
+  /**
+   * A method used to set the output type, either xml or text.  By using
+   * xml, xml-based CTD query commands will be used (GetSD, GetCD, GetCC, etc.).
+   * When using text, legacy text-based commands will be used to query the
+   * CTD (DS, DCal, etc.)
+   */
+  private void setOutputType(String outputType) {
+    this.outputType = outputType;
+      
+  }
+  
+  /**
+   * A method used to get the output type, either xml or text.
+   *
+   * @return outputType - the output type as a string.
+   */
+  public String getOutputType() {
+    return this.outputType;
+      
+  }
+  
   public String getCVSVersionString(){
     return (
     "$LastChangedDate$" +
@@ -1419,10 +1580,8 @@ public class CTDSource extends RBNBSource {
     if ( command.hasOption("t") ) {
       String connectionType = command.getOptionValue("t");
       if ( connectionType != null ) {
-        if ( connectionType.equals("serial") ) {
-          setConnectionType(connectionType);
-        
-        } else if ( connectionType.equals("socket") ) {
+        if ( connectionType.equals("serial") || 
+             connectionType.equals("socket") ) {
           setConnectionType(connectionType);
           
         } else {
@@ -1433,6 +1592,26 @@ public class CTDSource extends RBNBSource {
         }
       }
     }
+
+    // handle the -o option
+    if ( command.hasOption("o") ) {
+      String outputType = command.getOptionValue("o");
+      if ( outputType != null ) {
+        
+        if ( outputType.equals("xml") || outputType.equals("text") ) {
+          setOutputType(outputType);          
+          
+        } else {
+          logger.info("The output type was not recognized.  Please " +
+                      "use either 'xml' or 'text' for the '-o' option.");
+          return false;
+          
+        }
+        
+        setOutputType(outputType);
+      }
+    }
+    
     
     if ( (command.hasOption("H") || command.hasOption("P")) &&
           command.hasOption("c") && (!command.hasOption("t")) ) {
@@ -1509,11 +1688,12 @@ public class CTDSource extends RBNBSource {
     // -Z "Archive size"
     
     // add command line options here
-    options.addOption("H", true, "Source host name or IP e.g." + getHostName());
-    options.addOption("P", true, "Source host port number e.g." + getHostPort());    
-    options.addOption("C", true, "RBNB source channel name e.g." + getRBNBChannelName());
+    options.addOption("H", true, "Source host name or IP e.g. " + getHostName());
+    options.addOption("P", true, "Source host port number e.g. " + getHostPort());    
+    options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
     options.addOption("c", true, "communication serial port, e.g. /dev/ttyUSB0");
-    options.addOption("t", true, "connection type, either 'serial' or 'socket'");
+    options.addOption("o", true, "output type from the CTD, either 'xml' or 'text'");
+    options.addOption("t", true, "connection type to the CTD, either 'serial' or 'socket'");
                       
     return options;
   }
