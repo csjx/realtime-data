@@ -1918,7 +1918,7 @@ public class CTDParser {
    * @param xmlString - the CTD's XML output string containing the metadata values
    */
   public void setMetadata(String xmlString) throws ParseException {
-    logger.debug("CTDParser.parseXMLMetadata() called.");
+    logger.debug("CTDParser.setMetadata(xmlString) called.");
     
     try {
       // create an XML Document object from the instrument XML string
