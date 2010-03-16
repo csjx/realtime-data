@@ -47,6 +47,7 @@
     <property name="package.home" value="edu/hawaii/soest" />
 
     <property name="dist.dir" value="dist"/>
+    <property name="gumstix.dir" value="dist-gumstix"/>
     <property name="ver.dir" value="${dist.dir}/${name}-${release}"/>
     <property name="ver.src" value="${ver.dir}/src"/>
 
@@ -247,14 +248,12 @@
   </target>
 
 
-   <target name="dist" depends="jar,jdoc"
-       description="jar all class files and documentation for distribution">
+  <target name="dist" depends="jar,jdoc" description="jar all class files and documentation for distribution">
     <mkdir dir="${dist.dir}"/>
     <delete dir="${ver.dir}" />
     <mkdir dir="${ver.dir}"/>
     <copy todir="${ver.dir}">
-    <fileset dir="."
-      excludes="**/CVS* **/.#* **/src* **/test* **/build* **/docs* ${dist.dir}"/>
+      <fileset dir="." excludes="**/CVS* **/.#* **/src* **/test* **/build* **/docs* ${dist.dir}"/>
     </copy>
     <copy todir="${ver.dir}" file="build.xml"/>
     <copy todir="${ver.dir}/lib" file="${build.dir}/${name}.jar"/>
@@ -278,16 +277,42 @@
     <zip zipfile="./${name}-${release}.zip" basedir="${dist.dir}" excludes="${name}-${release}/src/**, ${name}-${release}/build/src/**"/>
     <delete file="./${name}-${release}.tar.gz" />
     <tar tarfile="./${name}-${release}.tar" basedir="${dist.dir}" excludes="${name}-${release}/src/**, ${name}-${release}/build/src/**"/>
-    <gzip zipfile="./${name}-${release}.tar.gz"
-        src="./${name}-${release}.tar"/>
+    <gzip zipfile="./${name}-${release}.tar.gz" src="./${name}-${release}.tar"/>
     <delete file="./${name}-${release}.tar" />
   </target>
 
+  <target name="dist-gumstix" 
+          depends="compile" 
+          description="jar class files, libraries, and scripts for gumstix deployment">
+    <delete dir="${gumstix.dir}"/>
+    <mkdir dir="${gumstix.dir}"/>
+    <mkdir dir="${gumstix.dir}/bbl"/>
+    <mkdir dir="${gumstix.dir}/bbl/trunk"/>
+    <copy todir="${gumstix.dir}/bbl/trunk/build">
+      <fileset dir="./build" excludes="**/.svn* **/CVS* **/.#* **/src* **/lib/* **docs/*"/>
+    </copy>                    
+    <copy todir="${gumstix.dir}/bbl/trunk/lib">
+      <fileset dir="./lib"   excludes="**/.svn* **/CVS* **/.#*" includes="*jar *properties"/>
+    </copy>                    
+    <copy todir="${gumstix.dir}/bbl/trunk/bin">
+      <fileset dir="./bin"   excludes="**/.svn* **/CVS* **/.#*" includes="*CTDX* rbnb"/>
+    </copy>
+    <copy todir="${gumstix.dir}/bbl/trunk" file = "build.xml" />
+    <delete dir="${gumstix.dir}/bbl/trunk/build/docs" />
+    <delete dir="${gumstix.dir}/bbl/trunk/build/lib" />
+    <delete dir="${gumstix.dir}/bbl/trunk/build/src" />
+    <delete file="./pacioos-gumstix.tar.gz" />
+    <tar tarfile="./pacioos-gumstix.tar" basedir="${gumstix.dir}"/>
+    <gzip zipfile="./pacioos-gumstix.tar.gz"
+        src="./pacioos-gumstix.tar"/>
+    <delete file="./pacioos-gumstix.tar" />    
+  </target>
+  
   <target name="distsrc" depends="dist"
        description="jar all source files for distribution">
     <mkdir dir="${ver.src}"/>
     <copy todir="${ver.src}">
-    <fileset dir="./src"/>
+      <fileset dir="./src"/>
     </copy>
 
     <delete file="./${name}-src-${release}.zip"/>
