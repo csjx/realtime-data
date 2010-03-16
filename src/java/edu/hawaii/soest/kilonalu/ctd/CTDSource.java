@@ -933,10 +933,325 @@ public class CTDSource extends RBNBSource {
                      this.responseString.matches("^#  [0-9].*\r\n") ||
                      this.responseString.matches("^ [0-9].*\r\n") ) {
                 
-                  // send the sample to the data turbine
+                  // build the channel map with all of the data and metadata channels:
+                  
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutMime(channelIndex, "text/plain");
+                  
+                  // add the ASCII sample data field
                   rbnbChannelMap.PutDataAsString(channelIndex, this.responseString);
+                  
+                  // add the samplingMode field data                                                                                 
+                  channelIndex = rbnbChannelMap.Add("samplingMode");                                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getSamplingMode()); // String
+                  
+                  // add the temperatureSerialNumber field data                                                                      
+                  channelIndex = rbnbChannelMap.Add("temperatureSerialNumber");                                                      
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTemperatureSerialNumber()); // String   
+                  
+                  // add the conductivitySerialNumber field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("conductivitySerialNumber");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getConductivitySerialNumber()); // String   
+                  
+                  // add the mainBatteryVoltage field data                                                                           
+                  channelIndex = rbnbChannelMap.Add("mainBatteryVoltage");                                                           
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getMainBatteryVoltage()}); // double   
+                  
+                  // add the lithiumBatteryVoltage field data                                                                        
+                  channelIndex = rbnbChannelMap.Add("lithiumBatteryVoltage");                                                        
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getLithiumBatteryVoltage()}); // double   
+                  
+                  // add the operatingCurrent field data                                                                             
+                  channelIndex = rbnbChannelMap.Add("operatingCurrent");                                                             
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getOperatingCurrent()}); // double   
+                  
+                  // add the pumpCurrent field data                                                                                  
+                  channelIndex = rbnbChannelMap.Add("pumpCurrent");                                                                  
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPumpCurrent()}); // double   
+                  
+                  // add the channels01ExternalCurrent field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("channels01ExternalCurrent");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getChannels01ExternalCurrent()}); // double   
+                  
+                  // add the channels23ExternalCurrent field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("channels23ExternalCurrent");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getChannels23ExternalCurrent()}); // double   
+                  
+                  // add the loggingStatus field data                                                                                
+                  channelIndex = rbnbChannelMap.Add("loggingStatus");                                                                
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getLoggingStatus()); // String   
+                  
+                  // add the numberOfScansToAverage field data                                                                       
+                  channelIndex = rbnbChannelMap.Add("numberOfScansToAverage");                                                       
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getNumberOfScansToAverage()}); // int      
+                  
+                  // add the numberOfSamples field data                                                                              
+                  channelIndex = rbnbChannelMap.Add("numberOfSamples");                                                              
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getNumberOfSamples()}); // int      
+                  
+                  // add the numberOfAvailableSamples field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("numberOfAvailableSamples");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getNumberOfAvailableSamples()}); // int      
+                  
+                  // add the sampleInterval field data                                                                               
+                  channelIndex = rbnbChannelMap.Add("sampleInterval");                                                               
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getSampleInterval()}); // int      
+                  
+                  // add the measurementsPerSample field data                                                                        
+                  channelIndex = rbnbChannelMap.Add("measurementsPerSample");                                                        
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getMeasurementsPerSample()}); // int      
+                  
+                  // add the transmitRealtime field data                                                                             
+                  channelIndex = rbnbChannelMap.Add("transmitRealtime");                                                             
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTransmitRealtime()); // String   
+                  
+                  // add the numberOfCasts field data                                                                                
+                  channelIndex = rbnbChannelMap.Add("numberOfCasts");                                                                
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getNumberOfCasts()}); // int      
+                  
+                  // add the minimumConductivityFrequency field data                                                                 
+                  channelIndex = rbnbChannelMap.Add("minimumConductivityFrequency");                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getMinimumConductivityFrequency()}); // int      
+                  
+                  // add the pumpDelay field data                                                                                    
+                  channelIndex = rbnbChannelMap.Add("pumpDelay");                                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{this.ctdParser.getPumpDelay()}); // int      
+                  
+                  // add the automaticLogging field data                                                                             
+                  channelIndex = rbnbChannelMap.Add("automaticLogging");                                                             
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getAutomaticLogging()); // String   
+                  
+                  // add the ignoreMagneticSwitch field data                                                                         
+                  channelIndex = rbnbChannelMap.Add("ignoreMagneticSwitch");                                                         
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getIgnoreMagneticSwitch()); // String   
+                  
+                  // add the batteryType field data                                                                                  
+                  channelIndex = rbnbChannelMap.Add("batteryType");                                                                  
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getBatteryType()); // String   
+                  
+                  // add the batteryCutoff field data                                                                                
+                  channelIndex = rbnbChannelMap.Add("batteryCutoff");                                                                
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getBatteryCutoff()); // String   
+                  
+                  // add the pressureSensorType field data                                                                           
+                  channelIndex = rbnbChannelMap.Add("pressureSensorType");                                                           
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSensorType()); // String   
+                  
+                  // add the pressureSensorRange field data                                                                          
+                  channelIndex = rbnbChannelMap.Add("pressureSensorRange");                                                          
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSensorRange()); // String   
+                  
+                  // add the sbe38TemperatureSensor field data                                                                       
+                  channelIndex = rbnbChannelMap.Add("sbe38TemperatureSensor");                                                       
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getSbe38TemperatureSensor()); // String   
+                  
+                  // add the gasTensionDevice field data                                                                             
+                  channelIndex = rbnbChannelMap.Add("gasTensionDevice");                                                             
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getGasTensionDevice()); // String   
+                  
+                  // add the externalVoltageChannelZero field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("externalVoltageChannelZero");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelZero()); // String   
+                  
+                  // add the externalVoltageChannelOne field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("externalVoltageChannelOne");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelOne()); // String   
+                  
+                  // add the externalVoltageChannelTwo field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("externalVoltageChannelTwo");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelTwo()); // String   
+                  
+                  // add the externalVoltageChannelThree field data                                                                  
+                  channelIndex = rbnbChannelMap.Add("externalVoltageChannelThree");                                                  
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getExternalVoltageChannelThree()); // String   
+                  
+                  // add the echoCommands field data                                                                                 
+                  channelIndex = rbnbChannelMap.Add("echoCommands");                                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getEchoCommands()); // String   
+                  
+                  // add the outputFormat field data                                                                                 
+                  channelIndex = rbnbChannelMap.Add("outputFormat");                                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getOutputFormat()); // String   
+                  
+                  // add the temperatureCalibrationDate field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("temperatureCalibrationDate");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getTemperatureCalibrationDate()); // String   
+                  
+                  // add the temperatureCoefficientTA0 field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA0");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getTemperatureCoefficientTA0()}); // double   
+                  
+                  // add the temperatureCoefficientTA1 field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA1");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getTemperatureCoefficientTA1()}); // double   
+                  
+                  // add the temperatureCoefficientTA2 field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA2");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getTemperatureCoefficientTA2()}); // double   
+                  
+                  // add the temperatureCoefficientTA3 field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("temperatureCoefficientTA3");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getTemperatureCoefficientTA3()}); // double   
+                  
+                  // add the temperatureOffsetCoefficient field data                                                                 
+                  channelIndex = rbnbChannelMap.Add("temperatureOffsetCoefficient");                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getTemperatureOffsetCoefficient()}); // double   
+                  
+                  // add the conductivityCalibrationDate field data                                                                  
+                  channelIndex = rbnbChannelMap.Add("conductivityCalibrationDate");                                                  
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getConductivityCalibrationDate()); // String   
+                  
+                  // add the conductivityCoefficientG field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientG");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientG()}); // double   
+                  
+                  // add the conductivityCoefficientH field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientH");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientH()}); // double   
+                  
+                  // add the conductivityCoefficientI field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientI");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientI()}); // double   
+                  
+                  // add the conductivityCoefficientJ field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientJ");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientJ()}); // double   
+                  
+                  // add the conductivityCoefficientCF0 field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientCF0");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientCF0()}); // double   
+                  
+                  // add the conductivityCoefficientCPCOR field data                                                                 
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientCPCOR");                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientCPCOR()}); // double   
+                  
+                  // add the conductivityCoefficientCTCOR field data                                                                 
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientCTCOR");                                                 
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientCTCOR()}); // double   
+                  
+                  // add the conductivityCoefficientCSLOPE field data                                                                
+                  channelIndex = rbnbChannelMap.Add("conductivityCoefficientCSLOPE");                                                
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getConductivityCoefficientCSLOPE()}); // double   
+                  
+                  // add the pressureSerialNumber field data                                                                         
+                  channelIndex = rbnbChannelMap.Add("pressureSerialNumber");                                                         
+                  rbnbChannelMap.PutMime(channelIndex, "text/plain");                                                                
+                  rbnbChannelMap.PutDataAsString(channelIndex, this.ctdParser.getPressureSerialNumber()); // String   
+                  
+                  // add the pressureCoefficientPA0 field data                                                                       
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPA0");                                                       
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPA0()}); // double   
+                  
+                  // add the pressureCoefficientPA1 field data                                                                       
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPA1");                                                       
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPA1()}); // double   
+                  
+                  // add the pressureCoefficientPA2 field data                                                                       
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPA2");                                                       
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPA2()}); // double   
+                  
+                  // add the pressureCoefficientPTCA0 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA0");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCA0()}); // double   
+                  
+                  // add the pressureCoefficientPTCA1 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA1");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCA1()}); // double   
+                  
+                  // add the pressureCoefficientPTCA2 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCA2");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCA2()}); // double   
+                  
+                  // add the pressureCoefficientPTCB0 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB0");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCB0()}); // double   
+                  
+                  // add the pressureCoefficientPTCB1 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB1");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCB1()}); // double   
+                  
+                  // add the pressureCoefficientPTCB2 field data                                                                     
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTCB2");                                                     
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTCB2()}); // double   
+                  
+                  // add the pressureCoefficientPTEMPA0 field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA0");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTEMPA0()}); // double   
+                  
+                  // add the pressureCoefficientPTEMPA1 field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA1");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTEMPA1()}); // double   
+                  
+                  // add the pressureCoefficientPTEMPA2 field data                                                                   
+                  channelIndex = rbnbChannelMap.Add("pressureCoefficientPTEMPA2");                                                   
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureCoefficientPTEMPA2()}); // double   
+                  
+                  // add the pressureOffsetCoefficient field data                                                                    
+                  channelIndex = rbnbChannelMap.Add("pressureOffsetCoefficient");                                                    
+                  rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");                                                  
+                  rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{this.ctdParser.getPressureOffsetCoefficient()}); // double   
+
+                  // send the sample to the data turbine
                   getSource().Flush(rbnbChannelMap);
                   logger.info("Sent sample to the DataTurbine: " + this.responseString);
                   
@@ -947,11 +1262,11 @@ public class CTDSource extends RBNBSource {
                   byteFour  = 0x00;
                   sampleBuffer.clear();
                   sampleByteCount = 0;
-                  //rbnbChannelMap.Clear();                      
+                  rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
                   
-                  // check if the clock need syncing (daily)
+                  // check if the clock needs syncing (daily)
                   Calendar currentCalendar = Calendar.getInstance();
                   currentCalendar.setTime(new Date());
                   Calendar lastSyncedCalendar = Calendar.getInstance();
