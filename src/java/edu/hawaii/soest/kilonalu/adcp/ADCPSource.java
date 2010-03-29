@@ -347,8 +347,8 @@ public class ADCPSource extends RBNBSource {
               int upperEnsembleByte = (byteOne & 0xFF) << 8;
               int lowerEnsembleByte = (byteTwo  & 0xFF);
               ensembleBytes = upperEnsembleByte + lowerEnsembleByte;
-              //logger.debug("Number of Bytes in the Ensemble: " +
-              //             ensembleBytes);
+              logger.debug("Number of Bytes in the Ensemble: " +
+                           ensembleBytes);
 
               if ( ensembleBuffer.remaining() > 0 ) {
                 
@@ -542,15 +542,15 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  //logger.debug(
-                  //  "flushed: "   + ensembleByteCount          + " "    +
-                  //  "ens cksum: " + ensembleChecksum           + "\t\t" +
-                  //  "ens pos: "   + ensembleBuffer.position()  + "\t"   +
-                  //  "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
-                  //  "buf pos: "   + buffer.position()          + "\t"   +
-                  //  "buf rem: "   + buffer.remaining()         + "\t"   +
-                  //  "state: "     + state
-                  //);
+                  logger.debug(
+                    "flushed: "   + ensembleByteCount          + " "    +
+                    "ens cksum: " + ensembleChecksum           + "\t\t" +
+                    "ens pos: "   + ensembleBuffer.position()  + "\t"   +
+                    "ens rem: "   + ensembleBuffer.remaining() + "\t"   +
+                    "buf pos: "   + buffer.position()          + "\t"   +
+                    "buf rem: "   + buffer.remaining()         + "\t"   +
+                    "state: "     + state
+                  );
                   logger.info("Sent ADCP ensemble to the data turbine.");
     
                   // only clear all four bytes if we are not one or two bytes 
@@ -561,7 +561,7 @@ public class ADCPSource extends RBNBSource {
                        buffer.position() == 0) {
                     byteThree = 0x00;
                     byteFour = 0x00;
-                    //logger.debug("Cleared ONLY b3, b4.");
+                    logger.debug("Cleared ONLY b3, b4.");
                   } else if ( byteOne == 0x7f && 
                               ensembleByteCount > ensembleBytes &&
                               buffer.position() == 1 ) {
@@ -569,21 +569,21 @@ public class ADCPSource extends RBNBSource {
                       byteTwo = 0x00;
                       byteThree = 0x00;
                       byteFour = 0x00;
-                      //logger.debug("Cleared ONLY b2, b3, b4.");
+                      logger.debug("Cleared ONLY b2, b3, b4.");
     
                   } else {
                     byteOne = 0x00;
                     byteTwo = 0x00;
                     byteThree = 0x00;
                     byteFour = 0x00;                      
-                    //logger.debug("Cleared ALL b1, b2, b3, b4.");
+                    logger.debug("Cleared ALL b1, b2, b3, b4.");
                   }
     
                   //rewind the position to before the next ensemble's header id
                   if ( buffer.position() >= 2 ) {
                     buffer.position(buffer.position() - 2);
-                    //logger.debug("Moved position back two, now: " +
-                    //             buffer.position());
+                    logger.debug("Moved position back two, now: " +
+                                 buffer.position());
                   }
     
     
@@ -640,13 +640,13 @@ public class ADCPSource extends RBNBSource {
           byteThree = byteTwo;
           byteTwo = byteOne;
 
-          //logger.debug("remaining:\t" + buffer.remaining() +
-          //             "\tstate:\t" + state +
-          //             "\tens byte count:\t" + ensembleByteCount +
-          //             "\tens bytes:\t" + ensembleBytes +
-          //             "\tver:\t" + headerIsVerified +
-          //             "\tbyte value:\t" + 
-          //             new String(Hex.encodeHex((new byte[]{byteOne}))));
+          logger.debug("remaining:\t" + buffer.remaining() +
+                       "\tstate:\t" + state +
+                       "\tens byte count:\t" + ensembleByteCount +
+                       "\tens bytes:\t" + ensembleBytes +
+                       "\tver:\t" + headerIsVerified +
+                       "\tbyte value:\t" + 
+                       new String(Hex.encodeHex((new byte[]{byteOne}))));
         } //end while (more unread bytes)
     
         // prepare the buffer to read in more bytes from the stream
