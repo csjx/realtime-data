@@ -31,6 +31,8 @@ import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
 import edu.hawaii.soest.kilonalu.ctd.CTDParser;
+import edu.hawaii.soest.kilonalu.utilities.SerialChannel;
+
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -41,10 +43,8 @@ import java.lang.InterruptedException;
 import java.lang.StringBuffer;
 
 import java.io.PrintWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-//import java.io.InputStream;
-//import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 //import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -113,7 +113,7 @@ public class CTDSource extends RBNBSource {
    * The default size of the ByteBuffer used to beffer the TCP stream from the
    * source instrument.
    */  
-  private int DEFAULT_BUFFER_SIZE = 8096; // 8K
+  private int DEFAULT_BUFFER_SIZE = 8192; // 8K
 
   /**
    * The size of the ByteBuffer used to beffer the TCP stream from the 
@@ -332,6 +332,8 @@ public class CTDSource extends RBNBSource {
     if (  !isConnected() ) return false;
     
     boolean failed = false;
+
+    this.hasMetadata = true;
     
     // test the connection type
     if ( this.connectionType.equals("serial") ) {
@@ -349,6 +351,7 @@ public class CTDSource extends RBNBSource {
                   "socket connection to the instrument.  Please be sure " +
                   "the connection type is set to either 'serial' or 'socket'.");
       return false;
+      
     }
     
     // while data are being sent, read them into the buffer
@@ -376,7 +379,7 @@ public class CTDSource extends RBNBSource {
       // Each sample will be sent to the Data Turbine as an rbnb frame.
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-      
+            
       // while there are bytes to read from the channel ...
       while ( this.channel.read(buffer) != -1 || buffer.position() > 0) {
 
@@ -396,7 +399,7 @@ public class CTDSource extends RBNBSource {
             "sample cnt: "   + sampleByteCount                          + "\t" +
             "buffer pos: "   + buffer.position()                        + "\t" +
             "buffer rem: "   + buffer.remaining()                       + "\t" +
-            "state: "        + state
+            "state: "        + this.state
           );
           
           // Use a State Machine to process the byte stream.
@@ -406,13 +409,13 @@ public class CTDSource extends RBNBSource {
           // observations of the measurements.  That time should be parsed out
           // of the sample in the Sink client code
     
-          switch( state ) {
+          switch( this.state ) {
             
             case 0:  // wake up the instrument
               
               // check for instrument metadata fields
               if ( this.hasMetadata ) {
-                state = 10;
+                this.state = 10;
                 break;
                 
               } else {
@@ -424,7 +427,7 @@ public class CTDSource extends RBNBSource {
                 this.command = this.commandSuffix;
                 this.sentCommand = queryInstrument(this.command);
                 
-                state = 1;
+                this.state = 1;
                 break;
                 
               }
@@ -446,12 +449,12 @@ public class CTDSource extends RBNBSource {
                 if ( getOutputType().equals("xml") ) {
                   // create the CTD parser instance used to parse CTD output
                   this.ctdParser = new CTDParser();
-                  state = 2;
+                  this.state = 2;
                   break;
                 
                 // otherwise, use text-based query commands
                 } else if ( getOutputType().equals("text") ) {
-                  state = 12; // process DS and DCal commands
+                  this.state = 12; // process DS and DCal commands
                   break;
                   
                 } else {
@@ -477,7 +480,7 @@ public class CTDSource extends RBNBSource {
                                this.commandSuffix;
                 this.sentCommand = queryInstrument(command);        
                 streamingThread.sleep(5000);
-                state = 3;
+                this.state = 3;
                 break;
                 
               } else {
@@ -488,7 +491,7 @@ public class CTDSource extends RBNBSource {
                                this.commandSuffix;
                 this.sentCommand = queryInstrument(command);        
                 streamingThread.sleep(5000);
-                state = 4;
+                this.state = 4;
                 break;
                 
               }
@@ -526,10 +529,6 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
@@ -541,7 +540,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 4;
+                  this.state = 4;
                   break;
 
                 } else {
@@ -552,7 +551,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 5;
+                  this.state = 5;
                   break;
 
                 }
@@ -595,10 +594,6 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
@@ -610,7 +605,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 5;
+                  this.state = 5;
                   break;
 
                 } else {
@@ -620,7 +615,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 6;
+                  this.state = 6;
                   break;
 
                 }
@@ -663,10 +658,6 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
@@ -678,7 +669,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 6;
+                  this.state = 6;
                   break;
 
                 } else {
@@ -688,7 +679,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 7;
+                  this.state = 7;
                   break;
 
                 }
@@ -731,10 +722,6 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
@@ -746,12 +733,12 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  state = 7;
+                  this.state = 7;
                   break;
 
                 } else {
 
-                  state = 8;
+                  this.state = 8;
                   break;
 
                 }
@@ -794,21 +781,17 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser.setMetadata(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
                 // sync the clock if it is not synced
                 if ( !this.clockIsSynced ){
                   
-                  state = 8;
+                  this.state = 8;
                   break;
                   
                 } else {
-                  state = 9;
+                  this.state = 9;
                   break;
                   
                 }
@@ -851,7 +834,7 @@ public class CTDSource extends RBNBSource {
                 this.clockIsSynced = true;
                 logger.info("The instrument clock has bee synced at " + 
                             this.clockSyncDate.toString());
-                state = 9;
+                this.state = 9;
                 break;
                 
               } else {
@@ -874,7 +857,7 @@ public class CTDSource extends RBNBSource {
                 streamingThread.sleep(5000);
                 
                 if (this.sentCommand ) {
-                  state = 10;
+                  this.state = 10;
                   break;
                   
                 } else {
@@ -893,7 +876,7 @@ public class CTDSource extends RBNBSource {
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0A && byteTwo == 0x0D ) {
                 // we've found the beginning of a sample, move on
-                state = 11;
+                this.state = 11;
                 break;
     
               } else {
@@ -933,8 +916,12 @@ public class CTDSource extends RBNBSource {
                      this.responseString.matches("^#  [0-9].*\r\n") ||
                      this.responseString.matches("^ [0-9].*\r\n") ) {
                 
-                  // build the channel map with all of the data and metadata channels:
+                  // add the data observations string to the CTDParser object
+                  // and populate the CTDParser data fields
+                  this.ctdParser.setData(this.responseString);
+                  this.ctdParser.parse();
                   
+                  // build the channel map with all of the data and metadata channels:                  
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutMime(channelIndex, "text/plain");
                   
@@ -1256,10 +1243,6 @@ public class CTDSource extends RBNBSource {
                   logger.info("Sent sample to the DataTurbine: " + this.responseString);
                   
                   // reset variables for the next sample
-                  byteOne   = 0x00;
-                  byteTwo   = 0x00;
-                  byteThree = 0x00;
-                  byteFour  = 0x00;
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   rbnbChannelMap.Clear();                      
@@ -1284,10 +1267,10 @@ public class CTDSource extends RBNBSource {
                   
                   // sync the clock daily
                   if ( currentCalendar.before(lastSyncedCalendar) ) {
-                    state = 8;
+                    this.state = 8;
                     
                   } else {
-                    state = 10;
+                    this.state = 10;
                     
                   }
                   
@@ -1300,16 +1283,12 @@ public class CTDSource extends RBNBSource {
                   logger.info("Skipping sample: " + this.responseString);
 
                   // reset variables for the next sample
-                  byteOne   = 0x00;
-                  byteTwo   = 0x00;
-                  byteThree = 0x00;
-                  byteFour  = 0x00;
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   logger.debug("sampleBuffer: " + sampleBuffer.toString());
-                  state = 10;
+                  this.state = 10;
                   
                 }
                 
@@ -1338,7 +1317,7 @@ public class CTDSource extends RBNBSource {
                              this.commandSuffix;
               this.sentCommand = queryInstrument(command);        
               streamingThread.sleep(5000);
-              state = 13;
+              this.state = 13;
               break;
               
               
@@ -1368,10 +1347,6 @@ public class CTDSource extends RBNBSource {
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
@@ -1381,7 +1356,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);
                   streamingThread.sleep(5000);
-                  state = 14;
+                  this.state = 14;
                   break;
                 
               } else {
@@ -1424,14 +1399,10 @@ public class CTDSource extends RBNBSource {
                 this.ctdParser = new CTDParser(this.responseString);
                 
                 // reset variables for the next sample
-                byteOne   = 0x00;
-                byteTwo   = 0x00;
-                byteThree = 0x00;
-                byteFour  = 0x00;
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
-                state = 8; // set the clock and start sampling
+                this.state = 8; // set the clock and start sampling
                 break;
                 
               } else {
@@ -1453,6 +1424,7 @@ public class CTDSource extends RBNBSource {
     
     
       } // end while (more channel bytes to read)
+      
       this.channel.close();
         
     } catch ( IOException e ) {
@@ -1484,18 +1456,18 @@ public class CTDSource extends RBNBSource {
                   "The error message was: " + pe.getMessage());
       return !failed;
       
-    } finally {
-      
-      if (this.channel.isOpen() ) {
-        try {
-          this.channel.close();
-          
-        } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
-                       " The error message was: " + cioe.getMessage());
-                       
-        }
-      }
+  //} finally {
+  //  
+  //  if (this.channel.isOpen() ) {
+  //    try {
+  //      this.channel.close();
+  //      
+  //    } catch ( IOException cioe ) {
+  //      logger.debug("An error occurred trying to close the byte channel. " +
+  //                   " The error message was: " + cioe.getMessage());
+  //                   
+  //    }
+  //  }
     }
     
     return !failed;
@@ -1548,73 +1520,11 @@ public class CTDSource extends RBNBSource {
    /**
    * A method used to get a serial connection for communication
    */
-  protected FileChannel getSerialConnection() {
+  protected ByteChannel getSerialConnection() {
+    logger.debug("CTDSource.getSerialConnection() called.");
     
-    String           portName = getSerialPort();
-    FileChannel      fileChannel = null;
-    FileOutputStream outStream = null;
-    SerialPort serialPort = null;
-    
-    try {  
-      
-      // create the socket channel connection to the data source via the 
-      // converter serial2IP converter      
-      CommPortIdentifier portIdentifier = 
-        CommPortIdentifier.getPortIdentifier(portName);
-      
-      // check if the port is busy
-      if ( portIdentifier.isCurrentlyOwned() ) {
-        logger.info("Error: Port " + portName + "is currently in use.");
-
-      } else {
-
-        //if not busy, open the serial port for communication
-        CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
-
-        if ( commPort instanceof SerialPort ) {
-          serialPort = (SerialPort) commPort;
-          serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-          serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8,
-                                                 SerialPort.STOPBITS_1,
-                                                 SerialPort.PARITY_NONE);
-
-          outStream = (FileOutputStream) serialPort.getOutputStream();
-          fileChannel = outStream.getChannel();
-
-        } else {
-          
-          commPort.close();
-          disconnect();
-          fileChannel = null;
-          logger.info("Error: Port " + portName + " is not a serial port.");
-          
-        }
-        
-      }
-
-      // if the connection to the source fails, also disconnect from the RBNB
-      // server and return null
-      if ( !fileChannel.isOpen()) {
-        //if (fileChannel  != null) fileChannel.close();
-        if (outStream  != null) outStream.close();
-        if (serialPort != null) serialPort.close();
-        disconnect();
-        fileChannel = null;
-      }      
-
-    } catch (NoSuchPortException nspe ) {
-      disconnect();
-      fileChannel = null;
-    
-    } catch (IOException ioe ) {
-      disconnect();
-      fileChannel = null;
-    
-    } catch (Exception e) {
-      disconnect();
-      fileChannel = null;            
-    }
-    return fileChannel;
+    ByteChannel serialChannel = (ByteChannel) new SerialChannel(getSerialPort());  
+    return serialChannel;
     
   }
 
