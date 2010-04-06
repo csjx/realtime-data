@@ -125,7 +125,8 @@ public class FakeSerialCTD {
         this.streamingThread.sleep(240000);
           
       }
-
+      testCTDFile.close();
+      
     } catch ( FileNotFoundException fnfe ) {
       fnfe.printStackTrace();
 
