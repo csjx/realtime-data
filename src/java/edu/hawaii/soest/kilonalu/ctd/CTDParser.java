@@ -57,6 +57,7 @@ import java.util.regex.Pattern;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 
 import javax.xml.transform.TransformerException;
 
@@ -97,8 +98,8 @@ public class CTDParser {
   /**  The Logger instance used to log system messages  */
   static Logger logger = Logger.getLogger(CTDParser.class);
   
-  /*  A field that stores the data file string input as a String */
-  private String dataString = "";
+  /*  A field that stores the metadata and data file string input as a String */
+  private String metadataAndDataString = "";
   
   /*
    *  A field that stores the metadata string input as a String.  This will be
@@ -175,8 +176,11 @@ public class CTDParser {
   /**  A field that stores the CTD synchronization mode key as a String */
   public final String SYNCHRONIZATION_MODE = "SyncMode";
 
+  /*  A field that stores the CTD default sampling mode as a String */
+  private String DEFAULT_SAMPLING_MODE = "moored";
+  
   /*  A field that stores the CTD sampling mode as a String */
-  private String samplingMode;
+  private String samplingMode = DEFAULT_SAMPLING_MODE;
   
   /**  A field that stores the CTD sampling mode key as a String */
   public final String SAMPLING_MODE = "mode";
@@ -192,6 +196,12 @@ public class CTDParser {
   
   /*  A field that stores the record delimiter in a String. */
   private String recordDelimiter = DEFAULT_RECORD_DELIMITER;
+  
+  /**  A field that stores the default field delimiter in a String. */
+  public final String DEFAULT_FIELD_DELIMITER = ",";
+  
+  /*  A field that stores the field delimiter in a String. */
+  private String fieldDelimiter = DEFAULT_FIELD_DELIMITER;
   
   /**
    *  A field that stores the default metadata delimiter pattern in a String. 
@@ -442,7 +452,7 @@ public class CTDParser {
   /*  A field that stores the output sound velocity state as a String */
   private String outputSoundVelocity;
   
-  /**  A field that stores the output salinity state key as a String */
+  /**  A field that stores the output sound velocity state key as a String */
   public final String OUTPUT_SOUND_VELOCITY = "OutputSV";
   
   /*  A field that stores the transmit real-time state as a String */
@@ -546,6 +556,18 @@ public class CTDParser {
   
   /**  A field that stores the external voltage channel 3 state key as a String */
   public final String EXTERNAL_VOLTAGE_CHANNEL_THREE = "Ext Volt 3";
+  
+  /*  A field that stores the external voltage channel 4 state as a String */
+  private String externalVoltageChannelFour;
+  
+  /**  A field that stores the external voltage channel 4 state key as a String */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_FOUR = "Ext Volt 4";
+  
+  /*  A field that stores the external voltage channel 5 state as a String */
+  private String externalVoltageChannelFive;
+  
+  /**  A field that stores the external voltage channel 5 state key as a String */
+  public final String EXTERNAL_VOLTAGE_CHANNEL_FIVE = "Ext Volt 4";
   
   /*  A field that stores the echo commands state as a String */
   private String echoCommands;
@@ -791,12 +813,45 @@ public class CTDParser {
   /*  A boolean field indicating if external voltage channel three is sampling */
   private boolean hasVoltageChannelThree = false;
   
+  /*  A boolean field indicating if external voltage channel four is sampling */
+  private boolean hasVoltageChannelFour = false;
+  
+  /*  A boolean field indicating if external voltage channel five is sampling */
+  private boolean hasVoltageChannelFive = false;
+  
   /*  A boolean field indicating if there is an SBE38 temperature sensor */
   private boolean hasSBE38TemperatureSensor = false;
   
   /*  A boolean field indicating if there is a gas tension device */
   private boolean hasGasTensionDevice = false;
 
+  /*  A boolean field indicating if salinity will be output */
+  private boolean willOutputSalinity = false;
+  
+  /*  A boolean field indicating if sound velocity will be output */
+  private boolean willOutputSoundVelocity = false;
+  
+  /*  A field that stores the temperature field name as a string */
+  public final String TEMPERATURE_FIELD_NAME = "temperature";  
+  
+  /*  A field that stores the conductivity field name as a string */
+  public final String CONDUCTIVITY_FIELD_NAME = "conductivity";  
+  
+  /*  A field that stores the pressure field name as a string */
+  public final String PRESSURE_FIELD_NAME = "pressure";  
+  
+  /*  A field that stores the salinity field name as a string */
+  public final String SALINITY_FIELD_NAME = "salinity";  
+  
+  /*  A field that stores the date field name as a string */
+  public final String DATE_FIELD_NAME = "date";  
+  
+  /*  A field that stores the time field name as a string */
+  public final String TIME_FIELD_NAME = "time";  
+  
+  /*  A field that stores the sound velocity field name as a string */
+  public final String SOUND_VELOCITY_FIELD_NAME = "soundVelocity";  
+  
   /*  A field that stores the raw temperature field name as a string */
   public final String RAW_TEMPERATURE_FIELD_NAME = "temperatureCounts";  
   
@@ -818,8 +873,14 @@ public class CTDParser {
   /*  A field that stores the raw voltage channel two field name as a string */
   public final String RAW_VOLTAGE_CHANNEL_TWO_FIELD_NAME = "voltageChannelTwo";  
   
-  /*  A field that stores the raw voltage channel zero field name as a string */
+  /*  A field that stores the raw voltage channel three field name as a string */
   public final String RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME = "voltageChannelThree";  
+  
+  /*  A field that stores the raw voltage channel four field name as a string */
+  public final String RAW_VOLTAGE_CHANNEL_FOUR_FIELD_NAME = "voltageChannelFour";  
+  
+  /*  A field that stores the raw voltage channel five field name as a string */
+  public final String RAW_VOLTAGE_CHANNEL_FIVE_FIELD_NAME = "voltageChannelFive";  
   
   /** An XML document object used to access CTD metadata reported in XML syntax */
   private Document xmlMetadata;
@@ -850,7 +911,7 @@ public class CTDParser {
   /**
    *  Constructor:  Builds an empty CTDParser object that can be populated manually.
    *  This can be used to gradually build the CTDParser object from independent sections
-   *  of metadata gethered from the CTD using commands such as GetCD, GetSD, GetCC, GetEC,
+   *  of metadata gathered from the CTD using commands such as GetCD, GetSD, GetCC, GetEC,
    *  and GetHD.  These commands are available in the Seabird firmare > 3.0f.
    */
   public CTDParser() {
@@ -869,7 +930,7 @@ public class CTDParser {
    *  @param dataString The String that contains the data and metadata output 
    *                    from the instrument
    */
-  public CTDParser(String dataString) throws ParseException{
+  public CTDParser(String metadataAndDataString) throws ParseException{
     
     // Prepare the string for parsing.  The data file is split into metadata
     // and data sections, and each section is then tokenized into lines. 
@@ -878,7 +939,7 @@ public class CTDParser {
     // are split based on "=" and ":" delimiters and placed into a SortedMap for
     // later retrieval.  The data section is split into its component 
     // observations, based on the presence/absence of certain data or voltages.
-    this.dataString = dataString;
+    this.metadataAndDataString = metadataAndDataString;
     this.metadataValuesMap = new TreeMap<String, String>();
     this.dataValuesMap     = new TreeMap<Integer, String>();
     
@@ -893,7 +954,7 @@ public class CTDParser {
       setMetadata();
       
       // set the data structures from the incoming text lines (Hex or decimal ...)
-      setData();
+      setData(this.observationsString);
       
     } catch (ParseException pe) {
       throw pe;
@@ -944,102 +1005,124 @@ public class CTDParser {
    *  later retrieval.  The data section is split into its component 
    *  observations, based on the presence/absence of certain data or voltages.
    */
-  private void parse() throws ParseException {
+  public void parse() throws ParseException {
     logger.debug("CTDParser.parse() called.");
         
-    // create the two sections
-    String[] sections = this.dataString.split(metadataDelimiter);
-    String[] nameValueArray = {"", ""};  //used later for splitting name/value pairs
-    
-    if ( sections.length > 1) {
-      this.metadataString     = sections[0];  
-      this.observationsString = sections[1];
+    if ( ! this.metadataAndDataString.equals("") ) {
       
-      // tokenize the file into lines
-      StringTokenizer lineTokenizer = 
-        new StringTokenizer(this.metadataString, this.recordDelimiter);
-     
-      while( lineTokenizer.hasMoreTokens() ) {
+      // create the two sections
+      String[] sections = this.metadataAndDataString.split(this.metadataDelimiter);
+      String[] nameValueArray = {"", ""};  //used later for splitting name/value pairs
 
-        String line = lineTokenizer.nextToken();
-        StringTokenizer fieldTokenizer = 
-          new StringTokenizer(line, this.METADATA_FIELD_DELIMITER);
+      if ( sections.length > 1) {
+        this.metadataString     = sections[0];  
+        this.observationsString = sections[1];
 
-        // tokenize the lines into field pairs
-        while ( fieldTokenizer.hasMoreTokens() ) {
-          
-          // remove leading "*" characters and trim whitespace
-          String nameValuePair = 
-            fieldTokenizer.nextToken().replaceAll("^\\**", "").trim();
+        // tokenize the legacy DS/Dcal metadata into lines
+        StringTokenizer lineTokenizer = 
+          new StringTokenizer(this.metadataString, this.recordDelimiter);
 
-          // check for pairs delimited by a colon
-          if ( nameValuePair.indexOf(this.PRIMARY_PAIR_DELIMITER) > 0 ) {
-            nameValueArray = nameValuePair.split(this.PRIMARY_PAIR_DELIMITER, 2);
+        while( lineTokenizer.hasMoreTokens() ) {
 
-            // add the pair to the metadata map
-            if ( nameValueArray.length > 1) {
-              this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
+          String line = lineTokenizer.nextToken();
+          StringTokenizer fieldTokenizer = 
+            new StringTokenizer(line, this.METADATA_FIELD_DELIMITER);
+
+          // tokenize the lines into field pairs
+          while ( fieldTokenizer.hasMoreTokens() ) {
+
+            // remove leading "*" characters and trim whitespace
+            String nameValuePair = 
+              fieldTokenizer.nextToken().replaceAll("^\\**", "").trim();
+
+            // check for pairs delimited by a colon
+            if ( nameValuePair.indexOf(this.PRIMARY_PAIR_DELIMITER) > 0 ) {
+              nameValueArray = nameValuePair.split(this.PRIMARY_PAIR_DELIMITER, 2);
+
+              // add the pair to the metadata map
+              if ( nameValueArray.length > 1) {
+                this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
+
+              // otherwise add an empty pair to the metadata map
+              } else {
+                this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+
+              }  
+
+            // check for pairs delimited by an equals sign
+            } else if ( nameValuePair.indexOf(this.SECONDARY_PAIR_DELIMITER) > 0  ) {
+              nameValueArray = nameValuePair.split(this.SECONDARY_PAIR_DELIMITER, 2);
+
+              // add the pair to the metadata map
+              if ( nameValueArray.length > 1) {
+                this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
+
+              // otherwise add an empty pair to the metadata map
+              } else {
+                this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+
+              }  
 
             // otherwise add an empty pair to the metadata map
             } else {
-              this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+              this.metadataValuesMap.put(nameValuePair.trim(), "");
 
-            }  
+            } //if   
 
-          // check for pairs delimited by an equals sign
-          } else if ( nameValuePair.indexOf(this.SECONDARY_PAIR_DELIMITER) > 0  ) {
-            nameValueArray = nameValuePair.split(this.SECONDARY_PAIR_DELIMITER, 2);
-            
-            // add the pair to the metadata map
-            if ( nameValueArray.length > 1) {
-              this.metadataValuesMap.put(nameValueArray[0].trim(), nameValueArray[1].trim());
-              
-            // otherwise add an empty pair to the metadata map
-            } else {
-              this.metadataValuesMap.put(nameValueArray[0].trim(), "");
+          } //while
 
-            }  
-
-          // otherwise add an empty pair to the metadata map
-          } else {
-            this.metadataValuesMap.put(nameValuePair.trim(), "");
-
-          } //if   
-                 
         } //while
-        
-      } //while
+
+        StringTokenizer dataTokenizer = 
+          new StringTokenizer(this.observationsString, this.recordDelimiter);
+
+        // tokenize the lines into observations strings, place them in sequential
+        // order into the dataValuesMap
+        while ( dataTokenizer.hasMoreTokens() ) {
+          String dataLine = dataTokenizer.nextToken();
+          //logger.debug("|" + dataLine + "|");
+          this.dataValuesMap.put(dataValuesMap.size() + 1, dataLine);  
+
+        }
+
+      } else {
+
+        throw new ParseException(
+        "Parsing of the CTD data input failed. The header " + 
+        "and data sections do not appear to be delimited "  +
+        "correctly.  Please be sure that the output of the" +
+        "'DS' and 'DCAL' commands are followed by "         +
+        "'*END*\\r\\n' and then the data observation lines.", 0);
+      } //end if (sections.length)
+
+    } else {
       
+      // just parse the observations data lines since the metadata came in
+      // XML form
       StringTokenizer dataTokenizer = 
-        new StringTokenizer(observationsString, this.recordDelimiter);
-      
+        new StringTokenizer(this.observationsString, this.recordDelimiter);
+
       // tokenize the lines into observations strings, place them in sequential
-      // order into the 
+      // order into the dataValuesMap
       while ( dataTokenizer.hasMoreTokens() ) {
         String dataLine = dataTokenizer.nextToken();
         //logger.debug("|" + dataLine + "|");
         this.dataValuesMap.put(dataValuesMap.size() + 1, dataLine);  
 
       }
-        
-    } else {
-      
-      throw new ParseException(
-      "Parsing of the CTD data input failed. The header " + 
-      "and data sections do not appear to be delimited "  +
-      "correctly.  Please be sure that the output of the" +
-      "'DS' and 'DCAL' commands are followed by "         +
-      "'*END*\\r\\n' and then the data observation lines.", 0);
+
     }
-    
   }                                                  
 
   /*
    *  A method used to set the data structure based on the sampling mode,
    *  data output format, and pertinent metadata fields.
    */
-  private void setData() throws ParseException {
+  public void setData(String dataString) throws ParseException {
     logger.debug("CTDParser.setData() called.");
+    
+    // make the observations available to the class
+    this.observationsString = dataString;
       
     // build the list of data variable names and offsets
   
@@ -1119,7 +1202,7 @@ public class CTDParser {
         }
         
         /*
-         * @todo - handle SBE38 and/or gasTensionDevice data
+         * @todo - handle SBE38, SBE50, and/or gasTensionDevice data
          */
           
         // We now know the data variable names, units, and corresponding
@@ -1135,15 +1218,16 @@ public class CTDParser {
         String hexDataString = "";
         Hex decoder          = new Hex();
         double value         = 0d;
-        convertedDataValuesMatrix = 
-          new Array2DRowRealMatrix(this.dataValuesMap.size() - 1, dataVariableOffsets.size());
+        this.convertedDataValuesMatrix = 
+          new Array2DRowRealMatrix(this.dataValuesMap.size() - 1, 
+                                   this.dataVariableOffsets.size());
   
         for ( int rowIndex = 1; rowIndex < this.dataValuesMap.size(); rowIndex++ ) {
           hexDataString = this.dataValuesMap.get(rowIndex);
           logger.debug(rowIndex + ") hexDataString is: " + hexDataString);
           
-          for ( offsetIndex = 0; offsetIndex < dataVariableOffsets.size(); offsetIndex++ ) {
-            endIndex = dataVariableOffsets.get(offsetIndex);
+          for ( offsetIndex = 0; offsetIndex < this.dataVariableOffsets.size(); offsetIndex++ ) {
+            endIndex = this.dataVariableOffsets.get(offsetIndex);
             hexSubstring = hexDataString.substring(beginIndex, endIndex);
             
             try {
@@ -1168,14 +1252,14 @@ public class CTDParser {
               
               // convert the value based on the CTD User manual conversion using
               // the corresponding data variable name to determine which conversion
-              double convertedValue = convert(value, dataVariableNames.get(offsetIndex));                                           
+              double convertedValue = convert(value, this.dataVariableNames.get(offsetIndex));                                           
               
               convertedDataValuesMatrix.setEntry(rowIndex - 1, offsetIndex, convertedValue);
-              logger.debug("\t"                               + 
-                           dataVariableNames.get(offsetIndex) + 
-                           " is:\t"                           + 
-                           value                              + 
-                           "\tConverted: "                    + 
+              logger.debug("\t"                                    + 
+                           this.dataVariableNames.get(offsetIndex) + 
+                           " is:\t"                                + 
+                           value                                   + 
+                           "\tConverted: "                         + 
                            convertedValue);
               // set the beginIndex to start at the endIndex
               beginIndex = endIndex;  
@@ -1216,11 +1300,116 @@ public class CTDParser {
     // handle moored mode
     } else if ( this.samplingMode.equals("moored") ) {
       
-      // handle converted engineering data
-      if ( this.outputFormat.equals("converted engineering") ) {
+      // handle the raw frequencies and voltages in Hex OUTPUTFORMAT (0)
+      if ( this.outputFormat.equals("raw HEX") ) {
+
+      // handle the engineering units in Hex OUTPUTFORMAT (1)
+      } else if ( this.outputFormat.equals("converted Hex") ) {
+        
+        /*
+         * @todo - handle OUTPUTFORMAT (1)
+         */
       
-        // TODO: process engineering data
+      // handle the raw frequencies and voltages in decimal OUTPUTFORMAT (2)
+      } else if ( this.outputFormat.equals("raw decimal") ) {
+      
+        /*
+         * @todo - handle OUTPUTFORMAT (2)
+         */
+      
+      // handle the engineering units in decimal OUTPUTFORMAT (3)
+      } else if ( this.outputFormat.equals("converted decimal") ) { 
+      
+        this.dataVariableNames = new ArrayList<String>();
+        this.dataVariableNames.add(this.TEMPERATURE_FIELD_NAME);
+        this.dataVariableNames.add(this.CONDUCTIVITY_FIELD_NAME);
+        
+        this.dataVariableUnits = new ArrayList<String>();
+        this.dataVariableUnits.add("degrees C");
+        this.dataVariableUnits.add("S/m");        
+        
+        // Is pressure present?
+        if ( this.hasPressure ) {
+          this.dataVariableNames.add(this.PRESSURE_FIELD_NAME);
+          this.dataVariableUnits.add("decibars");
+      
+        } else {
+          logger.info("There is no pressure sensor.");
+        }
+        
+        // Is there a channel zero voltage present?
+        if ( this.hasVoltageChannelZero ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_ZERO_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+  
+        // Is there a channel one voltage present?
+        if ( this.hasVoltageChannelOne ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_ONE_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+  
+        // Is there a channel two voltage present?
+        if ( this.hasVoltageChannelTwo ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_TWO_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+  
+        // Is there a channel three voltage present?
+        if ( this.hasVoltageChannelThree ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_THREE_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+        
+        // Is there a channel four voltage present?
+        if ( this.hasVoltageChannelFour ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_FOUR_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+  
+        // Is there a channel five voltage present?
+        if ( this.hasVoltageChannelFive ) {
+          this.dataVariableNames.add(this.RAW_VOLTAGE_CHANNEL_FIVE_FIELD_NAME);
+          this.dataVariableUnits.add("V");
+  
+        }
+        
+        /*
+         * @todo - handle SBE38, SBE50, and/or gasTensionDevice data
+         */
+       
+        // Will salinity be output?
+        if ( this.willOutputSalinity ) {
+          this.dataVariableNames.add(this.SALINITY_FIELD_NAME);
+          this.dataVariableUnits.add("psu");
+        
+        }
+
+        // Will sound velocity be output?
+        if ( this.willOutputSalinity ) {
+          this.dataVariableNames.add(this.SOUND_VELOCITY_FIELD_NAME);
+          this.dataVariableUnits.add("m/s");
+        
+        }
+        
+        // Add the date and time fields
+        this.dataVariableNames.add(this.DATE_FIELD_NAME);
+        this.dataVariableUnits.add("dd MMM yyyy");
+        this.dataVariableNames.add(this.TIME_FIELD_NAME);
+        this.dataVariableUnits.add("hh:mm:ss");        
+        
       }
+      
+      this.convertedDataValuesMatrix = 
+        new Array2DRowRealMatrix(this.dataValuesMap.size() - 1, 
+                                 this.dataVariableOffsets.size()); // CSJ fix this
+
+      
       
     } else {
       throw new ParseException("There was an error parsing the data string. "  +
@@ -1263,7 +1452,15 @@ public class CTDParser {
                                "check the output.", 0);
   
     }
-  
+
+    /*
+     * @ todo - handle 'output salinity = "yes|no"'
+     */ 
+      
+    /*
+     * @ todo - handle 'output sound velocity = "yes|no"'
+     */ 
+    
     // Is there a pressure sensor?  If so, what type?
     if ( this.PRESSURE_SENSOR_TYPE != null ) {
       this.pressureSensorType = 
@@ -1990,6 +2187,11 @@ public class CTDParser {
           .getFirstChild().getNodeValue().trim();
         logger.info("Output salinity state is: " + this.outputSalinity);
         
+        if (this.outputSalinity.equals("yes") ) {
+          this.willOutputSalinity = true;
+          
+        }
+        
         // set the output sound velocity state field
         this.outputSoundVelocity = 
           xmlUtil.getNodeWithXPath(xmlMetadata, 
@@ -1997,6 +2199,11 @@ public class CTDParser {
           .getFirstChild().getNodeValue().trim();
         logger.info("Output sound velocity state is: " + this.outputSoundVelocity);
         
+        if (this.outputSoundVelocity.equals("yes") ) {
+          this.willOutputSoundVelocity = true;
+          
+        }
+
         // set the output transmit real time state field
         this.transmitRealtime = 
           xmlUtil.getNodeWithXPath(xmlMetadata, 
@@ -2947,6 +3154,20 @@ public class CTDParser {
   }
   
   /**
+   * A method that returns the ExternalVoltageChannelFour field
+   */
+  public String getExternalVoltageChannelFour() {
+    return this.externalVoltageChannelFour;
+  }
+  
+  /**
+   * A method that returns the ExternalVoltageChannelFive field
+   */
+  public String getExternalVoltageChannelFive() {
+    return this.externalVoltageChannelFive;
+  }
+  
+  /**
    * A method that returns the EchoCommands field
    */
   public String getEchoCommands() {
@@ -3570,6 +3791,7 @@ public class CTDParser {
       "* Ext Volt 0 = yes, Ext Volt 1 = no, Ext Volt 2 = yes, Ext Volt 3 = yes\r\n" +
       "* echo commands = yes\r\n" +
       "* output format = raw HEX\r\n" +
+      "* output salinity = yes, output sound velocity = no" +
       "* S>\r\n" +
       "* dcal\r\n" +
       "* SeacatPlus V 1.6b  SERIAL NO. 5251    23 Sep 2009  11:29:08\r\n" +
