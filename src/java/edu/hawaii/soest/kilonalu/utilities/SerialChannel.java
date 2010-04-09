@@ -254,18 +254,35 @@ public class SerialChannel implements ByteChannel {
    */
   public int write(ByteBuffer writeBuffer) throws IOException    {
     
-    byte[] buffer = new byte[]{1};
-    int    count  = 0;
+    int count = 0;
+
     try {
+      logger.debug("writeBuffer: " + writeBuffer.toString());
+      logger.debug("writeBuffer rem: " + writeBuffer.remaining());
+      byte[] stringArray = new byte[writeBuffer.limit()];
       writeBuffer.flip();
-      while ( writeBuffer.hasRemaining() ) {
-        writeChannel.write(writeBuffer.get(buffer));
+
+      while( writeBuffer.hasRemaining() ) {
+        stringArray[count] = writeBuffer.get();
         count++;
-        
       }
-        
+
+      String writeString = new String(stringArray, "US-ASCII");
+      logger.debug("writeString: " + writeString );
+
+      this.serialWriter.write(writeString, 0, writeString.length());
+      //count = writeString.length();
+      this.serialWriter.flush();
+ 
     } catch ( BufferUnderflowException bufe ) {
+      logger.debug("There was an underflow problem:");
+      bufe.printStackTrace();
       throw new IOException(bufe.getMessage());
+      
+    } catch ( IOException ioe ) {
+      logger.debug("There was an IO problem:");
+      ioe.printStackTrace();
+      throw ioe;
       
     }
     return count;  
