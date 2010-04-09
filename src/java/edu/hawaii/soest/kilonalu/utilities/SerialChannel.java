@@ -25,9 +25,13 @@
  */ 
 package edu.hawaii.soest.kilonalu.utilities;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
@@ -59,6 +63,12 @@ public class SerialChannel implements ByteChannel {
   
   /* The output stream underlying serial communication writes */
   private OutputStream out;
+  
+  /* The buffered reader underlying serial communication reads */
+  private BufferedReader serialReader;
+  
+  /* The buffered writer underlying serial communication writes */
+  private BufferedWriter serialWriter;
   
   /* The output channel used for serial communication writes */
   private WritableByteChannel writeChannel;
@@ -128,8 +138,10 @@ public class SerialChannel implements ByteChannel {
            SerialPort.PARITY_NONE);
            
            this.in           = serialPort.getInputStream();
+           this.serialReader = new BufferedReader(new InputStreamReader(this.in));
            this.out          = serialPort.getOutputStream();
-           this.writeChannel = Channels.newChannel(this.out);
+           this.serialWriter = new BufferedWriter(new OutputStreamWriter(this.out));
+           this.writeChannel = Channels.newChannel(this.out); // CSJ - not needed?
            this.isOpen       = true;
            
         } else {
@@ -164,19 +176,34 @@ public class SerialChannel implements ByteChannel {
    */
   public int read(ByteBuffer readBuffer) throws IOException {
 
-    byte[] buffer = new byte[8192];
-    int count = -1;
+    //byte[] buffer = new byte[8192];
+    StringBuffer buffer = new StringBuffer();
+    int          count  = 0;
+    String       line   = null;
     
     try {
-      count = this.in.read(buffer);
-      logger.debug("Buffer length: " + buffer.length);
-      // only send non-null characters.  This is a hack - need to figure out
-      // how to discern serial null padding characters from data characters
-      if ( buffer[0] != 0x00 ) {
-        readBuffer.put(buffer, 0, count);
-        readBuffer.flip();
-        logger.debug(new String(Hex.encodeHex(new byte[]{readBuffer.get()})));
-            
+      line = this.serialReader.readLine();
+
+      if ( line != null && 
+           line.length() > 0 && 
+           !line.equals(new String(new byte[]{0x00})) ) {
+        buffer.append("\r\n"); //add termination bytes back into the line
+        buffer.append(line);
+        buffer.append("\r\n"); //add termination bytes back into the line
+        logger.debug(buffer.toString());
+        logger.debug(new String(Hex.encodeHex(buffer.toString().getBytes())));
+        
+        byte[] lineAsBytes = buffer.toString().getBytes();
+        for (int i = 0; i < lineAsBytes.length; i++) {
+          if ( lineAsBytes[i] != 0x00 ) {
+            readBuffer.put(lineAsBytes[i]);
+            count++;  
+          }
+        }
+        
+      } else {
+        count = 0;
+        
       }
 
     } catch ( BufferOverflowException bofe ) {
@@ -201,7 +228,6 @@ public class SerialChannel implements ByteChannel {
    *
    * @return isOpen - true if the serial port is open
    */
-  
   public boolean isOpen() {
     return this.isOpen;
   }
