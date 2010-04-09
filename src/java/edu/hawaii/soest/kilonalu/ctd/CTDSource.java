@@ -453,7 +453,7 @@ public class CTDSource extends RBNBSource {
                 
                 // otherwise, use text-based query commands
                 } else if ( getOutputType().equals("text") ) {
-                  this.state = 12; // process DS and DCal commands
+                  this.state = 11; // process DS and DCal commands
                   break;
                   
                 } else {
@@ -517,7 +517,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
@@ -582,7 +581,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
@@ -646,7 +644,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
@@ -710,7 +707,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
@@ -769,7 +765,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 this.responseString = new String(sampleArray, "US-ASCII");
                 
@@ -869,20 +864,7 @@ public class CTDSource extends RBNBSource {
 
               }
               
-            case 10:
-              
-              // sample line is begun by \r\n
-              // note bytes are in reverse order in the FIFO window
-              if ( byteOne == 0x0A && byteTwo == 0x0D ) {
-                // we've found the beginning of a sample, move on
-                this.state = 11;
-                break;
-    
-              } else {
-                break;                
-              }
-            
-            case 11: // read the rest of the bytes to the next EOL characters
+            case 10: // read bytes to the next EOL characters
               
               // sample line is terminated by \r\n
               // note bytes are in reverse order in the FIFO window
@@ -905,7 +887,6 @@ public class CTDSource extends RBNBSource {
                 // byte array.  Then, send it to the data turbine.
                 sampleArray = new byte[sampleByteCount];
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
                 this.responseString = new String(sampleArray, "US-ASCII");
@@ -1269,11 +1250,8 @@ public class CTDSource extends RBNBSource {
                   //if ( currentCalendar.before(lastSyncedCalendar) ) {
                   //  this.state = 8;
                   //  
-                  //} else {
-                  //  this.state = 10;
-                  //  
                   //}
-                  this.state = 10;
+                  // stay in state = 10                   
                   break;                  
                 
                 // the sample looks more like an instrument message, don't flush
@@ -1288,7 +1266,6 @@ public class CTDSource extends RBNBSource {
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-                  logger.debug("sampleBuffer: " + sampleBuffer.toString());
                   this.state = 10;
                   break;
                   
@@ -1311,7 +1288,7 @@ public class CTDSource extends RBNBSource {
                 break;
               } // end if for 0x0A0D EOL
           
-            case 12: // alternatively use legacy DS and DCal commands
+            case 11: // alternatively use legacy DS and DCal commands
               
               // start by getting the DS status output
               this.command = this.commandPrefix        +
@@ -1319,11 +1296,11 @@ public class CTDSource extends RBNBSource {
                              this.commandSuffix;
               this.sentCommand = queryInstrument(command);        
               streamingThread.sleep(5000);
-              this.state = 13;
+              this.state = 12;
               break;
               
               
-            case 13: // handle the DS command response
+            case 12: // handle the DS command response
               
               // command should end with the S> prompt
               if ( byteOne == 0x7E   && byteTwo == 0x53 ) {
@@ -1357,7 +1334,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);
                   streamingThread.sleep(5000);
-                  this.state = 14;
+                  this.state = 13;
                   break;
                 
               } else {
@@ -1386,7 +1363,6 @@ public class CTDSource extends RBNBSource {
                 // extract the sampleByteCount length from the sampleBuffer
                 sampleArray = new byte[sampleByteCount - 2]; // subtract "S>"
                 sampleBuffer.flip();
-                logger.debug("sampleBuffer: " + sampleBuffer.toString());
                 sampleBuffer.get(sampleArray);
                 
                 // append the DCal output to the DS output
