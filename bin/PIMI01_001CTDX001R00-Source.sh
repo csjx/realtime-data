@@ -14,11 +14,11 @@ $BBL_HOME/lib/log4j.properties
 # run the SeabirdCTDSource driver, connecting to the CTD the /dev/ttyUSB0 serial port
 # and to the RBNB server @ bbl.ancl.hawaii.edu:3333, defining the source name as
 # 'PIMI01_001CTDX001R00' and the data channel as 'DecimalASCIISampleData'.  The 
-# client is also requesting a cache size of 50000 frames, and an archive size
-# of 31536000 frames.  In this case, each frame is 1 sample transmitted by the
+# client is also requesting a cache size of 126000 frames, and an archive size
+# of 7776000 frames.  In this case, each frame is 1 sample transmitted by the
 # CTD instrument (15/minute), which equates to about 65 bytes of data per frame,
 # depending on the CTD configuration. With this ring buffer request, this source
-# use approximately 25MB of RAM, and 540MB of disk storage (in a 1 year period).
+# use approximately 2MB of RAM, and 126MB of disk storage (in a 90 day period).
 java edu.hawaii.soest.kilonalu.ctd.CTDSource\
  -t serial\
  -o xml\
@@ -27,5 +27,5 @@ java edu.hawaii.soest.kilonalu.ctd.CTDSource\
  -C DecimalASCIISampleData\
  -s bbl.ancl.hawaii.edu\
  -p 3333\
- -z 50000\
- -Z 31536000
+ -z 126000\
+ -Z 7776000
