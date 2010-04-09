@@ -184,15 +184,16 @@ public class SerialChannel implements ByteChannel {
     try {
       line = this.serialReader.readLine();
 
+      // only append the line read if it is not null, has a length
+      // greater than zero, and isn't just a single null character.
       if ( line != null && 
            line.length() > 0 && 
            !line.equals(new String(new byte[]{0x00})) ) {
-        buffer.append("\r\n"); //add termination bytes back into the line
         buffer.append(line);
         buffer.append("\r\n"); //add termination bytes back into the line
-        logger.debug(buffer.toString());
-        logger.debug(new String(Hex.encodeHex(buffer.toString().getBytes())));
         
+        // filter null characters out of the string before putting the
+        // bytes into the ByteBuffer.
         byte[] lineAsBytes = buffer.toString().getBytes();
         for (int i = 0; i < lineAsBytes.length; i++) {
           if ( lineAsBytes[i] != 0x00 ) {
