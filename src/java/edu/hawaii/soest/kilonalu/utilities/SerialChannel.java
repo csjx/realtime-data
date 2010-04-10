@@ -25,6 +25,8 @@
  */ 
 package edu.hawaii.soest.kilonalu.utilities;
 
+import edu.hawaii.soest.kilonalu.utilities.SerialWriter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -39,7 +41,6 @@ import java.nio.ReadOnlyBufferException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -67,11 +68,11 @@ public class SerialChannel implements ByteChannel {
   /* The buffered reader underlying serial communication reads */
   private BufferedReader serialReader;
   
-  /* The buffered writer underlying serial communication writes */
-  private BufferedWriter serialWriter;
+  /* The serial writer underlying serial communication writes */
+  private SerialWriter serialWriter;
   
-  /* The output channel used for serial communication writes */
-  private WritableByteChannel writeChannel;
+  /** The serial write thread for all write operations */
+  private Thread writeThread;
   
   /** The default serial port name used for serial communications */
   private static String DEFAULT_SERIAL_PORT = "/dev/ttyUSB0";
@@ -140,8 +141,9 @@ public class SerialChannel implements ByteChannel {
            this.in           = serialPort.getInputStream();
            this.serialReader = new BufferedReader(new InputStreamReader(this.in));
            this.out          = serialPort.getOutputStream();
-           this.serialWriter = new BufferedWriter(new OutputStreamWriter(this.out));
-           this.writeChannel = Channels.newChannel(this.out); // CSJ - not needed?
+           this.serialWriter = new SerialWriter(this.out);
+           this.writeThread  = new Thread(this.serialWriter);
+           this.writeThread.start();           
            this.isOpen       = true;
            
         } else {
@@ -253,39 +255,14 @@ public class SerialChannel implements ByteChannel {
    * @return count       - The number of bytes written to the serial port
    */
   public int write(ByteBuffer writeBuffer) throws IOException    {
-    
-    int count = 0;
-
+        
     try {
-      logger.debug("writeBuffer: " + writeBuffer.toString());
-      logger.debug("writeBuffer rem: " + writeBuffer.remaining());
-      byte[] stringArray = new byte[writeBuffer.limit()];
-      writeBuffer.flip();
-
-      while( writeBuffer.hasRemaining() ) {
-        stringArray[count] = writeBuffer.get();
-        count++;
-      }
-
-      String writeString = new String(stringArray, "US-ASCII");
-      logger.debug("writeString: " + writeString );
-
-      this.serialWriter.write(writeString, 0, writeString.length());
-      //count = writeString.length();
-      this.serialWriter.flush();
- 
-    } catch ( BufferUnderflowException bufe ) {
-      logger.debug("There was an underflow problem:");
-      bufe.printStackTrace();
-      throw new IOException(bufe.getMessage());
-      
+      return this.serialWriter.write(writeBuffer);  
+        
     } catch ( IOException ioe ) {
-      logger.debug("There was an IO problem:");
-      ioe.printStackTrace();
-      throw ioe;
-      
+       throw ioe;
+       
     }
-    return count;  
   }
     
   /**
