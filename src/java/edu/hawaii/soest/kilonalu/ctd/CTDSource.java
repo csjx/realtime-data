@@ -333,7 +333,7 @@ public class CTDSource extends RBNBSource {
     
     boolean failed = false;
 
-    this.hasMetadata = true;
+    //this.hasMetadata = true;
     
     // test the connection type
     if ( this.connectionType.equals("serial") ) {
@@ -1705,9 +1705,13 @@ public class CTDSource extends RBNBSource {
     
     // only send the command if the socket is connected
     if ( this.channel.isOpen() ) {
-      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length() * 10);
-      commandBuffer.put(command.getBytes());
-      commandBuffer.flip();
+      ByteBuffer commandBuffer = ByteBuffer.allocate( command.length());
+      
+      // lock the byte buffer while writing to it to make it threadsafe
+      synchronized(commandBuffer) {
+        commandBuffer.put(command.getBytes());
+        // don't flip the buffer
+      }
       
       try {
         this.channel.write(commandBuffer);
