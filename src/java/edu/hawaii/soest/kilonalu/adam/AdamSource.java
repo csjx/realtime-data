@@ -5,10 +5,10 @@
  *             RBNB Data Turbine frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/adam/AdamSource.java $
- * $LastChangedDate: 2009-06-19 16:37:18 -0600 (Fri, 19 Jun 2009) $
- * $LastChangedBy: cjones $
- * $LastChangedRevision: 398 $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -530,10 +530,10 @@ public class AdamSource extends RBNBSource {
 
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2009-06-19 16:37:18 -0600 (Fri, 19 Jun 2009) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 398 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/adam/AdamSource.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 

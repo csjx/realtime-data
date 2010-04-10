@@ -5,10 +5,10 @@
  *             frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy: cjones $
- * $LastChangedRevision:  $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2025,10 +2025,10 @@ public class SeahorseSource extends RBNBSource {
 
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2009-07-14 06:25:25 -0600 (Tue, 14 Jul 2009) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 454 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/SeahorseSource.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 
