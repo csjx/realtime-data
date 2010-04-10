@@ -1628,9 +1628,7 @@ public class CTDSource extends RBNBSource {
    */
 
   public static void main (String args[]) {
-    
-    logger.info("CTDSource.main() called.");
-    
+        
     try {
       // create a new instance of the CTDSource object, and parse the command 
       // line arguments as settings for this instance
