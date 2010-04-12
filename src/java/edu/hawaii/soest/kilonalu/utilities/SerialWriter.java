@@ -72,6 +72,9 @@ public class SerialWriter implements Runnable {
    */
   public SerialWriter(OutputStream out) {
     this.serialWriter = new BufferedWriter(new OutputStreamWriter(out));
+    this.writeBuffer.position(0);
+    this.writeBuffer.limit(0);
+    logger.debug("writeBuffer at init: " + this.writeBuffer.toString());
     
   }
   
@@ -81,10 +84,11 @@ public class SerialWriter implements Runnable {
    * OutputStream.
    */
   public void run() {
+    logger.debug("SerialWriter.run() called.");
     try {
 
       while ( this.writeBuffer.position() != -1 ) {
-        while ( this.writeBuffer.hasRemaining())
+        while ( this.writeBuffer.hasRemaining()) {
           this.serialWriter.write(this.writeBuffer.get());
           this.bytesWritten++;
         }
@@ -94,6 +98,7 @@ public class SerialWriter implements Runnable {
           this.serialWriter.flush();
           this.isComplete = true; 
         }
+      }
       
     } catch (IOException e) {
       logger.debug("There was an error writing to the serial port: " + e.getMessage());
@@ -109,18 +114,20 @@ public class SerialWriter implements Runnable {
    */
   public int write(ByteBuffer writeBuffer) throws IOException {
 
+    logger.debug("SerialWriter.write() called.");
     try {
  
       // duplicate the incoming writeBuffer when it is not locked
       synchronized(writeBuffer) {
 
         this.writeBuffer = writeBuffer.duplicate();
-         // set for reading without resetting the mark
+        logger.debug("SerialWriter.write(): duplicated the ByteBuffer.");
       }
       
       this.writeBuffer.flip();
       
       while ( ! this.isComplete ) {
+        logger.debug("SerialWriter.write(): waiting for write to complete.");
         // do nothing.  wait for the thread to write the data
       }
       // copy and reset the bytesWritten, reset the isComplete state

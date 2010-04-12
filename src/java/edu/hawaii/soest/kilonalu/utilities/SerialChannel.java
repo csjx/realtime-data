@@ -142,7 +142,7 @@ public class SerialChannel implements ByteChannel {
            this.serialReader = new BufferedReader(new InputStreamReader(this.in));
            this.out          = serialPort.getOutputStream();
            this.serialWriter = new SerialWriter(this.out);
-           this.writeThread  = new Thread(this.serialWriter);
+           this.writeThread  = new Thread(this.serialWriter, "SerialWriteThread");
            this.writeThread.start();           
            this.isOpen       = true;
            

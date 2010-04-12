@@ -1698,6 +1698,8 @@ public class CTDSource extends RBNBSource {
    */
   public boolean queryInstrument(String command) {
     
+    logger.debug("CTDSource.queryInstrument() called.");
+
     // the result of the query
     boolean result = false;
     
