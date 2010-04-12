@@ -419,12 +419,10 @@ public class CTDSource extends RBNBSource {
                 
               } else {
                 
-                // wake the instrument with two initial '\r\n' commands
+                // wake the instrument with an initial '\r\n' command
                 this.command = this.commandSuffix;
                 this.sentCommand = queryInstrument(this.command);
                 streamingThread.sleep(2000);
-                this.command = this.commandSuffix;
-                this.sentCommand = queryInstrument(this.command);
                 
                 this.state = 1;
                 break;
@@ -433,44 +431,113 @@ public class CTDSource extends RBNBSource {
             
             case 1: // stop the sampling
               
-              // allow time for the instrument response
-              streamingThread.sleep(2000);
-              this.command = this.commandPrefix       + 
-                             this.stopSamplingCommand +
-                             this.commandSuffix;
-              this.sentCommand = queryInstrument(command);        
-              
-              if ( this.sentCommand ) {
+              // be sure the instrument woke (look for S> prompt)
+              if (byteOne == 0x3E && byteTwo == 0x53 ) {
                 
+                sampleByteCount = 0;
+                sampleBuffer.clear();
+                
+                // send the stop sampling command
+                this.command = this.commandPrefix       + 
+                               this.stopSamplingCommand +
+                               this.commandSuffix;
+                this.sentCommand = queryInstrument(command);        
+                
+                sampleBuffer.clear();
+                sampleByteCount = 0;
+                this.state = 2;
+                break;
+
+              } else {
+                // handle instrument hardware response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                break; // continue reading bytes
+                
+              }
+              
+            case 2: // based on outputType, get metadata from the instrument
+              
+              // the response should end in <Executed/>
+              if ( byteOne == 0x3E && byteTwo == 0x2F && 
+                   byteThree == 0x64 && byteFour == 0x65) {
+                
+                sampleBuffer.clear();
+                sampleByteCount = 0;
                 this.samplingIsStopped = true;
                 
                 // for newer firmware CTDs, use xml-based query commands
                 if ( getOutputType().equals("xml") ) {
                   // create the CTD parser instance used to parse CTD output
                   this.ctdParser = new CTDParser();
-                  this.state = 2;
+                  this.state = 3;
                   break;
                 
                 // otherwise, use text-based query commands
                 } else if ( getOutputType().equals("text") ) {
-                  this.state = 11; // process DS and DCal commands
+                  this.state = 12; // process DS and DCal commands
                   break;
-                  
+                
                 } else {
+                  
                   logger.info("The CTD output type is not recognized. " +
                               "Please set the output type to either "   +
                               "'xml' or 'text'.");
                   failed = true;
-                  return !failed;
                   
+                  // close the serial or socket channel
+                  if ( this.channel != null && this.channel.isOpen() ) {
+                    try {
+                      this.channel.close();
+
+                    } catch ( IOException cioe ) {
+                      logger.debug("An error occurred trying to close the byte channel. " +
+                                   " The error message was: " + cioe.getMessage());
+                      return !failed;
+                      
+                    }
+                  }
+
+                  // disconnect from the RBNB
+                  if ( isConnected() ) {
+                    disconnect();
+                  }
+
+                  return !failed;
+                
                 }
-                
+                  
               } else {
-                break; // try stopping the instrument sampling again
                 
+                // handle instrument hardware response
+                sampleByteCount++; // add the last byte found to the count
+                
+                // add the last byte found to the sample buffer
+                if ( sampleBuffer.remaining() > 0 ) {
+                  sampleBuffer.put(byteOne);
+                
+                } else {
+                  sampleBuffer.compact();
+                  sampleBuffer.put(byteOne);
+                  
+                }                
+                
+                break; // continue reading bytes
+                
+                 
               }
-              
-            case 2: // get the instrument status metadata
+            
+            case 3: // get the instrument status metadata
                
               if ( !this.ctdParser.getHasStatusMetadata() ) {
                 
@@ -479,7 +546,7 @@ public class CTDSource extends RBNBSource {
                                this.commandSuffix;
                 this.sentCommand = queryInstrument(command);        
                 streamingThread.sleep(5000);
-                this.state = 3;
+                this.state = 4;
                 break;
                 
               } else {
@@ -490,12 +557,12 @@ public class CTDSource extends RBNBSource {
                                this.commandSuffix;
                 this.sentCommand = queryInstrument(command);        
                 streamingThread.sleep(5000);
-                this.state = 4;
+                this.state = 5;
                 break;
                 
               }
               
-            case 3: // handle instrument status response
+            case 4: // handle instrument status response
               
               // command response ends with <Executed/> (so find: ed/>)
               if ( byteOne == 0x3E   && byteTwo == 0x2F && 
@@ -538,7 +605,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 4;
+                  this.state = 5;
                   break;
 
                 } else {
@@ -549,7 +616,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 5;
+                  this.state = 6;
                   break;
 
                 }
@@ -559,7 +626,7 @@ public class CTDSource extends RBNBSource {
                 
               }
               
-            case 4: // handle the instrument configuration metadata
+            case 5: // handle the instrument configuration metadata
               
               // command response ends with <Executed/> (so find: ed/>)
               if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
@@ -602,7 +669,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 5;
+                  this.state = 6;
                   break;
 
                 } else {
@@ -612,7 +679,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 6;
+                  this.state = 7;
                   break;
 
                 }
@@ -622,7 +689,7 @@ public class CTDSource extends RBNBSource {
                 
               }
               
-            case 5: // handle the instrument calibration metadata
+            case 6: // handle the instrument calibration metadata
               
               // command response ends with <Executed/> (so find: ed/>)
               if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
@@ -665,7 +732,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 6;
+                  this.state = 7;
                   break;
 
                 } else {
@@ -675,7 +742,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 7;
+                  this.state = 8;
                   break;
 
                 }
@@ -685,7 +752,7 @@ public class CTDSource extends RBNBSource {
                 
               }
               
-            case 6: // handle instrument event metadata
+            case 7: // handle instrument event metadata
               
               // command response ends with <Executed/> (so find: ed/>)
               if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
@@ -728,12 +795,12 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);        
                   streamingThread.sleep(5000);
-                  this.state = 7;
+                  this.state = 8;
                   break;
 
                 } else {
 
-                  this.state = 8;
+                  this.state = 9;
                   break;
 
                 }
@@ -743,7 +810,7 @@ public class CTDSource extends RBNBSource {
                 
               }
               
-            case 7: // handle the instrument hardware response
+            case 8: // handle the instrument hardware response
             
               // command response ends with <Executed/> (so find: ed/>)
               if ( byteOne   == 0x3E && byteTwo  == 0x2F && 
@@ -781,11 +848,11 @@ public class CTDSource extends RBNBSource {
                 // sync the clock if it is not synced
                 if ( !this.clockIsSynced ){
                   
-                  this.state = 8;
+                  this.state = 9;
                   break;
                   
                 } else {
-                  this.state = 9;
+                  this.state = 10;
                   break;
                   
                 }
@@ -795,7 +862,7 @@ public class CTDSource extends RBNBSource {
                 
               }
               
-            case 8: // set the instrument clock
+            case 9: // set the instrument clock
               
               // is sampling stopped?
               if ( !this.samplingIsStopped ) {
@@ -828,7 +895,7 @@ public class CTDSource extends RBNBSource {
                 this.clockIsSynced = true;
                 logger.info("The instrument clock has bee synced at " + 
                             this.clockSyncDate.toString());
-                this.state = 9;
+                this.state = 10;
                 break;
                 
               } else {
@@ -838,7 +905,7 @@ public class CTDSource extends RBNBSource {
               }
               
               
-            case 9: // restart the instrument sampling
+            case 10: // restart the instrument sampling
               
               if ( this.samplingIsStopped ) {
                 
@@ -851,7 +918,7 @@ public class CTDSource extends RBNBSource {
                 streamingThread.sleep(5000);
                 
                 if (this.sentCommand ) {
-                  this.state = 10;
+                  this.state = 11;
                   break;
                   
                 } else {
@@ -864,7 +931,7 @@ public class CTDSource extends RBNBSource {
 
               }
               
-            case 10: // read bytes to the next EOL characters
+            case 11: // read bytes to the next EOL characters
               
               // sample line is terminated by \r\n
               // note bytes are in reverse order in the FIFO window
@@ -1266,7 +1333,7 @@ public class CTDSource extends RBNBSource {
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
                   logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-                  this.state = 10;
+                  this.state = 11;
                   break;
                   
                 }
@@ -1288,7 +1355,7 @@ public class CTDSource extends RBNBSource {
                 break;
               } // end if for 0x0A0D EOL
           
-            case 11: // alternatively use legacy DS and DCal commands
+            case 12: // alternatively use legacy DS and DCal commands
               
               // start by getting the DS status output
               this.command = this.commandPrefix        +
@@ -1296,11 +1363,11 @@ public class CTDSource extends RBNBSource {
                              this.commandSuffix;
               this.sentCommand = queryInstrument(command);        
               streamingThread.sleep(5000);
-              this.state = 12;
+              this.state = 13;
               break;
               
               
-            case 12: // handle the DS command response
+            case 13: // handle the DS command response
               
               // command should end with the S> prompt
               if ( byteOne == 0x7E   && byteTwo == 0x53 ) {
@@ -1334,7 +1401,7 @@ public class CTDSource extends RBNBSource {
                                  this.commandSuffix;
                   this.sentCommand = queryInstrument(command);
                   streamingThread.sleep(5000);
-                  this.state = 13;
+                  this.state = 14;
                   break;
                 
               } else {
@@ -1379,7 +1446,7 @@ public class CTDSource extends RBNBSource {
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 
-                this.state = 8; // set the clock and start sampling
+                this.state = 9; // set the clock and start sampling
                 break;
                 
               } else {
@@ -1410,12 +1477,48 @@ public class CTDSource extends RBNBSource {
       // to return false, which will prompt a retry.
       //this.channel.close();
       failed = true;
+      
+      // close the serial or socket channel
+      if ( this.channel != null && this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
+      
+      // disconnect from the RBNB
+      if ( isConnected() ) {
+        disconnect();
+      }
+      
       e.printStackTrace();
       return !failed;
     
     } catch ( InterruptedException intde ) {
       // in the event that the streamingThread is interrupted
       failed = true;
+      
+      // close the serial or socket channel
+      if ( this.channel != null && this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
+      
+      // disconnect from the RBNB
+      if ( isConnected() ) {
+        disconnect();
+      }
+      
       intde.printStackTrace();
       return !failed;
     
@@ -1424,27 +1527,65 @@ public class CTDSource extends RBNBSource {
       // and allow execute() to return false, which will prompt a retry.
       //this.channel.close();
       failed = true;
+      
+      // close the serial or socket channel
+      if ( this.channel != null && this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
+      
+      // disconnect from the RBNB
+      if ( isConnected() ) {
+        disconnect();
+      }
+      
       sapie.printStackTrace();
       return !failed;
     
     } catch (ParseException pe ) {
       failed = true;
+      
+      // close the serial or socket channel
+      if ( this.channel != null && this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
+      
+      // disconnect from the RBNB
+      if ( isConnected() ) {
+        disconnect();
+      }
+      
       logger.info("There was an error parsing the metadata response. " +
                   "The error message was: " + pe.getMessage());
       return !failed;
       
-  //} finally {
-  //  
-  //  if (this.channel.isOpen() ) {
-  //    try {
-  //      this.channel.close();
-  //      
-  //    } catch ( IOException cioe ) {
-  //      logger.debug("An error occurred trying to close the byte channel. " +
-  //                   " The error message was: " + cioe.getMessage());
-  //                   
-  //    }
-  //  }
+    } finally {
+      
+      // close the serial or socket channel
+      if ( this.channel != null && this.channel.isOpen() ) {
+        try {
+          this.channel.close();
+          
+        } catch ( IOException cioe ) {
+          logger.debug("An error occurred trying to close the byte channel. " +
+                       " The error message was: " + cioe.getMessage());
+                       
+        }
+      }
+      
     }
     
     return !failed;
