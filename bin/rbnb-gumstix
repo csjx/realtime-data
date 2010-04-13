@@ -14,7 +14,7 @@ RBNB_LOG='/var/log/rbnb/rbnb.log' # /var/log is volatile on OE/Gumstix
 RBNB_PIDFILE='/var/run/rbnb.pid';
 RBNB_ARCHIVE_LOC='/var/lib/rbnb';
 RBNB_USER='pacioos';
-RBNB_SERVER="192.168.1.126";
+RBNB_SERVER=$(ip addr show wlan0 | grep "inet " | tr -s " " " " | cut -d" " -f3 | cut -d"/" -f1);
 RBNB_PORT="3333";
 # Amount of memory in MegaBytes for the JVM running RBNB to use
 RBNB_MEM='64';
