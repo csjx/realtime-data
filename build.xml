@@ -295,7 +295,7 @@
       <fileset dir="./lib"   excludes="**/.svn* **/CVS* **/.#*" includes="*jar *properties"/>
     </copy>                    
     <copy todir="${gumstix.dir}/bbl/trunk/bin">
-      <fileset dir="./bin"   excludes="**/.svn* **/CVS* **/.#*" includes="*CTDX* rbnb"/>
+      <fileset dir="./bin"   excludes="**/.svn* **/CVS* **/.#*" includes="*CTDX* rbnb getWifiAuth.sh"/>
     </copy>
     <copy todir="${gumstix.dir}/bbl/trunk" file = "build.xml" />
     <delete dir="${gumstix.dir}/bbl/trunk/build/docs" />
