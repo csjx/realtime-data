@@ -9,7 +9,7 @@
 # description: Start the RBNB server
 #
 
-if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/RBNB/V3.1B4a; fi
+if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/RBNB/current; fi
 RBNB_LOG='/var/log/rbnb/rbnb.log'
 KN0101_010ADCP010R00_LOG='/var/log/rbnb/KN0101_010ADCP010R00.log'
 RBNB_PIDFILE='/var/run/rbnb.pid'
@@ -26,9 +26,15 @@ BBL_HOME='/usr/local/bbl/trunk';
 start() {
    mkdir -p ${RBNB_ARCHIVE_LOC}
    cd ${RBNB_ARCHIVE_LOC}
-   su - ${RBNB_USER} -c "java -Xms${RBNB_MEM}M -Xmx${RBNB_MEM}M -jar ${RBNB_HOME}/bin/rbnb.jar -H ${RBNB_ARCHIVE_LOC} -a ${RBNB_SERVER}:${RBNB_PORT} -n ${RBNB_NAME} > ${RBNB_LOG} 2>&1 &"
-   #java -Xmx${RBNB_MEM}M -jar ${RBNB_HOME}/bin/rbnb.jar -n ${RBNB_NAME} > ${RBNB_LOG} 2>&1 &
-   echo $! > ${RBNB_PIDFILE}
+   su - ${RBNB_USER}\
+    -c "java -Xms${RBNB_MEM}M\
+             -Xmx${RBNB_MEM}M\
+             -jar ${RBNB_HOME}/bin/rbnb.jar\
+             -H ${RBNB_ARCHIVE_LOC}\
+             -a ${RBNB_SERVER}:${RBNB_PORT}\
+             -n ${RBNB_NAME} > ${RBNB_LOG} 2>&1 &"
+   RBNB_PID=$(ps -ef | grep rbnb | grep java | tr -s " " " " | cut -d" " -f2)
+   echo ${RBNB_PID} > ${RBNB_PIDFILE}
 
    #sleep 10
 

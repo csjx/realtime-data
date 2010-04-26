@@ -16,7 +16,6 @@ export CLASSPATH=\
 /home/cjones/development/bbl/lib/commons-codec-1.3.jar:\
 /home/cjones/development/bbl/lib/commons-cli-1.0.jar:\
 /home/cjones/development/bbl/lib/commons-logging-1.0.4.jar:\
-/home/cjones/development/bbl/lib/turbine-3.9.0.jar:\
 /home/cjones/development/bbl/lib/log4j-1.2.8.jar:\
 /home/cjones/development/bbl/lib/log4j.properties
 
