@@ -9,6 +9,8 @@ checkURLwGetOptions=" -O - -q --load-cookies $cookieFile ";
 checkURL="http://checkip.dyndns.org";
 isAuthorized="false";
 sleepInterval=60;
+failureCount=0;
+failureThreshold=10;
 
 # subroutine to save session cookies to the cookies file
 saveSessionCookies () 
@@ -190,12 +192,21 @@ while [ 1 = 1 ];
         checkResultSuffix=${checkResult#*<body>};
         checkResultString=${checkResultSuffix%</body>*};
         echo $(date) "Wifi connection is authorized." ${checkResultString};
+        failureCount=0; # reset the number of failures
         isAuthorized="true";
       
       else
         echo $(date) "Wifi connection is not authorized.";
         echo ${checkResult};
+        let "failureCount+=1";        
         isAuthorized="false";
+        
+        # for persistent failures, restart the networking service
+        if [[ $failureCount >= $failureThreshold ]]; then
+          /etc/init.d/networking stop;
+          sleep 5;
+          /etc/init.d/networking start;
+        fi
         
       fi
       
@@ -207,11 +218,13 @@ while [ 1 = 1 ];
         checkResultSuffix=${checkResult#*<body>};
         checkResultString=${checkResultSuffix%</body>*};
         echo $(date) "Wifi connection is authorized." ${checkResultString};
+        failureCount=0; # reset the number of failures
         isAuthorized="true";
 
       else
         echo $(date) "Wifi connection is not authorized.";
         echo ${checkResult};
+        let "failureCount+=1";
         isAuthorized="false";
         
       fi
