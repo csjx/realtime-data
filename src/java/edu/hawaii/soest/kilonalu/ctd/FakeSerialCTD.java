@@ -122,7 +122,8 @@ public class FakeSerialCTD {
 
       while ( (this.sample = testCTDFile.readLine()) != null ) {
         this.out.writeChars(this.sample);
-        this.streamingThread.sleep(240000);
+        this.out.writeChars("\r\n");
+        this.streamingThread.sleep(15000);
           
       }
       testCTDFile.close();
