@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# getWifiAuth.sh
+# 
+# Copyright: 2010 Regents of the University of Hawaii and the
+#        School of Ocean and Earth Science and Technology 
+# 
+#  '$Author: cjones $'
+#  '$Date: 2010-04-26 17:14:11 -0600 (Mon, 26 Apr 2010) $'
+#  '$Revision: 612 $'
+
 # system variables
 wGet="/usr/bin/wget";
 
@@ -12,7 +21,8 @@ sleepInterval=60;
 failureCount=0;
 failureThreshold=10;
 
-# subroutine to save session cookies to the cookies file
+# subroutine to save session cookies to the cookies file. This is only needed
+# because wget version 1.9.1 doesn't support the '--keep-session-cookies' option.
 saveSessionCookies () 
 {
   cookieStrings=$(echo ${result} | tr "\r" "\n" | grep "Set-Cookie");
@@ -188,6 +198,7 @@ while [ 1 = 1 ];
       # test a known URL for the correct response.
       checkResult=$($wGet -O - -q --load-cookies /tmp/cookies.txt $checkURL);
       
+      # Did we get an IP address back in the response?
       if [[ $checkResult =~ [[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3} ]]; then
         checkResultSuffix=${checkResult#*<body>};
         checkResultString=${checkResultSuffix%</body>*};
@@ -204,7 +215,7 @@ while [ 1 = 1 ];
         # for persistent failures, restart the networking service
         if [[ "$failureCount" -gt "$failureThreshold" ]]; then
           /etc/init.d/networking stop;
-          sleep 5;
+          sleep 10;
           /etc/init.d/networking start;
         fi
         
