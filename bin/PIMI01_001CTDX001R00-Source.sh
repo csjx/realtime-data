@@ -10,12 +10,13 @@ $BBL_HOME/lib/commons-logging-1.0.4.jar:\
 $BBL_HOME/lib/log4j-1.2.8.jar:\
 $BBL_HOME/lib/log4j.properties;
 
-IP=$(ip addr show wlan0 | grep "inet " | tr -s " " " " | cut -d" " -f3 | cut -d"/" -f1);
-SOURCE="PIMI01_001CTDX001R00";
+export IFACE=wlan0;
+export IP=$(ip addr show $IFACE | grep "inet " | tr -s " " " " | cut -d" " -f3 | cut -d"/" -f1);
+export SOURCE="PIMI01_001CTDXXXXR00";
 
 # run the CTDSource driver, connecting to the CTD the /dev/ttyUSB0 serial port
 # and to the RBNB server @ bbl.ancl.hawaii.edu:3333, defining the source name as
-# 'PIMI01_001CTDX001R00' and the data channel as 'DecimalASCIISampleData'.  The 
+# 'PIMI01_001CTDXXXXR00' and the data channel as 'DecimalASCIISampleData'.  The 
 # client is also requesting a cache size of 126000 frames, and an archive size
 # of 7776000 frames.  In this case, each frame is 1 sample transmitted by the
 # CTD instrument (15/minute), which equates to about 65 bytes of data per frame,
