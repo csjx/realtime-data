@@ -2,7 +2,7 @@
 # set up the variables
 sourceName="PIPL01_001CTDXXXXR00";
 sourceType="CTDSource";
-sourceString="2 meter PIPL CTD";
+sourceString="1 meter PIPL CTD";
 bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver
