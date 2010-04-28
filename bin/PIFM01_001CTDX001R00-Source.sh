@@ -13,7 +13,7 @@ $BBL_HOME/lib/log4j.properties;
 IP=$(ip addr show wlan0 | grep "inet " | tr -s " " " " | cut -d" " -f3 | cut -d"/" -f1);
 SOURCE="PIFM01_001CTDX001R00";
 
-# run the SeabirdCTDSource driver, connecting to the CTD the /dev/ttyUSB0 serial port
+# run the CTDSource driver, connecting to the CTD the /dev/ttyUSB0 serial port
 # and to the RBNB server @ bbl.ancl.hawaii.edu:3333, defining the source name as
 # 'PIFM01_001CTDX001R00' and the data channel as 'DecimalASCIISampleData'.  The 
 # client is also requesting a cache size of 126000 frames, and an archive size
