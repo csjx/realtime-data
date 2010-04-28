@@ -202,7 +202,7 @@ while [ 1 = 1 ];
         isAuthorized="false";
         
         # for persistent failures, restart the networking service
-        if [[ $failureCount >= $failureThreshold ]]; then
+        if [[ "$failureCount" -gt "$failureThreshold" ]]; then
           /etc/init.d/networking stop;
           sleep 5;
           /etc/init.d/networking start;
