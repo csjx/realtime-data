@@ -1,0 +1,55 @@
+#!/bin/bash
+# Init script for wireless authentication on the PacIOOS gumstix deployments
+#
+# The BBL_HOME location needs to exist
+#
+
+if [ ! "${BBL_HOME}" ]; then BBL_HOME=/usr/local/bbl/trunk; fi
+WIFI_LOG='/var/log/wifi/wifi.log' # /var/log is volatile on OE/Gumstix
+WIFI_PIDFILE='/var/run/wifi.pid';
+
+################################################################################
+start() {   
+   
+   # OE/Gumstix /var/log directory is volatile.  Re-link if necessary
+   if [ -d /var/log/wifi ]; then
+     echo "Wifi log directory exists";
+   else
+     echo "Relinking the log directory.";
+     ln -s /usr/local/wifi/log /var/log/wifi;
+   fi
+   
+   # note rbnb.jar is found in the bbl lib directory
+   $BBL_HOME/bin/getWifiAuth.sh > ${WIFI_LOG} 2>&1 &
+   
+   WIFI_PID=$(ps -ef | grep WifiAuth | tr -s " " " " | cut -d" " -f2);
+   echo ${WIFI_PID} > ${WIFI_PIDFILE};
+
+}
+
+################################################################################
+stop() {
+  if [ -f ${WIFI_PIDFILE} ]; then
+    kill -s SIGTERM `cat ${WIFI_PIDFILE}`;
+    rm -f ${WIFI_PIDFILE};
+  fi
+}
+     
+case "$1" in
+   'start')
+       echo "Starting the RBNB server"
+       start
+       ;;
+   'stop')
+       echo "Stopping the RBNB server"
+       stop
+       ;;
+   'restart')
+       echo "Restarting the RBNB server"
+       stop
+       start
+       ;;
+   *)
+       echo "Usage: $0 {start|stop|restart} "
+       ;;
+esac
