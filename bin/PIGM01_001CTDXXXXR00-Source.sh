@@ -24,6 +24,7 @@ export SOURCE="PIGM01_001CTDXXXXR00";
 # depending on the CTD configuration. With this ring buffer request, this source
 # use approximately 2MB of RAM, and 126MB of disk storage (in a 90 day period).
 java edu.hawaii.soest.kilonalu.ctd.CTDSource\
+ -t socket\
  -H 68.25.27.65\
  -P 5111\
  -S $SOURCE\
