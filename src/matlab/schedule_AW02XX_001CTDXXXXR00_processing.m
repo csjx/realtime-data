@@ -172,6 +172,10 @@ set(configuration,                                                     ...
                              }                                         ...
 );
 
+% Tell the DataProcessor which type of figure to create
+% Either: temperatureSalinity or timeSeries
+set( configuration, 'currentFigureType', 'timeSeries');
+
 % Set the configuration parameters for the time series figures that should
 % be generated.  The timeSeriesFigures property is a cell array that includes
 % one or more cell arrays that contain figure properties:
@@ -181,6 +185,8 @@ set(configuration,                                                     ...
 %
 % Figure Title Prefix       : The prefix string used at the top of the figure. This
 %                             will be followed by 'latest observation period ...'
+% Figure Start Date         : the start date (mm-dd-yyyy HH:MM:SS) in UTC, this
+%                             is for TS plots only, set to empty string for timeSeries
 % Figure Duration           : the number of seconds that the plots in the figure will
 %                             represent (given as an integer)
 % {YAxis Variables}         : A cell array of Y axis variable names as strings, 
@@ -218,6 +224,7 @@ set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
                           % Figure 1                                 
                           {'Ala Wai Canal (NS02), 1 Day Water Quality' , ... % titlePrefix
+                           ''                                          , ... % figure start in UTC
                            '86400'                                     , ... % duration
                            {'temperature'                              , ... % xAxisVars
                             'salinity'                                 , ... 
@@ -241,6 +248,7 @@ set( configuration,                                                    ...
                          }                                             , ...
                          % Figure 2                                    
                          {'Ala Wai Canal (NS02), 3 Day Water Quality'  , ... % titlePrefix
+                          ''                                           , ... % figure start in UTC
                           '259200'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
@@ -264,6 +272,7 @@ set( configuration,                                                    ...
                          }                                             , ...
                          % Figure 3                                    
                          {'Ala Wai Canal (NS02), 7 Day Water Quality'  , ... % titlePrefix
+                          ''                                           , ... % figure start in UTC
                           '604800'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
@@ -287,6 +296,7 @@ set( configuration,                                                    ...
                          }                                             , ...
                          % Figure 4                                    
                          {'Ala Wai Canal (NS02), 21 Day Water Quality' , ... % titlePrefix
+                          ''                                           , ... % figure start in UTC
                           '1814400'                                    , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
