@@ -906,7 +906,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       %============
       close(gcf);
       numberOfPlots = length(figureYAxisVariables{1});
-      figureRectangle = [0 800 1296 800];
+      figureRectangle = [1950 800 800 800];
       paperOrientation = 'portrait';
       paperPosition = [0 0 11.0 8.5];
       yLabelPosition = [-0.1 0.5042 0];
