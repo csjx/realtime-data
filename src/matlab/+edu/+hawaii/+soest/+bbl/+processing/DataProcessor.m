@@ -684,7 +684,6 @@ classdef DataProcessor < hgsetget & dynamicprops
       figureHandle     = figure(); clf;
       numberOfPlots    = length(figureYAxisVariables{1});
       figureRectangle  = [0 800 1296 800];
-      paperOrientation = 'portrait';
       paperPosition    = [0 0 8.5 11.0];
       yLabelPosition   = [-0.1 0.5042 0];
       figureHandle     = figure(); clf;
@@ -907,7 +906,6 @@ classdef DataProcessor < hgsetget & dynamicprops
       close(gcf);
       numberOfPlots = length(figureYAxisVariables{1});
       figureRectangle = [1950 800 800 800];
-      paperOrientation = 'portrait';
       paperPosition = [0 0 11.0 8.5];
       yLabelPosition = [-0.1 0.5042 0];
       figureHandle = figure(); clf;
@@ -937,8 +935,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         % Position and Size of Figure
         set(gcf, 'units', 'pixels',              ...
                  'position', figureRectangle,    ...
-                 'paperposition', paperPosition, ...
-                 'paperorientation', paperOrientation);
+                 'paperposition', paperPosition);
         
         % Plotting
         % build the X and Y variables
