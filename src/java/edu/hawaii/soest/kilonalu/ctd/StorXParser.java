@@ -142,4 +142,165 @@ public class StorXParser {
       
   }
   
+  /**
+   * A method used to parse the binary STOR-X file.  Currently, this only
+   * parses out ASCII sample data strings.
+   *
+   * @param fileBuffer - the binary data file as a ByteBuffer
+   */ 
+  public void parse(ByteBuffer fileBuffer) {
+    
+    logger.debug("StorXParser.parse() called.");
+    
+    try {
+      
+      // Create a buffer that will store a single line of the file
+      ByteBuffer lineBuffer = ByteBuffer.allocate(1024);
+      
+      // create four byte placeholders used to evaluate up to a four-byte 
+      // window.  The FIFO layout looks like:
+      //           -------------------------
+      //   in ---> | One | Two |Three|Four |  ---> out
+      //           -------------------------
+      byte byteOne   = 0x00,   // set initial placeholder values
+           byteTwo   = 0x00,
+           byteThree = 0x00,
+           byteFour  = 0x00;
+      
+      int lineByteCount = 0; // keep track of bytes per line
+      
+      fileBuffer.position(0);
+      fileBuffer.limit(fileBuffer.capacity());
+      
+      while ( fileBuffer.hasRemaining() ) {
+          
+        // load the next byte into the FIFO window
+        byteOne = fileBuffer.get();
+        
+        // show the byte stream coming in
+        //logger.debug("b1: " + new String(Hex.encodeHex(new byte[]{byteOne}))   + "\t" +
+        //             "b2: " + new String(Hex.encodeHex(new byte[]{byteTwo}))   + "\t" +
+        //             "b3: " + new String(Hex.encodeHex(new byte[]{byteThree})) + "\t" +
+        //             "b4: " + new String(Hex.encodeHex(new byte[]{byteFour}))
+        //             );
+        
+        // evaluate the bytes, separate the file line by line (SAT ...\r\n)
+        switch (this.state) {
+          
+          case 0: // find a line beginning (SAT) 53 41 54
+            
+            if ( byteOne == 0x54 && byteTwo == 0x41 && byteThree == 0x53 ) {
+              
+              // found a line, add the beginning to the line buffer 
+              lineBuffer.put(byteThree);
+              lineBuffer.put(byteTwo);
+              lineBuffer.put(byteOne);
+              
+              lineByteCount = lineByteCount + 3;
+              
+              this.state = 1;
+              break;
+            
+            } else {
+              break;
+              
+            }
+          
+          case 1: // find a line ending (\r\n)
+            
+            if ( byteOne == 0x0A && byteTwo == 0x0D ) {
+              
+              // we have a line ending. store the line in the arrayList
+              lineBuffer.put(byteOne);
+              lineByteCount++;
+              lineBuffer.flip();
+              // create a true copy of the byte array subset
+              byte[] lineArray = lineBuffer.array();
+              byte[] lineCopy  = new byte[lineByteCount];
+              System.arraycopy(lineArray, 0, lineCopy, 0, lineByteCount);
+              String currentLine = new String(lineCopy, "US-ASCII");
+              this.lineStringArrayList.add(currentLine);
+              
+              // rest the line buffer for the next line
+              lineBuffer.clear();
+              lineByteCount = 0;
+              this.state = 0; 
+              break;
+              
+            } else {
+              
+              // no full line yet, keep adding bytes
+              lineBuffer.put(byteOne);
+              lineByteCount++;
+              break;
+              
+            }
+          
+        } // end switch()
+        
+        // shift the bytes in the FIFO window
+        byteFour  = byteThree;
+        byteThree = byteTwo;
+        byteTwo   = byteOne;
+        
+      } // end while()
+      
+      if ( this.lineStringArrayList.size() > 0 ) {
+        // now the file has been parsed into lines.  Evaluate each line, find
+        // the data lines, and add them to the sample strings array      
+        for (Iterator iterator = this.lineStringArrayList.iterator(); iterator.hasNext();) {
+          
+          // prepare the line for reading
+          String lineString = (String) iterator.next();
+          
+          if ( lineString.matches("SATSBE[0-9]{4}.*\t.*[0-9][0-9]\r\n") ) {
+
+            logger.debug("LINE: " + lineString);
+
+            // we've found a line of data. Store it in the sampleStrings list
+            logger.debug("This is a data line in the file. Processing it.");
+            
+            // find the beginning of the data string and subset the string
+            int index = lineString.indexOf(" ");
+            String sampleString = lineString.substring(index, lineString.length());
+            this.sampleStrings.add(sampleString);
+            
+          } else {
+            // go to the next line
+            // logger.debug("This is not a data line in the file. Skipping it.");
+
+          }
+
+        } // end for()
+
+        // now the sample strings have been extracted. Parse each string to
+        // extract the date column value. Note: this has hard-coded information
+        // about the data string. Needs to be abstracted, but we have little to
+        // no automated metadata to allow automated string parsing.
+        for (Iterator sIterator = this.sampleStrings.iterator(); sIterator.hasNext();) {
+
+          String sample = (String) sIterator.next();
+          String[] columns      = sample.trim().split(",");
+          String   dateString   = columns[columns.length - 1]; // last field
+
+          DATE_FORMAT.setTimeZone(TZ);
+          Date sampleDate = DATE_FORMAT.parse(dateString);
+          this.sampleDates.add(sampleDate);
+
+        } // end for()
+        
+      } else {
+        logger.debug("There are no lines in the line buffer to parse.");
+        
+      } // end if()
+      
+    } catch (Exception e) {
+      logger.debug("Failed to parse the data file.  The error message was:" +
+                   e.getMessage());
+      e.printStackTrace();
+      
+    }    
+        
+  }
+                                                
 }                                               
