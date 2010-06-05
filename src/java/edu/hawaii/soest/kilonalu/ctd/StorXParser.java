@@ -122,4 +122,24 @@ public class StorXParser {
     this.logConfigurationFile = logConfigurationFile;
   }
   
+  /**
+   * A method that returns the data sample strings as a String array
+   *
+   * @return sampleStrings -  the data sample strings array
+   */
+  public String[] getSampleStrings() {
+    return this.sampleStrings.toArray(new String[this.sampleStrings.size()]);
+      
+  }
+  
+  /**
+   * A method that returns the data sample dates as a Date array
+   *
+   * @return sampleDates -  the data sample dates array
+   */
+  public Date[] getSampleDates() {
+    return this.sampleDates.toArray(new Date[this.sampleDates.size()]);
+      
+  }
+  
 }                                               
