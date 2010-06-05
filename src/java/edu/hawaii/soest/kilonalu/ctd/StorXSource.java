@@ -188,4 +188,120 @@ public class StorXSource extends RBNBSource {
     setRBNBClientName(rbnbClientName);
   }
 
+  /**
+   * A method that processes the data ByteBuffer passed in for the given IP
+   * address of the ADAM sensor, parses the binary ADAM data, and flushes the
+   * data to the DataTurbine given the sensor properties in the XMLConfiguration
+   * passed in.
+   *
+   * @param serialNumber      - the sensor serial number 
+   * @param xmlConfig         - the XMLConfiguration object containing the list of
+   *                            sensor properties
+   * @param messageAttachment - the binary data file as a ByteBuffer
+   */
+  protected boolean process(String serialNumber, XMLConfiguration xmlConfig,
+                            ByteBuffer messageAttachment) {
+    
+    logger.debug("StorXSource.process() called.");
+    // do not execute the stream if there is no connection
+    if (  !isConnected() ) return false;
+    
+    boolean success = false;
+    
+    try {
+      
+      // add channels of data that will be pushed to the server.  
+      // Each sample will be sent to the Data Turbine as an rbnb frame.  Information
+      // on each channel is found in the XMLConfiguration file (email.account.properties.xml)
+      // and the StorXParser object (to get the data string)
+      ChannelMap rbnbChannelMap     = new ChannelMap(); // used to flush channels
+      ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
+      int channelIndex = 0;
+        
+      this.storXParser = new StorXParser(messageAttachment);
+      
+      String sensorName           = null;
+      String sensorSerialNumber   = null;
+      String sensorDescription    = null;
+      
+      List sensorList = xmlConfig.configurationsAt("account.sensor");
+      
+      for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+        
+        HierarchicalConfiguration sensorConfig = 
+          (HierarchicalConfiguration) sIterator.next();
+        sensorSerialNumber = sensorConfig.getString("serialNumber");
+        
+        // find the correct sensor configuration properties
+        if ( sensorSerialNumber.equals(serialNumber) ) {
+        
+          sensorName = sensorConfig.getString("name");
+          sensorDescription = sensorConfig.getString("description");
+        
+          // the message attachment may contain one or more data sample strings,
+          // so iterate through them and add them to the RBNB
+          String[] sampleStrings = this.storXParser.getSampleStrings();
+          Date[]   sampleDates   = this.storXParser.getSampleDates();
+          
+          if ( sampleStrings.length > 0 && sampleStrings != null ) {
+            for ( int index = 0; index < sampleStrings.length; index++ ) {
+
+              // Build the RBNB channel map 
+
+              // get the sample string
+              String sampleString = sampleStrings[index];
+
+              // get the sample date and convert it to seconds since the epoch
+              Calendar sampleDateTime = Calendar.getInstance();
+              sampleDateTime.setTime(sampleDates[index]);
+              double sampleTimeAsSecondsSinceEpoch = (double)
+                (sampleDateTime.getTimeInMillis()/1000);
+
+              // add the sample timestamp to the rbnb channel map
+              //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+              rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+
+              // add the DecimalASCIISampleData channel to the channelMap
+              channelIndex = registerChannelMap.Add(getRBNBChannelName());
+              registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+              channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+              rbnbChannelMap.PutMime(channelIndex, "text/plain");
+              rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+
+              // Now register the RBNB channels, and flush the rbnbChannelMap to the
+              // DataTurbine
+              getSource().Register(registerChannelMap);
+              getSource().Flush(rbnbChannelMap);
+              logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + sampleString);
+              registerChannelMap.Clear();
+              rbnbChannelMap.Clear();
+
+            } // end for() 
+
+          } else {
+            logger.debug("The are no sample strings to to insert.");
+            
+          }//end if()
+          // leave the for loop since we've found the correct config
+          break;
+          
+        } // end if()
+        
+      } // end for()                                             
+      
+      //getSource.Detach();
+      success = true;
+      
+    } catch ( SAPIException sapie ) {
+      // In the event of an RBNB communication  exception, log the exception, 
+      // and allow execute() to return false, which will prompt a retry.
+      success = false;
+      sapie.printStackTrace();
+      return success;
+      
+    }
+    
+    return success;
+  } // end if (  !isConnected() ) 
+  
 }
