@@ -304,4 +304,36 @@ public class StorXSource extends RBNBSource {
     return success;
   } // end if (  !isConnected() ) 
   
+  /**
+   * A method that gets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   */
+   public int getBufferSize() {
+     return this.bufferSize;
+   }
+   
+  /**
+   * A method that returns the name of the RBNB channel that contains the 
+   * streaming data from this instrument
+   */
+  public String getRBNBChannelName(){
+    return this.rbnbChannelName;
+  }
+
+  /**
+   * A method that returns the versioning info for this file.  In this case, 
+   * it returns a String that includes the Subversion LastChangedDate, 
+   * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   */
+
+  public String getCVSVersionString(){
+    return (
+    "$LastChangedDate: 2010-04-10 16:41:48 -0600 (Sat, 10 Apr 2010) $" +
+    "$LastChangedBy: cjones $" +
+    "$LastChangedRevision: 604 $" +
+    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/storX/StorXSource.java $"
+    );
+  }
+
+
 }
