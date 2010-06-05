@@ -336,4 +336,18 @@ public class StorXSource extends RBNBSource {
   }
 
 
+  /**
+   * A method that starts the connection with the RBNB DataTurbine
+   */
+  public boolean startConnection() {
+    return connect();
+  }
+   
+  /**
+   * A method that stops the connection with the RBNB DataTurbine
+   */
+  public void stopConnection() {
+    disconnect();
+  }
+   
 }
