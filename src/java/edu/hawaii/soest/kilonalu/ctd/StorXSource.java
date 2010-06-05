@@ -373,4 +373,24 @@ public class StorXSource extends RBNBSource {
     return options;
   }
 
+  /**
+   * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   *
+   * @param bufferSize  the size, in bytes, of the ByteBuffer
+   */
+  public void setBuffersize(int bufferSize) {
+    this.bufferSize = bufferSize;
+  }
+  
+  /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
+
 }
