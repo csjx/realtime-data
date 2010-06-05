@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!--
+  *  email.sensor.properties.xml
+  *
+  *  Copyright: 2010 Regents of the University of Hawaii and the
+  *         School of Ocean and Earth Science and Technology 
+  *
+  *   '$Author:  $'
+  *   '$Date:  $'
+  *   '$Revision:  $'
+-->
+<!-- 
+  The following DTD and XML structure represent a list of IMAP email accounts with
+  sensor data and their properties.  
+-->
+<!-- Definitions for the sensor list properties are as follows: -->
+<!DOCTYPE accounts [
+  <!-- The list of sensors -->
+  <!ELEMENT accounts (account*)>
+  <!-- the email account used to store data -->
+  <!ELEMENT account (accountName, server, username, password, protocol, dataMailbox, processedMailbox, sensor*)>
+  <!-- The account name for the email account -->
+  <!ELEMENT accountName (#PCDATA)>
+  <!-- The IP/address of the IMAP mail server -->
+  <!ELEMENT server (#PCDATA)>
+  <!-- The username for the email account -->
+  <!ELEMENT username (#PCDATA)>
+  <!-- The password for the email account -->
+  <!ELEMENT password (#PCDATA)>
+  <!-- The protocol for the email account -->
+  <!ELEMENT protocol (#PCDATA)>
+  <!-- The incoming data mailbox for the email account -->
+  <!ELEMENT dataMailbox (#PCDATA)>
+  <!-- The processed data mailbox for the email account -->
+  <!ELEMENT processedMailbox (#PCDATA)>
+  <!-- An individual sensor with each property as an element -->
+  <!ELEMENT sensor (name, serialNumber, description, cacheSize, archiveSize, archiveChannel)>
+  <!-- The source name of the sensor -->
+  <!ELEMENT name (#PCDATA)>
+  <!-- The serial number of the sensor. This must be unique in the xml document -->
+  <!ELEMENT serialNumber (#PCDATA)>
+  <!-- The source description of the sensor -->
+  <!ELEMENT description (#PCDATA)>
+  <!-- The source's DataTurbine cache size in frames -->
+  <!ELEMENT cacheSize (#PCDATA)>
+  <!-- The source's DataTurbine archive size in frames -->
+  <!ELEMENT archiveSize (#PCDATA)>
+  <!-- The source's channel to be archived to file -->
+  <!ELEMENT archiveChannel (#PCDATA)>
+  <!-- The source type of the sensor (either monitor or control) -->
+]>
+<accounts>
+  <account>
+    <accountName>HIOOS Water Quality Buoy Data</accountName>
+    <server>imap.gmail.com</server>
+    <username>hiooswqb</username>
+    <password>password-here</password>
+    <protocol>imaps</protocol>
+    <dataMailbox>Inbox</dataMailbox>
+    <processedMailbox>processed</processedMailbox>
+    <sensor>
+      <name>HIWQ01_XXXCTDXXXXR00</name>
+      <serialNumber>0062</serialNumber>
+      <description>WQB-KN</description>
+      <cacheSize>50000</cacheSize>
+      <archiveSize>31536000</archiveSize>
+      <archiveChannel>DecimalASCIISampleData</archiveChannel>
+    </sensor>
+    <sensor>
+      <name>HIWQ02_XXXCTDXXXXR00</name>
+      <serialNumber>0063</serialNumber>
+      <description>WQB-AW</description>
+      <cacheSize>50000</cacheSize>
+      <archiveSize>31536000</archiveSize>
+      <archiveChannel>DecimalASCIISampleData</archiveChannel>
+    </sensor>
+  </account>
+</accounts>
