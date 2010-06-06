@@ -269,4 +269,182 @@ public class StorXDispatcher extends RBNBSource {
     setRBNBClientName(rbnbClientName);
   }
 
+  /**
+   * A method that executes the reading of data from the email account to the RBNB
+   * server after all configuration of settings, connections to hosts, and
+   * thread initiatizing occurs.  This method contains the detailed code for 
+   * reading the data and interpreting the data files.
+   */
+  protected boolean execute() {
+    logger.debug("StorXDispatcher.execute() called.");
+    boolean failed = true; // indicates overall success of execute()
+    boolean messageProcessed = false; // indicates per message success
+    
+    // declare the account properties that will be pulled from the 
+    // email.account.properties.xml file
+    String accountName      = "";
+    String server           = "";
+    String username         = "";
+    String password         = "";
+    String protocol         = "";
+    String dataMailbox      = "";
+    String processedMailbox = "";
+    
+    // fetch data from each sensor in the account list
+    List accountList  = this.xmlConfiguration.getList("account.accountName");
+    
+    for (Iterator aIterator = accountList.iterator(); aIterator.hasNext(); ) {
+      
+      int aIndex = accountList.indexOf(aIterator.next());
+      
+      // populate the email connection variables from the xml properties file
+      accountName      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").accountName");
+      server           = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").server");
+      username         = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").username");
+      password         = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").password");
+      protocol         = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").protocol");
+      dataMailbox      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").dataMailbox");
+      processedMailbox = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").processedMailbox");
+      
+      logger.debug("\n\nACCOUNT DETAILS: \n" +
+                   "accountName     : " + accountName      + "\n" +
+                   "server          : " + server           + "\n" +
+                   "username        : " + username         + "\n" +
+                   "password        : " + password         + "\n" +
+                   "protocol        : " + protocol         + "\n" +
+                   "dataMailbox     : " + dataMailbox      + "\n" +
+                   "processedMailbox: " + processedMailbox + "\n"
+                   );
+      // get a connection to the mail server
+      Properties props = System.getProperties();
+      props.setProperty("mail.store.protocol", protocol);
+
+      try {
+        
+        // create the imaps mail session
+        Session session = Session.getDefaultInstance(props, null);
+        Store store = session.getStore(protocol);
+        store.connect(server, username, password);
+        
+        // get folder references for the inbox and processed data box  
+        Folder inbox = store.getFolder(dataMailbox);
+        inbox.open(Folder.READ_WRITE);
+
+        Folder processed = store.getFolder(processedMailbox);
+        processed.open(Folder.READ_WRITE);
+
+        Message messages[] = inbox.getMessages();
+        
+        for(Message message:messages) {
+          
+          // determine the sensor serial number for this message
+          String messageSubject = message.getSubject();
+          String[] subjectParts = messageSubject.split("\\s");
+          String sensorSerialNumber = subjectParts[2];
+          
+          String messageBody;
+          ByteBuffer messageAttachment = ByteBuffer.allocate(256); // init only          
+
+          // Do we have a data attachment?  If not, there's no data to process
+          if ( message.isMimeType("multipart/mixed") ) {
+            Multipart mMessage = (Multipart) message.getContent();
+
+            // separate the message body from the data attachment                    
+            for ( int partCount = mMessage.getCount(); partCount > 0; partCount-- ) {
+              Part part = mMessage.getBodyPart(partCount - 1);
+
+              if ( part.isMimeType("text/plain") ) {
+                messageBody = (String) part.getContent();
+
+              } else if ( part.isMimeType("application/octet-stream") ) {
+
+                // convert the attachment object to a ByteBuffer
+                InputStream inputStream = part.getInputStream();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                
+                // buffer the input stream if it's not already
+                if ( !(inputStream instanceof BufferedInputStream) ) {
+                  inputStream = new BufferedInputStream(inputStream);
+                  
+                }
+                
+                int fourBytes;
+                
+                // read the attachment as bytes (Base 64 decoding happens on the fly)
+                while ( (fourBytes = inputStream.read()) != -1 ) {
+                  outputStream.write(fourBytes);
+                  
+                } // end while
+                
+                messageAttachment = ByteBuffer.wrap(outputStream.toByteArray());
+                
+              } // end if()
+
+            } // end for()
+            
+            // we now have the body, attachement, and serial number. Parse the
+            // attachment for the data string, look up the storXSource based on
+            // the serial number, and push the data to the DataTurbine
+                        
+            if (this.sourceMap.get(sensorSerialNumber) != null ) {
+
+              // look up the source object in the sourceMap
+              StorXSource source = sourceMap.get(sensorSerialNumber);
+
+              // process the data using the StorXSource driver
+              messageProcessed = source.process(sensorSerialNumber, 
+                                                this.xmlConfiguration, 
+                                                messageAttachment);
+                
+              if ( !messageProcessed ) {
+                logger.info("Failed to process message: " +
+                            "Message Number: " + message.getMessageNumber() + "  " +
+                            "Sensor Serial:"   + sensorSerialNumber);
+                // leave it in the inbox, flagged as seen (read)
+                message.setFlag(Flags.Flag.SEEN, true);
+                
+              } else {
+                
+                // message processed successfully. copy it and flag it deleted
+                inbox.copyMessages(new Message[]{message}, processed) ;
+                message.setFlag(Flags.Flag.DELETED, true);
+                logger.debug("Deleted message " + message.getMessageNumber());
+              } // end if()
+
+            } else {
+              logger.debug("There is no configuration information for "    +
+                          "the sensor serial number " + sensorSerialNumber +
+                          ". Please add the configuration to the "         +
+                          "email.account.properties.xml configuration file.");
+            } // end if()
+            
+          } else {
+            logger.debug("This is not a data email since there is no " + 
+                         "attachment. Skipping it. Subject: " + messageSubject);
+
+          } // end if()
+          
+        } // end for()
+
+        // expunge messages and close the mail server store once we're done
+        //inbox.expunge();
+        store.close();
+        
+      } catch (NoSuchProviderException e) {
+        e.printStackTrace();
+        System.exit(1);
+        
+      } catch (MessagingException e) {
+        e.printStackTrace();
+        System.exit(2);
+        
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(2);
+        
+      }
+    }
+        
+    return !failed;
+  }
 }
