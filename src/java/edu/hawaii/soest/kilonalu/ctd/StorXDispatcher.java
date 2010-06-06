@@ -447,4 +447,85 @@ public class StorXDispatcher extends RBNBSource {
         
     return !failed;
   }
+  
+  /**
+   * A method used to connect each of the StorXSource drivers to the DataTurbine.
+   * There is a one driver for each sensor stated in the xml configuration
+   * file, and the primary key for each sensor is the sensor serial number.
+   */
+  protected boolean connect() {
+    logger.debug("StorXDispatcher.execute() called.");
+    
+    if ( isConnected() ) {
+      return true;
+    }
+    
+    try {
+      
+      // Create a list of sensors from the properties file, and iterate through
+      // the list, creating an RBNB Source object for each sensor listed. Store
+      // these objects in a HashMap for later referral.
+
+      this.sourceMap = new HashMap<String, StorXSource>();
+
+      // the sensor properties to be pulled from each account's sensor list.
+      String sourceName     = "";
+      String serialNumber   = "";
+      String description    = "";
+      String cacheSize      = "";
+      String archiveSize    = "";
+      String archiveChannel = "";
+
+      // iterate through each account
+      List accountList  = xmlConfiguration.getList("account.accountName");
+      
+      for ( Iterator aIterator = accountList.iterator(); aIterator.hasNext(); ) {
+        
+        int aIndex = accountList.indexOf(aIterator.next());                
+        
+        // evaluate each sensor listed in the email.account.properties.xml file
+        List sensorList  = xmlConfiguration.getList("account.sensor.name");
+        
+        for ( Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+
+            // get each property value of the sensor
+            int sIndex = sensorList.indexOf(sIterator.next());
+
+            sourceName     = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").name");
+            serialNumber   = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").serialNumber");
+            description    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").description");
+            cacheSize      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").cacheSize");
+            archiveSize    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").archiveSize");
+            archiveChannel = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").archiveChannel");
+
+            // test for all of the critical source information
+            if ( sourceName  != null && cacheSize != null &&
+                 archiveSize != null && archiveChannel != null ) {
+              
+              // given the properties, create an RBNB Source object
+              StorXSource storXSource = 
+                new StorXSource(this.serverName, 
+                              (new Integer(this.serverPort)).toString(),
+                              this.archiveMode, 
+                              (new Integer(archiveSize).intValue()),
+                              (new Integer(cacheSize).intValue()), 
+                              sourceName);
+              storXSource.startConnection();
+              sourceMap.put(serialNumber, storXSource);
+                   
+            }
+
+        }
+        
+      }
+      
+      return true;
+
+    } catch (Exception e) {
+      logger.debug("Failed to connect. Message: " + e.getMessage());
+      return false;
+        
+    }
+  
+  }
 }
