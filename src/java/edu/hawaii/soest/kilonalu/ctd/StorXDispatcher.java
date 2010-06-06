@@ -566,4 +566,69 @@ public class StorXDispatcher extends RBNBSource {
     "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/StorXDispatcher.java $"
     );
   }
+
+  /**
+   * The main method for running the code
+   * @ param args[] the command line list of string arguments, none are needed
+   */
+  public static void main (String args[]) {
+        
+    try {
+      // create a new instance of the StorXDispatcher object, and parse the command 
+      // line arguments as settings for this instance
+      final StorXDispatcher storXDispatcher = new StorXDispatcher();
+            
+      // Handle ctrl-c's and other abrupt death signals to the process
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        // stop the streaming process
+        public void run() {
+          Collection sourceCollection = storXDispatcher.sourceMap.values();
+          for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext(); ) {
+             
+             StorXSource source = (StorXSource) iterator.next();
+             logger.debug("Disconnecting source: " + source.getRBNBClientName());
+             source.stopConnection();
+             
+          }
+        }
+      }
+      );
+      
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(storXDispatcher.getLogConfigurationFile());
+      
+      // parse the commandline arguments to configure the connection, then 
+      // start the streaming connection between the source and the RBNB server.
+      if ( storXDispatcher.parseArgs(args) && storXDispatcher.parseConfiguration() ) {
+        
+        // establish the individual source connections with the RBNB
+        if ( storXDispatcher.connect() ) {
+          
+          // fetch data on a schedule
+          TimerTask fetchData = new TimerTask() {
+            public void run() {
+              logger.debug("TimerTask.run() called.");
+                storXDispatcher.execute();      
+            }
+          };
+
+          Timer executeTimer = new Timer();
+          // run the fetchData timer task every 20 minutes
+          executeTimer.scheduleAtFixedRate(fetchData, 
+            new Date(), storXDispatcher.executeInterval);      
+
+        } else {
+          logger.info("Could not establish a connection to the DataTurbine. Exiting.");
+          System.exit(0);
+        }
+        
+      }
+            
+    } catch ( Exception e ) {
+      logger.info("Error in main(): " + e.getMessage());
+      e.printStackTrace();
+      
+    }
+  }
+  
 }
