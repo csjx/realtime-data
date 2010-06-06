@@ -630,5 +630,50 @@ public class StorXDispatcher extends RBNBSource {
       
     }
   }
+
+  /**
+   * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   *
+   * @param bufferSize  the size, in bytes, of the ByteBuffer
+   */
+  public void setBufferSize(int bufferSize) {
+    this.bufferSize = bufferSize;
+  }
   
+  /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
+
+  /**
+   * A method that sets the domain name or IP address of the source 
+   * instrument (i.e. the serial-to-IP converter to which it is attached)
+   *
+   * @param hostName  the domain name or IP address of the source instrument
+   */
+  public void setHostName(String hostName) {
+    this.sourceHostName = hostName;
+  }
+
+  /**
+   * A method that sets the domain name or IP address of the RBNB server
+   *
+   * @param serverName  the domain name or IP address of the RBNB server
+   */
+  public void setServerName(String serverName) {
+    this.serverName = serverName;
+  }
+
+  /**
+   * A method that sets the TCP port of the RBNB server 
+   *
+   * @param serverPort  the TCP port of the RBNB server
+   */
+  public void setServerPort(int serverPort) {
 }
