@@ -676,4 +676,120 @@ public class StorXDispatcher extends RBNBSource {
    * @param serverPort  the TCP port of the RBNB server
    */
   public void setServerPort(int serverPort) {
+  
+  /*
+   * A method used to get the sensor configuration properties for each of
+   * the listed CTD sensors
+   *
+   * @return true if the parsing doesn't succeed
+   */
+   private boolean parseConfiguration() {
+     
+     boolean failed = true;
+     
+     try {
+       // create an XML Configuration object from the sensor XML file
+       File xmlConfigFile = new File(this.xmlConfigurationFile);
+       this.xmlConfiguration = new XMLConfiguration(xmlConfigFile);
+       failed = false;
+       
+     } catch ( NullPointerException npe ) {
+       logger.info("There was an error reading the XML configuration file. " +
+         "The error message was: " + npe.getMessage());
+
+     } catch ( ConfigurationException ce ) {
+       logger.info("There was an error creating the XML configuration. " +
+         "The error message was: " + ce.getMessage());
+       
+     }
+     return !failed;
+     
+   }
+
+  /**
+   * A method that sets the command line arguments for this class.  This method 
+   * calls the <code>RBNBSource.setBaseArgs()</code> method.
+   * 
+   * @param command  The CommandLine object being passed in from the command
+   */
+  protected boolean setArgs(CommandLine command) {
+    
+    // first set the base arguments that are included on the command line
+    if ( !setBaseArgs(command)) {
+      return false;
+    }
+    
+    // add command line arguments here
+    
+    // handle the -H option
+    if ( command.hasOption("H") ) {
+      String hostName = command.getOptionValue("H");
+      if ( hostName != null ) {
+        setHostName(hostName);
+      }
+    }
+
+    // handle the -C option
+    if ( command.hasOption("C") ) {
+      String channelName = command.getOptionValue("C");
+      if ( channelName != null ) {
+        setChannelName(channelName);
+      }
+    }
+    
+    // handle the -s option
+    if ( command.hasOption('s') ) {
+     String serverName = command.getOptionValue('s');
+     if ( serverName != null ) setServerName(serverName);
+    }
+
+    // handle the -p option
+    if ( command.hasOption('p') ) {
+      String serverPort = command.getOptionValue('p');
+      if ( serverPort != null ) {
+        try {
+          setServerPort(Integer.parseInt(serverPort));
+          
+        } catch (NumberFormatException nf) {
+          System.out.println(
+            "Please enter a numeric value for -p (server port). " + 
+            serverPort + " is not valid.");
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+
+  /**
+   * A method that sets the command line options for this class.  This method 
+   * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+   * properties such as the sourceHostName, sourceHostPort, serverName, and
+   * serverPort.
+   */
+  protected Options setOptions() {
+    Options options = setBaseOptions(new Options());
+    
+    // Note: 
+    // Command line options already provided by RBNBBase include:
+    // -h "Print help"
+    // -s "RBNB Server Hostname"
+    // -p "RBNB Server Port Number"
+    // -S "RBNB Source Name"
+    // -v "Print Version information"
+    
+    // Command line options already provided by RBNBSource include:
+    // -z "Cache size"
+    // -Z "Archive size"
+    
+    // add command line options here
+    options.addOption("H", true, "Source host name or IP e.g. " + getHostName());
+    options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
+    options.addOption("s", true,  "RBNB Server Hostname");
+    options.addOption("p", true,  "RBNB Server Port Number");
+                      
+    return options;
+  }
+
 }
