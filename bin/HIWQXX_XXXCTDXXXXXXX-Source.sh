@@ -15,5 +15,5 @@ $BBL_HOME/lib/log4j-1.2.8.jar:\
 $BBL_HOME/lib/log4j.properties
 
 java edu.hawaii.soest.kilonalu.ctd.StorXDispatcher\
- -s 127.0.0.1\
+ -s 192.168.103.50\
  -p 3333
