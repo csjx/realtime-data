@@ -59,18 +59,18 @@
     <dataMailbox>Inbox</dataMailbox>
     <processedMailbox>processed</processedMailbox>
     <sensor>
-      <name>HIWQ01_XXXCTDXXXXR00</name>
+      <name>WQAW01_XXXCTD001XR00</name>
       <serialNumber>0062</serialNumber>
-      <description>WQB-KN</description>
-      <cacheSize>50000</cacheSize>
+      <description>WQB-AW</description>
+      <cacheSize>25000</cacheSize>
       <archiveSize>31536000</archiveSize>
       <archiveChannel>DecimalASCIISampleData</archiveChannel>
     </sensor>
     <sensor>
-      <name>HIWQ02_XXXCTDXXXXR00</name>
+      <name>WQKN01_XXXCTD001XR00</name>
       <serialNumber>0063</serialNumber>
-      <description>WQB-AW</description>
-      <cacheSize>50000</cacheSize>
+      <description>WQB-KN</description>
+      <cacheSize>25000</cacheSize>
       <archiveSize>31536000</archiveSize>
       <archiveChannel>DecimalASCIISampleData</archiveChannel>
     </sensor>
