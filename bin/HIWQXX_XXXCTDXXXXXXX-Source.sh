@@ -3,6 +3,7 @@ BBL_HOME=/usr/local/bbl/trunk;
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
+$BBL_HOME/lib/activation.jar:\
 $BBL_HOME/lib/mail.jar:\
 $BBL_HOME/lib/commons-codec-1.3.jar:\
 $BBL_HOME/lib/commons-cli-1.0.jar:\
