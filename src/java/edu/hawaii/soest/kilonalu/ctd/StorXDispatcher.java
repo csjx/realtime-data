@@ -676,7 +676,9 @@ public class StorXDispatcher extends RBNBSource {
    * @param serverPort  the TCP port of the RBNB server
    */
   public void setServerPort(int serverPort) {
-  
+    this.serverPort = serverPort;
+    
+  }
   /*
    * A method used to get the sensor configuration properties for each of
    * the listed CTD sensors
