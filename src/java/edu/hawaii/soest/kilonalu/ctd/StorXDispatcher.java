@@ -160,6 +160,12 @@ public class StorXDispatcher extends RBNBSource {
   /* The default TCP port of the RBNB server */
   private int serverPort = DEFAULT_SERVER_PORT;
   
+  /* The IMAP session used to connect to the email server */
+  private Session mailSession;
+  
+  /* The IMAP store email server from the email connection*/
+  private Store mailStore;
+  
   /* The address and port string for the RBNB server */
   private String server = serverName + ":" + serverPort;
   
@@ -322,15 +328,15 @@ public class StorXDispatcher extends RBNBSource {
       try {
         
         // create the imaps mail session
-        Session session = Session.getDefaultInstance(props, null);
-        Store store = session.getStore(protocol);
-        store.connect(server, username, password);
+        this.mailSession = Session.getDefaultInstance(props, null);
+        this.mailStore   = mailSession.getStore(protocol);
+        this.mailStore.connect(server, username, password);
         
         // get folder references for the inbox and processed data box  
-        Folder inbox = store.getFolder(dataMailbox);
+        Folder inbox = mailStore.getFolder(dataMailbox);
         inbox.open(Folder.READ_WRITE);
 
-        Folder processed = store.getFolder(processedMailbox);
+        Folder processed = this.mailStore.getFolder(processedMailbox);
         processed.open(Folder.READ_WRITE);
 
         Message messages[] = inbox.getMessages();
@@ -338,8 +344,8 @@ public class StorXDispatcher extends RBNBSource {
         for(Message message:messages) {
           
           // determine the sensor serial number for this message
-          String messageSubject = message.getSubject();
-          String[] subjectParts = messageSubject.split("\\s");
+          String messageSubject     = message.getSubject();
+          String[] subjectParts     = messageSubject.split("\\s");
           String sensorSerialNumber = subjectParts[2];
           
           String messageBody;
@@ -427,20 +433,32 @@ public class StorXDispatcher extends RBNBSource {
         } // end for()
 
         // expunge messages and close the mail server store once we're done
-        //inbox.expunge();
-        store.close();
+        inbox.expunge();
+        this.mailStore.close();
         
-      } catch (NoSuchProviderException e) {
-        e.printStackTrace();
-        System.exit(1);
+      } catch (NoSuchProviderException nspe) {
+        this.mailStore.close();
+        logger.info("There was an error connecting to the mail server. The " +
+                    "message was: " + nspe.getMessage());
+        nspe.printStackTrace();
+        failed = true;
+        return !failed;
         
-      } catch (MessagingException e) {
-        e.printStackTrace();
-        System.exit(2);
+      } catch (MessagingException me) {
+        this.mailStore.close();
+        logger.info("There was an error reading the mail message. The " +
+                    "message was: " + me.getMessage());
+        me.printStackTrace();
+        failed = true;
+        return !failed;
         
       } catch (IOException e) {
-        e.printStackTrace();
-        System.exit(2);
+        this.mailStore.close();
+        logger.info("There was an I/O error reading the message part. The " +
+                    "message was: " + me.getMessage());
+        me.printStackTrace();
+        failed = true;
+        return !failed;
         
       }
     }
