@@ -437,7 +437,14 @@ public class StorXDispatcher extends RBNBSource {
         this.mailStore.close();
         
       } catch (NoSuchProviderException nspe) {
-        this.mailStore.close();
+        try {
+          this.mailStore.close();
+          
+        } catch (MessagingException me) {
+          failed = true;
+          return !failed;
+          
+        }
         logger.info("There was an error connecting to the mail server. The " +
                     "message was: " + nspe.getMessage());
         nspe.printStackTrace();
@@ -445,15 +452,29 @@ public class StorXDispatcher extends RBNBSource {
         return !failed;
         
       } catch (MessagingException me) {
-        this.mailStore.close();
+        try {
+          this.mailStore.close();
+          
+        } catch (MessagingException me2) {
+          failed = true;
+          return !failed;
+          
+        }
         logger.info("There was an error reading the mail message. The " +
                     "message was: " + me.getMessage());
         me.printStackTrace();
         failed = true;
         return !failed;
         
-      } catch (IOException e) {
-        this.mailStore.close();
+      } catch (IOException me) {
+        try {
+          this.mailStore.close();
+          
+        } catch (MessagingException me3) {
+          failed = true;
+          return !failed;
+          
+        }
         logger.info("There was an I/O error reading the message part. The " +
                     "message was: " + me.getMessage());
         me.printStackTrace();
