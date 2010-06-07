@@ -198,7 +198,7 @@ public class StorXDispatcher extends RBNBSource {
   private double endTime = Double.MAX_VALUE;
   
   /* The execute interval used to periodically fetch data (in seconds) */
-  private int executeInterval = 12000;
+  private int executeInterval = 1200;
   
   /* a flag to indicate if we are connected to the RBNB server or not */
   private boolean connected = false;
