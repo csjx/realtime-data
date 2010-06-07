@@ -204,7 +204,7 @@ public class StorXDispatcher extends RBNBSource {
   private double endTime = Double.MAX_VALUE;
   
   /* The execute interval used to periodically fetch data (in milliseconds) */
-  private long executeInterval = 1200000; // 20 minutes
+  private long executeInterval = 60000; // 1 minute
   
   /* a flag to indicate if we are connected to the RBNB server or not */
   private boolean connected = false;
@@ -652,7 +652,7 @@ public class StorXDispatcher extends RBNBSource {
           };
 
           Timer executeTimer = new Timer("Execute Timer");
-          // run the fetchData timer task every 20 minutes
+          // run the fetchData timer task at the default interval
           executeTimer.scheduleAtFixedRate(fetchData, 
             new Date(), storXDispatcher.executeInterval);      
 
