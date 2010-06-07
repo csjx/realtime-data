@@ -76,6 +76,7 @@
     </condition>
 
     <!-- classpath jar files (including relative path from basedir) -->
+    <property name="activationjar"  value="${libdir}/activation.jar"/>
     <property name="clijar"         value="${libdir}/commons-cli-1.0.jar"/>
     <property name="commhttpjar"    value="${libdir}/commons-httpclient-3.1.jar"/>
     <property name="langjar"        value="${libdir}/commons-lang-2.4.jar"/>
@@ -93,7 +94,7 @@
     <property name="xercesjar"      value="${libdir}/utilities.jar"/>
     <!-- CLASSPATH -->
     <property name="cpath"      
-      value="${clijar}:${commhttpjar}:${mathjar}:${mailjar}:${langjar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${utiljar}:${xercesjar}" />
+      value="${activationjar}:${clijar}:${commhttpjar}:${mathjar}:${mailjar}:${langjar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${utiljar}:${xercesjar}" />
     <echo message="classpath is:   ${cpath}"/>
   </target>
 
