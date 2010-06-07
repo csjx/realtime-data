@@ -6,7 +6,7 @@ sourceType="StorXDispatcher";
 sourceString="Satlantic STOR-X CTD Dispatcher";
 
 # find any pertinent processes
-processDetails=$(ps -ef | grep $sourceType | grep $sourceName);
+processDetails=$(ps -ef | grep $sourceType);
 processCount=$(echo $processDetails | grep -ve "^$" | wc -l);
 
 # kill the driver process if it exists
