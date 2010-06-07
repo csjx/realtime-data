@@ -204,7 +204,7 @@ public class CTDConverter {
     ArrayRealVector temperatureVector = (ArrayRealVector)
       this.dataValuesMatrix.getColumnVector(temperatureVectorIndex);
     
-    ArrayRealVector convertedTemperatureVector = (ArrayRealVector)
+    ArrayRealVector convertedTemperatureVector =
       new ArrayRealVector(temperatureVector.getDimension());
       
     // iterate through the temperature values and apply the conversion
@@ -261,7 +261,7 @@ public class CTDConverter {
     ArrayRealVector conductivityVector = (ArrayRealVector)
       this.dataValuesMatrix.getColumnVector(conductivityVectorIndex);
     
-    ArrayRealVector convertedConductivityVector = (ArrayRealVector)
+    ArrayRealVector convertedConductivityVector =
       new ArrayRealVector(conductivityVector.getDimension());
     
     ArrayRealVector convertedTemperatureVector = (ArrayRealVector)
@@ -337,7 +337,7 @@ public class CTDConverter {
       this.dataValuesMatrix.getColumnVector(pressureTempCompIndex);
     
     // to engineering values
-    ArrayRealVector convertedPressureVector = (ArrayRealVector)
+    ArrayRealVector convertedPressureVector =
       new ArrayRealVector(pressureVector.getDimension());
       
     // iterate through the pressure values and apply the conversion

@@ -744,7 +744,7 @@ public class AdamParser {
     float voltage =
     ( this.voltageSenseRange * ( channelData / this.voltageFullRange ) ) -
       ( this.voltageSenseRange/2 );
-    return (float) voltage;
+    return voltage;
     
   }
 }                                               

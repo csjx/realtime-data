@@ -786,7 +786,7 @@ public class DavisWxParser {
    */
   public int getBarTrend(){
     this.barTrend.flip();
-    return (int) (this.barTrend.get() & 0xFF);
+    return (this.barTrend.get() & 0xFF);
   }
   
   /**
@@ -822,7 +822,7 @@ public class DavisWxParser {
    */
   public int getPacketType(){
     this.packetType.flip();
-    return (int) (this.packetType.get() & 0xFF);
+    return (this.packetType.get() & 0xFF);
   }
   
   /**
@@ -862,7 +862,7 @@ public class DavisWxParser {
    */
   public int getInsideHumidity(){
     this.insideHumidity.flip();
-    return (int) (this.insideHumidity.get() & 0xFF);
+    return (this.insideHumidity.get() & 0xFF);
   }
   
   /**
@@ -882,7 +882,7 @@ public class DavisWxParser {
    */
   public int getWindSpeed(){
     this.windSpeed.flip();
-    return (int) (this.windSpeed.get() & 0xFF);
+    return (this.windSpeed.get() & 0xFF);
   }
   
   /**
@@ -892,7 +892,7 @@ public class DavisWxParser {
    */
   public int getTenMinuteAverageWindSpeed(){
     this.tenMinuteAverageWindSpeed.flip();
-    return (int) (this.tenMinuteAverageWindSpeed.get() & 0xFF);
+    return (this.tenMinuteAverageWindSpeed.get() & 0xFF);
   }
   
   /**
@@ -902,7 +902,7 @@ public class DavisWxParser {
    */
   public int getWindDirection(){
     this.windDirection.flip();
-    return (int) (this.windDirection.get() & 0xFF);
+    return (this.windDirection.get() & 0xFF);
   }
   
   /**
@@ -960,7 +960,7 @@ public class DavisWxParser {
    */
   public int getOutsideHumidity(){
     this.outsideHumidity.flip();
-    return (int) (this.outsideHumidity.get() & 0xFF);
+    return (this.outsideHumidity.get() & 0xFF);
   }
   
   /**
@@ -996,7 +996,7 @@ public class DavisWxParser {
    */
   public int getUvRadiation(){
     this.uvRadiation.flip();
-    return (int) (this.uvRadiation.get() & 0xFF);
+    return (this.uvRadiation.get() & 0xFF);
   }
   
   /**
@@ -1039,7 +1039,7 @@ public class DavisWxParser {
           
     int year  = currentStormStartDate;
         year  = (year << 25) >> 25; // clear bits 7-32
-    int centuryYear = 2000 + (int) year;
+    int centuryYear = 2000 + year;
           String centuryYearString = (new Integer(centuryYear)).toString();
     if ( monthString.equals("-1") || dayString.equals("-1") ) {
       return "01-01-1999";
@@ -1253,7 +1253,7 @@ public class DavisWxParser {
    */
   public String getForecastRuleNumberAsString(){
     this.forecastRuleNumber.flip();
-    int forecastRuleNumber = (int) (this.forecastRuleNumber.get() & 0xFF);
+    int forecastRuleNumber = (this.forecastRuleNumber.get() & 0xFF);
     
     String forecastRuleNumberAsString = "No forecast rule string available";
     Map<Integer, String> forecastRuleMap = new HashMap<Integer,String>();

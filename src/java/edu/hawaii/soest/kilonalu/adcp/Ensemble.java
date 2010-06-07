@@ -1459,7 +1459,7 @@ public class Ensemble {
    public float getDepthOfTransducer(){
      short value = ensembleVariableLeader.getDepthOfTransducer().order(
                    ByteOrder.LITTLE_ENDIAN).getShort();
-     int exp = (int) (value/10)*10;
+     int exp = (value/10)*10;
      int valueAsInt = (int) value;
      int man = valueAsInt - exp;
      float mantissa = (float) man;
@@ -1475,7 +1475,7 @@ public class Ensemble {
    public float getHeading(){
      short value = ensembleVariableLeader.getHeading().order(
                    ByteOrder.LITTLE_ENDIAN).getShort();
-     int exp = (int) (value/100)*100;
+     int exp = (value/100)*100;
      int valueAsInt = (int) value;
      int man = valueAsInt - exp;
      float mantissa = (float) man;
@@ -1491,7 +1491,7 @@ public class Ensemble {
    public float getPitch(){
      short value = ensembleVariableLeader.getPitch().order(
                    ByteOrder.LITTLE_ENDIAN).getShort();
-     int exp = (int) (value/100)*100;
+     int exp = (value/100)*100;
      int valueAsInt = (int) value;
      int man = valueAsInt - exp;
      float mantissa = (float) man;
@@ -1507,7 +1507,7 @@ public class Ensemble {
    public float getRoll(){
      short value = ensembleVariableLeader.getRoll().order(
                    ByteOrder.LITTLE_ENDIAN).getShort();
-     int exp = (int) (value/100)*100;
+     int exp = (value/100)*100;
      int valueAsInt = (int) value;
      int man = valueAsInt - exp;
      float mantissa = (float) man;
@@ -1533,7 +1533,7 @@ public class Ensemble {
    public float getTemperature(){
      short value = ensembleVariableLeader.getTemperature().order(
                    ByteOrder.LITTLE_ENDIAN).getShort();
-     int exp = (int) (value/100)*100;
+     int exp = (value/100)*100;
      int valueAsInt = (int) value;
      int man = valueAsInt - exp;
      float mantissa = (float) man;
@@ -1679,8 +1679,8 @@ public class Ensemble {
    public float getPressure(){
      int value = ensembleVariableLeader.getPressure().order(
                    ByteOrder.LITTLE_ENDIAN).getInt();
-     int exp = (int) (value/10000)*10000;
-     int valueAsLong = (int) value;
+     int exp = (value/10000)*10000;
+     int valueAsLong = value;
      int man = valueAsLong - exp;
      float mantissa = (float) man;
      float exponent = (float) exp;

@@ -262,7 +262,7 @@ public class AdamDispatcher {
         // find the correct source in the sourceMap hash and process the data
         if (sourceMap.get(datagramAddress) != null ) {
           
-          AdamSource source = (AdamSource) sourceMap.get(datagramAddress);
+          AdamSource source = sourceMap.get(datagramAddress);
 
           // process the data using the AdamSource driver
           source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
@@ -380,7 +380,7 @@ public class AdamDispatcher {
     // get each source and disconnect from the DataTurbine
     for ( Iterator sIterator = (sourceMap.keySet()).iterator(); sIterator.hasNext(); ) {
       
-      AdamSource adamSource = (AdamSource) (sourceMap.get(sIterator.next()));
+      AdamSource adamSource = sourceMap.get(sIterator.next());
       adamSource.stopConnection();
       logger.info("Disconnected from source: " + adamSource.getRBNBClientName());
     }
