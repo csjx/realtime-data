@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set up the variables
-sourceName="HIWQXX_XXXCTDXXXXXX";
+sourceName="HIWQXX_XXXCTDXXXXXXX";
 sourceType="StorXDispatcher";
 sourceString="Satlantic STOR-X CTD Dispatcher";
 
