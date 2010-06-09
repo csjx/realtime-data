@@ -23,5 +23,6 @@ java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
  -p 3333\
  -n WQKN01_XXXCTDX001R00\
  -c DecimalASCIISampleData\
+ -I daily\
  -k WQKN01_XXXCTDX001R00_DecimalASCIIData_FileArchiver\
- -d /data/raw/alawai/WQKN01_XXXCTDX001R00/DecimalASCIISampleData
+ -d /data/raw/kilonalu/WQKN01_XXXCTDX001R00/DecimalASCIISampleData
