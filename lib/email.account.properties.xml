@@ -54,12 +54,12 @@
     <accountName>HIOOS Water Quality Buoy Data</accountName>
     <server>imap.gmail.com</server>
     <username>hiooswqb</username>
-    <password>password-here</password>
+    <password>sharedPW4WQB</password>
     <protocol>imaps</protocol>
     <dataMailbox>Inbox</dataMailbox>
     <processedMailbox>processed</processedMailbox>
     <sensor>
-      <name>WQAW01_XXXCTD001XR00</name>
+      <name>WQAW01_XXXCTDX001R00</name>
       <serialNumber>0062</serialNumber>
       <description>WQB-AW</description>
       <cacheSize>25000</cacheSize>
@@ -67,7 +67,7 @@
       <archiveChannel>DecimalASCIISampleData</archiveChannel>
     </sensor>
     <sensor>
-      <name>WQKN01_XXXCTD001XR00</name>
+      <name>WQKN01_XXXCTDX001R00</name>
       <serialNumber>0063</serialNumber>
       <description>WQB-KN</description>
       <cacheSize>25000</cacheSize>
