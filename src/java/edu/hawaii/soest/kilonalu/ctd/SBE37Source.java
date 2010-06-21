@@ -764,6 +764,14 @@ public class SBE37Source extends RBNBSource {
       }
     }
 
+    // handle the -i option
+    if ( command.hasOption("i") ) {
+      String instrumentID = command.getOptionValue("i");
+      if ( instrumentID != null ) {
+        setInstrumentID(instrumentID);
+      }
+    }
+
     return true;
   }
 
@@ -829,9 +837,10 @@ public class SBE37Source extends RBNBSource {
     // -Z "Archive size"
     
     // add command line options here
-    options.addOption("H", true, "Source host name or IP *" + getHostName());
-    options.addOption("P", true, "Source host port number *" + getHostPort());    
-    options.addOption("C", true, "RBNB source channel name *" + getRBNBChannelName());
+    options.addOption("H", true, "Source host name or IP, e.g. " + getHostName());
+    options.addOption("P", true, "Source host port number, e.g. " + getHostPort());    
+    options.addOption("C", true, "RBNB source channel name, e.g. " + getRBNBChannelName());
+    options.addOption("i", true, "Instrument ID, e.g. " + "01");
     //options.addOption("M", true, "RBNB archive mode *" + getArchiveMode());    
                       
     return options;
