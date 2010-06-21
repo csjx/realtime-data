@@ -292,8 +292,11 @@ public class SBE37Source extends RBNBSource {
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
       
-      // wake the instrument with an initial ID command
-      this.command = this.idCommand + this.commandSuffix;
+      // wake the instrument with an initial display status command
+      this.command = this.commandPrefix + 
+                     getInstrumentID()  + 
+                     "DS" +
+                     this.commandSuffix;
       this.sentCommand = queryInstrument(this.command);
 
       // verify the instrument ID is correct
