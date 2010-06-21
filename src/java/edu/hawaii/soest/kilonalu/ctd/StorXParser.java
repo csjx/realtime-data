@@ -253,7 +253,7 @@ public class StorXParser {
           // prepare the line for reading
           String lineString = (String) iterator.next();
           
-          if ( lineString.matches("SATSBE[0-9]{4}.*\t.*[0-9][0-9]\r\n") ) {
+          if ( lineString.matches("SATSBE[0-9]{4}.*\t.* [0-9][0-9] [A-Z][a-z][a-z] [0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\r\n") ) {
 
             logger.debug("LINE: " + lineString);
 
