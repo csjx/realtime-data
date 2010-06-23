@@ -30,7 +30,7 @@ start() {
      echo "RBNB log directory exists";
    else
      echo "Relinking the log directory.";
-     ln -s /usr/local/rbnb/log /varl/log/rbnb;
+     ln -s /usr/local/rbnb/log /var/log/rbnb;
    fi
    
    cd ${RBNB_ARCHIVE_LOC}
