@@ -530,4 +530,77 @@ public class FileSource extends RBNBSource {
     return options;
   }
 
+  /**
+   * A method that starts the streaming of data lines from the source file to
+   * the RBNB server.  
+   */
+  public boolean start() {
+    
+    // return false if the streaming is running
+    if ( isRunning() ) {
+      return false;
+    }
+    
+    // reset the connection to the RBNB server
+    if ( isConnected() ) {
+      disconnect();
+    }
+    connect();
+    
+    // return false if the connection fails
+    if ( !isConnected() ) {
+      return false;
+    }
+    
+    // begin the streaming thread to the source
+    startThread();
+    
+    return true;  
+  }
+
+  /**
+   * A method that creates and starts a new Thread with a run() method that 
+   * begins processing the data streaming from the source file.
+   */
+  private void startThread() {
+    
+    // build the runnable class and implement the run() method
+    Runnable runner = new Runnable() {
+      public void run() {
+        runWork();
+      }
+    };
+    
+    // build the Thread and start it, indicating that it has been started
+    readyToStream = true;
+    streamingThread = new Thread(runner, "StreamingThread");
+    streamingThread.start();     
+  }
+
+  /**
+   * A method that stops the streaming of data between the source file and
+   * the RBNB server.  
+   */ 
+  public boolean stop() {
+    
+    // return false if the thread is not running
+    if ( !isRunning() ) {
+      return false;
+    }
+    
+    // stop the thread and disconnect from the RBNB server
+    stopThread();
+    disconnect();
+    return true;
+  }
+
+  /**
+   * A method that interrupts the thread created in startThread()
+   */
+  private void stopThread() {
+    // set the streaming status to false and stop the Thread
+    readyToStream = false;
+    streamingThread.interrupt();
+  }
+
 }
