@@ -290,4 +290,35 @@ public class FileSource extends RBNBSource {
     
   }
   
+  /**
+   * A method that returns the name of the RBNB channel that contains the 
+   * streaming data from this instrument
+   */
+  public String getRBNBChannelName(){
+    return this.rbnbChannelName;
+  }
+
+  /**
+   * A method that gets the file name of the source data file
+   *
+   * @return fileName - the name of the source data file
+   */
+  public String getFileName() {
+    return this.fileName;
+  }
+
+  /**
+   * A method that returns the versioning info for this file.  In this case, 
+   * it returns a String that includes the Subversion LastChangedDate, 
+   * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   */
+  public String getCVSVersionString(){
+    return (
+    "$LastChangedDate: 2010-04-13 17:57:16 -0600 (Tue, 13 Apr 2010) $" +
+    "$LastChangedBy: cjones $" +
+    "$LastChangedRevision: 609 $" +
+    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/FileSource.java $"
+    );
+  }
+
 }
