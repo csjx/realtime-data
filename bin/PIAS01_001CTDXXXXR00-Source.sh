@@ -23,12 +23,13 @@ export SOURCE="PIAS01_001CTDXXXXR00";
 
 # The regular expression used to match data lines as opposed to other 
 # instrument messages is:
-# " *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"
+# "# *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"
 #
 # which corresponds to a data line, e.g.:
 # " 29.2616,  5.73958,    1.666, 0.0681, 0.0803,  34.8810, 09 Jun 2010 09:59:21\r\n"
 #
 # Each section is explained below with single quotes around each section:
+# '#'                - match a single pound sign
 # ' *.*,'            - match any # of spaces followed by any # of characters, 
 #                      followed by a comma
 # ' *.*,'            - match any # of spaces followed by any # of characters, 
@@ -52,7 +53,7 @@ export SOURCE="PIAS01_001CTDXXXXR00";
 
 java edu.hawaii.soest.kilonalu.utilities.FileSource\
  -F "/data/spool/PIAS01_001CTDXXXXR00.log"\
- -e " *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"\
+ -e "# *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"\
  -S $SOURCE\
  -C DecimalASCIISampleData\
  -s 127.0.0.1\
