@@ -405,4 +405,129 @@ public class FileSource extends RBNBSource {
     }
   }
   
+  /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
+
+  /**
+   * A method that sets the command line arguments for this class.  This method 
+   * calls the <code>RBNBSource.setBaseArgs()</code> method.
+   * 
+   * @param command  The CommandLine object being passed in from the command
+   */
+  protected boolean setArgs(CommandLine command) {
+    
+    // first set the base arguments that are included on the command line
+    if ( !setBaseArgs(command)) {
+      return false;
+    }
+    
+    // add command line arguments here
+    
+    // handle the -F option
+    if ( command.hasOption("F") ) {
+      String fileName = command.getOptionValue("F");
+      if ( fileName != null ) {
+        setFileName(fileName);
+      }
+    }
+
+    // handle the -e option
+    if ( command.hasOption("e") ) {
+      String expression = command.getOptionValue("e");
+      if ( expression != null ) {
+        setPattern(expression);
+      }
+    }
+
+    // handle the -C option
+    if ( command.hasOption("C") ) {
+      String channelName = command.getOptionValue("C");
+      if ( channelName != null ) {
+        setChannelName(channelName);
+      }
+    }
+    
+    // handle the -s option
+    if ( command.hasOption('s') ) {
+     String serverName = command.getOptionValue('s');
+     if ( serverName != null ) setServerName(serverName);
+    }
+
+    // handle the -p option
+    if ( command.hasOption('p') ) {
+      String serverPort = command.getOptionValue('p');
+      if ( serverPort != null ) {
+        try {
+          setServerPort(Integer.parseInt(serverPort));
+          
+        } catch (NumberFormatException nf) {
+          System.out.println(
+            "Please enter a numeric value for -p (server port). " + 
+            serverPort + " is not valid.");
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+
+  /**
+   * A method that sets the file name of the source data file
+   *
+   * @param fileName - the name of the source data file
+   */
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+    
+  }
+
+  /**
+   * A method that sets the regular expression pattern for matching data lines
+   *
+   * @param pattern - the pattern string used to match data lines
+   */
+  public void setPattern(String pattern) {
+    this.dataPattern = Pattern.compile(pattern);
+    
+  }
+
+  /**
+   * A method that sets the command line options for this class.  This method 
+   * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+   * properties such as the sourceHostName, sourceHostPort, serverName, and
+   * serverPort.
+   */
+  protected Options setOptions() {
+    Options options = setBaseOptions(new Options());
+    
+    // Note: 
+    // Command line options already provided by RBNBBase include:
+    // -h "Print help"
+    // -s "RBNB Server Hostname"
+    // -p "RBNB Server Port Number"
+    // -S "RBNB Source Name"
+    // -v "Print Version information"
+    
+    // Command line options already provided by RBNBSource include:
+    // -z "Cache size"
+    // -Z "Archive size"
+    
+    // add command line options here
+    options.addOption("F", true, "Data source file name e.g. " + getFileName());
+    options.addOption("e", true, "regular expression for data line matching, e.g \"*[0-9][0-9]\" ");
+    options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
+    options.addOption("s", true,  "RBNB Server Hostname");
+    options.addOption("p", true,  "RBNB Server Port Number");
+                      
+    return options;
+  }
+
 }
