@@ -366,4 +366,43 @@ public class FileSource extends RBNBSource {
     stop();
   }
 
+  /**
+   * The main method for running the code
+   * @ param args[] the command line list of string arguments, none are needed
+   */
+  public static void main (String args[]) {
+        
+    try {
+      // create a new instance of the FileSource object, and parse the command 
+      // line arguments as settings for this instance
+      final FileSource fileSource = new FileSource();
+            
+      // Handle ctrl-c's and other abrupt death signals to the process
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        // stop the streaming process
+        public void run() {
+             
+          fileSource.disconnect();
+             
+        }
+      }
+      );
+      
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(fileSource.getLogConfigurationFile());
+      
+      // parse the commandline arguments to configure the connection, then 
+      // start the streaming connection between the source and the RBNB server.
+      if ( fileSource.parseArgs(args) ) {
+        fileSource.start();
+        
+      }
+        
+    } catch ( Exception e ) {
+      logger.info("Error in main(): " + e.getMessage());
+      e.printStackTrace();
+      
+    }
+  }
+  
 }
