@@ -1,6 +1,5 @@
 #!/bin/bash
-#BBL_HOME=/usr/local/bbl/trunk;
-BBL_HOME=/Users/cjones/Documents/Development/bbl/trunk;
+BBL_HOME=/usr/local/bbl/trunk;
 export CLASSPATH=\
 $BBL_HOME/build/classes/:\
 $BBL_HOME/lib/rbnb.jar:\
