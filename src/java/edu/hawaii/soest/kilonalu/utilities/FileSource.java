@@ -214,7 +214,7 @@ public class FileSource extends RBNBSource {
             String   dateString   = columns[columns.length - 1]; // last field
 
             DATE_FORMAT.setTimeZone(TZ);
-            Date sampleDate = DATE_FORMAT.parse(dateString);
+            Date sampleDate = DATE_FORMAT.parse(dateString.trim());
             
             // convert the sample date to seconds since the epoch
             Calendar sampleDateTime = Calendar.getInstance();
@@ -230,7 +230,7 @@ public class FileSource extends RBNBSource {
             // into the DataTurbine
             channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
             rbnbChannelMap.PutMime(channelIndex, "text/plain");
-            rbnbChannelMap.PutDataAsString(channelIndex, line);
+            rbnbChannelMap.PutDataAsString(channelIndex, line + "\r\n");
             getSource().Flush(rbnbChannelMap);
             
             logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + line.trim());
