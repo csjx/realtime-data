@@ -160,4 +160,134 @@ public class FileSource extends RBNBSource {
   public FileSource() {
   }
 
+  /**
+   * A method that executes the reading of data from the data file to the RBNB
+   * server after all configuration of settings, connections to hosts, and
+   * thread initiatizing occurs.  This method contains the detailed code for 
+   * reading the data and interpreting the data files.
+   */
+  protected boolean execute() {
+    logger.debug("FileSource.execute() called.");
+    boolean failed = true; // indicates overall success of execute()
+    
+    // do not execute the stream if there is no connection
+    if (  !isConnected() ) return false;
+    
+    try {
+      
+      // open the data file for monitoring
+      FileReader reader = new FileReader(new File(getFileName()));
+      this.fileReader = new BufferedReader(reader);
+      
+      // add channels of data that will be pushed to the server.  
+      // Each sample will be sent to the Data Turbine as an rbnb frame.  
+      int channelIndex = 0;
+      
+      ChannelMap rbnbChannelMap     = new ChannelMap(); // used to insert channel data
+      ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
+      
+      // add the DecimalASCIISampleData channel to the channelMap
+      channelIndex = registerChannelMap.Add(getRBNBChannelName());
+      registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+      // and register the RBNB channels
+      getSource().Register(registerChannelMap);
+      registerChannelMap.Clear();
+      
+      // poll the data file for new lines of data and insert them into the RBNB
+      while (true) {
+        String line = fileReader.readLine();
+        
+        if (line == null ) {
+          this.streamingThread.sleep(POLL_INTERVAL);
+          
+        } else {
+          
+          // test the line for the expected data pattern
+          Matcher matcher = this.dataPattern.matcher(line);
+          
+          // if the line matches the data pattern, insert it into the DataTurbine
+          if ( matcher.matches() ) {
+            logger.debug("This line matches the data line pattern: " + line);
+            
+            // extract the date from the data line
+            String[] columns      = line.trim().split(",");
+            String   dateString   = columns[columns.length - 1]; // last field
+
+            DATE_FORMAT.setTimeZone(TZ);
+            Date sampleDate = DATE_FORMAT.parse(dateString);
+            
+            // convert the sample date to seconds since the epoch
+            Calendar sampleDateTime = Calendar.getInstance();
+            sampleDateTime.setTime(sampleDate);
+            double sampleTimeAsSecondsSinceEpoch = (double)
+              (sampleDateTime.getTimeInMillis()/1000);
+
+            // add the sample timestamp to the rbnb channel map
+            //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            
+            // then add the data line to the channel map and insert it
+            // into the DataTurbine
+            channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, line);
+            getSource().Flush(rbnbChannelMap);
+            
+            logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + line.trim());
+            rbnbChannelMap.Clear();
+            
+          } else {
+            logger.info("The current line doesn't match an expected "     +
+                        "data line pattern. Skipping it.  The line was: " +
+                        line);
+                        
+          }
+        }
+      }
+      
+    } catch ( ParseException pe ) {
+      logger.info("There was a problem parsing the sample date string. " +
+                  "The message was: " + pe.getMessage());
+      try {
+        this.fileReader.close();        
+      } catch (IOException ioe2) {
+        logger.info("There was a problem closing the data file.  The " +
+                    "message was: " + ioe2.getMessage());
+      }
+      failed = true;
+      return !failed;
+    } catch ( SAPIException sapie ) {
+      logger.info("There was a problem communicating with the DataTurbine. " +
+                  "The message was: " + sapie.getMessage());
+      try {
+        this.fileReader.close();        
+      } catch (IOException ioe2) {
+        logger.info("There was a problem closing the data file.  The " +
+                    "message was: " + ioe2.getMessage());
+      }
+      failed = true;
+      return !failed;
+      
+    } catch ( InterruptedException ie ) {
+      logger.info("There was a problem while polling the data file. The " +
+                   "message was: " + ie.getMessage());
+      try {
+        this.fileReader.close();        
+      } catch (IOException ioe2) {
+        logger.info("There was a problem closing the data file.  The " +
+                    "message was: " + ioe2.getMessage());
+      }
+      failed = true;
+      return !failed;
+      
+    } catch ( IOException ioe ) {
+      logger.info("There was a problem opening the data file. " + 
+                   "The message was: " + ioe.getMessage());
+      failed = true;
+      return !failed;
+      
+    }
+    
+  }
+  
 }
