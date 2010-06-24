@@ -142,7 +142,7 @@ public class FileSource extends RBNBSource {
   private Thread streamingThread;
   
   /* The polling interval (millis) used to check for new lines in the data file */
-  private final int POLL_INTERVAL = 1000;
+  private final int POLL_INTERVAL = 10000;
   
   /*
    * An internal Thread setting used to specify how long, in milliseconds, the
