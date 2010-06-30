@@ -27,6 +27,7 @@
 package edu.hawaii.soest.kilonalu.utilities;
 
 import com.rbnb.sapi.ChannelMap;
+import com.rbnb.sapi.Sink;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
@@ -40,7 +41,6 @@ import java.lang.InterruptedException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -113,9 +113,6 @@ public class FileSource extends RBNBSource {
   
   /* The date format for the timestamp in the data sample string */
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-  
-  /* The timezone used for the sample date */
-  private static final TimeZone TZ = TimeZone.getTimeZone("SST");
   
   /* The buffered reader data representing the data file stream  */
   BufferedReader fileReader;
@@ -193,6 +190,44 @@ public class FileSource extends RBNBSource {
       getSource().Register(registerChannelMap);
       registerChannelMap.Clear();
       
+      // on execute(), query the DT to find the timestamp of the last sample inserted
+      // and be sure the following inserts are after that date
+      ChannelMap requestMap = new ChannelMap();
+      int entryIndex = requestMap.Add(getRBNBClientName() + "/" + getRBNBChannelName());
+      logger.debug("Request Map: " + requestMap.toString());
+      Sink sink = new Sink();
+      sink.OpenRBNBConnection(getServer(), "lastEntrySink");
+      
+      sink.Request(requestMap, 0., 1., "newest");
+      ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
+      // initialize the last sample date 
+      Date initialDate = new Date();
+      long lastSampleTimeAsSecondsSinceEpoch = initialDate.getTime()/1000L;
+      logger.debug("Initialized the last sample date to: " + initialDate.toString());
+      logger.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
+      
+      if ( responseMap.NumberOfChannels() == 0 )  {
+        // set the last sample time to 0 since there are no channels yet
+        lastSampleTimeAsSecondsSinceEpoch = 0L;
+        logger.debug("Resetting the last sample date to the epoch: " +
+                     (new Date(
+                          lastSampleTimeAsSecondsSinceEpoch * 1000L
+                          )).toString()
+                     );
+      
+      } else if ( responseMap.NumberOfChannels() > 0 )  {
+        lastSampleTimeAsSecondsSinceEpoch = 
+          new Double(responseMap.GetTimeStart(entryIndex)).longValue();
+        logger.debug("There are existing channels. Last sample time: " +
+                     (new Date(
+                         lastSampleTimeAsSecondsSinceEpoch * 1000L
+                         )).toString()
+                    );
+                     
+      }
+      
+      sink.CloseRBNBConnection();
+      
       // poll the data file for new lines of data and insert them into the RBNB
       while (true) {
         String line = fileReader.readLine();
@@ -213,28 +248,49 @@ public class FileSource extends RBNBSource {
             String[] columns      = line.trim().split(",");
             String   dateString   = columns[columns.length - 1]; // last field
 
-            DATE_FORMAT.setTimeZone(TZ);
             Date sampleDate = DATE_FORMAT.parse(dateString.trim());
+            logger.debug("Sample date is: " + sampleDate.toString());
             
             // convert the sample date to seconds since the epoch
-            Calendar sampleDateTime = Calendar.getInstance();
-            sampleDateTime.setTime(sampleDate);
-            double sampleTimeAsSecondsSinceEpoch = (double)
-              (sampleDateTime.getTimeInMillis()/1000);
-
-            // add the sample timestamp to the rbnb channel map
-            //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-            rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
             
-            // then add the data line to the channel map and insert it
-            // into the DataTurbine
-            channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-            rbnbChannelMap.PutMime(channelIndex, "text/plain");
-            rbnbChannelMap.PutDataAsString(channelIndex, line + "\r\n");
-            getSource().Flush(rbnbChannelMap);
+            // only insert samples newer than the last sample seen at startup 
+            // and that are not in the future
+            if ( lastSampleTimeAsSecondsSinceEpoch < 
+                 sampleTimeAsSecondsSinceEpoch     &&
+                 sampleTimeAsSecondsSinceEpoch     < 
+                 (new Date()).getTime()/1000L ) {
+              
+              // add the sample timestamp to the rbnb channel map
+              //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+              rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
             
-            logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + line.trim());
-            rbnbChannelMap.Clear();
+              // then add the data line to the channel map and insert it
+              // into the DataTurbine
+              channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+              rbnbChannelMap.PutMime(channelIndex, "text/plain");
+              rbnbChannelMap.PutDataAsString(channelIndex, line + "\r\n");
+              getSource().Flush(rbnbChannelMap);
+              
+              // reset the last sample time to the sample just inserted
+              lastSampleTimeAsSecondsSinceEpoch = sampleTimeAsSecondsSinceEpoch;
+              logger.debug("Last sample time is now: " + 
+                            (new Date(
+                                        lastSampleTimeAsSecondsSinceEpoch * 1000L
+                                     ).toString())
+                          );
+              logger.info(getRBNBClientName()                 +
+                          " Sample sent to the DataTurbine: " +
+                          line.trim());
+              rbnbChannelMap.Clear();
+              
+            } else {
+              logger.info("The current line is earlier than the last entry " +
+                          "in the Data Turbine or is a date in the future. " +
+                          "Skipping it.  The line was: " +
+                          line);
+              
+            }
             
           } else {
             logger.info("The current line doesn't match an expected "     +
@@ -242,8 +298,8 @@ public class FileSource extends RBNBSource {
                         line);
                         
           }
-        }
-      }
+        }  // end if()
+      } // end while
       
     } catch ( ParseException pe ) {
       logger.info("There was a problem parsing the sample date string. " +
