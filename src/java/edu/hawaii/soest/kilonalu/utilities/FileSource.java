@@ -41,6 +41,7 @@ import java.lang.InterruptedException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -255,11 +256,16 @@ public class FileSource extends RBNBSource {
             long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
             
             // only insert samples newer than the last sample seen at startup 
-            // and that are not in the future
+            // and that are not in the future  (> 1 hour since the CTD clock
+            // may have drifted)
+            Calendar currentCal = Calendar.getInstance();
+            currentCal.add(Calendar.HOUR, 1);
+            Date currentDate = currentCal.getTime();
+            
             if ( lastSampleTimeAsSecondsSinceEpoch < 
                  sampleTimeAsSecondsSinceEpoch     &&
                  sampleTimeAsSecondsSinceEpoch     < 
-                 (new Date()).getTime()/1000L ) {
+                 currentDate.getTime()/1000L ) {
               
               // add the sample timestamp to the rbnb channel map
               //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
