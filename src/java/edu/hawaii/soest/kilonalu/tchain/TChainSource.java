@@ -505,6 +505,7 @@ public class TChainSource extends RBNBSource {
       dataSocket = SocketChannel.open();
       Socket tcpSocket = dataSocket.socket();
       tcpSocket.setTcpNoDelay(true);
+      tcpSocket.setReceiveBufferSize(256);
       dataSocket.connect( new InetSocketAddress(host, portNumber));
       
       // if the connection to the source fails, also disconnect from the RBNB
