@@ -39,6 +39,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
@@ -502,6 +503,8 @@ public class TChainSource extends RBNBSource {
       // create the socket channel connection to the data source via the 
       // converter serial2IP converter      
       dataSocket = SocketChannel.open();
+      Socket tcpSocket = dataSocket.socket();
+      tcpSocket.setTcpNoDelay(true);
       dataSocket.connect( new InetSocketAddress(host, portNumber));
       
       // if the connection to the source fails, also disconnect from the RBNB
