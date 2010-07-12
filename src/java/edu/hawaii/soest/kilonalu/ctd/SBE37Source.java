@@ -133,6 +133,16 @@ public class SBE37Source extends RBNBSource {
   private int sourceHostPort = DEFAULT_SOURCE_HOST_PORT;
   
   /**
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /**
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+
+  /**
    * The ID of the instrument as determined by the queryInstrument() method
    */
   private String instrumentID = null;
@@ -657,11 +667,6 @@ public class SBE37Source extends RBNBSource {
 
   public static void main (String args[]) {
     
-    // Set up a simple logger that logs to the console
-    BasicConfigurator.configure();
-    
-    logger.info("SBE37Source.main() called.");
-    
     try {
       // create a new instance of the SBE37Source object, and parse the command 
       // line arguments as settings for this instance
@@ -670,6 +675,10 @@ public class SBE37Source extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( sbe37Source.parseArgs(args) ) {
+        // Set up a simple logger that logs to the console
+        PropertyConfigurator.configure(sbe37Source.getLogConfigurationFile());
+        logger.info("SBE37Source.main() called.");
+        
         sbe37Source.start();
       }
       
@@ -921,5 +930,24 @@ public class SBE37Source extends RBNBSource {
     readyToStream = false;
     streamingThread.interrupt();
   }
+  
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
 
 }
