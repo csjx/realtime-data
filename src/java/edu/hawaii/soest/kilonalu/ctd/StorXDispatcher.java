@@ -338,8 +338,17 @@ public class StorXDispatcher extends RBNBSource {
 
         Folder processed = this.mailStore.getFolder(processedMailbox);
         processed.open(Folder.READ_WRITE);
-
-        Message messages[] = inbox.getMessages();
+        
+        Message messages[];
+        
+        if ( inbox.isOpen() ) {
+          messages = inbox.getMessages();
+          
+        } else {
+          inbox.open(Folder.READ_WRITE);
+          messages = inbox.getMessages();
+          
+        }
         
         for(Message message:messages) {
           
@@ -481,6 +490,20 @@ public class StorXDispatcher extends RBNBSource {
         failed = true;
         return !failed;
         
+      } catch (IllegalStateException ese) {
+        try {
+          this.mailStore.close();
+          
+        } catch (MessagingException me4) {
+          failed = true;
+          return !failed;
+          
+        }
+        logger.info("There was an error reading messages from the folder. The " +
+                    "message was: " + ese.getMessage());
+        failed = true;
+        return !failed;
+      
       }
     }
         
