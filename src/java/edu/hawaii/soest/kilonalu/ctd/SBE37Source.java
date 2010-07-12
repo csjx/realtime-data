@@ -292,10 +292,10 @@ public class SBE37Source extends RBNBSource {
       ChannelMap rbnbChannelMap = new ChannelMap();
       int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
       
-      // wake the instrument with an initial display status command
+      // wake the instrument with an initial take sample command
       this.command = this.commandPrefix + 
                      getInstrumentID()  + 
-                     "DS" +
+                     "TS" +
                      this.commandSuffix;
       this.sentCommand = queryInstrument(this.command);
 
@@ -349,7 +349,7 @@ public class SBE37Source extends RBNBSource {
       // instrumentID is set
 
       // allow time for the instrument response
-      streamingThread.sleep(2000);
+      streamingThread.sleep(5000);
       this.command = this.commandPrefix + 
                      getInstrumentID()  + 
                      this.takeSampleCommand +
