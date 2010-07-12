@@ -74,7 +74,7 @@ classdef Configure < hgsetget & dynamicprops
     copyPath = '/bin/cp';
 
     % The path of the RBNB software
-    rbnbPath = '/usr/local/RBNB/V3.1a/';
+    rbnbPath = '/usr/local/RBNB/current/';
     
     % The path of the RBNB java library
     rbnbLibraryPath;
@@ -99,6 +99,10 @@ classdef Configure < hgsetget & dynamicprops
     
     %The format string used to parse the columns of data
     dataFormatString = '%n %f %f %f %f %f %f %f %s %s';
+    
+    % The latitude and longitude of the sensor
+    sensorLatitude =  [];
+    sensorLongitude = [];
     
     % The string used to designate which variable name represents a date column
     % in the data.  
