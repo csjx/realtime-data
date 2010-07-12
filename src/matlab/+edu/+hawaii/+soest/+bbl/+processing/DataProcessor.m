@@ -460,7 +460,7 @@ classdef DataProcessor < hgsetget & dynamicprops
               ) ...
             };
             
-            x  = [sin(21.16/57.29578)]^2;
+            x  = [sin(self.configuration.sensorLatitude/57.29578)]^2;
             g1 = 9.780318 .* ...
                  [1 + (5.2788*10^-3 + 2.36*10^-5 .* x) .* x] ...
                  + 1.092*10^-6 .* pressure;
@@ -905,8 +905,8 @@ classdef DataProcessor < hgsetget & dynamicprops
       %============
       close(gcf);
       numberOfPlots = length(figureYAxisVariables{1});
-      figureRectangle = [0 0 800 800];
-      paperPosition = [0 0 8.5 11.0];
+      figureRectangle = [0 0 1200 800];
+      paperPosition = [0 0 11.0 8.5];
       yLabelPosition = [-0.1 0.5042 0];
       figureHandle = figure(); clf;
       figureDurationInDays = figureDuration/60/60/24;
@@ -1067,7 +1067,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         % this function
         
         % set the X limits for single day plots
-        xlim([(round(max(x)) - (figureDuration/60/60/24)) round(max(x))]);        
+        xlim([min(x) round(max(x))]);        
         
         % set the Y axis limits based on min and max observations
         minYObservation=[]; maxYObservation=[];
