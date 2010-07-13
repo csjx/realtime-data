@@ -1028,7 +1028,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         % Add the figure title to the top of the figure only
         
         latestObservationTime   = max(x);
-        earliestObservationTime = min(x);
+        earliestObservationTime = round(min(x)) + 1;
         
         % round the observation period to the nearest timerInterval (i.e even 20 minute periods)
         latestSeconds = str2num(datestr(latestObservationTime, 'SS'));
@@ -1056,8 +1056,8 @@ classdef DataProcessor < hgsetget & dynamicprops
         if ( plotNumber == 1 )
           titleText = [figureTitlePrefix ' : '         ...
                       datestr(earliestObservationTime, ...
-                      'mm-dd-yyyy') ' to '             ...
-                      datestr(latestObservationTime,'mm-dd-yyyy')];
+                      'mm-dd-yyyy HH:MM') ' to '       ...
+                      datestr(latestObservationTime,'mm-dd-yyyy HH:MM')];
           title(titleText);
         end
         grid on; axhan = gca; 
@@ -1067,7 +1067,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         % this function
         
         % set the X limits for single day plots
-        xlim([min(x) round(max(x))]);        
+        xlim([round(min(x)) + 1 round(max(x)) + 1]);        
         
         % set the Y axis limits based on min and max observations
         minYObservation=[]; maxYObservation=[];
@@ -1076,7 +1076,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         
         % Ticks and Ticklabels
         %xtick = get(axhan,'XTick');
-        xtick = (round(max(x)) - (figureDurationInDays):figureXAxisTickStep:round(max(x)));
+        xtick = ((round(max(x)) + 1) - (figureDurationInDays):figureXAxisTickStep:(round(max(x) + 1)));
         if ( figureDurationInDays <= 3 )
           xticklabel = datestr(xtick,'mm/dd/yy HH:MM');
         else  
