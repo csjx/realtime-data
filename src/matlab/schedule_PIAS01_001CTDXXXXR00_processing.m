@@ -254,8 +254,8 @@ set( configuration,                                                    ...
                           {'serialdate'}                               , ... % yAxisVar
                           '.25'                                        , ... % xTickStep
                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
                           [                                              ...
                             {[255/255 0       0      ]}                , ... % red
                             {[0        0       255/255]}               , ... % blue
@@ -278,10 +278,10 @@ set( configuration,                                                    ...
                            'turbidity'                                 , ... 
                            'depth'}                                    , ... 
                           {'serialdate'}                               , ... % yAxisVar
-                          '1'                                         , ... % xTickStep
+                          '1'                                          , ... % xTickStep
                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
                           [                                              ...
                             {[255/255 0       0      ]}                , ... % red
                             {[0        0       255/255]}               , ... % blue
@@ -304,10 +304,10 @@ set( configuration,                                                    ...
                            'turbidity'                                 , ... 
                            'depth'}                                    , ... 
                           {'serialdate'}                               , ... % yAxisVar
-                          '1'                                         , ... % xTickStep
+                          '1'                                          , ... % xTickStep
                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
                           [                                              ...
                             {[255/255 0       0      ]}                , ... % red
                             {[0        0       255/255]}               , ... % blue
@@ -332,8 +332,34 @@ set( configuration,                                                    ...
                           {'serialdate'}                               , ... % yAxisVar
                           '3'                                          , ... % xTickStep
                           [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]                    , ... % marker
-                          [{3.0},{3.0},{3.0},{3.0},{3.0}]                    , ... % markerSize
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}               , ... % brown
+                            {[102/255  102/255 102/255]}                 ... % gray
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
+                         % 60-day plot
+                         {'Pago Pago Harbor, Fagatogo, American Samoa, 60 Day Water Quality'  , ... % titlePrefix
+                         '06-30-2010 00:00:00'                         , ... % figure start in UTC
+                          '5184000'                                    , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'                                 , ... 
+                           'depth'}                                    , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '5'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
                           [                                              ...
                             {[255/255 0       0      ]}                , ... % red
                             {[0        0       255/255]}               , ... % blue
@@ -354,9 +380,9 @@ set( configuration,                                                    ...
 %
 % startTime         - the time when the timer should start (in seconds, 0 meaning now)
 % timerInterval     - the interval (in minutes) that the timer process should fire
-set( configuration,          ...
-'startTime'           , 0  , ...
-'timerInterval'       , 20   ...
+set( configuration,                                                      ...
+'startTime'           , 0                                              , ...
+'timerInterval'       , 20                                               ...
 );                                                                 
 
 % Set up directory paths, and create a new DataProcessor instance
