@@ -138,7 +138,7 @@ def main():
     ''' Creates and runs an instance of the TChainSource class'''
     
     # define rbnb server, source, and channel details
-    rbnbServer = '10.0.0.100'
+    rbnbServer = 'localhost'
     rbnbPort = 3333
     rbnbCacheSize = 25000
     rbnbArchiveSize = 3000000
@@ -157,10 +157,10 @@ def main():
                                 sourceHostPort)
     
     # set the source file name (demo only, not needed with TCP sockets)
-    tChainSource.setSourceFile(
-        os.path.join('..', '..', '..', '..', 'test', 'tchain.short.log'))
-    #tChainSource.setSourceFile(
-    #   os.path.join('..', '..', '..', '..', 'test', 'tchain.long.log'))
+    sourceFile = os.path.join('..', '..', '..', '..', 'test', 'tchain.short.log')
+    #sourceFile = os.path.join('..', '..', '..', '..', 'test', 'tchain.long.log')
+    
+    tChainSource.setSourceFile(sourceFile)
     
     # start the streaming
     tChainSource.start()
