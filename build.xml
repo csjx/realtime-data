@@ -9,7 +9,7 @@
   *   '$Date$'
   *   '$Revision$'
 -->
-<project name="kilonalu" default="compile" basedir=".">
+<project name="bbl" default="compile" basedir=".">
 
   <target name="usage" depends="init">
   <exec executable="ant" dir="." vmlauncher="false">
@@ -27,7 +27,7 @@
   <target name="init" depends="config">
     <property name="name" value="kilonalu"/>
     <property name="Name" value="Kilo Nalu Real Time System"/>
-    <property name="release" value="0.0.0"/>
+    <property name="release" value="0.5.0"/>
 
     <filter token="release" value="${release}"/>
 
@@ -253,32 +253,32 @@
     <delete dir="${ver.dir}" />
     <mkdir dir="${ver.dir}"/>
     <copy todir="${ver.dir}">
-      <fileset dir="." excludes="**/CVS* **/.#* **/src* **/test* **/build* **/docs* ${dist.dir}"/>
+      <fileset dir="." excludes="**/CVS* **/.svn* **/.#* **/build* **/docs* ${dist.dir}"/>
     </copy>
     <copy todir="${ver.dir}" file="build.xml"/>
     <copy todir="${ver.dir}/lib" file="${build.dir}/${name}.jar"/>
 
     <copy todir="${ver.dir}/docs" filtering="yes" failonerror="false">
-    <fileset dir="docs" excludes="**/*gif **/*jpg **/*png" />
+      <fileset dir="docs" excludes="**/*gif **/*jpg **/*png" />
     </copy>
     <copy todir="${ver.dir}/docs" filtering="no" failonerror="false">
-    <fileset dir="docs" includes="**/*gif **/*jpg **/*png" />
+      <fileset dir="docs" includes="**/*gif **/*jpg **/*png" />
     </copy>
     <copy todir="${ver.dir}/docs/dev">
-    <fileset dir="${build.dir}/docs"/>
+      <fileset dir="docs/dev"/>
     </copy>
-    <copy todir="${ver.dir}/src">
-    <fileset dir="${build.dir}/src"/>
+    <copy todir="${ver.dir}/docs/user">
+      <fileset dir="docs/user"/>
     </copy>
 
     <delete dir="./${ver.dir}/${build.dir}"/>
     <delete dir="./${ver.dir}/dist"/>
     <delete file="./${name}-${release}.zip"/>
-    <zip zipfile="./${name}-${release}.zip" basedir="${dist.dir}" excludes="${name}-${release}/src/**, ${name}-${release}/build/src/**"/>
-    <delete file="./${name}-${release}.tar.gz" />
+    <zip zipfile="./${name}-${release}.zip" basedir="${dist.dir}" excludes="${name}-${release}/build/src/**"/>
+    <!--delete file="./${name}-${release}.tar.gz" />
     <tar tarfile="./${name}-${release}.tar" basedir="${dist.dir}" excludes="${name}-${release}/src/**, ${name}-${release}/build/src/**"/>
     <gzip zipfile="./${name}-${release}.tar.gz" src="./${name}-${release}.tar"/>
-    <delete file="./${name}-${release}.tar" />
+    <delete file="./${name}-${release}.tar" /-->
   </target>
 
   <target name="dist-gumstix" 
