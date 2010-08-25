@@ -18,8 +18,8 @@
 '''TChain package that allows TChain to RBNB DataTurbine communication.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision: $"
-# $LastChangedDate: $
-# $LastChangedBy:   $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
+# $LastChangedBy$
 
 import tchain

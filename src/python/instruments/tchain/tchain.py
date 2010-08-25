@@ -18,9 +18,9 @@
 '''Classes for TChain communication, data parsing, and DataTurbine insertion.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision: $"
-# $LastChangedDate: $
-# $LastChangedBy:   $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
+# $LastChangedBy$
 
 import os
 import sys

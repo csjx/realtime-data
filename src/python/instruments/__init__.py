@@ -18,9 +18,9 @@
 '''Instrument package that allows instrument to RBNB DataTurbine communication.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision: $"
-# $LastChangedDate: $
-# $LastChangedBy:   $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
+# $LastChangedBy$
 
 import tchain
 # import adam 
