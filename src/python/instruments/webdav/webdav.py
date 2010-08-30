@@ -18,9 +18,9 @@
 '''Classes for WebDAV communication, data parsing, and DataTurbine insertion.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision: 723 $"
-# $LastChangedDate: 2010-08-24 21:57:03 -0600 (Tue, 24 Aug 2010) $
-# $LastChangedBy: cjones $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
+# $LastChangedBy$
 
 import os
 import pycurl
