@@ -15,22 +15,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-'''Instrument package that allows instrument to RBNB DataTurbine communication.'''
+'''TChain package that allows TChain to RBNB DataTurbine communication.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision$"
-# $LastChangedDate$
-# $LastChangedBy$
+__version__ = "$LastChangedRevision: 723 $"
+# $LastChangedDate: 2010-08-24 21:57:03 -0600 (Tue, 24 Aug 2010) $
+# $LastChangedBy: cjones $
 
-import tchain
 import webdav
-# import adam 
-# import adcp
-# import ctd
-# import dvp2
-# import flntu
-import sys
-import os
-
-#Add the rbnb jar file to the python class path
-sys.path.append(os.path.join('..', '..', '..', 'lib', 'rbnb.jar'))
