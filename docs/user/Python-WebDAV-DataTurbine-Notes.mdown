@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-The RBNB DataTurbine provides a WebDAV service for interacting with the server.  This document covers the software dependencies needed to interact with the DataTurbine via the WebDAV protocol and gives an example of a WebDAVSource class that loads tchain data into the DataTurbine.
+The RBNB DataTurbine provides a WebDAV service for interacting with the server.  This document covers the software dependencies needed to interact with the DataTurbine via the WebDAV protocol and gives an example of a WebDAVSource class that loads tchain data into the DataTurbine.  Documentation for the DataTurbine WebDAV interface is in the DataTurbine distribution, or [online](http://bbl.ancl.hawaii.edu:8080/documentation/WebDAVOptions.html).
 
 ## 2. Dependencies
 
