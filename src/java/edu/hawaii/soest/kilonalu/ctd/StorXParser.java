@@ -80,6 +80,42 @@ public class StorXParser {
   /* The dates corresponding to each sample */
   private ArrayList<Date> sampleDates = new ArrayList<Date>();
   
+  /* A Stor-X frame header as a ByteBuffer (SATSTX)*/
+  private ByteBuffer storXFrameHeader = ByteBuffer.allocate(6);
+  
+  /* A Stor-X frame serial number as a ByteBuffer (4 digits)*/
+  private ByteBuffer storXFrameSerialNumber = ByteBuffer.allocate(4);
+  
+  /* A Stor-X frame analog channel 1 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelOne = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 2 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelTwo = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 3 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelThree = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 4 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelFour = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 5 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelFive = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 6 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelSix = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame analog channel 7 as a ByteBuffer */
+  private ByteBuffer storXFrameAnalogChannelSeven = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame internal voltage as a ByteBuffer */
+  private ByteBuffer storXFrameInternalVoltage = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame terminator sequence as a ByteBuffer (\r\n)*/
+  private ByteBuffer storXFrameTerminator = ByteBuffer.allocate(2);
+  
+  /* A Stor-X frame timestamp as a ByteBuffer*/
+  private ByteBuffer storXFrameTimestamp = ByteBuffer.allocate(7);
+  
   /* The processing state during data parsing */
   private int state = 0;
   
