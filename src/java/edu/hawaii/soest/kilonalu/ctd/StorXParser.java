@@ -80,10 +80,37 @@ public class StorXParser {
   /* The dates corresponding to each sample */
   private ArrayList<Date> sampleDates = new ArrayList<Date>();
   
-  /* A Stor-X frame header as a ByteBuffer (SATSTX)*/
-  private ByteBuffer storXFrameHeader = ByteBuffer.allocate(6);
+  /* A Stor-X header size in bytes as an integer (null-filled at the end) */
+  private final int STOR_X_HEADER_SIZE = 128;
   
-  /* A Stor-X frame serial number as a ByteBuffer (4 digits)*/
+  /* A Stor-X header ID as a String */
+  private final String STOR_X_HEADER_ID = 'SATHDR';
+  
+  /* A Stor-X header date tag as a String */
+  private final String STOR_X_HEADER_DATETAG = 'DATETAG';
+  
+  /* A Stor-X header time tag as a String */
+  private final String STOR_X_HEADER_TIMETAG = 'TIMETAG2';
+  
+  /* A Stor-X frame ID as a String */
+  private final String STOR_X_FRAME_ID = 'SATSTX';
+  
+  /* A Seabird SBE CTD sensor frame ID as a String */
+  private final String SBE_CTD_FRAME_ID = 'SATSBE';
+  
+  /* An ISUS nitrate sensor dark binary frame ID as a String */
+  private final String ISUS_DARK_FRAME_ID = 'SATNDB';
+  
+  /* An ISUS nitrate sensor light binary frame ID as a String */
+  private final String ISUS_LIGHT_FRAME_ID = 'SATNLB';
+  
+  /* A Stor-X header as a ByteBuffer (SATSTX) */
+  private ByteBuffer storXHeader = ByteBuffer.allocate(STOR_X_HEADER_SIZE);
+  
+  /* A Stor-X frame header ID as a ByteBuffer (SATSTX) */
+  private ByteBuffer storXFrameHeaderID = ByteBuffer.allocate(6);
+  
+  /* A Stor-X frame serial number as a ByteBuffer (4 digits) */
   private ByteBuffer storXFrameSerialNumber = ByteBuffer.allocate(4);
   
   /* A Stor-X frame analog channel 1 as a ByteBuffer */
@@ -119,9 +146,14 @@ public class StorXParser {
   /* The processing state during data parsing */
   private int state = 0;
   
-   /* The date format for the timestamp applied to the sample */
-   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  /* The date format for the timestamp applied to a SBE CTD sample */
+  private static final SimpleDateFormat DATE_FORMAT = 
+    new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
   
+  /* The date format for the timestamp applied to a StorX frame (Julian day)*/
+  private static final SimpleDateFormat FRAME_DATE_FORMAT = 
+    new SimpleDateFormat("YYYYDDDHHmmss");
+ 
   /* The timezone used for the sample date */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
   
