@@ -468,6 +468,7 @@ classdef DataProcessor < hgsetget & dynamicprops
               % update the field names and units arrays
               updateDataVariableNames(self, self.configuration.serialdateFieldName);
               updateDataVariableUnits(self, 'days');
+              
             else
               value = [];
               error(['There are no date, time, or datetime fields designated ' ...
@@ -994,14 +995,26 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.dataVariableNames ...
                 ) ...
               ) ...
-            }; 
-        %keyboard;
+            };
+        
         % Subset the y and x axis data based on the duration of the
         % particular figure. Order matters because y depends on x
         if ( strcmp(self.configuration.reference, 'newest') )
           % for 'most recent' data duration
           y = y(find(x >= (max(x) - figureDurationInDays)));          
           x = x(find(x >= (max(x) - figureDurationInDays)));          
+          
+          % flip the vectors in order to append to them
+          xFlipped = flipud(x);
+          yFlipped = flipud(y);
+          
+          if ( min(xFlipped) > max(xFlipped) - figureDurationInDays )
+            xFlipped(find(xFlipped == min(xFlipped)) + 1) = max(x) - figureDurationInDays;
+            yFlipped(length(yFlipped) + 1) = NaN;
+          end
+          
+          x = flipud(xFlipped);
+          y = flipud(yFlipped);
           
         else
           HSTOffsetInDays = 10/24; % Hawaii time hour offset in days
