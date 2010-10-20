@@ -79,6 +79,16 @@ import org.nees.rbnb.RBNBSource;
  */
 public class DavisWxSource extends RBNBSource {
 
+  /**
+   * The default log configuration file location
+   */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /**
+   * The log configuration file location
+   */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+  
   /*
    *  A default archive mode for the given source connection to the RBNB server.
    * Valid modes include 'append', 'create', 'load' and 'none'.
@@ -1022,9 +1032,6 @@ public class DavisWxSource extends RBNBSource {
 
   public static void main (String args[]) {
     
-    // Set up a simple logger that logs to the console
-    BasicConfigurator.configure();
-    
     logger.info("DavisWxSource.main() called.");
     
     try {
@@ -1032,6 +1039,9 @@ public class DavisWxSource extends RBNBSource {
       // line arguments as settings for this instance
       final DavisWxSource davisWxSource = new DavisWxSource();
       
+      // Set up a simple logger that logs to the console
+      PropertyConfigurator.configure(davisWxSource.getLogConfigurationFile());
+
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( davisWxSource.parseArgs(args) ) {
@@ -1278,4 +1288,23 @@ public class DavisWxSource extends RBNBSource {
     streamingThread.interrupt();
   }
 
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
+  
 }
