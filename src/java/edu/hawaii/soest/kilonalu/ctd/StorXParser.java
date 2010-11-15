@@ -6,10 +6,10 @@
  *
  *   Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy: $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ public class StorXParser {
    * @return sampleStrings -  the data sample strings array
    */
   public String[] getSampleStrings() {
-    return this.sampleStrings.toArray(new String[this.sampleStrings.size()]);
+    return new String[1];
       
   }
   
@@ -190,7 +190,7 @@ public class StorXParser {
    * @return sampleDates -  the data sample dates array
    */
   public Date[] getSampleDates() {
-    return this.sampleDates.toArray(new Date[this.sampleDates.size()]);
+    return new Date[1];
       
   }
   
