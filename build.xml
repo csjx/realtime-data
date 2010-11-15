@@ -33,7 +33,8 @@
 
     <property name="srcdir" value="src/java" />
     <property name="libdir" value="lib" />
-    <property name="testdir" value="tests/java" />
+    <property name="testdir" value="test/java" />
+    <property name="resourcedir" value="test/resources" />
 
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="${build.dir}/src"/>
@@ -64,9 +65,12 @@
         <not><available file="lib/commons-configuration-1.6.jar"/></not>
         <not><available file="lib/commons-collections-3.2.1.jar"/></not>
         <not><available file="lib/commons-codec-1.3.jar"/></not>
+        <not><available file="lib/commons-io-2.0.jar"/></not>
         <not><available file="lib/commons-math-2.0.jar"/></not>
         <not><available file="lib/commons-lang-2.4.jar"/></not>
+        <not><available file="lib/dhmp.jar"/></not>
         <not><available file="lib/httpclient.jar"/></not>
+        <not><available file="lib/junit-4.8.2.jar"/></not>
         <not><available file="lib/log4j-1.2.8.jar"/></not>
         <not><available file="lib/rbnb.jar"/></not>
         <not><available file="lib/RXTXcomm.jar"/></not>
@@ -85,7 +89,10 @@
     <property name="configjar"      value="${libdir}/commons-configuration-1.6.jar"/>
     <property name="collectionsjar" value="${libdir}/commons-collections-3.2.1.jar"/>
     <property name="codecjar"       value="${libdir}/commons-codec-1.3.jar"/>
+    <property name="iojar"          value="${libdir}/commons-io-2.0.jar"/>
+    <property name="dhmpjar"        value="${libdir}/dhmp.jar"/>
     <property name="httpjar"        value="${libdir}/httpclient.jar"/>
+    <property name="junitjar"       value="${libdir}/junit-4.8.2.jar"/>
     <property name="mailjar"        value="${libdir}/mail.jar"/>
     <property name="log4jjar"       value="${libdir}/log4j-1.2.8.jar"/>
     <property name="rbnbjar"        value="${libdir}/rbnb.jar"/>
@@ -94,7 +101,7 @@
     <property name="xercesjar"      value="${libdir}/utilities.jar"/>
     <!-- CLASSPATH -->
     <property name="cpath"      
-      value="${activationjar}:${clijar}:${commhttpjar}:${mathjar}:${mailjar}:${langjar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${utiljar}:${xercesjar}" />
+      value="${activationjar}:${clijar}:${commhttpjar}:${dhmpjar}:${mathjar}:${mailjar}:${langjar}:${iojar}:${loggingjar}:${configjar}:${collectionsjar}:${codecjar}:${httpjar}:${junitjar}:${log4jjar}:${rbnbjar}:${rxtxjar}:${utiljar}:${xercesjar}" />
     <echo message="classpath is:   ${cpath}"/>
   </target>
 
@@ -122,23 +129,23 @@
        destdir="${build.dest}"
        classpath="${cpath}"
        debug="on">
-       <compilerarg value="-Xlint"/>
+       <compilerarg value="-Xlint:unchecked"/>
     </javac>
    </target>
 
    <target name="jar" depends="compile"
        description="compiles and jars all the java classes">
-    <delete file="${build.dir}/${name}.jar" />
-    <copy todir="${build.dest}/${package.home}/${name}" filtering="no">
-      <fileset dir="${srcdir}/${package.home}/${name}">
-      </fileset>
-    </copy>
-    <jar jarfile="${build.dir}/${name}.jar">
-    <fileset dir="${build.dest}">
-      <include name="${package.home}/${name}/**" />
-      <exclude name="**/*.java"/>
-    </fileset>
-    </jar>
+     <delete file="${build.dir}/${name}.jar" />
+     <copy todir="${build.dest}/${package.home}/${name}" filtering="no">
+       <fileset dir="${srcdir}/${package.home}/${name}">
+       </fileset>
+     </copy>
+     <jar jarfile="${build.dir}/${name}.jar">
+       <fileset dir="${build.dest}">
+         <include name="${package.home}/${name}/**" />
+         <exclude name="**/*.java"/>
+       </fileset>
+     </jar>
    </target>
 
    <target name="install" depends="jar">
@@ -180,12 +187,17 @@
        description="copy and compile the tests into a jar file">
     <mkdir dir="${build.tests}"/>
     <copy todir="${build.tests}" filtering="yes">
-    <fileset dir="${testdir}">
-      <include name="**/*.java"/>
-      <include name="**/*.xml"/>
-      <exclude name="**/CVS*"/>
-      <exclude name="**/.#*"/>
-    </fileset>
+      <fileset dir="${testdir}">
+        <include name="**/*.java"/>
+        <include name="**/*.xml"/>
+        <exclude name="**/CVS*"/>
+        <exclude name="**/.#*"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.tests}" filtering="no">
+      <fileset dir="${resourcedir}">
+        <include name="**/*.raw"/>
+      </fileset>
     </copy>
     <javac srcdir="${build.tests}"
        destdir="${build.dest}"
@@ -193,10 +205,13 @@
        debug="on"/>
 
     <jar jarfile="${build.dir}/${name}-test.jar" basedir="${build.dest}">
-    <fileset dir="${testdir}">
-      <include name="${package.home}/${name}/**" />
-      <exclude name="**/*.java"/>
-    </fileset>
+      <fileset dir="${testdir}">
+        <include name="${package.home}/${name}/**" />
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${resourcedir}">
+        <include name="${package.home}/${name}/**" />
+      </fileset>
     </jar>
 
    </target>
@@ -226,8 +241,8 @@
   <target name="onetest" depends="buildtestjar" 
       description="target to run only ONE of the junit tests - you will be prompted for the class name">
                 
-    <input  message="Enter test class name (e.g. MyClassTest)"
-        addproperty="test.class"/>
+    <!--input  message="Enter test class name (e.g. MyClassTest)"
+        addproperty="test.class"/-->
           
     <junit printsummary="withOutAndErr" haltonfailure="true" fork="true"
        haltonerror="true" newenvironment="true">
@@ -241,7 +256,8 @@
 
     <batchtest fork="true" todir="${build.dir}">
       <fileset dir="${build.dest}">
-      <include name="**/${test.class}.class" />
+        <!--include name="**/${test.class}.class" /-->
+        <include name="**/StorXParserTest.class" />
       </fileset>
     </batchtest>
     </junit> 
@@ -253,7 +269,7 @@
     <delete dir="${ver.dir}" />
     <mkdir dir="${ver.dir}"/>
     <copy todir="${ver.dir}">
-      <fileset dir="." excludes="**/CVS* **/.svn* **/.#* **/build* **/docs* ${dist.dir}"/>
+      <fileset dir="." excludes="**/CVS* **/.svn* **/.#* **/build* **/docs* **/test/* ${dist.dir}"/>
     </copy>
     <copy todir="${ver.dir}" file="build.xml"/>
     <copy todir="${ver.dir}/lib" file="${build.dir}/${name}.jar"/>
@@ -263,6 +279,9 @@
     </copy>
     <copy todir="${ver.dir}/docs" filtering="no" failonerror="false">
       <fileset dir="docs" includes="**/*gif **/*jpg **/*png" />
+    </copy>
+    <copy todir="${ver.dir}/test" filtering="no" failonerror="false">
+      <fileset dir="test" includes="tchain* AW01*txt"  excludes="**/data/*"/>
     </copy>
     <copy todir="${ver.dir}/docs/dev">
       <fileset dir="docs/dev"/>
