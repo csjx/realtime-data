@@ -31,10 +31,14 @@ import edu.hawaii.soest.kilonalu.ctd.StorXParser;
 
 import java.io.File; 
 import java.io.FileInputStream; 
+import java.io.InputStream; 
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.BufferUnderflowException;
+import java.nio.BufferOverflowException;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 
 import java.util.Arrays;
@@ -47,15 +51,22 @@ import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Hex;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 
+import org.dhmp.util.HierarchicalMap;
+import org.dhmp.util.BasicHierarchicalMap;
+
 /**
  *  A class that represents a single binary data file from a Satlantic 
- *  STOR-X data logger.  At the moment, the parser treats the binary format
- *  as simple lines starting with "SAT" and ending with "\r\n", ignoring
- * other structured content (since we don't have a format specification).
+ *  STOR-X data logger.  The parser treats the binary format as a series of
+ *  frames as defined by Satlantic's binary file format.  It parses each frame
+ *  out of the binary data based on the frame type and creates a frame map that
+ *  enables access to the individual fields of data.  It cuurently supports
+ *  the parsing of native StorX logger frames and Seabird CTD ASCII frames.
  */
 public class StorXParser {
     
@@ -69,80 +80,41 @@ public class StorXParser {
   private static Logger logger = Logger.getLogger(StorXParser.class);
 
   /* A field that stores the binary UPD packet data input as a ByteBuffer */
-  private ByteBuffer fileBuffer = ByteBuffer.allocate(256);
+  private ByteBuffer fileBuffer = ByteBuffer.allocate(8192);
   
-  /* An array list used to store lines of a file as ByteBuffers*/
-  private ArrayList<String> lineStringArrayList = new ArrayList<String>();
-  
-  /* The ASCII data sample strings */
-  private ArrayList<String> sampleStrings = new ArrayList<String>();
-  
-  /* The dates corresponding to each sample */
-  private ArrayList<Date> sampleDates = new ArrayList<Date>();
+  /* 
+   * The hierarchical map of data frames and their parsed poperties. 
+   * The map structure is:
+   * frames/frame/rawFrame          - (ByteBuffer of the entire binary frame)
+   * frames/frame/id                - (String: 'SATSTX')
+   * frames/frame/type              - (String: 'SBE')
+   * frames/frame/serialNumber      - (String: '0207')
+   * frames/frame/date              - (Date object)
+   * frames/frame/parsedFrameObject - (ISUSFrameParser,CTDFrameParser objects)
+  */
+  private BasicHierarchicalMap framesMap = new BasicHierarchicalMap();
   
   /* A Stor-X header size in bytes as an integer (null-filled at the end) */
   private final int STOR_X_HEADER_SIZE = 128;
   
+  /* A Stor-X frame size in bytes as an integer */
+  private final int STOR_X_FRAME_SIZE = 35;
+  
   /* A Stor-X header ID as a String */
-  private final String STOR_X_HEADER_ID = 'SATHDR';
-  
-  /* A Stor-X header date tag as a String */
-  private final String STOR_X_HEADER_DATETAG = 'DATETAG';
-  
-  /* A Stor-X header time tag as a String */
-  private final String STOR_X_HEADER_TIMETAG = 'TIMETAG2';
+  private final String STOR_X_HEADER_ID = "SATHDR";
   
   /* A Stor-X frame ID as a String */
-  private final String STOR_X_FRAME_ID = 'SATSTX';
+  private final String STOR_X_FRAME_ID = "SATSTX";
   
   /* A Seabird SBE CTD sensor frame ID as a String */
-  private final String SBE_CTD_FRAME_ID = 'SATSBE';
+  private final String SBE_CTD_FRAME_ID = "SATSBE";
   
   /* An ISUS nitrate sensor dark binary frame ID as a String */
-  private final String ISUS_DARK_FRAME_ID = 'SATNDB';
+  private final String ISUS_DARK_FRAME_ID = "SATNDB";
   
   /* An ISUS nitrate sensor light binary frame ID as a String */
-  private final String ISUS_LIGHT_FRAME_ID = 'SATNLB';
-  
-  /* A Stor-X header as a ByteBuffer (SATSTX) */
-  private ByteBuffer storXHeader = ByteBuffer.allocate(STOR_X_HEADER_SIZE);
-  
-  /* A Stor-X frame header ID as a ByteBuffer (SATSTX) */
-  private ByteBuffer storXFrameHeaderID = ByteBuffer.allocate(6);
-  
-  /* A Stor-X frame serial number as a ByteBuffer (4 digits) */
-  private ByteBuffer storXFrameSerialNumber = ByteBuffer.allocate(4);
-  
-  /* A Stor-X frame analog channel 1 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelOne = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 2 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelTwo = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 3 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelThree = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 4 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelFour = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 5 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelFive = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 6 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelSix = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame analog channel 7 as a ByteBuffer */
-  private ByteBuffer storXFrameAnalogChannelSeven = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame internal voltage as a ByteBuffer */
-  private ByteBuffer storXFrameInternalVoltage = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame terminator sequence as a ByteBuffer (\r\n)*/
-  private ByteBuffer storXFrameTerminator = ByteBuffer.allocate(2);
-  
-  /* A Stor-X frame timestamp as a ByteBuffer*/
-  private ByteBuffer storXFrameTimestamp = ByteBuffer.allocate(7);
-  
+  private final String ISUS_LIGHT_FRAME_ID = "SATNLB";
+
   /* The processing state during data parsing */
   private int state = 0;
   
@@ -152,10 +124,17 @@ public class StorXParser {
   
   /* The date format for the timestamp applied to a StorX frame (Julian day)*/
   private static final SimpleDateFormat FRAME_DATE_FORMAT = 
-    new SimpleDateFormat("YYYYDDDHHmmss");
+    new SimpleDateFormat("yyyyDDDHHmmssSSS");
  
   /* The timezone used for the sample date */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  
+  /**
+   *  Constructor: Creates an empty StorXParser instance 
+   */
+  public StorXParser() {
+    
+  }
   
   /**
    *  Constructor: Creates a StorXParser instance that parses a single binary
@@ -165,11 +144,16 @@ public class StorXParser {
    */
   public StorXParser(ByteBuffer fileBuffer) {
     
-    this.fileBuffer = fileBuffer;
-    
     // parse the buffer
-    parse(this.fileBuffer);
-    
+    try {
+      
+      parse(this.fileBuffer);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      
+    }
+      
   }
 
   /**
@@ -211,19 +195,23 @@ public class StorXParser {
   }
   
   /**
-   * A method used to parse the binary STOR-X file.  Currently, this only
-   * parses out ASCII sample data strings.
+   * Parses the binary STOR-X file.  The binary file format is a sequence of
+   * 'frames' that all begin with 'SAT'.  The parser creates a list with the
+   * individual frames.  Some frames are StorX frames (SATSTX), some are from 
+   * external sensors (ISUS: 'SATNLB', 'SATNDB'; SBE CTD: 'SATSBE')
    *
    * @param fileBuffer - the binary data file as a ByteBuffer
    */ 
-  public void parse(ByteBuffer fileBuffer) {
+  public void parse(ByteBuffer fileBuffer) throws Exception {
     
     logger.debug("StorXParser.parse() called.");
     
+    this.fileBuffer = fileBuffer;
+    
     try {
       
-      // Create a buffer that will store a single line of the file
-      ByteBuffer lineBuffer = ByteBuffer.allocate(1024);
+      // Create a buffer that will store a single frame of the file
+      ByteBuffer frameBuffer = ByteBuffer.allocate(1024);
       
       // create four byte placeholders used to evaluate up to a four-byte 
       // window.  The FIFO layout looks like:
@@ -235,7 +223,8 @@ public class StorXParser {
            byteThree = 0x00,
            byteFour  = 0x00;
       
-      int lineByteCount = 0; // keep track of bytes per line
+      int frameByteCount = 0; // keep track of bytes per frame
+      int frameCount = 0; // keep track of frames
       
       fileBuffer.position(0);
       fileBuffer.limit(fileBuffer.capacity());
@@ -249,22 +238,23 @@ public class StorXParser {
         //logger.debug("b1: " + new String(Hex.encodeHex(new byte[]{byteOne}))   + "\t" +
         //             "b2: " + new String(Hex.encodeHex(new byte[]{byteTwo}))   + "\t" +
         //             "b3: " + new String(Hex.encodeHex(new byte[]{byteThree})) + "\t" +
-        //             "b4: " + new String(Hex.encodeHex(new byte[]{byteFour}))
+        //             "b4: " + new String(Hex.encodeHex(new byte[]{byteFour}))  + "\t" +
+        //             "st: " + Integer.toString(this.state)
         //             );
         
-        // evaluate the bytes, separate the file line by line (SAT ...\r\n)
+        // evaluate the bytes, separate the file frame by frame (SAT ...)
         switch (this.state) {
           
-          case 0: // find a line beginning (SAT) 53 41 54
+          case 0: // find a frame beginning (SAT) 53 41 54
             
             if ( byteOne == 0x54 && byteTwo == 0x41 && byteThree == 0x53 ) {
               
               // found a line, add the beginning to the line buffer 
-              lineBuffer.put(byteThree);
-              lineBuffer.put(byteTwo);
-              lineBuffer.put(byteOne);
+              frameBuffer.put(byteThree);
+              frameBuffer.put(byteTwo);
+              frameBuffer.put(byteOne);
               
-              lineByteCount = lineByteCount + 3;
+              frameByteCount = frameByteCount + 3;
               
               this.state = 1;
               break;
@@ -274,36 +264,155 @@ public class StorXParser {
               
             }
           
-          case 1: // find a line ending (\r\n)
+          case 1: // find the next frame beginning (SAT) 53 41 54
             
-            if ( byteOne == 0x0A && byteTwo == 0x0D ) {
+            if ( byteOne == 0x54 && byteTwo == 0x41 && byteThree == 0x53 ) {
               
               // we have a line ending. store the line in the arrayList
-              lineBuffer.put(byteOne);
-              lineByteCount++;
-              lineBuffer.flip();
+              frameBuffer.put(byteOne);
+              frameByteCount++;
+              frameBuffer.flip();
               // create a true copy of the byte array subset
-              byte[] lineArray = lineBuffer.array();
-              byte[] lineCopy  = new byte[lineByteCount];
-              System.arraycopy(lineArray, 0, lineCopy, 0, lineByteCount);
-              String currentLine = new String(lineCopy, "US-ASCII");
-              this.lineStringArrayList.add(currentLine);
+              byte[] frameArray = frameBuffer.array();
+              byte[] frameCopy  = new byte[frameByteCount - 3];
+              System.arraycopy(frameArray, 0, frameCopy, 0, frameByteCount - 3);
+              ByteBuffer currentFrameBuffer = ByteBuffer.wrap(frameCopy);
               
-              // rest the line buffer for the next line
-              lineBuffer.clear();
-              lineByteCount = 0;
+              // parse the current frame and add it to the frameMap
+              
+              frameCount++;
+              
+              // create a map to store frames as they are encountered
+              BasicHierarchicalMap frameMap = new BasicHierarchicalMap();
+              
+              // peek at the first six header bytes as a string
+              byte[] sixBytes  = new byte[6];
+              currentFrameBuffer.get(sixBytes);
+              currentFrameBuffer.position(0);
+              String frameHeader = new String(sixBytes, "US-ASCII");
+              
+              // determine the frame type based on the header
+              if ( frameHeader.matches(this.STOR_X_HEADER_ID) ) {
+                frameMap.put("rawFrame", currentFrameBuffer);
+                frameMap.put("id", frameHeader);
+                frameMap.put("type", frameHeader.substring(3,6));
+                frameMap.put("serialNumber", null);
+                frameMap.put("date", null);
+                String headerString = new String(currentFrameBuffer.array());
+                // trim trailing null characters and line endings
+                int nullIndex = headerString.indexOf(0);
+                headerString = headerString.substring(0, nullIndex).trim();
+                frameMap.put("parsedFrameObject", headerString);
+                
+                // Add the frame to the frames map
+                this.framesMap.add("/frames/frame", 
+                                   (BasicHierarchicalMap) frameMap.clone());
+                
+                frameMap.removeAll("frame");
+                currentFrameBuffer.clear();
+                
+              } else if ( frameHeader.matches(this.STOR_X_FRAME_ID) ) {
+                
+                // test if the frame is complete
+                if ( currentFrameBuffer.capacity() == this.STOR_X_FRAME_SIZE ) {
+                  
+                  // convert the frame buffer to a StorXFrame
+                  StorXFrame storXFrame = new StorXFrame(currentFrameBuffer);
+                  
+                  frameMap.put("rawFrame", currentFrameBuffer);
+                  frameMap.put("id", frameHeader);
+                  frameMap.put("type", frameHeader.substring(3,6));
+                  frameMap.put("serialNumber", storXFrame.getSerialNumber());
+                  frameMap.put("date", parseTimestamp(storXFrame.getTimestamp()));
+                  frameMap.put("parsedFrameObject", storXFrame);
+    
+                  // Add the frame to the frames map
+                  this.framesMap.add("/frames/frame", 
+                                     (BasicHierarchicalMap) frameMap.clone());
+    
+                  frameMap.removeAll("frame");
+                  currentFrameBuffer.clear();
+                  
+                } else {
+                  logger.debug(frameHeader + " frame " + frameCount + 
+                               " length is " + currentFrameBuffer.capacity() +
+                               " not " + this.STOR_X_FRAME_SIZE);
+                }
+                
+              } else if ( frameHeader.matches(this.SBE_CTD_FRAME_ID) ) {
+                
+                // move to the serial number field and extract it
+                currentFrameBuffer.position(6);
+                byte[] fourBytes = new byte[4];
+                currentFrameBuffer.get(fourBytes);
+                String serialNumber = new String(fourBytes, "US-ASCII");
+                // move to the timestamp field and extract it
+                currentFrameBuffer.position(currentFrameBuffer.capacity() - 7);
+                int endSampleIndex = currentFrameBuffer.position();
+                byte[] timestamp = new byte[7];
+                currentFrameBuffer.get(timestamp);
+                
+                // reset the position to extract the CTD sample (or message)
+                currentFrameBuffer.position(SBE_CTD_FRAME_ID.length() + 5);
+                int sampleLength = endSampleIndex - currentFrameBuffer.position();
+                logger.debug("length: " + sampleLength);
+                byte[] sampleBytes = new byte[sampleLength];
+                currentFrameBuffer.get(sampleBytes);
+                String sampleString = new String(sampleBytes, "US-ASCII");
+                
+                // add in a sample if it matches a general data sample pattern
+                if ( ! sampleString.matches(" [0-9].*[0-9]\r\n")) {
+                  sampleString = null;
+                  
+                }
+                
+                // extract the sample bytes from the frame
+                frameMap.put("rawFrame", currentFrameBuffer);
+                frameMap.put("id", frameHeader);
+                frameMap.put("type", frameHeader.substring(3,6));
+                frameMap.put("serialNumber", serialNumber);
+                frameMap.put("date", parseTimestamp(timestamp));
+                frameMap.put("parsedFrameObject", sampleString);
+                
+                // Add the frame to the frames map
+                this.framesMap.add("/frames/frame", 
+                                   (BasicHierarchicalMap) frameMap.clone());
+                
+                frameMap.removeAll("frame");
+                currentFrameBuffer.clear();
+                
+              } else if ( frameHeader.matches(this.ISUS_DARK_FRAME_ID) ) {
+                
+                currentFrameBuffer.clear();
+                
+              } else if ( frameHeader.matches(this.ISUS_LIGHT_FRAME_ID) ) {
+                
+                currentFrameBuffer.clear();
+                
+              } else {
+                logger.info("The current frame type is not recognized. " +
+                            "Discarding it.  The header was: " + frameHeader);
+                currentFrameBuffer.clear();
+                            
+              }
+              
+              // reset the frame buffer for the next frame, but add the 'SAT'
+              // bytes already encountered
+              frameBuffer.clear();
+              frameByteCount = 0;
+              fileBuffer.position(fileBuffer.position() - 3);
               this.state = 0; 
               break;
               
             } else {
               
               // no full line yet, keep adding bytes
-              lineBuffer.put(byteOne);
-              lineByteCount++;
+              frameBuffer.put(byteOne);
+              frameByteCount++;
               break;
               
             }
-          
+            
         } // end switch()
         
         // shift the bytes in the FIFO window
@@ -313,54 +422,7 @@ public class StorXParser {
         
       } // end while()
       
-      if ( this.lineStringArrayList.size() > 0 ) {
-        // now the file has been parsed into lines.  Evaluate each line, find
-        // the data lines, and add them to the sample strings array      
-        for (Iterator iterator = this.lineStringArrayList.iterator(); iterator.hasNext();) {
-          
-          // prepare the line for reading
-          String lineString = (String) iterator.next();
-          
-          if ( lineString.matches("SATSBE[0-9]{4}.*\t.* [0-9][0-9] [A-Z][a-z][a-z] [0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\r\n") ) {
-
-            logger.debug("LINE: " + lineString);
-
-            // we've found a line of data. Store it in the sampleStrings list
-            logger.debug("This is a data line in the file. Processing it.");
-            
-            // find the beginning of the data string and subset the string
-            int index = lineString.indexOf(" ");
-            String sampleString = lineString.substring(index, lineString.length());
-            this.sampleStrings.add(sampleString);
-            
-          } else {
-            // go to the next line
-            // logger.debug("This is not a data line in the file. Skipping it.");
-
-          }
-
-        } // end for()
-
-        // now the sample strings have been extracted. Parse each string to
-        // extract the date column value. Note: this has hard-coded information
-        // about the data string. Needs to be abstracted, but we have little to
-        // no automated metadata to allow automated string parsing.
-        for (Iterator sIterator = this.sampleStrings.iterator(); sIterator.hasNext();) {
-
-          String sample = (String) sIterator.next();
-          String[] columns      = sample.trim().split(",");
-          String   dateString   = columns[columns.length - 1]; // last field
-
-          DATE_FORMAT.setTimeZone(TZ);
-          Date sampleDate = DATE_FORMAT.parse(dateString);
-          this.sampleDates.add(sampleDate);
-
-        } // end for()
-        
-      } else {
-        logger.debug("There are no lines in the line buffer to parse.");
-        
-      } // end if()
+      logger.debug(this.framesMap.toXMLString(1000));
       
     } catch (Exception e) {
       logger.debug("Failed to parse the data file.  The error message was:" +
@@ -370,5 +432,61 @@ public class StorXParser {
     }    
         
   }
-                                                
-}                                               
+  
+  /**
+   * Parses the binary STOR-X timestamp. The timestamp format is
+   * YYYYDDD from the first 3 bytes, and HHMMSS.SSS from the last four:
+   * Example:
+   * 1E AC CC = 2010316 (year 2010, julian day 316)
+   * 09 9D 3E 20 = 16:13:00.000 (4:13 pm)
+   * @param timestamp - the timestamp to parse as a byte array
+   * @return date - the timestamp as a Date object
+   */ 
+  public Date parseTimestamp(byte[] timestamp) {
+    
+    Date convertedDate = new Date(0L); // initialize to the epoch
+    
+    try {
+      ByteBuffer timestampBuffer = ByteBuffer.wrap(timestamp);
+      
+      // convert the year and day bytes
+      int yearAndJulianDay =
+      ((timestampBuffer.get() & 0xFF) << 16) |
+      ((timestampBuffer.get() & 0xFF) <<  8) |
+      ((timestampBuffer.get() & 0xFF));
+      
+      String yearAndJulianDayString = new Integer(yearAndJulianDay).toString();
+      
+      // convert the hour, minute, second, millis bytes
+      int hourMinuteSecondMillis =
+      timestampBuffer.getInt();
+      String hourMinuteSecondMillisString = 
+        String.format("%09d", hourMinuteSecondMillis);
+      
+      // concatenate the strings to get the timestamp
+      String timestampString = yearAndJulianDayString + hourMinuteSecondMillisString;
+      
+      // convert to a Date object
+      FRAME_DATE_FORMAT.setTimeZone(TZ);
+      convertedDate = 
+        FRAME_DATE_FORMAT.parse(timestampString, new ParsePosition(0));
+      
+    } catch (BufferUnderflowException bue) {
+      
+      logger.debug("There was a problem reading the timestamp. " +
+                   "The error message was: " + bue.getMessage());
+      
+    } catch (NullPointerException npe) {
+      
+      logger.debug("There was a problem converting the timestamp. " +
+                   "The error message was: " + npe.getMessage());
+      
+    } finally {
+      
+      return convertedDate;
+      
+    }
+    
+  }
+
+}
