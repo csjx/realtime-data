@@ -396,7 +396,7 @@ public class StorXParser {
                 // test if the frame is complete
                 if ( currentFrameBuffer.capacity() == this.ISUS_FRAME_SIZE ) {
                   
-                  // convert the frame buffer to a StorXFrame
+                  // convert the frame buffer to a ISUSFrame
                   ISUSFrame isusFrame = new ISUSFrame(currentFrameBuffer);
                   
                   frameMap.put("rawFrame", currentFrameBuffer);
@@ -426,7 +426,7 @@ public class StorXParser {
                 // test if the frame is complete
                 if ( currentFrameBuffer.capacity() == this.ISUS_FRAME_SIZE ) {
                   
-                  // convert the frame buffer to a StorXFrame
+                  // convert the frame buffer to a ISUSFrame
                   ISUSFrame isusFrame = new ISUSFrame(currentFrameBuffer);
                   
                   frameMap.put("rawFrame", currentFrameBuffer);
