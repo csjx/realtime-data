@@ -30,8 +30,8 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import edu.hawaii.soest.kilonalu.ctd.StorXParser;
-import edu.hawaii.soest.kilonalu.ctd.StorXSource;
+import edu.hawaii.soest.hioos.storx.StorXParser;
+import edu.hawaii.soest.hioos.storx.StorXSource;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

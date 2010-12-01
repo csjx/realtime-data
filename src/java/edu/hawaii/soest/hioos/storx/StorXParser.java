@@ -27,8 +27,8 @@
  */ 
 package edu.hawaii.soest.hioos.storx;
 
-import edu.hawaii.soest.kilonalu.ctd.StorXParser;
-import edu.hawaii.soest.kilonalu.isus.ISUSFrame;
+import edu.hawaii.soest.hioos.storx.StorXParser;
+import edu.hawaii.soest.hioos.isus.ISUSFrame;
 
 import java.io.File; 
 import java.io.FileInputStream; 
