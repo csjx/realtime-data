@@ -28,6 +28,7 @@
 package edu.hawaii.soest.kilonalu.ctd;
 
 import edu.hawaii.soest.kilonalu.ctd.StorXParser;
+import edu.hawaii.soest.kilonalu.isus.ISUSFrame;
 
 import java.io.File; 
 import java.io.FileInputStream; 
@@ -114,7 +115,10 @@ public class StorXParser {
   
   /* An ISUS nitrate sensor light binary frame ID as a String */
   private final String ISUS_LIGHT_FRAME_ID = "SATNLB";
-
+  
+  /* An ISUS frame size in bytes as an integer */
+  private final int ISUS_FRAME_SIZE = 610;
+  
   /* The processing state during data parsing */
   private int state = 0;
   
@@ -147,7 +151,7 @@ public class StorXParser {
     // parse the buffer
     try {
       
-      parse(this.fileBuffer);
+      parse(fileBuffer);
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -175,22 +179,12 @@ public class StorXParser {
   }
   
   /**
-   * A method that returns the data sample strings as a String array
+   * A method that returns the frames map as a hierarchical map
    *
-   * @return sampleStrings -  the data sample strings array
+   * @return frmaesMap -  the frames stored in the hierarchical map
    */
-  public String[] getSampleStrings() {
+  public String[] getFramesMap() {
     return new String[1];
-      
-  }
-  
-  /**
-   * A method that returns the data sample dates as a Date array
-   *
-   * @return sampleDates -  the data sample dates array
-   */
-  public Date[] getSampleDates() {
-    return new Date[1];
       
   }
   
@@ -207,6 +201,7 @@ public class StorXParser {
     logger.debug("StorXParser.parse() called.");
     
     this.fileBuffer = fileBuffer;
+    //logger.debug(this.fileBuffer.toString());
     
     try {
       
@@ -215,9 +210,9 @@ public class StorXParser {
       
       // create four byte placeholders used to evaluate up to a four-byte 
       // window.  The FIFO layout looks like:
-      //           -------------------------
-      //   in ---> | One | Two |Three|Four |  ---> out
-      //           -------------------------
+      //           ---------------------------
+      //   in ---> | Four | Three | Two | One |  ---> out
+      //           ---------------------------
       byte byteOne   = 0x00,   // set initial placeholder values
            byteTwo   = 0x00,
            byteThree = 0x00,
@@ -226,11 +221,11 @@ public class StorXParser {
       int frameByteCount = 0; // keep track of bytes per frame
       int frameCount = 0; // keep track of frames
       
-      fileBuffer.position(0);
-      fileBuffer.limit(fileBuffer.capacity());
+      this.fileBuffer.position(0);
+      this.fileBuffer.limit(this.fileBuffer.capacity());
       
-      while ( fileBuffer.hasRemaining() ) {
-          
+      while ( this.fileBuffer.hasRemaining() ) {
+        
         // load the next byte into the FIFO window
         byteOne = fileBuffer.get();
         
@@ -239,7 +234,9 @@ public class StorXParser {
         //             "b2: " + new String(Hex.encodeHex(new byte[]{byteTwo}))   + "\t" +
         //             "b3: " + new String(Hex.encodeHex(new byte[]{byteThree})) + "\t" +
         //             "b4: " + new String(Hex.encodeHex(new byte[]{byteFour}))  + "\t" +
-        //             "st: " + Integer.toString(this.state)
+        //             "st: " + Integer.toString(this.state)                     + "\t" +
+        //             "po: " + this.fileBuffer.position()                       + "\t" +
+        //             "cp: " + this.fileBuffer.capacity()
         //             );
         
         // evaluate the bytes, separate the file frame by frame (SAT ...)
@@ -266,17 +263,31 @@ public class StorXParser {
           
           case 1: // find the next frame beginning (SAT) 53 41 54
             
-            if ( byteOne == 0x54 && byteTwo == 0x41 && byteThree == 0x53 ) {
+            if ( ( byteOne == 0x54 && byteTwo == 0x41 && byteThree == 0x53 ) || 
+                 fileBuffer.position() == fileBuffer.capacity() ) {
               
               // we have a line ending. store the line in the arrayList
               frameBuffer.put(byteOne);
               frameByteCount++;
               frameBuffer.flip();
-              // create a true copy of the byte array subset
               byte[] frameArray = frameBuffer.array();
-              byte[] frameCopy  = new byte[frameByteCount - 3];
-              System.arraycopy(frameArray, 0, frameCopy, 0, frameByteCount - 3);
-              ByteBuffer currentFrameBuffer = ByteBuffer.wrap(frameCopy);
+              ByteBuffer currentFrameBuffer;
+              
+              if ( fileBuffer.position() == fileBuffer.capacity() ) {
+                
+                // create a true copy of the byte array subset (no trailing 'SAT')
+                byte[] frameCopy  = new byte[frameByteCount];
+                System.arraycopy(frameArray, 0, frameCopy, 0, frameByteCount);
+                currentFrameBuffer = ByteBuffer.wrap(frameCopy);
+                
+              } else {
+                
+                // create a true copy of the byte array subset (less the 'SAT')
+                byte[] frameCopy  = new byte[frameByteCount - 3];
+                System.arraycopy(frameArray, 0, frameCopy, 0, frameByteCount - 3);
+                currentFrameBuffer = ByteBuffer.wrap(frameCopy);
+                
+              }
               
               // parse the current frame and add it to the frameMap
               
@@ -355,7 +366,6 @@ public class StorXParser {
                 // reset the position to extract the CTD sample (or message)
                 currentFrameBuffer.position(SBE_CTD_FRAME_ID.length() + 5);
                 int sampleLength = endSampleIndex - currentFrameBuffer.position();
-                logger.debug("length: " + sampleLength);
                 byte[] sampleBytes = new byte[sampleLength];
                 currentFrameBuffer.get(sampleBytes);
                 String sampleString = new String(sampleBytes, "US-ASCII");
@@ -383,9 +393,61 @@ public class StorXParser {
                 
               } else if ( frameHeader.matches(this.ISUS_DARK_FRAME_ID) ) {
                 
+                // test if the frame is complete
+                if ( currentFrameBuffer.capacity() == this.ISUS_FRAME_SIZE ) {
+                  
+                  // convert the frame buffer to a StorXFrame
+                  ISUSFrame isusFrame = new ISUSFrame(currentFrameBuffer);
+                  
+                  frameMap.put("rawFrame", currentFrameBuffer);
+                  frameMap.put("id", frameHeader);
+                  frameMap.put("type", frameHeader.substring(3,6));
+                  frameMap.put("serialNumber", isusFrame.getSerialNumber());
+                  frameMap.put("date", parseTimestamp(isusFrame.getTimestamp()));
+                  frameMap.put("parsedFrameObject", isusFrame);
+    
+                  // Add the frame to the frames map
+                  this.framesMap.add("/frames/frame", 
+                                     (BasicHierarchicalMap) frameMap.clone());
+    
+                  frameMap.removeAll("frame");
+                  currentFrameBuffer.clear();
+                  
+                } else {
+                  logger.debug(frameHeader + " frame " + frameCount + 
+                               " length is " + currentFrameBuffer.capacity() +
+                               " not " + this.ISUS_FRAME_SIZE);
+                }
+                
                 currentFrameBuffer.clear();
                 
               } else if ( frameHeader.matches(this.ISUS_LIGHT_FRAME_ID) ) {
+                
+                // test if the frame is complete
+                if ( currentFrameBuffer.capacity() == this.ISUS_FRAME_SIZE ) {
+                  
+                  // convert the frame buffer to a StorXFrame
+                  ISUSFrame isusFrame = new ISUSFrame(currentFrameBuffer);
+                  
+                  frameMap.put("rawFrame", currentFrameBuffer);
+                  frameMap.put("id", frameHeader);
+                  frameMap.put("type", frameHeader.substring(3,6));
+                  frameMap.put("serialNumber", isusFrame.getSerialNumber());
+                  frameMap.put("date", parseTimestamp(isusFrame.getTimestamp()));
+                  frameMap.put("parsedFrameObject", isusFrame);
+    
+                  // Add the frame to the frames map
+                  this.framesMap.add("/frames/frame", 
+                                     (BasicHierarchicalMap) frameMap.clone());
+    
+                  frameMap.removeAll("frame");
+                  currentFrameBuffer.clear();
+                  
+                } else {
+                  logger.debug(frameHeader + " frame " + frameCount + 
+                               " length is " + currentFrameBuffer.capacity() +
+                               " not " + this.ISUS_FRAME_SIZE);
+                }
                 
                 currentFrameBuffer.clear();
                 
@@ -400,7 +462,7 @@ public class StorXParser {
               // bytes already encountered
               frameBuffer.clear();
               frameByteCount = 0;
-              fileBuffer.position(fileBuffer.position() - 3);
+              this.fileBuffer.position(this.fileBuffer.position() - 3);
               this.state = 0; 
               break;
               
