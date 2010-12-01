@@ -443,14 +443,18 @@ public class ISUSFrame {
     return this.seaWaterDarkCounts.getFloat();
   }
 
-  /* BF4 An AF formatted field representing the average value ofall spectrometer channels, to 2 decimal places. */
+  /* BF4 An AF formatted field representing the average value of all spectrometer channels, to 2 decimal places. */
   public float getAverageWavelength() {
     return this.averageWavelength.getFloat();
   }
 
-  /* BU2 The counts of the first channel (wavelength 1) of thespectrometer. */
-  public float getChannelWavelengths() {
-    return this.channelWavelengths.getFloat();
+  /* BU2 The counts of the given channel wavelength of thespectrometer. */
+  public int getChannelWavelengthCounts(int wavelength) {
+    
+    int position = (wavelength * 2) - 2;
+    short counts = this.channelWavelengths.getShort(position);
+    
+    return new Short(counts).intValue();
   }
 
   /* BU1 Binary frames only: A check sum validates binaryframes. Satlantic’s software rejects invalid frames. */
