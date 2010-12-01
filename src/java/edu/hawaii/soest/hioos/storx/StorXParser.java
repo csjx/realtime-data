@@ -25,7 +25,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */ 
-package edu.hawaii.soest.kilonalu.ctd;
+package edu.hawaii.soest.hioos.storx;
 
 import edu.hawaii.soest.kilonalu.ctd.StorXParser;
 import edu.hawaii.soest.kilonalu.isus.ISUSFrame;
