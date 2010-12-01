@@ -41,7 +41,6 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-
 /**
  *  A class that represents a single (full) binary frame from a Satlantic 
  * ISUS V3 nitrate concentration instrument.  The class represents both light
