@@ -212,10 +212,10 @@ public class StorXFrame {
 
   /* 
    * Get the frame serial number as a String
-   * @return frameHeader - the serial number as a String
+   * @return serialNumber - the serial number as a String
    */
   public String getSerialNumber() {
-
+  
     try {
       return new String(this.serialNumber.array(), "US-ASCII");
       
@@ -224,8 +224,7 @@ public class StorXFrame {
                    uee.getMessage());
       return null;
     }
-
-
+  
   }
 
   /** 
