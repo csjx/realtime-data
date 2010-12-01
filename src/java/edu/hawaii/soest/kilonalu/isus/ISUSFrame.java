@@ -308,5 +308,189 @@ public class ISUSFrame {
     }
   }
   
+  /* 
+   * AS10 The frame header or synchronization string starts with SAT 
+   * for a Satlantic instrument, followed by threecharacters identifying 
+   * the frame type. The last four characters are the instrument serial number.
+   */
+  public String getHeader() {
+    try {
+      return new String(this.header.array(), "US-ASCII");
+    
+    } catch (UnsupportedEncodingException uee) {
+      logger.debug("The string encoding was not recognized: " +
+                   uee.getMessage());
+      return null;
+    }
+    
+  }
+
+  /* 
+   * Get the frame serial number as a String
+   * @return frameSerialNumber - the serial number as a String
+   */
+  public String getSerialNumber() {
+
+    try {
+      
+      byte[] fourBytes = new byte[4];
+      this.header.flip().position(6);
+      this.header.get(fourBytes);
+      this.header.flip();
+      return new String(fourBytes, "US-ASCII");
+      
+    } catch (UnsupportedEncodingException uee) {
+      logger.debug("The string encoding was not recognized: " +
+                   uee.getMessage());
+      return null;
+    }
+
+
+  }
+  
+  /* 
+   * BS4 The date field denotes the date at the time of the sample, using 
+   * the year and Julian day. The format is YYYYDDD. 
+   */
+  public byte[] getSampleDate() {
+    return this.sampleDate.array();
+  }
+
+  /* 
+   * BD8 The time field gives the GMT/UTC time of the sample in decimal 
+   * hours of the day. 
+   */
+  public byte[] getSampleTime() {
+    return this.sampleTime.array();
+  }
+
+  /*  in ASCII frames to 2 decimal places. */
+  public float getNitrogenConcentration() {
+    return this.nitrogenConcentration.getFloat();
+  }
+
+  /* BF4 The first auxiliary fitting result of the ISUS is reported. */
+  public float getAuxConcentration1() {
+    return this.auxConcentration1.getFloat();
+  }
+
+  /* BF4 The second auxiliary fitting result of the ISUS is reported. */
+  public float getAuxConcentration2() {
+    return this.auxConcentration2.getFloat();
+  }
+
+  /* BF4 The first auxiliary fitting result of the ISUS is reported. */
+  public float getAuxConcentration3() {
+    return this.auxConcentration3.getFloat();
+  }
+
+  /* BF4 The Root Mean Square Error of the ISUS’ concentration calculation is given, in ASCII frames to 6 decimal places. */
+  public float getRmsError() {
+    return this.rmsError.getFloat();
+  }
+
+  /* The temperature inside the housing in degrees Celcius. */
+  public float getInsideTemperature() {
+    return this.insideTemperature.getFloat();
+  }
+
+  /* The temperature of the spectrometer in degrees Celcius. */
+  public float getSpectrometerTemperature() {
+    return this.spectrometerTemperature.getFloat();
+  }
+
+  /* The temperature of the lamp in degrees Celcius. */
+  public float getLampTemperature() {
+    return this.lampTemperature.getFloat();
+  }
+
+  /* BU4 The lamp on-time of the current data acquisition inseconds. */
+  public float getLampTime() {
+    return this.lampTime.getFloat();
+  }
+
+  /* BF4 The humidity inside the instrument, given in percent. Increasing values of humidity indicate a slow leak. */
+  public float getHumidity() {
+    return this.humidity.getFloat();
+  }
+
+  /* BF4 The voltage of the lamp power supply. */
+  public float getLampVoltage12() {
+    return this.lampVoltage12.getFloat();
+  }
+
+  /* BF4 The voltage of the internal analog power supply. */
+  public float getInternalPowerVoltage5() {
+    return this.internalPowerVoltage5.getFloat();
+  }
+
+  /* BF4 The voltage of the main internal supply. */
+  public float getMainPowerVoltage() {
+    return this.mainPowerVoltage.getFloat();
+  }
+
+  /* BF4 The average Reference Channel measurement during thesample time, in ASCII mode to 2 decimal places. */
+  public float getReferenceAverage() {
+    return this.referenceAverage.getFloat();
+  }
+
+  /* BF4 The variance of the Reference Channel measurements, inASCII mode to 2 decimal places. */
+  public float getReferenceVariance() {
+    return this.referenceVariance.getFloat();
+  }
+
+  /* BF4 An AF formatted field representing the Sea-Water Darkcalculation (to 2 decimal places), in spectrometer counts. */
+  public float getSeaWaterDarkCounts() {
+    return this.seaWaterDarkCounts.getFloat();
+  }
+
+  /* BF4 An AF formatted field representing the average value ofall spectrometer channels, to 2 decimal places. */
+  public float getAverageWavelength() {
+    return this.averageWavelength.getFloat();
+  }
+
+  /* BU2 The counts of the first channel (wavelength 1) of thespectrometer. */
+  public float getChannelWavelengths() {
+    return this.channelWavelengths.getFloat();
+  }
+
+  /* BU1 Binary frames only: A check sum validates binaryframes. Satlantic’s software rejects invalid frames. */
+  public float getChecksum() {
+    return this.checksum.getFloat();
+  }
+
+  /**
+   * Get the frame timestamp field as a byte array. The timestamp format is
+   * YYYYDDD from the first 3 bytes, and HHMMSS.SSS from the last four:
+   * Example:
+   * 1E AC CC = 2010316 (year 2010, julian day 316)
+   * 09 9D 3E 20 = 16:13:00.000 (4:13 pm)
+   * @return timestamp - the frame timestamp as a byte array
+   */
+  public byte[] getTimestamp() {
+  
+    this.timestamp.flip();
+    return this.timestamp.array();
+  
+  }
+  
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
   
 }
