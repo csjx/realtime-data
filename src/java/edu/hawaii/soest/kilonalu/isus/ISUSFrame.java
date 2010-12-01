@@ -152,4 +152,161 @@ public class ISUSFrame {
   /* A ISUS frame timestamp as a ByteBuffer*/
   private ByteBuffer timestamp = ByteBuffer.allocate(7);
   
+  public ISUSFrame(ByteBuffer isusFrame) {
+    
+    this.isusFrame = isusFrame;
+    
+    // parse each of the fields from the incoming byte buffer
+    byte[] twoBytes   = new byte[2];
+    byte[] sixBytes   = new byte[6];
+    byte[] sevenBytes = new byte[7];
+    byte[] fiveTwelveBytes = new byte[512];
+    
+    try {
+      
+      // set the header field
+      this.isusFrame.get(sixBytes);
+      this.header.put(sixBytes);
+      this.isusFrame.get(twoBytes);
+      this.header.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.header.put(twoBytes);
+
+      // set the sample date field
+      this.isusFrame.get(twoBytes);
+      this.sampleDate.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.sampleDate.put(twoBytes);
+
+      // set the sample time field
+      this.isusFrame.get(sixBytes);
+      this.sampleTime.put(sixBytes);
+      this.isusFrame.get(twoBytes);
+      this.sampleTime.put(twoBytes);
+
+      // set the nitrogen concentration field
+      this.isusFrame.get(twoBytes);
+      this.nitrogenConcentration.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.nitrogenConcentration.put(twoBytes);
+
+      // set the first auxillary concentration field
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration1.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration1.put(twoBytes);
+
+      // set the second auxillary concentration field
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration2.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration2.put(twoBytes);
+
+      // set the third auxillary concentration field
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration3.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.auxConcentration3.put(twoBytes);
+
+      // set the root mean square error field
+      this.isusFrame.get(twoBytes);
+      this.rmsError.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.rmsError.put(twoBytes);
+
+      // set the inside temperature field
+      this.isusFrame.get(twoBytes);
+      this.insideTemperature.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.insideTemperature.put(twoBytes);
+
+      // set the spectrometer temperature field
+      this.isusFrame.get(twoBytes);
+      this.spectrometerTemperature.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.spectrometerTemperature.put(twoBytes);
+
+      // set the lamp temperature field
+      this.isusFrame.get(twoBytes);
+      this.lampTemperature.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.lampTemperature.put(twoBytes);
+
+      // set the lamp time field
+      this.isusFrame.get(twoBytes);
+      this.lampTime.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.lampTime.put(twoBytes);
+
+      // set the humdity field
+      this.isusFrame.get(twoBytes);
+      this.humidity.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.humidity.put(twoBytes);
+
+      // set the lamp voltage12 field
+      this.isusFrame.get(twoBytes);
+      this.lampVoltage12.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.lampVoltage12.put(twoBytes);
+
+      // set the internal power voltage5 field
+      this.isusFrame.get(twoBytes);
+      this.internalPowerVoltage5.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.internalPowerVoltage5.put(twoBytes);
+
+      // set the main power voltage field
+      this.isusFrame.get(twoBytes);
+      this.mainPowerVoltage.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.mainPowerVoltage.put(twoBytes);
+
+      // set the reference average field
+      this.isusFrame.get(twoBytes);
+      this.referenceAverage.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.referenceAverage.put(twoBytes);
+
+      // set the reference variance field
+      this.isusFrame.get(twoBytes);
+      this.referenceVariance.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.referenceVariance.put(twoBytes);
+
+      // set the sea water dark counts field
+      this.isusFrame.get(twoBytes);
+      this.seaWaterDarkCounts.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.seaWaterDarkCounts.put(twoBytes);
+
+      // set the average wavelength field
+      this.isusFrame.get(twoBytes);
+      this.averageWavelength.put(twoBytes);
+      this.isusFrame.get(twoBytes);
+      this.averageWavelength.put(twoBytes);
+
+      // set the channel wavelengths field
+      this.isusFrame.get(fiveTwelveBytes);
+      this.channelWavelengths.put(fiveTwelveBytes);
+
+      // set the checksum field
+      this.checksum.put(this.isusFrame.get());
+
+      // set the timestamp field
+      this.isusFrame.get(sixBytes);
+      this.timestamp.put(sixBytes);
+      this.timestamp.put(this.isusFrame.get());
+      
+      logger.debug(this.isusFrame.toString());
+      System.out.println("-------------------------------------------------------");
+      
+    } catch ( BufferUnderflowException bue ) {
+      
+      bue.printStackTrace();
+      
+    }
+  }
+  
+  
 }
