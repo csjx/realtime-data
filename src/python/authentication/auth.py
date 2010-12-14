@@ -32,7 +32,7 @@ import time
 import types
 import urllib, urllib2
 from cookielib import CookieJar
-from subprocess import Popen, PIPE
+#from subprocess import Popen, PIPE # not available on the Gumstix
 
 # set up logging
 logger = logging.getLogger('authentication')
@@ -132,6 +132,10 @@ class Authentication(object):
         '''Connect to the local network.'''
         
         self.logger.info('Starting the network connection.')
+        
+        # subprocess is not available on the Gumstix, use os.system()
+        os.system(self.startNetworkingCommand)
+        time.sleep(10)
         #process = Popen(self.startNetworkCommand, 
         #                stdout=PIPE, stderr=PIPE, shell=True)
         #(resultString, ErrorString) = process.communicate()
@@ -143,6 +147,10 @@ class Authentication(object):
         '''Disconnect from the local network'''
         
         self.logger.info('Stopping the network connection.')
+        
+        # subprocess is not available on the Gumstix, use os.system()
+        os.system(self.stopNetworkingCommand)
+        time.sleep(10)
         #process = Popen(self.stopNetworkCommand, 
         #                stdout=PIPE, stderr=PIPE, shell=True)
         #(resultString, ErrorString) = process.communicate()
