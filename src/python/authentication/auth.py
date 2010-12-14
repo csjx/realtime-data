@@ -101,6 +101,22 @@ class Authentication(object):
         
     
     
+    def start(self):
+        '''Start the authentication thread.'''
+        self.logger.debug('start() called.')
+        
+        # execute the authenticate() method at the given interval
+        self.authenticate(self.config.get('interval'))
+    
+    
+    def stop(self, signal=None, frame=None):
+        '''Stop the authentication thread.'''
+        self.logger.debug('stop() called.')
+        
+        isLoggedIn = self.logout(self.config)
+        sys.exit()
+    
+    
 
 
 def main():
