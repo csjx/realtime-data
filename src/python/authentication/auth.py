@@ -81,6 +81,145 @@ class Authentication(object):
     
 
 
+def main():
+    ''' Creates and runs an instance of the Authentication class'''
+    
+    logger.debug('main() called.')
+    
+    # set up the POST parameters per site:
+    # domain - the domain to be used for returning cookies
+    # testURL - the URL used for testing IP connectivity
+    # interval - the interval between tests in seconds
+    # isAuthenticated - defaults to False, set to True to bypass authentication
+    # login - the login service URL and parameters to be sent for authentication
+    # logout - the logout service URL and parameters to be sent to close the session
+    location = {
+        'Palau': {
+            'domain': None,
+            'testURL': 'http://checkip.dyndns.org',
+            'interval': 20.0,
+            'isAuthenticated': False,
+            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'palauUsername',
+                                 'password': 'palauPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
+                       'params': {'username': 'palauUsername',
+                                  'password': 'palauPassword',
+                                  'hiddenField': 'hiddenValue',
+                                 }
+                      },
+            'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
+                        'params': {'username': 'palauUsername',
+                                   'password': 'palauPassword',
+                                   'hiddenField': 'hiddenValue',
+                                  }
+                       },
+        },
+        'Micronesia': {
+            'domain': None,
+            'testURL': 'http://checkip.dyndns.org',
+            'interval': 20.0,
+            'isAuthenticated': False,
+            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'fsmUsername',
+                                 'password': 'fsmPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
+                       'params': {'username': 'fsmUsername',
+                                  'password': 'fsmPassword',
+                                  'hiddenField': 'hiddenValue',
+                                 }
+                      },
+            'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
+                        'params': {'username': 'fsmUsername',
+                                   'password': 'fsmPassword',
+                                   'hiddenField': 'hiddenValue',
+                                  }
+                       },
+        },
+        'AmericanSamoa': {
+            'domain': None,
+            'testURL': 'http://checkip.dyndns.org',
+            'interval': 20.0,
+            'isAuthenticated': False,
+            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'samoaUsername',
+                                 'password': 'samoaPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'samoaUsername',
+                                 'password': 'samoaPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'samoaUsername',
+                                 'password': 'samoaPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+        },
+        'MarshallIslands': {
+            'domain': '.ntamar.net',
+            'testURL': 'http://checkip.dyndns.org',
+            'interval': 20.0,
+            'isAuthenticated': False,
+            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'rmiUsername',
+                                 'password': 'rmiPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
+                      'params': {'username': 'rmiUsername',
+                                 'password': 'rmiPassword',
+                                 'hiddenField': 'hiddenValue',
+                                }
+                     },
+            'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
+                        'params': {'username': 'rmiUsername',
+                                   'password': 'rmiPassword',
+                                   'hiddenField': 'hiddenValue',
+                                  }
+                       },
+        },
+        'Test': {
+            'domain': '.piscoweb.org',
+            'testURL': 'http://checkip.dyndns.org',
+            'interval': 20.0,
+            'isAuthenticated': False,
+            'login': {'url': 'http://knb.ecoinformatics.org/knb/metacat',
+                      'params': {'username': 'uid=kepler,o=unaffiliated,dc=ecoinformatics,dc=org',
+                                 'password': 'knbPassword',
+                                 'action': 'login',
+                                }
+                     },
+            'logout': {'url': 'http://data.piscoweb.org/catalog/metacat',
+                       'params': {'action': 'logout',
+                                  'sessionId': None,
+                                 }
+                      },
+        },
+    }
+    
+    # create an Authentication instance
+    session = Authentication(location.get('Test'))
+    
+    # handle abrupt signals such as as Control-C, kill, etc.
+    signal.signal(signal.SIGTERM, session.stop)
+    
+    # start the authentication session
+    session.start()
+    
+
+
 # run the main method of the module if called from the command line
 if __name__ == '__main__':
     main()
