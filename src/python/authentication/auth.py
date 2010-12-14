@@ -79,6 +79,55 @@ class Authentication(object):
         self.cookieJar = CookieJar()
     
     
+    def authenticate(self, waitInterval=60):
+        ''' Establish an authenticated session with the service.'''
+        
+        try:
+            # continuously test the connection
+            while True:
+                
+                # listen for the stop event flag
+                # event.wait(waitInterval)
+                # if event.is_set():
+                #     break
+                
+                # test the network connection
+                if not self.has_connection():
+                    self.logger.info('(' + str(self.failureCount) + 
+                                      ') There is no network connection.')
+                    
+                    # test if the network downtime is past the threshhold
+                    if self.failureCount > 4:
+                        
+                        # attempt to restart the network connection
+                        self.disconnect()
+                        self.connect()
+                        self.failureCount = 0
+                        
+                else:
+                    
+                    # otherwise, test the authentication status
+                    if self.isAuthenticated == False:
+                        
+                        # logout first
+                        isLoggedIn = self.logout(self.config)
+                        
+                        # then try to login
+                        isLoggedIn = self.login(self.config)
+                        
+                        self.logger.info("Currently logged in: " + str(isLoggedIn))
+                        
+                    else:
+                        self.logger.debug('Already authenticated.')
+                        
+                # pause the thread for the given wait interval in seconds
+                time.sleep(waitInterval)
+         
+        except KeyboardInterrupt:
+            logger.info("Caught keyboard interrupt. Stopping.")
+            self.stop()
+    
+    
     def connect(self):
         '''Connect to the local network.'''
         
