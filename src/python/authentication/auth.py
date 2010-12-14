@@ -101,6 +101,42 @@ class Authentication(object):
         
     
     
+    def has_connection(self):
+        '''Check the network connection at a known URL.'''
+        
+        try:
+            # send the GET request to the test URL
+            response = urllib2.urlopen(self.testURL)
+            content = response.read()
+            ip = content.split(":")[1].split("<")[0].lstrip()
+            self.logger.info('IP address: ' + ip)
+            
+            # test if the returned IP address is valid
+            if re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip) is types.NoneType:
+                self.isConnected = False
+                self.failureCount += 1
+            
+            else:
+                self.isConnected = True
+                self.failureCount = 0
+                
+        except urllib2.URLError as (errorNumber, errorString):
+            self.logger.debug('There was an error reading the URL:' +
+              'Error({0}) message: {1}'.format(errorNumber, errorString))
+            self.isConnected = False
+            self.failureCount += 1
+            
+        except:
+            self.logger.debug('Unexpected error: ' + str(sys.exc_info()[1]))
+            self.isConnected = False
+            self.failureCount += 1
+            
+        else:
+            response.close()
+            
+        return self.isConnected
+    
+    
     def login(self, config=None):
         '''Log in to the service with the username and password.'''
         
