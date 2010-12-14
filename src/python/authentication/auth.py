@@ -79,6 +79,28 @@ class Authentication(object):
         self.cookieJar = CookieJar()
     
     
+    def connect(self):
+        '''Connect to the local network.'''
+        
+        self.logger.info('Starting the network connection.')
+        #process = Popen(self.startNetworkCommand, 
+        #                stdout=PIPE, stderr=PIPE, shell=True)
+        #(resultString, ErrorString) = process.communicate()
+        #returnCode = process.returncode
+        
+    
+    
+    def disconnect(self):
+        '''Disconnect from the local network'''
+        
+        self.logger.info('Stopping the network connection.')
+        #process = Popen(self.stopNetworkCommand, 
+        #                stdout=PIPE, stderr=PIPE, shell=True)
+        #(resultString, ErrorString) = process.communicate()
+        #returnCode = process.returncode
+        
+    
+    
 
 
 def main():
