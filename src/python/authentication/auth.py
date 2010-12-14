@@ -101,6 +101,79 @@ class Authentication(object):
         
     
     
+    def login(self, config=None):
+        '''Log in to the service with the username and password.'''
+        
+        self.logger.debug('login() called.')
+        
+        loginURL = self.config.get('login').get('url')
+        loginParams = urllib.urlencode(self.config.get('login').get('params'))
+        request = urllib2.Request(loginURL, loginParams)
+        httpHandler = urllib2.HTTPHandler()
+        cookieHandler = urllib2.HTTPCookieProcessor(self.cookieJar)
+        urlOpener = urllib2.build_opener(httpHandler, cookieHandler)
+        
+        try:
+            response = urlOpener.open(request)
+            content = response.read()
+            self.logger.info('Login: response code ' + str(response.getcode()) +
+                              ' from ' + response.geturl() + '.')
+            self.logger.debug(content)
+            self.isAuthenticated = True
+            
+        except urllib2.URLError as (errorNumber, errorString):
+            self.logger.debug('There was an error reading the URL:' +
+              'Error({0}) message: {1}'.format(errorNumber, errorString))
+            self.isAuthenticated = False
+            
+        except urllib2.HTTPError as (errorNumber, errorString):
+            self.logger.debug('There was an HTTP error:' +
+              'Error({0}) message: {1}'.format(errorNumber, errorString))
+            self.isAuthenticated = False
+            
+        except:
+            self.logger.debug('Unexpected error: ' + str(sys.exc_info()[1]))
+            self.isAuthenticated = False
+            
+        else:
+            response.close()
+        
+        return self.isAuthenticated
+    
+    
+    def logout(self, config=None):
+        '''Log out of the service.'''
+        
+        self.logger.debug('logout() called.')
+        
+        logoutURL = self.config.get('logout').get('url')
+        logoutParams = urllib.urlencode(self.config.get('logout').get('params'))
+        request = urllib2.Request(logoutURL, logoutParams)
+        httpHandler = urllib2.HTTPHandler()
+        cookieHandler = urllib2.HTTPCookieProcessor(self.cookieJar)
+        urlOpener = urllib2.build_opener(httpHandler, cookieHandler)
+        try:
+            response = urlOpener.open(request)
+            content = response.read()
+            self.logger.info('Logout: response code ' + str(response.getcode()) +
+                              ' from ' + response.geturl() + '.')
+            self.logger.debug(content)
+            
+        except urllib2.URLError as (errorNumber, errorString):
+            self.logger.debug('There was an error reading the URL:' +
+              'Error({0}) message: {1}'.format(errorNumber, errorString))
+            self.isAuthenticated = False
+            
+        except:
+            self.logger.debug('Unexpected error: ' + str(sys.exc_info()[1]))
+            self.isAuthenticated = False
+            
+        else:
+            response.close()
+        
+        return self.isAuthenticated
+    
+    
     def start(self):
         '''Start the authentication thread.'''
         self.logger.debug('start() called.')
