@@ -18,9 +18,9 @@
 '''Auth module that allows authentication to password protected WiFi services.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision: $"
-# $LastChangedDate: $
-# $LastChangedBy: $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
+# $LastChangedBy$
 
 import logging
 import logging.handlers
