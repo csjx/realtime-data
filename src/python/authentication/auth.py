@@ -44,10 +44,10 @@ logHandler   = logging.handlers.RotatingFileHandler(
                       5)        # rotate up to 5 files
 
 logHandler.setFormatter(logFormatter)
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(logFormatter)
 logger.addHandler(logHandler)     # send to log file
-logger.addHandler(consoleHandler) # send to console
+#consoleHandler = logging.StreamHandler()
+#consoleHandler.setFormatter(logFormatter)
+#logger.addHandler(consoleHandler) # send to console
 logger.setLevel(logging.INFO)
 
 class Authentication(object):
