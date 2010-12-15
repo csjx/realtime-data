@@ -73,9 +73,11 @@ class Authentication(object):
         self.failureCount = 0
         self.config = config
         self.testURL = self.config.get('testURL')
+        self.isConnected = False
         self.isAuthenticated = self.config.get('isAuthenticated')
         self.startNetworkCommand = '/etc/init.d/networking start'
         self.stopNetworkCommand = '/etc/init.d/networking stop'
+        self.checkIPCommand = '/sbin/ifconfig'
         self.cookieJar = CookieJar()
     
     
@@ -153,21 +155,60 @@ class Authentication(object):
     def has_connection(self):
         '''Check the network connection at a known URL.'''
         
+        # the IP address pattern needed for a match
+        pattern = '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+        
         try:
-            # send the GET request to the test URL
-            response = urllib2.urlopen(self.testURL)
-            content = response.read()
-            ip = content.split(":")[1].split("<")[0].lstrip()
-            self.logger.info('IP address: ' + ip)
             
-            # test if the returned IP address is valid
-            if re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip) is types.NoneType:
-                self.isConnected = False
-                self.failureCount += 1
+            # first check for a local IP address
+            if self.isConnected == False:
+                
+                # send the check ip command
+                process = Popen(self.checkIPCommand + ' ' + 
+                                self.config.get('interface'),
+                                stdout=PIPE, stderr=PIPE, shell=True)
+                (resultString, ErrorString) = process.communicate()
+                returnCode = process.returncode
+                
+                lanIP = 'no-ip-yet'
+                
+                # extract the local IP if there is one
+                for line in resultString.split("\n"):
+                    self.logger.debug(line)
+                    if re.match('^inet ', line.lstrip()):
+                        lanIP = line.lstrip().split(" ")[1].split(":")[1]
+                
+                self.logger.info('LAN IP address: ' + lanIP)
+                
+                # test for the correct IP address pattern
+                self.logger.debug(re.match(pattern , lanIP))
+                
+                if re.match(pattern , lanIP) == None:
+                    self.isConnected = False
+                    self.failureCount += 1
+                    return self.isConnected
+                    
+                else:
+                    self.isConnected = True
+                    self.failureCount = 0
+                    return self.isConnected
             
             else:
-                self.isConnected = True
-                self.failureCount = 0
+                
+                # we are connected, send the GET request to the test URL
+                response = urllib2.urlopen(self.testURL)
+                content = response.read()
+                wanIP = content.split(":")[1].split("<")[0].lstrip()
+                self.logger.info('WAN IP address: ' + wanIP)
+                
+                # test if the returned WAN IP address is valid
+                if re.match(pattern, wanIP) is types.NoneType:
+                    self.isConnected = False
+                    self.failureCount += 1
+                
+                else:
+                    self.isConnected = True
+                    self.failureCount = 0
                 
         except urllib2.URLError as (errorNumber, errorString):
             self.logger.debug('There was an error reading the URL:' +
@@ -283,6 +324,7 @@ def main():
     logger.debug('main() called.')
     
     # set up the POST parameters per site:
+    # interface - the network interface on the device to be used
     # domain - the domain to be used for returning cookies
     # testURL - the URL used for testing IP connectivity
     # interval - the interval between tests in seconds
@@ -291,6 +333,7 @@ def main():
     # logout - the logout service URL and parameters to be sent to close the session
     location = {
         'Palau': {
+            'interface': 'wlan0',
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
@@ -315,6 +358,7 @@ def main():
                        },
         },
         'Micronesia': {
+            'interface': 'wlan0',
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
@@ -339,6 +383,7 @@ def main():
                        },
         },
         'AmericanSamoa': {
+            'interface': 'wlan0',
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
@@ -363,6 +408,7 @@ def main():
                      },
         },
         'MarshallIslands': {
+            'interface': 'wlan0',
             'domain': '.ntamar.net',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
@@ -387,6 +433,7 @@ def main():
                        },
         },
         'Test': {
+            'interface': 'wlan0',
             'domain': '.piscoweb.org',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
