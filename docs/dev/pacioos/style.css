@@ -1,0 +1,22 @@
+body {
+  color: #252525;
+  font-family: "Myriad Pro", Myriad, Verdana, Arial, sans-serif;
+  font-size: 1em;
+  padding: 10px;
+}
+
+blockquote {
+  border: 1px solid #999999;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  padding: 10px 10px 0px 10px;
+  background-color: #E3E3E3;
+  font-family: Courier;
+  font-size: 1em;
+}
+
+img {
+    width: 50%;
+    border: 1px solid #BFBFBF;
+}
