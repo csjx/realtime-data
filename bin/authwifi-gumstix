@@ -5,7 +5,6 @@
 #
 
 if [ ! "${BBL_HOME}" ]; then BBL_HOME=/usr/local/bbl/trunk; fi
-WIFI_LOG='/var/log/wifi/wifi.log' # /var/log is volatile on OE/Gumstix
 WIFI_PIDFILE='/var/run/wifi.pid';
 
 ################################################################################
@@ -20,9 +19,9 @@ start() {
    fi
    
    # note rbnb.jar is found in the bbl lib directory
-   $BBL_HOME/bin/getWifiAuth.sh > ${WIFI_LOG} 2>&1 &
+   python $BBL_HOME/bin/auth.py &
    
-   WIFI_PID=$(ps -ef | grep WifiAuth | tr -s " " " " | cut -d" " -f2);
+   WIFI_PID=$(ps -ef | grep auth.py | tr -s " " " " | cut -d" " -f2);
    echo ${WIFI_PID} > ${WIFI_PIDFILE};
 
 }
@@ -37,15 +36,15 @@ stop() {
      
 case "$1" in
    'start')
-       echo "Starting the RBNB server"
+       echo "Starting the WiFi authentication service"
        start
        ;;
    'stop')
-       echo "Stopping the RBNB server"
+       echo "Stopping the WiFi authentication service"
        stop
        ;;
    'restart')
-       echo "Restarting the RBNB server"
+       echo "Restarting the WiFi authentication service"
        stop
        start
        ;;

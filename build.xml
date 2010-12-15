@@ -320,7 +320,12 @@
     <copy todir="${gumstix.dir}/bbl/trunk/bin">
       <fileset dir="./bin"   
                excludes="**/.svn* **/CVS* **/.#*" 
-               includes="*CTDX* rbnb-gumstix getWifiAuth.sh authwifi-gumstix"/>
+               includes="*CTDX* rbnb-gumstix authwifi-gumstix"/>
+    </copy>
+    <copy todir="${gumstix.dir}/bbl/trunk/bin">
+      <fileset dir="./src/python/authentication"   
+               excludes="**/.svn* **/CVS* **/.#*" 
+               includes="*py"/>
     </copy>
     <copy todir="${gumstix.dir}/bbl/trunk" file = "build.xml" />
     <delete dir="${gumstix.dir}/bbl/trunk/build/docs" />
