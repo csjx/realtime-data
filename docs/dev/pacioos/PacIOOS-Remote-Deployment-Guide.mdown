@@ -213,7 +213,7 @@ Set up the ddclient service in run level 3 with the script provided.
 
 ## 5. Set up WiFi authentication
 
-Certain deployments will require username and password-based authentication if the upstream network doesn't support MAC-based authentication.  So far, only American Samoa supports it.  For the others, install the *authwifi* service script found in the bin directory of the BBL Subversion repository.  Then, customize the getWifiAuth.sh script for the particular site's network login.
+Certain deployments will require username and password-based authentication if the upstream network doesn't support MAC-based authentication.  So far, only American Samoa supports it.  For the others, install the *authwifi* service script found in the bin directory of the BBL Subversion repository.  Then, customize the Authentication.main() in auth.py for the particular site's network login and other parameters.
 
 ## 6. Connecting to the VPN server
 
