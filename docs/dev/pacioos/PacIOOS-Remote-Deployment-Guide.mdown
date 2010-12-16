@@ -37,20 +37,6 @@ Installing software onto the Gumstix will require a number of software downloads
 
 The [FTDI Driver](http://ftdichip.com/FTDrivers.htm) is installed on your workstation in order to connect to the Gumstix serial console via USB. Choose the right driver for your operating system.
 
-### 3.3. Install third party software
-
-3.3.1 To function correctly and to have standard command line conveniences, install the following opkg software packages on the Gumstix:
-
-  > cron, jamvm, lib-rxtx-jni, lsof, minicom, ntp-bin, openvpn,  
-  > perl-module-strict, perl-module-exporter-heavy, perl-module-sys-hostname,  
-  > perl-module-xsloader, perl-module-io-socket, perl-module-io,  
-  > perl-module-integer, perl-module-io-select, python-logging,  
-  > python-subprocess, screen, vim-syntax
-
-3.3.2 Build and add the latest *pacioos-gumstix.tar.gz* distribution to */usr/local/bbl* from the [BBL Subversion repository](http://bbl.ancl.hawaii.edu/wsvn).
-
-3.3.3 From [ddclient](http://sourceforge.net/apps/trac/ddclient) on SourceForge, download, install, and configure the ddclient software. See below.
-
 ## 4. Gumstix Installation
 
 The OpenEmbedded Linux operating system needs to be installed onto the 8GB microSD card such that it is bootable.
@@ -87,21 +73,36 @@ Once the microSD card is imaged, boot the Gumstix off of it.  Connect via USB se
 
 Then apply power to the Gumstix.  
 
-### 4.3 Set up the operating system and services
+### 4.3. Install third party software
 
-4.3.1. Change the root password.  
-4.3.2. Set the system to boot into runlevel 3.  
-4.3.3. Add in the *pacioos* user, which will run the instrument driver software.  
-4.3.4. Change syslog.conf to "file" rather than "buffer".  
-4.3.5. Networking depends on a small change to the *hosts* file.  Add *overo* to the localhost line:  
+4.3.1 To function correctly and to have standard command line conveniences, install the following opkg software packages on the Gumstix:
+
+  > cron, jamvm, lib-rxtx-jni, lsof, minicom, ntp-bin, openvpn,  
+  > perl-module-strict, perl-module-exporter-heavy, perl-module-sys-hostname,  
+  > perl-module-xsloader, perl-module-io-socket, perl-module-io,  
+  > perl-module-integer, perl-module-io-select, python-logging,  
+  > python-subprocess, screen, vim-syntax
+
+4.3.2 Build and add the latest *pacioos-gumstix.tar.gz* distribution to */usr/local/bbl* from the [BBL Subversion repository](http://bbl.ancl.hawaii.edu/wsvn).
+
+4.3.3 From [ddclient](http://sourceforge.net/apps/trac/ddclient) on SourceForge, download, install, and configure the ddclient software. See below.
+
+
+### 4.4 Set up the operating system and services
+
+4.4.1. Change the root password.  
+4.4.2. Set the system to boot into runlevel 3.  
+4.4.3. Add in the *pacioos* user, which will run the instrument driver software.  
+4.4.4. Change syslog.conf to "file" rather than "buffer".  
+4.4.5. Networking depends on a small change to the *hosts* file.  Add *overo* to the localhost line:  
 
   > 127.0.0.1       overo   localhost.localdomain           localhost
 
-4.3.6. Add *networking* and *openvpn* to run level 3 and remove the following services since they aren't needed:  
+4.4.6. Add *networking* and *openvpn* to run level 3 and remove the following services since they aren't needed:  
 
   > apmd, avahi-daemon, bluetooth, caps, NetworkManager, samba  
   
-4.3.7. Configure networking over the 802.11b/g Wifi interface *wlan0*.  The exact setup will differ per site depending on the local network settings.  Some require WEP or WPA authentication, while others are open.  
+4.4.7. Configure networking over the 802.11b/g Wifi interface *wlan0*.  The exact setup will differ per site depending on the local network settings.  Some require WEP or WPA authentication, while others are open.  
 
   For open networks:  
   > auto lo  
@@ -156,11 +157,11 @@ Then apply power to the Gumstix.
 
   Once the configuration is finished, restart the networking service to bring up the WiFi interface.  
 
-4.3.8. Add the following repository to the opkg configuration file:  
+4.4.8. Add the following repository to the opkg configuration file:  
 
   > http://www.angstrom-distribution.com/feeds/2008/ipk/glibc/armv7a/base  
 
-4.3.9 Set up the timezone files correctly for Pacific time zones.  First, download the Pacific timezone files from the NIH FTP site:  
+4.4.9 Set up the timezone files correctly for Pacific time zones.  First, download the Pacific timezone files from the NIH FTP site:  
 
   >  elsie.nci.nih.gov/pub/tzdata*.tar.gz  
 
@@ -168,7 +169,7 @@ Open the archive and use the standard Linux timezone compiler to compile the zon
 
 Save the old */etc/localtime* file and symbolically link to the appropriate new zone file.  
 
-4.3.10. Create the following directories, which will be used for the data streaming, archiving, and logging. Be sure that they are writable by the *pacioos* user and group.  
+4.4.10. Create the following directories, which will be used for the data streaming, archiving, and logging. Be sure that they are writable by the *pacioos* user and group.  
   
   > /usr/local/rbnb/log  
   > /var/log/rbnb (symbolically link to above)  
@@ -182,16 +183,16 @@ Save the old */etc/localtime* file and symbolically link to the appropriate new 
   > /data/spool  
   > /dev/net  
 
-4.3.11. Set up NTP now that the new zone files are in place. First, stop the *ntpd* service and then add *time.apple.com* or any other reliable NTP server to the NTP configuration file.  Restart the service.  
+4.4.11. Set up NTP now that the new zone files are in place. First, stop the *ntpd* service and then add *time.apple.com* or any other reliable NTP server to the NTP configuration file.  Restart the service.  
 
-4.3.12.  Prepare the OS for openVPN connections by creating the correct device files and loading the modules:  
+4.4.12.  Prepare the OS for openVPN connections by creating the correct device files and loading the modules:  
 
   > $ sudo mknod /dev/net/tun c 10 120  
   > $ sudo modprobe tun  
   
   Add the *tun* module to the *modules* configuration file.  
 
-4.3.13. Set up the dynamic DNS client.  First, install the ddclient download into */usr/local/dyndns*.  Copy the configuration file provided into the *ddclient.conf* file.  Configure the client to use web IP detection with the *pacioos* user and password:  
+4.4.13. Set up the dynamic DNS client.  First, install the ddclient download into */usr/local/dyndns*.  Copy the configuration file provided into the *ddclient.conf* file.  Configure the client to use web IP detection with the *pacioos* user and password:  
 
   > pid=/var/run/ddclient.pid  
   > ssl=no  
