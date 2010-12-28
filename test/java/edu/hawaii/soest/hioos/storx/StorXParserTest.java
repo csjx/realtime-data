@@ -25,9 +25,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */ 
 
-package edu.hawaii.soest.kilonalu.storx;
+package edu.hawaii.soest.hioos.storx;
 
-import edu.hawaii.soest.kilonalu.storx.StorXParser;
+import edu.hawaii.soest.hioos.storx.StorXParser;
 
 import java.io.InputStream;
 import java.io.IOException;
