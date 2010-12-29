@@ -2147,6 +2147,20 @@ public class CTDSource extends RBNBSource {
   }
 
   /**
+   * A method that starts the connection with the RBNB DataTurbine
+   */
+  public boolean startConnection() {
+    return connect();
+  }
+   
+  /**
+   * A method that stops the connection with the RBNB DataTurbine
+   */
+  public void stopConnection() {
+    disconnect();
+  }
+   
+  /**
    * A method that gets the log configuration file location
    *
    * @return logConfigurationFile  the log configuration file location
