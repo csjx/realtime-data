@@ -29,6 +29,7 @@ package edu.hawaii.soest.hioos.storx;
 
 import edu.hawaii.soest.hioos.storx.StorXParser;
 import edu.hawaii.soest.hioos.isus.ISUSFrame;
+import edu.hawaii.soest.kilonalu.ctd.CTDFrame;
 
 import java.io.File; 
 import java.io.FileInputStream; 
@@ -91,7 +92,7 @@ public class StorXParser {
    * frames/frame/type              - (String: 'SBE')
    * frames/frame/serialNumber      - (String: '0207')
    * frames/frame/date              - (Date object)
-   * frames/frame/parsedFrameObject - (ISUSFrameParser,CTDFrameParser objects)
+   * frames/frame/parsedFrameObject - (StorXFrame, ISUSFrame, CTDFrame objects)
   */
   private BasicHierarchicalMap framesMap = new BasicHierarchicalMap();
   
@@ -352,41 +353,29 @@ public class StorXParser {
                 
               } else if ( frameHeader.matches(this.SBE_CTD_FRAME_ID) ) {
                 
-                // move to the serial number field and extract it
-                currentFrameBuffer.position(6);
-                byte[] fourBytes = new byte[4];
-                currentFrameBuffer.get(fourBytes);
-                String serialNumber = new String(fourBytes, "US-ASCII");
-                // move to the timestamp field and extract it
-                currentFrameBuffer.position(currentFrameBuffer.capacity() - 7);
-                int endSampleIndex = currentFrameBuffer.position();
-                byte[] timestamp = new byte[7];
-                currentFrameBuffer.get(timestamp);
-                
-                // reset the position to extract the CTD sample (or message)
-                currentFrameBuffer.position(SBE_CTD_FRAME_ID.length() + 5);
-                int sampleLength = endSampleIndex - currentFrameBuffer.position();
-                byte[] sampleBytes = new byte[sampleLength];
-                currentFrameBuffer.get(sampleBytes);
-                String sampleString = new String(sampleBytes, "US-ASCII");
+                // convert the frame buffer to a CTDFrame
+                CTDFrame ctdFrame = new CTDFrame(currentFrameBuffer);
                 
                 // add in a sample if it matches a general data sample pattern
-                if ( ! sampleString.matches(" [0-9].*[0-9]\r\n")) {
-                  sampleString = null;
+                if ( ctdFrame.getSample().matches(" [0-9].*[0-9]\r\n")) {
                   
+                  // extract the sample bytes from the frame
+                  frameMap.put("rawFrame", currentFrameBuffer);
+                  frameMap.put("id", frameHeader);
+                  frameMap.put("type", frameHeader.substring(3,6));
+                  frameMap.put("serialNumber", ctdFrame.getSerialNumber());
+                  frameMap.put("date", parseTimestamp(ctdFrame.getTimestamp()));
+                  frameMap.put("parsedFrameObject", ctdFrame);
+
+                  // Add the frame to the frames map
+                  this.framesMap.add("/frames/frame", 
+                                     (BasicHierarchicalMap) frameMap.clone());
+                  
+                } else {
+                  logger.info("This CTD frame is not a data sample." +
+                              " Skipping it. The string is: " +
+                              ctdFrame.getSample());
                 }
-                
-                // extract the sample bytes from the frame
-                frameMap.put("rawFrame", currentFrameBuffer);
-                frameMap.put("id", frameHeader);
-                frameMap.put("type", frameHeader.substring(3,6));
-                frameMap.put("serialNumber", serialNumber);
-                frameMap.put("date", parseTimestamp(timestamp));
-                frameMap.put("parsedFrameObject", sampleString);
-                
-                // Add the frame to the frames map
-                this.framesMap.add("/frames/frame", 
-                                   (BasicHierarchicalMap) frameMap.clone());
                 
                 frameMap.removeAll("frame");
                 currentFrameBuffer.clear();
