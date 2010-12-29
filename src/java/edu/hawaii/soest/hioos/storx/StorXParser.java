@@ -181,10 +181,10 @@ public class StorXParser {
   /**
    * A method that returns the frames map as a hierarchical map
    *
-   * @return frmaesMap -  the frames stored in the hierarchical map
+   * @return framesMap -  the frames stored in the hierarchical map
    */
-  public String[] getFramesMap() {
-    return new String[1];
+  public HierarchicalMap getFramesMap() {
+    return this.framesMap;
       
   }
   
