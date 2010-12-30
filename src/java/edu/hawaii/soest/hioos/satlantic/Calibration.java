@@ -7,10 +7,10 @@
  *
  *   Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy: $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,40 @@ import java.io.IOException;
  */
 public class Calibration {
   
+  /* The default log configuration file location */
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+
+  /* The log configuration file location */
+  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
+  
+  /* The Logger instance used to log system messages */
+  private static Logger logger = Logger.getLogger(Calibration.class);
+
+  
   /*
    * Constructor: Creates an empty Calibration instance
    */
   public Calibration() {
     
   }
+  
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
+  
 }
