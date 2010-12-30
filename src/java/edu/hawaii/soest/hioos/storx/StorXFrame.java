@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
 
+import org.apache.commons.codec.binary.Hex;
+
 import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
@@ -228,83 +230,130 @@ public class StorXFrame {
   }
 
   /** 
-   * Get the frame analog channel one field as a byte array
-   * @return analogChannelone - the analog channel one as a byte array
+   * Get the frame analog channel one field as an integer
+   * @return analogChannelone - the analog channel one as an integer
    */
-  public byte[] getAnalogChannelOne() {
+  public int getAnalogChannelOne() {
 
-    return this.analogChannelOne.array();
+    this.analogChannelOne.flip();
+    
+    byte byteOne = this.analogChannelOne.get();
+    byte byteTwo = this.analogChannelOne.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel two field as a byte array
-   * @return analogChannelTwo - the analog channel two as a byte array
+   * Get the frame analog channel two field as an integer
+   * @return analogChannelTwo - the analog channel two as an integer
    */
-  public byte[] getAnalogChannelTwo() {
+  public int getAnalogChannelTwo() {
 
-    return this.analogChannelTwo.array();
+    this.analogChannelTwo.flip();
+    
+    byte byteOne = this.analogChannelTwo.get();
+    byte byteTwo = this.analogChannelTwo.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel three field as a byte array
-   * @return analogChannelThree - the analog channel three as a byte array
+   * Get the frame analog channel three field as an integer
+   * @return analogChannelThree - the analog channel three as an integer
    */
-  public byte[] getAnalogChannelThree() {
+  public int getAnalogChannelThree() {
 
-    return this.analogChannelThree.array();
+    this.analogChannelThree.flip();
+    
+    byte byteOne = this.analogChannelThree.get();
+    byte byteTwo = this.analogChannelThree.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel four field as a byte array
-   * @return analogChannelFour - the analog channel four as a byte array
+   * Get the frame analog channel four field as an integer
+   * @return analogChannelFour - the analog channel four as an integer
    */
-  public byte[] getAnalogChannelFour() {
+  public int getAnalogChannelFour() {
 
-    return this.analogChannelFour.array();
+    this.analogChannelFour.flip();
+    
+    byte byteOne = this.analogChannelFour.get();
+    byte byteTwo = this.analogChannelFour.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel five field as a byte array
-   * @return analogChannelFive - the analog channel five as a byte array
+   * Get the frame analog channel five field as an integer
+   * @return analogChannelFive - the analog channel five as an integer
    */
-  public byte[] getAnalogChannelFive() {
+  public int getAnalogChannelFive() {
 
-    return this.analogChannelFive.array();
+    this.analogChannelFive.flip();
+    
+    byte byteOne = this.analogChannelFive.get();
+    byte byteTwo = this.analogChannelFive.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel six field as a byte array
-   * @return analogChannelSix - the analog channel six as a byte array
+   * Get the frame analog channel six field as an integer
+   * @return analogChannelSix - the analog channel six as an integer
    */
-  public byte[] getAnalogChannelSix() {
+  public int getAnalogChannelSix() {
 
-    return this.analogChannelSix.array();
+    this.analogChannelSix.flip();
+    
+    byte byteOne = this.analogChannelSix.get();
+    byte byteTwo = this.analogChannelSix.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /** 
-   * Get the frame analog channel seven field as a byte array
-   * @return analogChannelSeven - the analog channel seven as a byte array
+   * Get the frame analog channel seven field as an integer
+   * @return analogChannelSeven - the analog channel seven as an integer
    */
-  public byte[] getAnalogChannelSeven() {
+  public int getAnalogChannelSeven() {
 
-    return this.analogChannelSeven.array();
+    this.analogChannelSeven.flip();
+    
+    byte byteOne = this.analogChannelSeven.get();
+    byte byteTwo = this.analogChannelSeven.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
   /**
-   * Get the frame internal voltage field as a float
-   * @return internalVoltage - the internal voltage as a float
+   * Get the frame internal voltage field as an integer
+   * @return internalVoltage - the internal voltage as an integer
    */
-  public float getInternalVoltage() {
+  public int getInternalVoltage() {
 
     this.internalVoltage.flip();
-    return this.internalVoltage.getFloat();
+    
+    byte byteOne = this.internalVoltage.get();
+    byte byteTwo = this.internalVoltage.get();
+    int value = (int) (((byteOne & 0xFF) << 8) | (byteTwo & 0xFF));
+    
+    return value;
 
   }
 
