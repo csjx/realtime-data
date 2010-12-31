@@ -38,6 +38,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 
+import org.dhmp.util.HierarchicalMap;
+import org.dhmp.util.BasicHierarchicalMap;
 
 /*
  * A calibration object that models the Satlantic 'Instrument File Standard'
@@ -60,6 +62,13 @@ public class Calibration {
   
   /* The URL of the calibration file */
   private String calibrationURL;
+  
+  /* A string array of the calibration file lines */
+  private String[] calibrationLines;
+  
+  /* A hierarchical map of the information found in the calibration file */
+  private BasicHierarchicalMap calibrationMap;
+  
   /*
    * Constructor: Creates an empty Calibration instance
    */
@@ -85,12 +94,33 @@ public class Calibration {
       
       // and read each line
       String line;
-      
+      int count = 0;
       while ((line = inputReader.readLine()) != null) {
         
-        // parse each line of the file
+        // extract each line of the file
+        this.calibrationLines[count] = line;
+        count++;
         
-      }
+      } // end while()
+      
+      // parse non-empty lines or those without comments
+      for (int i=0; i < this.calibrationLines.length; i++) {
+        line = calibrationLines[i];
+        
+        if ( !(line.matches("^#") || line.matches("^ *$")) ) {
+
+          String[] parts     = line.split(" ");
+          String type        = parts[0];
+          String id          = parts[1];
+          String units       = parts[2];
+          String fieldLength = parts[3];
+          String dataType    = parts[4];
+          String calLines    = parts[5];
+          String fitType     = parts[6];
+
+        } // end if()
+        
+      } // end for()
       
     } catch (IOException ioe) {
       logger.info("There was a problem reading the calibration file " +
