@@ -28,10 +28,16 @@
  */ 
 package edu.hawaii.soest.hioos.satlantic;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+
+import java.net.URL;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+
 
 /*
  * A calibration object that models the Satlantic 'Instrument File Standard'
@@ -45,14 +51,15 @@ public class Calibration {
   
   /* The default log configuration file location */
   private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
+  
   /* The log configuration file location */
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
   private static Logger logger = Logger.getLogger(Calibration.class);
-
   
+  /* The URL of the calibration file */
+  private String calibrationURL;
   /*
    * Constructor: Creates an empty Calibration instance
    */
@@ -60,6 +67,41 @@ public class Calibration {
     
   }
   
+  /*
+   * A method that parses a Satlantic calibration or telemetry definition file.
+   */
+  public boolean parse(String calibrationURL) {
+    
+    this.calibrationURL = calibrationURL;
+    boolean success = false;
+    
+    try {
+    
+      // open the calibration URL for reading
+      URL calibrationFile = new URL(this.calibrationURL);
+      BufferedReader inputReader = new BufferedReader(
+                                   new InputStreamReader(
+                                   calibrationFile.openStream()));
+      
+      // and read each line
+      String line;
+      
+      while ((line = inputReader.readLine()) != null) {
+        
+        // parse each line of the file
+        
+      }
+      
+    } catch (IOException ioe) {
+      logger.info("There was a problem reading the calibration file " +
+                  "from " + this.calibrationURL + " .");
+      logger.debug("The error message was: " + ioe.getMessage());
+      
+    } // end try/catch
+    
+    return success;
+  }
+   
   /**
    * A method that gets the log configuration file location
    *
