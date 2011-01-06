@@ -434,7 +434,7 @@ def main():
         },
         'Test': {
             'interface': 'wlan0',
-            'domain': '.piscoweb.org',
+            'domain': '.ecoinformatics.org',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
             'isAuthenticated': False,
