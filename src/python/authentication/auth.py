@@ -444,7 +444,7 @@ def main():
                                  'action': 'login',
                                 }
                      },
-            'logout': {'url': 'http://data.ecoinformatics.org/knb/metacat',
+            'logout': {'url': 'http://knb.ecoinformatics.org/knb/metacat',
                        'params': {'action': 'logout',
                                   'sessionId': None,
                                  }
