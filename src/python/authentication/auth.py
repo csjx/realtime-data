@@ -363,23 +363,32 @@ def main():
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
             'isAuthenticated': False,
-            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
-                      'params': {'username': 'fsmUsername',
+            'login': {'url': 'http://10.22.0.1:5788/fs_login.php',
+                      'params': {'name': 'loginForm',
+                                 'username': 'fsmUsername',
                                  'password': 'fsmPassword',
-                                 'hiddenField': 'hiddenValue',
+                                 'ok_url': 'redirect.php',
+                                 'fail_url': 'login_form.php',
+                                 'zero_url': 'cart.php',
+                                 'cart_url': 'cart.php'
                                 }
                      },
-            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
-                       'params': {'username': 'fsmUsername',
-                                  'password': 'fsmPassword',
-                                  'hiddenField': 'hiddenValue',
+            'logout': {'url': 'http://10.22.0.1/disconnect.php',
+                       'params': {'name': 'logoutForm'
                                  }
                       },
             'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
-                        'params': {'username': 'fsmUsername',
-                                   'password': 'fsmPassword',
-                                   'hiddenField': 'hiddenValue',
-                                  }
+                         'params': {'name': 'forcelogout',
+                                    'username': 'fsmUsername',
+                                    'password': 'fsmPassword',
+                                    'sess_patronsoft1': '',
+                                    'sess_patronsoft2': '',
+                                    'ok_url': 'redirect.php',
+                                    'fail_url': 'login_form.php',
+                                    'zero_url': 'cart.php',
+                                    'cart_url': 'cart.php',
+                                    'logout': 'true'
+                                   }
                        },
         },
         'AmericanSamoa': {
