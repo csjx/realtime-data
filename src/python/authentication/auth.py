@@ -378,17 +378,17 @@ def main():
                                  }
                       },
             'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
-                         'params': {'name': 'forcelogout',
-                                    'username': 'fsmUsername',
-                                    'password': 'fsmPassword',
-                                    'sess_patronsoft1': '',
-                                    'sess_patronsoft2': '',
-                                    'ok_url': 'redirect.php',
-                                    'fail_url': 'login_form.php',
-                                    'zero_url': 'cart.php',
-                                    'cart_url': 'cart.php',
-                                    'logout': 'true'
-                                   }
+                        'params': {'name': 'forcelogout',
+                                   'username': 'fsmUsername',
+                                   'password': 'fsmPassword',
+                                   'sess_patronsoft1': '',
+                                   'sess_patronsoft2': '',
+                                   'ok_url': 'redirect.php',
+                                   'fail_url': 'login_form.php',
+                                   'zero_url': 'cart.php',
+                                   'cart_url': 'cart.php',
+                                   'logout': 'true'
+                                  }
                        },
         },
         'AmericanSamoa': {
@@ -422,22 +422,23 @@ def main():
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
             'isAuthenticated': False,
-            'login': {'url': 'http://10.22.0.1:5788/login_form.php',
-                      'params': {'username': 'rmiUsername',
+            'login': {'url': 'http://scc.ntamar.net/minta/eup/login',
+                      'params': {'login_id': 'rmiUsername',
                                  'password': 'rmiPassword',
-                                 'hiddenField': 'hiddenValue',
+                                 'authsys_id': '1',
+                                 'portal_id': '7',
                                 }
                      },
-            'logout': {'url': 'http://10.22.0.1:5788/login_form.php',
-                      'params': {'username': 'rmiUsername',
+            'logout': {'url': 'http://scc.ntamar.net/minta/eup/login',
+                      'params': {'login_id': 'rmiUsername',
                                  'password': 'rmiPassword',
-                                 'hiddenField': 'hiddenValue',
+                                 'hiddenField': 'hiddenValue'
                                 }
                      },
-            'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
-                        'params': {'username': 'rmiUsername',
+            'relogin': {'url': 'http://scc.ntamar.net/minta/eup/login',
+                        'params': {'login_id': 'rmiUsername',
                                    'password': 'rmiPassword',
-                                   'hiddenField': 'hiddenValue',
+                                   'hiddenField': 'hiddenValue'
                                   }
                        },
         },
