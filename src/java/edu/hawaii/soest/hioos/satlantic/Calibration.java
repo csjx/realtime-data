@@ -34,6 +34,11 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.text.ParseException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -63,26 +68,59 @@ public class Calibration {
   /* The URL of the calibration file */
   private String calibrationURL;
   
-  /* A string array of the calibration file lines */
-  private String[] calibrationLines;
+  /* An array list of the calibration file lines */
+  private ArrayList<String> calibrationLines;
   
-  /* A hierarchical map of the information found in the calibration file */
+  /* 
+   * A hierarchical map of the information found in the calibration file. 
+   * The map structure is:
+   * /calibrations/calibration/type        - the sensor calibration type (String)
+   * /calibrations/calibration/id          - the sensor calibration id (String)
+   * /calibrations/calibration/units       - the sensor calibration units (String)
+   * /calibrations/calibration/fieldLength - the sensor calibration field length (Integer)
+   * /calibrations/calibration/dataType    - the sensor calibration data type (String)
+   * /calibrations/calibration/coeffLines  - the sensor calibration coefficient lines (Integer)
+   * /calibrations/calibration/fitType     - the sensor calibration fit type (String)
+   * /calibrations/calibration/coefficient - a sensor calibration coefficient (Double)
+   *
+   * Calibration definitions can repeat, and are loaded into the structure in
+   * the order they are listed in the .cal or .tdf file that has been parsed.
+   */
+  private BasicHierarchicalMap calibrationsMap;
+  
+  /**
+   * A single node in the calibrationsMap used to build the full map above
+   */
   private BasicHierarchicalMap calibrationMap;
-  
-  /*
+   
+  /**
    * Constructor: Creates an empty Calibration instance
    */
   public Calibration() {
     
   }
   
-  /*
+  /**
    * A method that parses a Satlantic calibration or telemetry definition file.
    */
-  public boolean parse(String calibrationURL) {
+  public boolean parse(String calibrationURL) throws ParseException {
     
-    this.calibrationURL = calibrationURL;
-    boolean success = false;
+    this.calibrationURL  = calibrationURL;
+    this.calibrationsMap = new BasicHierarchicalMap();
+    
+    int count       = 0;     // track lines in the file
+    int coeffCount  = 0;     // track current number of coefficient lines
+    boolean success = false; // track parsing success
+    String line;             // current line being parsed
+    String[] parts;          // array of current line fields
+    String type;             // placeholder calibration field
+    String id;               // placeholder calibration field
+    String units;            // placeholder calibration field
+    Integer fieldLength;     // placeholder calibration field
+    String dataType;         // placeholder calibration field
+    Integer coeffLines;      // placeholder calibration field
+    String fitType;          // placeholder calibration field
+    Double coefficient;      // placeholder calibration field
     
     try {
     
@@ -92,42 +130,103 @@ public class Calibration {
                                    new InputStreamReader(
                                    calibrationFile.openStream()));
       
+      this.calibrationLines = new ArrayList<String>();
       // and read each line
-      String line;
-      int count = 0;
       while ((line = inputReader.readLine()) != null) {
         
         // extract each line of the file
-        this.calibrationLines[count] = line;
+        logger.debug("The current line is: " + line);
+        this.calibrationLines.add(line);
         count++;
         
       } // end while()
       
+      inputReader.close();
+      
       // parse non-empty lines or those without comments
-      for (int i=0; i < this.calibrationLines.length; i++) {
-        line = calibrationLines[i];
+      for (Iterator cIterator = calibrationLines.iterator(); cIterator.hasNext();) {
         
-        if ( !(line.matches("^#") || line.matches("^ *$")) ) {
-
-          String[] parts     = line.split(" ");
-          String type        = parts[0];
-          String id          = parts[1];
-          String units       = parts[2];
-          String fieldLength = parts[3];
-          String dataType    = parts[4];
-          String calLines    = parts[5];
-          String fitType     = parts[6];
-
+        line = ((String) cIterator.next()).trim();
+        
+        // handle sensor definition lines
+        if ( line.matches("^[A-Za-z].*") ) {
+          
+          parts       = line.split(" ");
+          type        = parts[0];
+          id          = parts[1];
+          units       = parts[2].replaceAll("'", "");
+          fieldLength = new Integer(parts[3]);
+          dataType    = parts[4];
+          coeffLines  = new Integer(parts[5]);
+          fitType     = parts[6];
+          
+          if ( coeffCount == 0 ) {
+            // create a new calibration entry
+            this.calibrationMap = new BasicHierarchicalMap();
+            coeffCount = coeffLines;
+          }
+          
+          // populate the map
+          this.calibrationMap.put("type", type);
+          this.calibrationMap.put("id", id);
+          this.calibrationMap.put("units", units);
+          this.calibrationMap.put("fieldLength", fieldLength);
+          this.calibrationMap.put("dataType", dataType);
+          this.calibrationMap.put("coeffLines", coeffLines);
+          this.calibrationMap.put("fitType", fitType);
+          
+          logger.debug(this.calibrationMap.toXMLString(1000));
+          
+          // add the map if there are no more coefficient lines
+          if ( coeffCount == 0 ) {
+            this.calibrationsMap.add("/calibrations/calibration", this.calibrationMap.clone());
+            this.calibrationMap.removeAll("*");
+            
+          }
+        
+        // handle coefficient lines
+        } else if ( line.matches("^[0-9].*") ){
+          
+          logger.debug("MARK 1");
+          
+          parts = line.split(" ");
+          
+          // extract each coefficient and add it to the map
+          for ( int j=0; j < parts.length; j++ ) {
+            
+            coefficient = new Double(parts[j]);
+            this.calibrationMap.add("coefficient", coefficient);
+            
+          }
+          coeffCount--;
+          
+          // add the map if there are no more coefficient lines
+          if ( coeffCount == 0 ) {
+            this.calibrationsMap.add("/calibrations/calibration", this.calibrationMap.clone());
+            this.calibrationMap.removeAll("*");
+            
+          }
+          
+        // handle comments and blank lines
+        } else if ( line.matches("^#.*") || line.matches("^$") ) {
+          logger.debug("Skipping blank or commented calibration file lines.");
+          
         } // end if()
         
       } // end for()
       
+    } catch ( NumberFormatException nfe ) {
+      throw new ParseException("There was a problem parsing"    +
+                               " the calibration line string: " +
+                               nfe.getMessage(), 0);
+    
     } catch (IOException ioe) {
-      logger.info("There was a problem reading the calibration file " +
-                  "from " + this.calibrationURL + " .");
-      logger.debug("The error message was: " + ioe.getMessage());
+      throw new ParseException("There was a problem reading the calibration file " +
+                               "from " + this.calibrationURL + ": " + ioe.getMessage(), 0);
       
     } // end try/catch
+    
+    logger.debug(this.calibrationsMap.toXMLString(1000));
     
     return success;
   }
