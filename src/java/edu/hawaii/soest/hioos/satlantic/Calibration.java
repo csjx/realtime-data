@@ -28,6 +28,7 @@
  */ 
 package edu.hawaii.soest.hioos.satlantic;
 
+import edu.hawaii.soest.hioos.satlantic.CalibrationType;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -105,9 +106,74 @@ public class Calibration {
    *
    * @param fitType - the type of calibration to be applied as a String
    */
-  public String apply(String fitType) {
+  public String apply(String observedValue, String fitType) {
     
     String returnValue = "";
+    
+    try {
+      
+      CalibrationType calibrationType = CalibrationType.valueOf(fitType);
+      
+      // apply the appropriate calibration based on fit type
+      switch(calibrationType) {
+        
+        case GPSTIME:
+          //returnValue = applyGPSTime(observedValue, coefficients);
+          break;
+          
+        case GPSPOS:
+          //returnValue = applyGPSPos(observedValue, coefficients);
+          break;
+          
+        case GPSHEMI:
+          //returnValue = applyGPSHemi(observedValue, coefficients);
+          break;
+          
+        case GPSMODE:
+          //returnValue = applyGPSMode(observedValue, coefficients);
+          break;
+          
+        case GPSSTATUS:
+          //returnValue = applyGPSStatus(observedValue, coefficients);
+          break;
+          
+        case DDMM:
+          //returnValue = applyDDMM(observedValue, coefficients);
+          break;
+          
+        case HHMMSS:
+          //returnValue = applyHHMMSS(observedValue, coefficients);
+          break;
+          
+        case DDMMYY:
+          //returnValue = applyDDMMYY(observedValue, coefficients);
+          break;
+          
+        case TIME2:
+          //returnValue = applyTIME2(observedValue, coefficients);
+          break;
+          
+        case COUNT:
+          //returnValue = applyCount(observedValue, coefficients);
+          break;
+          
+        case NONE:
+          //returnValue = applyNone(observedValue, coefficients);
+          break;
+          
+        case DELIMITER:
+          //returnValue = applyDelimiter(observedValue, coefficients);
+          break;
+          
+      }
+      
+    } catch (NullPointerException npe) {
+      throw new IllegalArgumentException("The fit type was null. " +
+                                         "Couldn't apply a calibration.");
+      
+    } catch (IllegalArgumentException iae) {
+      throw iae;
+    }
     
     return returnValue;
   }
@@ -120,9 +186,48 @@ public class Calibration {
    * @param coefficients - an ArrayList of coefficient values
    * @param fitType - the type of calibration to be applied as a String
    */
-  public Double apply(Double observedValue, ArrayList coefficients, String fitType) {
+  public Double apply(Double observedValue, ArrayList<Double> coefficients, 
+                      String fitType) throws IllegalArgumentException {
     
     Double returnValue = null;
+    
+    try {
+      
+      CalibrationType calibrationType = CalibrationType.valueOf(fitType);
+      
+      // apply the appropriate calibration based on fit type
+      switch(calibrationType) {
+        
+        case OPTIC1:
+          returnValue = applyOptic1(observedValue, coefficients);
+          
+        case OPTIC2:
+          returnValue = applyOptic2(observedValue, coefficients);
+          
+        case OPTIC3:
+          returnValue = applyOptic3(observedValue, coefficients);
+          
+        case THERM1:
+          returnValue = applyTherm1(observedValue, coefficients);
+          
+        case POW10:
+          returnValue = applyPow10(observedValue, coefficients);
+          
+        case POLYU:
+          returnValue = applyPolyU(observedValue, coefficients);
+          
+        case POLYF:
+          returnValue = applyPolyF(observedValue, coefficients);
+          
+      }
+      
+    } catch (NullPointerException npe) {
+      throw new IllegalArgumentException("The fit type was null. " +
+                                         "Couldn't apply a calibration.");
+      
+    } catch (IllegalArgumentException iae) {
+      throw iae;
+    }
     
     return returnValue;
   }
@@ -135,7 +240,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic1(Double observedValue, ArrayList coefficients) {
+  private Double applyOptic1(Double observedValue, ArrayList<Double> coefficients)
+                             throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -150,7 +256,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic2(Double observedValue, ArrayList coefficients) {
+  private Double applyOptic2(Double observedValue, ArrayList<Double> coefficients)
+                             throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -165,7 +272,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic3(Double observedValue, ArrayList coefficients) {
+  private Double applyOptic3(Double observedValue, ArrayList<Double> coefficients)
+                             throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -180,7 +288,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyTherm1(Double observedValue, ArrayList coefficients) {
+  private Double applyTherm1(Double observedValue, ArrayList<Double> coefficients)
+                             throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -195,7 +304,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyPow10(Double observedValue, ArrayList coefficients) {
+  private Double applyPow10(Double observedValue, ArrayList<Double> coefficients)
+                            throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -210,7 +320,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyPolyU(Double observedValue, ArrayList coefficients) {
+  private Double applyPolyU(Double observedValue, ArrayList<Double> coefficients)
+                            throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -225,7 +336,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyPolyF(Double observedValue, ArrayList coefficients) {
+  private Double applyPolyF(Double observedValue, ArrayList<Double> coefficients)
+                            throws IllegalArgumentException {
     
     Double returnValue = null;
     
