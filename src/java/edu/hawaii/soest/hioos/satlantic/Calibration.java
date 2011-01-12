@@ -101,6 +101,138 @@ public class Calibration {
   }
   
   /**
+   * A method that applies a Satlantic calibration with no coefficients.
+   *
+   * @param fitType - the type of calibration to be applied as a String
+   */
+  public String apply(String fitType) {
+    
+    String returnValue = "";
+    
+    return returnValue;
+  }
+  
+  /**
+   * A method that applies a Satlantic calibration to an observed value 
+   * using the given coefficients.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   * @param fitType - the type of calibration to be applied as a String
+   */
+  public Double apply(Double observedValue, ArrayList coefficients, String fitType) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic OPTIC1 calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyOptic1(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic OPTIC2 calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyOptic2(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic OPTIC3 calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyOptic3(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic THERM1 calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyTherm1(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic POW10 calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyPow10(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic POLYU calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyPolyU(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /*
+   * A method that applies a Satlantic POLYF calibration to an observed value
+   * using the given coefficients. See Satlantic's Instrument File Standard,
+   * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
+   *
+   * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param coefficients - an ArrayList of coefficient values
+   */
+  private Double applyPolyF(Double observedValue, ArrayList coefficients) {
+    
+    Double returnValue = null;
+    
+    return returnValue;
+  }
+  
+  /**
    * A method that parses a Satlantic calibration or telemetry definition file.
    */
   public boolean parse(String calibrationURL) throws ParseException {
