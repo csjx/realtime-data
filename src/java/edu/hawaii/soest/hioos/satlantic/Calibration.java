@@ -29,6 +29,7 @@
 package edu.hawaii.soest.hioos.satlantic;
 
 import edu.hawaii.soest.hioos.satlantic.CalibrationType;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -154,12 +155,10 @@ public class Calibration {
           break;
           
         case COUNT:
-          //returnValue = applyCount(observedValue, coefficients);
-          break;
+          returnValue = observedValue;
           
         case NONE:
-          //returnValue = applyNone(observedValue, coefficients);
-          break;
+          returnValue = observedValue;
           
         case DELIMITER:
           //returnValue = applyDelimiter(observedValue, coefficients);
@@ -183,11 +182,13 @@ public class Calibration {
    * using the given coefficients.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an ArrayList of coefficient values
    * @param fitType - the type of calibration to be applied as a String
    */
-  public Double apply(Double observedValue, ArrayList<Double> coefficients, 
-                      String fitType) throws IllegalArgumentException {
+  public Double apply(Double observedValue, boolean isImmersed,
+                      ArrayList<Double> coefficients, String fitType) 
+                      throws IllegalArgumentException {
     
     Double returnValue = null;
     
@@ -199,19 +200,19 @@ public class Calibration {
       switch(calibrationType) {
         
         case OPTIC1:
-          returnValue = applyOptic1(observedValue, coefficients);
+          returnValue = applyOptic1(observedValue, isImmersed, coefficients);
           
         case OPTIC2:
-          returnValue = applyOptic2(observedValue, coefficients);
+          returnValue = applyOptic2(observedValue, isImmersed, coefficients);
           
         case OPTIC3:
-          returnValue = applyOptic3(observedValue, coefficients);
+          returnValue = applyOptic3(observedValue, isImmersed, coefficients);
           
         case THERM1:
           returnValue = applyTherm1(observedValue, coefficients);
           
         case POW10:
-          returnValue = applyPow10(observedValue, coefficients);
+          returnValue = applyPow10(observedValue, isImmersed, coefficients);
           
         case POLYU:
           returnValue = applyPolyU(observedValue, coefficients);
@@ -238,9 +239,11 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic1(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyOptic1(Double observedValue, boolean isImmersed,
+                             ArrayList<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -254,12 +257,33 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic2(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyOptic2(Double observedValue, boolean isImmersed,
+                             ArrayList<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
+    
+    if ( coefficients.size() != 3 ) {
+      throw new IllegalArgumentException("The OPTIC1 callibration requires " +
+                                         "exactly three coefficients, not "  +
+                                         coefficients.size());
+    }
+    
+    Double a0 = coefficients.get(0);
+    Double a1 = coefficients.get(1);
+    Double im = coefficients.get(2);
+    
+    // apply wet vs. dry calibrations
+    if ( isImmersed ) {
+      returnValue = im * a1 * (observedValue - a0);
+      
+    } else {
+      returnValue = 1.0d * a1 * (observedValue - a0);
+      
+    }
     
     return returnValue;
   }
@@ -270,9 +294,11 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyOptic3(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyOptic3(Double observedValue, boolean isImmersed,
+                             ArrayList<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -302,9 +328,11 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
+   * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an ArrayList of coefficient values
    */
-  private Double applyPow10(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyPow10(Double observedValue, boolean isImmersed,
+                            ArrayList<Double> coefficients)
                             throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -323,7 +351,24 @@ public class Calibration {
   private Double applyPolyU(Double observedValue, ArrayList<Double> coefficients)
                             throws IllegalArgumentException {
     
-    Double returnValue = null;
+    Double returnValue = 0d;
+    Double power = 0d;
+    
+    if ( !(coefficients.size() > 0) ) {
+      throw new IllegalArgumentException("The POLYU callibration requires " +
+                                         "at least one coefficient, not "  +
+                                         coefficients.size());
+    }
+    
+    for (Iterator cIterator = coefficients.iterator(); cIterator.hasNext();) {
+      
+      Double coefficient = (Double) cIterator.next();
+      
+      // apply the unfactored polynomial calibration
+      returnValue = returnValue + (coefficient * Math.pow(observedValue, power));
+      power++;
+      
+    }
     
     return returnValue;
   }
@@ -340,6 +385,28 @@ public class Calibration {
                             throws IllegalArgumentException {
     
     Double returnValue = null;
+    int count = 0;
+    if ( !(coefficients.size() > 0) ) {
+      throw new IllegalArgumentException("The POLYU callibration requires " +
+                                         "at least one coefficient, not "  +
+                                         coefficients.size());
+    }
+    
+    for (Iterator cIterator = coefficients.iterator(); cIterator.hasNext();) {
+      
+      Double coefficient = (Double) cIterator.next();
+      
+      if ( count == 0 ) {
+        returnValue = coefficient;
+        
+      } else {
+        // apply the factored polynomial calibration
+        returnValue = returnValue * (observedValue - coefficient);
+        
+      }
+      count++;
+      
+    }
     
     return returnValue;
   }
