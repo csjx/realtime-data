@@ -156,9 +156,11 @@ public class Calibration {
           
         case COUNT:
           returnValue = observedValue;
+          break;
           
         case NONE:
           returnValue = observedValue;
+          break;
           
         case DELIMITER:
           //returnValue = applyDelimiter(observedValue, coefficients);
@@ -190,7 +192,7 @@ public class Calibration {
                       ArrayList<Double> coefficients, String fitType) 
                       throws IllegalArgumentException {
     
-    Double returnValue = null;
+    Double returnValue = 0d;
     
     try {
       
@@ -201,24 +203,31 @@ public class Calibration {
         
         case OPTIC1:
           returnValue = applyOptic1(observedValue, isImmersed, coefficients);
+          break;
           
         case OPTIC2:
           returnValue = applyOptic2(observedValue, isImmersed, coefficients);
+          break;
           
         case OPTIC3:
           returnValue = applyOptic3(observedValue, isImmersed, coefficients);
+          break;
           
         case THERM1:
           returnValue = applyTherm1(observedValue, coefficients);
+          break;
           
         case POW10:
           returnValue = applyPow10(observedValue, isImmersed, coefficients);
+          break;
           
         case POLYU:
           returnValue = applyPolyU(observedValue, coefficients);
+          break;
           
         case POLYF:
           returnValue = applyPolyF(observedValue, coefficients);
+          break;
           
       }
       
@@ -446,7 +455,6 @@ public class Calibration {
       while ((line = inputReader.readLine()) != null) {
         
         // extract each line of the file
-        logger.debug("The current line is: " + line);
         this.calibrationLines.add(line);
         count++;
         
@@ -486,7 +494,7 @@ public class Calibration {
           this.calibrationMap.put("coeffLines", coeffLines);
           this.calibrationMap.put("fitType", fitType);
           
-          logger.debug(this.calibrationMap.toXMLString(1000));
+          //logger.debug(this.calibrationMap.toXMLString(1000));
           
           // add the map if there are no more coefficient lines
           if ( coeffCount == 0 ) {
@@ -497,8 +505,6 @@ public class Calibration {
         
         // handle coefficient lines
         } else if ( line.matches("^[0-9].*") ){
-          
-          logger.debug("MARK 1");
           
           parts = line.split(" ");
           
@@ -520,7 +526,7 @@ public class Calibration {
           
         // handle comments and blank lines
         } else if ( line.matches("^#.*") || line.matches("^$") ) {
-          logger.debug("Skipping blank or commented calibration file lines.");
+          //logger.debug("Skipping blank or commented calibration file lines.");
           
         } // end if()
         
@@ -537,7 +543,7 @@ public class Calibration {
       
     } // end try/catch
     
-    logger.debug(this.calibrationsMap.toXMLString(1000));
+    //logger.debug(this.calibrationsMap.toXMLString(1000));
     
     return success;
   }
