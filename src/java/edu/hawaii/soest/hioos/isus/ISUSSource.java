@@ -344,6 +344,49 @@ public class ISUSSource extends RBNBSource {
   }
    
   /**
+   * A method that sets the command line arguments for this class.  This method 
+   * calls the <code>RBNBSource.setBaseArgs()</code> method.
+   * 
+   * @param command  The CommandLine object being passed in from the command
+   */
+  protected boolean setArgs(CommandLine command) {
+    
+    return true;
+  }
+
+  /**
+   * A method that sets the command line options for this class.  This method 
+   * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+   * properties such as the sourceHostName, sourceHostPort, serverName, and
+   * serverPort.
+   */
+  protected Options setOptions() {
+    Options options = setBaseOptions(new Options());
+                      
+    return options;
+  }
+
+  /**
+   * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   *
+   * @param bufferSize  the size, in bytes, of the ByteBuffer
+   */
+  public void setBuffersize(int bufferSize) {
+    this.bufferSize = bufferSize;
+  }
+  
+  /**
+   * A method that sets the RBNB channel name of the source instrument's data
+   * stream
+   *
+   * @param channelName  the name of the RBNB channel being streamed
+   */
+  public void setChannelName(String channelName) {
+    this.rbnbChannelName = channelName;
+  }
+
+  /**
    * A method that gets the log configuration file location
    *
    * @return logConfigurationFile  the log configuration file location
