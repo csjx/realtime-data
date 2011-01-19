@@ -30,8 +30,10 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import edu.hawaii.soest.hioos.isus.ISUSSource;
 import edu.hawaii.soest.hioos.storx.StorXParser;
 import edu.hawaii.soest.hioos.storx.StorXSource;
+import edu.hawaii.soest.kilonalu.ctd.CTDSource;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -91,8 +93,12 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 
+import org.dhmp.util.HierarchicalMap;
+import org.dhmp.util.BasicHierarchicalMap;
+
 import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
+
 
 /**
  * A class used to harvest a decimal ASCII data from a Seacat 
@@ -192,7 +198,7 @@ public class StorXDispatcher extends RBNBSource {
   protected int state = 0;
   
   /* A hash map that contains sensor serial number to RBNB Source mappings */
-  private HashMap<String, StorXSource> sourceMap;
+  private HashMap<String, Object> sourceMap;
   
   /* The instance of the StorX Parser class used to parse StorX output */
   private StorXParser storXParser;
@@ -321,6 +327,7 @@ public class StorXDispatcher extends RBNBSource {
                    "dataMailbox     : " + dataMailbox      + "\n" +
                    "processedMailbox: " + processedMailbox + "\n"
                    );
+      
       // get a connection to the mail server
       Properties props = System.getProperties();
       props.setProperty("mail.store.protocol", protocol);
@@ -355,7 +362,7 @@ public class StorXDispatcher extends RBNBSource {
           // determine the sensor serial number for this message
           String messageSubject     = message.getSubject();
           String[] subjectParts     = messageSubject.split("\\s");
-          String sensorSerialNumber = subjectParts[2];
+          String loggerSerialNumber = subjectParts[2];
           
           String messageBody;
           ByteBuffer messageAttachment = ByteBuffer.allocate(256); // init only          
@@ -400,37 +407,120 @@ public class StorXDispatcher extends RBNBSource {
             // we now have the body, attachement, and serial number. Parse the
             // attachment for the data string, look up the storXSource based on
             // the serial number, and push the data to the DataTurbine
-                        
-            if (this.sourceMap.get(sensorSerialNumber) != null ) {
-
-              // look up the source object in the sourceMap
-              StorXSource source = sourceMap.get(sensorSerialNumber);
-
-              // process the data using the StorXSource driver
-              messageProcessed = source.process(sensorSerialNumber, 
-                                                this.xmlConfiguration, 
-                                                messageAttachment);
+            
+            // parse the binary attachment
+            StorXParser storXParser = new StorXParser(messageAttachment);
+            
+            // iterate through the parsed framesMap and handle each frame
+            // based on its instrument type
+            BasicHierarchicalMap framesMap = 
+              (BasicHierarchicalMap) storXParser.getFramesMap();
+            
+            Collection frameCollection = framesMap.getAll("/frames/frame");
+            Iterator   framesIterator  = frameCollection.iterator();
+            
+            while ( framesIterator.hasNext() ) {
+              
+              BasicHierarchicalMap frameMap = 
+                (BasicHierarchicalMap) framesIterator.next();
+              
+              //logger.debug(frameMap.toXMLString(1000));
+              
+              String frameType = (String) frameMap.get("type");
+              String sensorSerialNumber = (String) frameMap.get("serialNumber");
+              
+              // handle each instrument type
+              if ( frameType.equals("HDR") ) {
+                logger.debug("This is a header frame. Skipping it.");
                 
-              if ( !messageProcessed ) {
-                logger.info("Failed to process message: " +
-                            "Message Number: " + message.getMessageNumber() + "  " +
-                            "Sensor Serial:"   + sensorSerialNumber);
-                // leave it in the inbox, flagged as seen (read)
-                message.setFlag(Flags.Flag.SEEN, true);
+              } else if ( frameType.equals("STX") ) {
+                
+                try {
+                  
+                  // handle StorXSource 
+                  StorXSource source = (StorXSource) sourceMap.get(sensorSerialNumber);
+                  // process the data using the StorXSource driver
+                  messageProcessed = 
+                    source.process(this.xmlConfiguration, frameMap);
+                  
+                } catch (ClassCastException cce) {
+                
+                }
+                
+              } else if ( frameType.equals("SBE") ) {
+                
+                try {
+                  
+                  // handle CTDSource
+                  CTDSource source = (CTDSource) sourceMap.get(sensorSerialNumber);
+                  // process the data using the CTDSource driver
+                  // messageProcessed = source.process(this.xmlConfiguration, 
+                  //                                   ctdFrame);
+                  
+                } catch (ClassCastException cce) {
+                  
+                }
+                
+              } else if ( frameType.equals("NLB") ) {
+                
+                try {
+                  
+                  // handle ISUSSource
+                  ISUSSource source = (ISUSSource) sourceMap.get(sensorSerialNumber);
+                  // process the data using the ISUSSource driver
+                  // messageProcessed = source.process(this.xmlConfiguration, 
+                  //                                   isusFrame);
+                  
+                } catch (ClassCastException cce) {
+                  
+                }
+                
+              } else if ( frameType.equals("NDB") ) {
+                  
+                try {
+                  
+                  // handle ISUSSource
+                  ISUSSource source = (ISUSSource) sourceMap.get(sensorSerialNumber);
+                  // process the data using the ISUSSource driver
+                  // messageProcessed = source.process(this.xmlConfiguration, 
+                  //                                   isusFrame);
+                  
+                } catch (ClassCastException cce) {
+                  
+                }
                 
               } else {
                 
-                // message processed successfully. copy it and flag it deleted
-                inbox.copyMessages(new Message[]{message}, processed) ;
-                message.setFlag(Flags.Flag.DELETED, true);
-                logger.debug("Deleted message " + message.getMessageNumber());
-              } // end if()
-
+                logger.debug("The frame type " + frameType + 
+                             " is not recognized. Skipping it.");
+              }
+              
+            } // end while()
+            
+            if (this.sourceMap.get(loggerSerialNumber) != null ) {
+            
+               if ( !messageProcessed ) {
+                 logger.info("Failed to process message: " +
+                             "Message Number: " + message.getMessageNumber() + "  " +
+                             "Logger Serial:"   + loggerSerialNumber);
+                 // leave it in the inbox, flagged as seen (read)
+                 message.setFlag(Flags.Flag.SEEN, true);
+                 logger.debug("Saw message " + message.getMessageNumber());
+                 
+               } else {
+                 
+                 // message processed successfully. copy it and flag it deleted
+                 inbox.copyMessages(new Message[]{message}, processed) ;
+                 //message.setFlag(Flags.Flag.DELETED, true);
+                 logger.debug("Deleted message " + message.getMessageNumber());
+               } // end if()
+            
             } else {
               logger.debug("There is no configuration information for "    +
-                          "the sensor serial number " + sensorSerialNumber +
+                          "the logger serial number " + loggerSerialNumber +
                           ". Please add the configuration to the "         +
                           "email.account.properties.xml configuration file.");
+                          
             } // end if()
             
           } else {
@@ -442,7 +532,7 @@ public class StorXDispatcher extends RBNBSource {
         } // end for()
 
         // expunge messages and close the mail server store once we're done
-        inbox.expunge();
+        //inbox.expunge();
         this.mailStore.close();
         
       } catch (NoSuchProviderException nspe) {
@@ -505,6 +595,7 @@ public class StorXDispatcher extends RBNBSource {
         return !failed;
       
       }
+      
     }
         
     return !failed;
@@ -528,10 +619,14 @@ public class StorXDispatcher extends RBNBSource {
       // the list, creating an RBNB Source object for each sensor listed. Store
       // these objects in a HashMap for later referral.
 
-      this.sourceMap = new HashMap<String, StorXSource>();
+      this.sourceMap = new HashMap<String, Object>();
 
       // the sensor properties to be pulled from each account's sensor list.
+      String loggerName           = "";
+      String loggerSerialNumber   = "";
+      
       String sourceName     = "";
+      String sourceType     = "";
       String serialNumber   = "";
       String description    = "";
       String cacheSize      = "";
@@ -545,41 +640,87 @@ public class StorXDispatcher extends RBNBSource {
         
         int aIndex = accountList.indexOf(aIterator.next());                
         
-        // evaluate each sensor listed in the email.account.properties.xml file
-        List sensorList  = xmlConfiguration.getList("account.sensor.name");
+        // evaluate each logger listed in the email.account.properties.xml file
+        List loggerList  = xmlConfiguration.getList("account.logger.loggerName");
         
-        for ( Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+        for ( Iterator gIterator = loggerList.iterator(); gIterator.hasNext(); ) {
 
+          int gIndex = loggerList.indexOf(gIterator.next());
+          
+          loggerName           = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerName");
+          loggerSerialNumber   = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerSerialNumber");
+          
+          // evaluate each logger listed in the email.account.properties.xml file
+          List sensorList  = xmlConfiguration.getList("account.logger.sensor.name");
+            
+          for ( Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+          
             // get each property value of the sensor
             int sIndex = sensorList.indexOf(sIterator.next());
-
-            sourceName     = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").name");
-            serialNumber   = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").serialNumber");
-            description    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").description");
-            cacheSize      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").cacheSize");
-            archiveSize    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").archiveSize");
-            archiveChannel = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").sensor(" + sIndex + ").archiveChannel");
-
+          
+            sourceName     = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").name");
+            sourceType     = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").type");
+            serialNumber   = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").serialNumber");
+            description    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").description");
+            cacheSize      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").cacheSize");
+            archiveSize    = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveSize");
+            archiveChannel = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveChannel");
+            
             // test for all of the critical source information
-            if ( sourceName  != null && cacheSize != null &&
+            if ( sourceName  != null && sourceType !=null && cacheSize != null &&
                  archiveSize != null && archiveChannel != null ) {
               
-              // given the properties, create an RBNB Source object
-              StorXSource storXSource = 
-                new StorXSource(this.serverName, 
-                              (new Integer(this.serverPort)).toString(),
-                              this.archiveMode, 
-                              (new Integer(archiveSize).intValue()),
-                              (new Integer(cacheSize).intValue()), 
-                              sourceName);
-              storXSource.startConnection();
-              sourceMap.put(serialNumber, storXSource);
-                   
-            }
-
-        }
+              // test which type of source to create the RBNB Source
+              if ( sourceType.equals("StorXSource") ) {
+                
+                // given the properties, create a StorXSource object
+                StorXSource storXSource = 
+                  new StorXSource(this.serverName, 
+                                (new Integer(this.serverPort)).toString(),
+                                this.archiveMode, 
+                                (new Integer(archiveSize).intValue()),
+                                (new Integer(cacheSize).intValue()), 
+                                sourceName);
+                storXSource.startConnection();
+                sourceMap.put(serialNumber, storXSource);
+                
+              } else if ( sourceType.equals("CTDSource") ) {
+                
+                // given the properties, create a CTDSource object
+                //CTDSource ctdSource = 
+                //  new CTDSource(this.serverName, 
+                //                (new Integer(this.serverPort)).toString(),
+                //                this.archiveMode, 
+                //                (new Integer(archiveSize).intValue()),
+                //                (new Integer(cacheSize).intValue()), 
+                //                sourceName);
+                //ctdSource.startConnection();
+                //sourceMap.put(serialNumber, ctdSource);
+                
+              } else if ( sourceType.equals("ISUSSource") ) {
+                
+                // given the properties, create an ISUSSource object
+                ISUSSource isusSource = 
+                  new ISUSSource(this.serverName, 
+                                (new Integer(this.serverPort)).toString(),
+                                this.archiveMode, 
+                                (new Integer(archiveSize).intValue()),
+                                (new Integer(cacheSize).intValue()), 
+                                sourceName);
+                isusSource.startConnection();
+                sourceMap.put(serialNumber, isusSource);
+                
+              } // end if()
+              
+            }  // end if()
+          
+          } // end for()
+          
+        } // end for()
         
-      }
+      } // end for()
+      
+      logger.debug(this.sourceMap.toString());
       
       return true;
 
@@ -647,14 +788,41 @@ public class StorXDispatcher extends RBNBSource {
           Collection sourceCollection = storXDispatcher.sourceMap.values();
           for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext(); ) {
              
-             StorXSource source = (StorXSource) iterator.next();
-             logger.debug("Disconnecting source: " + source.getRBNBClientName());
-             source.stopConnection();
+             Object sourceObject = iterator.next();
              
-          }
-        }
-      }
-      );
+             try {
+               
+               // disconnect StorX sources
+               StorXSource source = (StorXSource) sourceObject;
+               logger.info("Disconnecting source: " + source.getRBNBClientName());
+               source.stopConnection();
+             
+             } catch (java.lang.ClassCastException cce) {
+               
+               // disconnect ISUS sources
+               try {
+                 ISUSSource source = (ISUSSource) sourceObject;
+                 logger.info("Disconnecting source: " + source.getRBNBClientName());
+                 source.stopConnection();
+             
+               } catch (java.lang.ClassCastException cce2) {
+             
+                 // disconnect CTD sources
+                 CTDSource source = (CTDSource) sourceObject;
+                 logger.info("Disconnecting source: " + source.getRBNBClientName());
+                 // source.stopConnection();
+                 
+               } // end try/catch
+               
+             } // end try/catch
+             
+          } // end for()
+          
+        } // end run()
+        
+      } // end new Thread()
+      
+      ); // end addShutDownHook()
       
       // Set up a simple logger that logs to the console
       PropertyConfigurator.configure(storXDispatcher.getLogConfigurationFile());
