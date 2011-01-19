@@ -298,6 +298,52 @@ public class ISUSSource extends RBNBSource {
   } // end if (  !isConnected() ) 
   
   /**
+   * A method that gets the size, in bytes, of the ByteBuffer used in streaming 
+   * data from a source instrument via a TCP connection
+   */
+   public int getBufferSize() {
+     return this.bufferSize;
+   }
+   
+  /**
+   * A method that returns the name of the RBNB channel that contains the 
+   * streaming data from this instrument
+   */
+  public String getRBNBChannelName(){
+    return this.rbnbChannelName;
+  }
+
+  /**
+   * A method that returns the versioning info for this file.  In this case, 
+   * it returns a String that includes the Subversion LastChangedDate, 
+   * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   */
+
+  public String getCVSVersionString(){
+    return (
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
+    );
+  }
+
+
+  /**
+   * A method that starts the connection with the RBNB DataTurbine
+   */
+  public boolean startConnection() {
+    return connect();
+  }
+   
+  /**
+   * A method that stops the connection with the RBNB DataTurbine
+   */
+  public void stopConnection() {
+    disconnect();
+  }
+   
+  /**
    * A method that gets the log configuration file location
    *
    * @return logConfigurationFile  the log configuration file location
