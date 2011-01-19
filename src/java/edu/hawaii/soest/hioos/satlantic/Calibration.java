@@ -39,6 +39,8 @@ import java.net.URL;
 import java.text.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -74,21 +76,20 @@ public class Calibration {
   private ArrayList<String> calibrationLines;
   
   /* 
-   * A hierarchical map of the information found in the calibration file. 
+   * A hash map of the information found in the calibration file, using the
+   * concatenated type and id as the key. Each value is a hierarchical map. 
    * The map structure is:
-   * /calibrations/calibration/type        - the sensor calibration type (String)
-   * /calibrations/calibration/id          - the sensor calibration id (String)
-   * /calibrations/calibration/units       - the sensor calibration units (String)
-   * /calibrations/calibration/fieldLength - the sensor calibration field length (Integer)
-   * /calibrations/calibration/dataType    - the sensor calibration data type (String)
-   * /calibrations/calibration/coeffLines  - the sensor calibration coefficient lines (Integer)
-   * /calibrations/calibration/fitType     - the sensor calibration fit type (String)
-   * /calibrations/calibration/coefficient - a sensor calibration coefficient (Double)
+   * /calibration/type        - the sensor calibration type (String)
+   * /calibration/id          - the sensor calibration id (String)
+   * /calibration/units       - the sensor calibration units (String)
+   * /calibration/fieldLength - the sensor calibration field length (Integer)
+   * /calibration/dataType    - the sensor calibration data type (String)
+   * /calibration/coeffLines  - the sensor calibration coefficient lines (Integer)
+   * /calibration/fitType     - the sensor calibration fit type (String)
+   * /calibration/coefficient - a sensor calibration coefficient (Double)
    *
-   * Calibration definitions can repeat, and are loaded into the structure in
-   * the order they are listed in the .cal or .tdf file that has been parsed.
    */
-  private BasicHierarchicalMap calibrationsMap;
+  private HashMap<String, BasicHierarchicalMap> calibrationsMap;
   
   /**
    * A single node in the calibrationsMap used to build the full map above
@@ -185,14 +186,16 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an ArrayList of coefficient values
-   * @param fitType - the type of calibration to be applied as a String
+   * @param variable - the name of the measurement variable as a String
    */
-  public Double apply(Double observedValue, boolean isImmersed,
-                      ArrayList<Double> coefficients, String fitType) 
+  public Double apply(Double observedValue, boolean isImmersed, String variable)
                       throws IllegalArgumentException {
     
-    Double returnValue = 0d;
+    Double returnValue = new Double(0d);
+    
+    Collection<Double> coefficients = getCoefficients(variable);
+    
+    String fitType = getFitType(variable);
     
     try {
       
@@ -249,10 +252,10 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
   private Double applyOptic1(Double observedValue, boolean isImmersed,
-                             ArrayList<Double> coefficients)
+                             Collection<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -267,23 +270,24 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
   private Double applyOptic2(Double observedValue, boolean isImmersed,
-                             ArrayList<Double> coefficients)
+                             Collection<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
+    ArrayList<Double> list = (ArrayList<Double>) coefficients;
     
-    if ( coefficients.size() != 3 ) {
+    if ( list.size() != 3 ) {
       throw new IllegalArgumentException("The OPTIC1 callibration requires " +
                                          "exactly three coefficients, not "  +
-                                         coefficients.size());
+                                         list.size());
     }
     
-    Double a0 = coefficients.get(0);
-    Double a1 = coefficients.get(1);
-    Double im = coefficients.get(2);
+    Double a0 = list.get(0);
+    Double a1 = list.get(1);
+    Double im = list.get(2);
     
     // apply wet vs. dry calibrations
     if ( isImmersed ) {
@@ -304,10 +308,10 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
   private Double applyOptic3(Double observedValue, boolean isImmersed,
-                             ArrayList<Double> coefficients)
+                             Collection<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -321,9 +325,9 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
-  private Double applyTherm1(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyTherm1(Double observedValue, Collection<Double> coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -338,10 +342,10 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
   private Double applyPow10(Double observedValue, boolean isImmersed,
-                            ArrayList<Double> coefficients)
+                            Collection<Double> coefficients)
                             throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -355,13 +359,13 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
-  private Double applyPolyU(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyPolyU(Double observedValue, Collection<Double> coefficients)
                             throws IllegalArgumentException {
     
-    Double returnValue = 0d;
-    Double power = 0d;
+    Double returnValue = new Double(0d);
+    Double power = new Double(0d);
     
     if ( !(coefficients.size() > 0) ) {
       throw new IllegalArgumentException("The POLYU callibration requires " +
@@ -388,9 +392,9 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an ArrayList of coefficient values
+   * @param coefficients - an Collection of coefficient values
    */
-  private Double applyPolyF(Double observedValue, ArrayList<Double> coefficients)
+  private Double applyPolyF(Double observedValue, Collection<Double> coefficients)
                             throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -420,17 +424,50 @@ public class Calibration {
     return returnValue;
   }
   
+  /*
+   *  Returns the array of calibration coefficients for a given variable
+   *
+   *  @param variable - the variable name
+   */
+  @SuppressWarnings("unchecked")
+  private Collection<Double> getCoefficients(String variable) {
+    
+    BasicHierarchicalMap calibrationMap = this.calibrationsMap.get(variable);
+    
+    Collection<Double> coefficients = 
+      (Collection<Double>) calibrationMap.getAll("calibration/coefficient");
+    logger.debug(coefficients.toString());
+    
+    return coefficients;
+  }
+  
+  /*
+   *  Returns the type of calibration fit for a given variable
+   *
+   *  @param variable - the variable name
+   */
+  private String getFitType(String variable) {
+    
+    String fitType = "NULL";
+    
+    BasicHierarchicalMap calibrationMap = this.calibrationsMap.get(variable);
+    fitType = (String) calibrationMap.get("calibration/fitType");
+    
+    return fitType;
+  }
+  
   /**
    * A method that parses a Satlantic calibration or telemetry definition file.
    */
   public boolean parse(String calibrationURL) throws ParseException {
     
     this.calibrationURL  = calibrationURL;
-    this.calibrationsMap = new BasicHierarchicalMap();
+    this.calibrationsMap = new HashMap<String, BasicHierarchicalMap>();
     
     int count       = 0;     // track lines in the file
     int coeffCount  = 0;     // track current number of coefficient lines
     boolean success = false; // track parsing success
+    String key      = "";    // unique identifier 
     String line;             // current line being parsed
     String[] parts;          // array of current line fields
     String type;             // placeholder calibration field
@@ -471,6 +508,8 @@ public class Calibration {
         if ( line.matches("^[A-Za-z].*") ) {
           
           parts       = line.split(" ");
+          key         = parts[1].toUpperCase().equals("NONE") ? 
+                          parts[0] : parts[0] + "_" + parts[1];
           type        = parts[0];
           id          = parts[1];
           units       = parts[2].replaceAll("'", "");
@@ -486,19 +525,19 @@ public class Calibration {
           }
           
           // populate the map
-          this.calibrationMap.put("type", type);
-          this.calibrationMap.put("id", id);
-          this.calibrationMap.put("units", units);
-          this.calibrationMap.put("fieldLength", fieldLength);
-          this.calibrationMap.put("dataType", dataType);
-          this.calibrationMap.put("coeffLines", coeffLines);
-          this.calibrationMap.put("fitType", fitType);
+          this.calibrationMap.put("calibration/type", type);
+          this.calibrationMap.put("calibration/id", id);
+          this.calibrationMap.put("calibration/units", units);
+          this.calibrationMap.put("calibration/fieldLength", fieldLength);
+          this.calibrationMap.put("calibration/dataType", dataType);
+          this.calibrationMap.put("calibration/coeffLines", coeffLines);
+          this.calibrationMap.put("calibration/fitType", fitType);
           
           //logger.debug(this.calibrationMap.toXMLString(1000));
           
           // add the map if there are no more coefficient lines
           if ( coeffCount == 0 ) {
-            this.calibrationsMap.add("/calibrations/calibration", this.calibrationMap.clone());
+            this.calibrationsMap.put(key, (BasicHierarchicalMap) this.calibrationMap.clone());
             this.calibrationMap.removeAll("*");
             
           }
@@ -512,14 +551,14 @@ public class Calibration {
           for ( int j=0; j < parts.length; j++ ) {
             
             coefficient = new Double(parts[j]);
-            this.calibrationMap.add("coefficient", coefficient);
+            this.calibrationMap.add("calibration/coefficient", coefficient);
             
           }
           coeffCount--;
           
           // add the map if there are no more coefficient lines
           if ( coeffCount == 0 ) {
-            this.calibrationsMap.add("/calibrations/calibration", this.calibrationMap.clone());
+            this.calibrationsMap.put(key, (BasicHierarchicalMap) this.calibrationMap.clone());
             this.calibrationMap.removeAll("*");
             
           }
@@ -532,6 +571,8 @@ public class Calibration {
         
       } // end for()
       
+      success = true;
+      
     } catch ( NumberFormatException nfe ) {
       throw new ParseException("There was a problem parsing"    +
                                " the calibration line string: " +
@@ -543,7 +584,7 @@ public class Calibration {
       
     } // end try/catch
     
-    //logger.debug(this.calibrationsMap.toXMLString(1000));
+    //logger.debug(this.calibrationsMap.toString());
     
     return success;
   }
