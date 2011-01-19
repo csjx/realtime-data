@@ -74,7 +74,8 @@ class Authentication(object):
         self.config = config
         self.testURL = self.config.get('testURL')
         self.isConnected = False
-        self.isAuthenticated = self.config.get('isAuthenticated')
+        self.isAuthenticated = self.config.get('skipAuthentication')
+        self.skipAuthentication = self.config.get('skipAuthentication')
         self.startNetworkCommand = '/etc/init.d/networking start'
         self.stopNetworkCommand = '/etc/init.d/networking stop'
         self.checkIPCommand = '/sbin/ifconfig'
@@ -108,6 +109,10 @@ class Authentication(object):
                         
                 else:
                     
+                    # test if this is a non-login location
+                    if self.skipAuthentication:
+                        self.isAuthenticated = True
+                        
                     # otherwise, test the authentication status
                     if self.isAuthenticated == False:
                         
@@ -328,7 +333,7 @@ def main():
     # domain - the domain to be used for returning cookies
     # testURL - the URL used for testing IP connectivity
     # interval - the interval between tests in seconds
-    # isAuthenticated - defaults to False, set to True to bypass authentication
+    # skipAuthentication - defaults to False, set to True to bypass authentication
     # login - the login service URL and parameters to be sent for authentication
     # logout - the logout service URL and parameters to be sent to close the session
     location = {
@@ -337,7 +342,7 @@ def main():
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'isAuthenticated': True,
+            'skipAuthentication': True,
             'login': {'url': 'http://10.22.0.1:5788/login_form.php',
                       'params': {'username': 'palauUsername',
                                  'password': 'palauPassword',
@@ -362,7 +367,7 @@ def main():
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'isAuthenticated': False,
+            'skipAuthentication': False,
             'login': {'url': 'http://10.22.0.1:5788/fs_login.php',
                       'params': {'name': 'loginForm',
                                  'username': 'fsmUsername',
@@ -396,7 +401,7 @@ def main():
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'isAuthenticated': True,
+            'skipAuthentication': True,
             'login': {'url': 'http://10.22.0.1:5788/login_form.php',
                       'params': {'username': 'samoaUsername',
                                  'password': 'samoaPassword',
@@ -421,7 +426,7 @@ def main():
             'domain': '.ntamar.net',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'isAuthenticated': False,
+            'skipAuthentication': False,
             'login': {'url': 'http://scc.ntamar.net/minta/eup/login',
                       'params': {'login_id': 'rmiUsername',
                                  'password': 'rmiPassword',
@@ -447,7 +452,7 @@ def main():
             'domain': '.ecoinformatics.org',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'isAuthenticated': False,
+            'skipAuthentication': False,
             'login': {'url': 'http://knb.ecoinformatics.org/knb/metacat',
                       'params': {'username': 'uid=kepler,o=unaffiliated,dc=ecoinformatics,dc=org',
                                  'password': 'knbPassword',
