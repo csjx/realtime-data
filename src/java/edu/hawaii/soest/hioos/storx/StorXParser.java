@@ -372,7 +372,7 @@ public class StorXParser {
                                      (BasicHierarchicalMap) frameMap.clone());
                   
                 } else {
-                  logger.info("This CTD frame is not a data sample." +
+                  logger.debug("This CTD frame is not a data sample." +
                               " Skipping it. The string is: " +
                               ctdFrame.getSample());
                 }
