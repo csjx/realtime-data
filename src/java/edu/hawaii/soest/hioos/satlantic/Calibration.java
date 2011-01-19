@@ -188,14 +188,15 @@ public class Calibration {
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param variable - the name of the measurement variable as a String
    */
-  public Double apply(Double observedValue, boolean isImmersed, String variable)
+  public double apply(double observedValue, boolean isImmersed, String variable)
                       throws IllegalArgumentException {
     
-    Double returnValue = new Double(0d);
+    double returnValue = 0d;
     
-    Collection<Double> coefficients = getCoefficients(variable);
+    double[] coefficients = getCoefficients(variable);
     
     String fitType = getFitType(variable);
+    fitType = fitType.toUpperCase();
     
     try {
       
@@ -252,13 +253,13 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyOptic1(Double observedValue, boolean isImmersed,
-                             Collection<Double> coefficients)
+  private double applyOptic1(double observedValue, boolean isImmersed,
+                             double[] coefficients)
                              throws IllegalArgumentException {
     
-    Double returnValue = null;
+    double returnValue = 0d;
     
     return returnValue;
   }
@@ -270,24 +271,23 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyOptic2(Double observedValue, boolean isImmersed,
-                             Collection<Double> coefficients)
+  private double applyOptic2(double observedValue, boolean isImmersed,
+                             double[] coefficients)
                              throws IllegalArgumentException {
     
-    Double returnValue = null;
-    ArrayList<Double> list = (ArrayList<Double>) coefficients;
+    double returnValue = 0d;
     
-    if ( list.size() != 3 ) {
+    if ( coefficients.length != 3 ) {
       throw new IllegalArgumentException("The OPTIC1 callibration requires " +
                                          "exactly three coefficients, not "  +
-                                         list.size());
+                                         coefficients.length);
     }
     
-    Double a0 = list.get(0);
-    Double a1 = list.get(1);
-    Double im = list.get(2);
+    double a0 = coefficients[0];
+    double a1 = coefficients[1];
+    double im = coefficients[2];
     
     // apply wet vs. dry calibrations
     if ( isImmersed ) {
@@ -308,13 +308,13 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyOptic3(Double observedValue, boolean isImmersed,
-                             Collection<Double> coefficients)
+  private double applyOptic3(double observedValue, boolean isImmersed,
+                             double[] coefficients)
                              throws IllegalArgumentException {
     
-    Double returnValue = null;
+    double returnValue = 0d;
     
     return returnValue;
   }
@@ -325,9 +325,9 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyTherm1(Double observedValue, Collection<Double> coefficients)
+  private double applyTherm1(double observedValue, double[] coefficients)
                              throws IllegalArgumentException {
     
     Double returnValue = null;
@@ -342,13 +342,13 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyPow10(Double observedValue, boolean isImmersed,
-                            Collection<Double> coefficients)
+  private double applyPow10(double observedValue, boolean isImmersed,
+                            double[] coefficients)
                             throws IllegalArgumentException {
     
-    Double returnValue = null;
+    double returnValue = 0d;
     
     return returnValue;
   }
@@ -359,23 +359,21 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyPolyU(Double observedValue, Collection<Double> coefficients)
+  private double applyPolyU(double observedValue, double[] coefficients)
                             throws IllegalArgumentException {
     
-    Double returnValue = new Double(0d);
-    Double power = new Double(0d);
+    double returnValue = 0d;
+    double power = 0d;
     
-    if ( !(coefficients.size() > 0) ) {
+    if ( !(coefficients.length > 0) ) {
       throw new IllegalArgumentException("The POLYU callibration requires " +
                                          "at least one coefficient, not "  +
-                                         coefficients.size());
+                                         coefficients.length);
     }
     
-    for (Iterator cIterator = coefficients.iterator(); cIterator.hasNext();) {
-      
-      Double coefficient = (Double) cIterator.next();
+    for (double coefficient : coefficients) {
       
       // apply the unfactored polynomial calibration
       returnValue = returnValue + (coefficient * Math.pow(observedValue, power));
@@ -392,22 +390,21 @@ public class Calibration {
    * (SAT-DN-00134) Version 6.1 (E) February 4, 2010.
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
-   * @param coefficients - an Collection of coefficient values
+   * @param coefficients - an array of coefficient values
    */
-  private Double applyPolyF(Double observedValue, Collection<Double> coefficients)
+  private double applyPolyF(double observedValue, double[] coefficients)
                             throws IllegalArgumentException {
     
-    Double returnValue = null;
+    double returnValue = 0d;
     int count = 0;
-    if ( !(coefficients.size() > 0) ) {
+    
+    if ( !(coefficients.length > 0) ) {
       throw new IllegalArgumentException("The POLYU callibration requires " +
                                          "at least one coefficient, not "  +
-                                         coefficients.size());
+                                         coefficients.length);
     }
     
-    for (Iterator cIterator = coefficients.iterator(); cIterator.hasNext();) {
-      
-      Double coefficient = (Double) cIterator.next();
+    for (double coefficient : coefficients) {
       
       if ( count == 0 ) {
         returnValue = coefficient;
@@ -429,14 +426,20 @@ public class Calibration {
    *
    *  @param variable - the variable name
    */
-  @SuppressWarnings("unchecked")
-  private Collection<Double> getCoefficients(String variable) {
+  private double[] getCoefficients(String variable) {
     
     BasicHierarchicalMap calibrationMap = this.calibrationsMap.get(variable);
     
-    Collection<Double> coefficients = 
-      (Collection<Double>) calibrationMap.getAll("calibration/coefficient");
-    logger.debug(coefficients.toString());
+    Collection collection = calibrationMap.getAll("calibration/coefficient");
+    double[] coefficients = new double[collection.size()];
+    int count = 0;
+    
+    for (Object item : collection) {
+      Double coefficient = (Double) item;
+      coefficients[count] = coefficient.doubleValue();
+      count ++;
+      
+    }
     
     return coefficients;
   }
