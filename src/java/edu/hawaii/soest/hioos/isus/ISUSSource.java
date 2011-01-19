@@ -184,4 +184,23 @@ public class ISUSSource extends RBNBSource {
     setCacheSize(cacheFrameSize);
     setRBNBClientName(rbnbClientName);
   }
+
+  /**
+   * A method that gets the log configuration file location
+   *
+   * @return logConfigurationFile  the log configuration file location
+   */
+  public String getLogConfigurationFile() {
+    return this.logConfigurationFile;
+  }
+  
+  /**
+   * A method that sets the log configuration file name
+   *
+   * @param logConfigurationFile  the log configuration file name
+   */
+  public void setLogConfigurationFile(String logConfigurationFile) {
+    this.logConfigurationFile = logConfigurationFile;
+  }
+  
 }
