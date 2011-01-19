@@ -196,6 +196,7 @@ public final class RBNBUtilities {
     return getSortedChildren(node.getChildren().iterator(), showHiddenChildren);
   }  
   
+  @SuppressWarnings("unchecked")
   private static List getSortedChildren(Iterator it, boolean showHiddenChildren) {
     List list = new ArrayList();
 
@@ -290,6 +291,7 @@ public final class RBNBUtilities {
    * @return        a list of channel names
    * @sicne         1.3
    */
+  @SuppressWarnings("unchecked")
   public static List getAllChannels(ChannelTree ctree, boolean hidden) {
     ArrayList channels = new ArrayList();
     Iterator it = ctree.iterator();
@@ -311,6 +313,7 @@ public final class RBNBUtilities {
    * @return        a list of channel names
    * @since         1.3
    */
+  @SuppressWarnings("unchecked")
   public static List getChildChannels(ChannelTree.Node source, boolean hidden) {
     ArrayList channels = new ArrayList();
     Iterator children = source.getChildren().iterator();
