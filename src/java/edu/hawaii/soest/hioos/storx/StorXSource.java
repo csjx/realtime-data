@@ -30,6 +30,8 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import edu.hawaii.soest.hioos.satlantic.Calibration;
+
 import java.lang.StringBuffer;
 import java.lang.StringBuilder;
 import java.lang.InterruptedException;
@@ -72,6 +74,9 @@ import org.apache.commons.lang.exception.NestableException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
+
+import org.dhmp.util.HierarchicalMap;
+import org.dhmp.util.BasicHierarchicalMap;
 
 import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
@@ -137,7 +142,7 @@ public class StorXSource extends RBNBSource {
   private String rbnbChannelName = DEFAULT_CHANNEL_NAME;
   
   /* The date format for the timestamp in the data sample string */
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z");
   
   /* The timezone used for the sample date */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
@@ -189,18 +194,15 @@ public class StorXSource extends RBNBSource {
   }
 
   /**
-   * A method that processes the data ByteBuffer passed in for the given IP
-   * address of the ADAM sensor, parses the binary ADAM data, and flushes the
+   * A method that processes the data object passed and flushes the
    * data to the DataTurbine given the sensor properties in the XMLConfiguration
    * passed in.
    *
-   * @param serialNumber      - the sensor serial number 
-   * @param xmlConfig         - the XMLConfiguration object containing the list of
-   *                            sensor properties
-   * @param messageAttachment - the binary data file as a ByteBuffer
+   * @param xmlConfig - the XMLConfiguration object containing the list of
+   *                    sensor properties
+   * @param frameMap  - the parsed data as a HierarchicalMap object
    */
-  protected boolean process(String serialNumber, XMLConfiguration xmlConfig,
-                            ByteBuffer messageAttachment) {
+  protected boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
     logger.debug("StorXSource.process() called.");
     // do not execute the stream if there is no connection
@@ -218,72 +220,172 @@ public class StorXSource extends RBNBSource {
       ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
       int channelIndex = 0;
         
-      this.storXParser = new StorXParser(messageAttachment);
+      // this.storXParser = new StorXParser(storXFrame);
       
-      String sensorName           = null;
-      String sensorSerialNumber   = null;
-      String sensorDescription    = null;
+      String sensorName         = null;
+      String sensorSerialNumber = null;
+      String sensorDescription  = null;
+      boolean isImmersed        = false;
+      String calibrationURL     = null;
       
-      List sensorList = xmlConfig.configurationsAt("account.sensor");
+      List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
       
       for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
-        
+      //  
         HierarchicalConfiguration sensorConfig = 
           (HierarchicalConfiguration) sIterator.next();
         sensorSerialNumber = sensorConfig.getString("serialNumber");
         
         // find the correct sensor configuration properties
-        if ( sensorSerialNumber.equals(serialNumber) ) {
+        if ( sensorSerialNumber.equals(frameMap.get("serialNumber")) ) {
         
           sensorName = sensorConfig.getString("name");
           sensorDescription = sensorConfig.getString("description");
-        
-          // the message attachment may contain one or more data sample strings,
-          // so iterate through them and add them to the RBNB
-          String[] sampleStrings = this.storXParser.getSampleStrings();
-          Date[]   sampleDates   = this.storXParser.getSampleDates();
+          isImmersed = new Boolean(sensorConfig.getString("isImmersed")).booleanValue();
+          calibrationURL = sensorConfig.getString("calibrationURL");
           
-          if ( sampleStrings.length > 0 && sampleStrings != null ) {
-            for ( int index = 0; index < sampleStrings.length; index++ ) {
-
-              // Build the RBNB channel map 
-
-              // get the sample string
-              String sampleString = sampleStrings[index];
-
-              // get the sample date and convert it to seconds since the epoch
-              Calendar sampleDateTime = Calendar.getInstance();
-              sampleDateTime.setTime(sampleDates[index]);
-              double sampleTimeAsSecondsSinceEpoch = (double)
-                (sampleDateTime.getTimeInMillis()/1000);
-
-              // add the sample timestamp to the rbnb channel map
-              //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-              rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-
-              // add the DecimalASCIISampleData channel to the channelMap
-              channelIndex = registerChannelMap.Add(getRBNBChannelName());
-              registerChannelMap.PutUserInfo(channelIndex, "units=none");               
-              channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-              rbnbChannelMap.PutMime(channelIndex, "text/plain");
-              rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
-
-              // Now register the RBNB channels, and flush the rbnbChannelMap to the
-              // DataTurbine
-              getSource().Register(registerChannelMap);
-              getSource().Flush(rbnbChannelMap);
-              logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + sampleString);
-              registerChannelMap.Clear();
-              rbnbChannelMap.Clear();
-
-            } // end for() 
-
-          } else {
-            logger.debug("The are no sample strings to to insert.");
+          // get a Calibration instance to interpret raw sensor values
+          Calibration calibration = new Calibration();
+          
+          if ( calibration.parse(calibrationURL) ) {
             
-          }//end if()
-          // leave the for loop since we've found the correct config
-          break;
+            // Build the RBNB channel map 
+
+            // get the sample date and convert it to seconds since the epoch
+            Date sampleDate = (Date) frameMap.get("date");
+            Calendar sampleDateTime = Calendar.getInstance();
+            sampleDateTime.setTime(sampleDate);
+            double sampleTimeAsSecondsSinceEpoch = (double)
+              (sampleDateTime.getTimeInMillis()/1000);
+            // and create a string formatted date
+            DATE_FORMAT.setTimeZone(TZ);
+            String sampleDateAsString = DATE_FORMAT.format(sampleDate).toString();
+            
+            // get the sample data from the frame map
+            ByteBuffer rawFrame          = (ByteBuffer) frameMap.get("rawFrame");
+            StorXFrame storXFrame        = (StorXFrame) frameMap.get("parsedFrameObject");
+            String serialNumber          = storXFrame.getSerialNumber();
+            double rawAnalogChannelOne   = new Float(storXFrame.getAnalogChannelOne()).doubleValue();
+            double rawAnalogChannelTwo   = new Float(storXFrame.getAnalogChannelTwo()).doubleValue();
+            double rawAnalogChannelThree = new Float(storXFrame.getAnalogChannelThree()).doubleValue();
+            double rawAnalogChannelFour  = new Float(storXFrame.getAnalogChannelFour()).doubleValue();
+            double rawAnalogChannelFive  = new Float(storXFrame.getAnalogChannelFive()).doubleValue();
+            double rawAnalogChannelSix   = new Float(storXFrame.getAnalogChannelSix()).doubleValue();
+            double rawAnalogChannelSeven = new Float(storXFrame.getAnalogChannelSeven()).doubleValue();
+            double rawInternalVoltage    = new Float(storXFrame.getInternalVoltage()).doubleValue();
+            
+            // apply calibrations to the observed data
+            double analogChannelOne   = calibration.apply(rawAnalogChannelOne  , isImmersed, "AUX_1");
+            double analogChannelTwo   = calibration.apply(rawAnalogChannelTwo  , isImmersed, "AUX_2");
+            double analogChannelThree = calibration.apply(rawAnalogChannelThree, isImmersed, "AUX_3");
+            double analogChannelFour  = calibration.apply(rawAnalogChannelFour , isImmersed, "AUX_4");
+            double analogChannelFive  = calibration.apply(rawAnalogChannelFive , isImmersed, "AUX_5");
+            double analogChannelSix   = calibration.apply(rawAnalogChannelSix  , isImmersed, "AUX_6");
+            double analogChannelSeven = calibration.apply(rawAnalogChannelSeven, isImmersed, "AUX_7");
+            double internalVoltage    = calibration.apply(rawInternalVoltage   , isImmersed, "SV");         
+            
+            String sampleString = "";
+            sampleString += String.format("%s",     serialNumber      )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelOne  )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelTwo  )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelThree)    + ", ";
+            sampleString += String.format("%05.2f", analogChannelFour )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelFive )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelSix  )    + ", ";
+            sampleString += String.format("%05.2f", analogChannelSeven)    + ", ";
+            sampleString += String.format("%05.2f", internalVoltage   )    + ", ";
+            sampleString += sampleDateAsString;
+            sampleString += storXFrame.getTerminator();
+            
+            // add the sample timestamp to the rbnb channel map
+            //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+
+            // add the DecimalASCIISampleData channel to the channelMap
+            channelIndex = registerChannelMap.Add(getRBNBChannelName());
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+            
+            // add the serialNumber channel to the channelMap
+            channelIndex = registerChannelMap.Add("serialNumber");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("serialNumber");
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, serialNumber);
+            
+            // add the analogChannelOne channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelOne");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelOne");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelOne});
+            
+            // add the analogChannelTwo channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelTwo");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelTwo");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelTwo});
+            
+            // add the analogChannelThree channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelThree");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelThree");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelThree});
+            
+            // add the analogChannelFour channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelFour");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelFour");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelFour});
+            
+            // add the analogChannelFive channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelFive");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelFive");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelFive});
+            
+            // add the analogChannelSix channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelSix");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelSix");
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelSix});
+            
+            // add the analogChannelSeven channel to the channelMap
+            channelIndex = registerChannelMap.Add("analogChannelSeven");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("analogChannelSeven");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelSeven});
+            
+            // add the internalVoltage channel to the channelMap
+            channelIndex = registerChannelMap.Add("internalVoltage");
+            registerChannelMap.PutUserInfo(channelIndex, "units=V");               
+            channelIndex = rbnbChannelMap.Add("internalVoltage");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{internalVoltage});
+
+            // Now register the RBNB channels, and flush the rbnbChannelMap to the
+            // DataTurbine
+            getSource().Register(registerChannelMap);
+            getSource().Flush(rbnbChannelMap);
+            logger.info("Sample sent to the DataTurbine:" + sampleString);
+            
+            registerChannelMap.Clear();
+            rbnbChannelMap.Clear();
+            
+          } else {
+            
+            logger.info("Couldn't apply the calibration coefficients. " +
+                        "Skipping this sample.");
+                        
+          } // end if()
           
         } // end if()
         
@@ -292,7 +394,8 @@ public class StorXSource extends RBNBSource {
       //getSource.Detach();
       success = true;
       
-    } catch ( SAPIException sapie ) {
+    } catch ( Exception sapie ) {
+    //} catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
       success = false;
