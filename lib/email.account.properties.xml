@@ -42,7 +42,7 @@
   <!ELEMENT loggerSerialNumber (#PCDATA)>
   <!-- An individual sensor with each property as an element -->
   <!ELEMENT sensor (name, type, serialNumber, description, isImmersed, 
-                    calibrationURL, cacheSize, archiveSize, archiveChannel)>
+                    calibrationURL+, cacheSize, archiveSize, archiveChannel)>
   <!-- The source name of the sensor -->
   <!ELEMENT name (#PCDATA)>
   <!-- The source type of the sensor -->
@@ -103,7 +103,8 @@
         <serialNumber>0206</serialNumber>
         <description>WQB-AW-ISUS</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL></calibrationURL>
+        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF</calibrationURL>
+        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -140,7 +141,8 @@
         <serialNumber>0207</serialNumber>
         <description>WQB-KN-ISUS</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL></calibrationURL>
+        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NLB.TDF</calibrationURL>
+        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NDB.TDF</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>DecimalASCIISampleData</archiveChannel>
