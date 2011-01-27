@@ -30,6 +30,8 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
+import edu.hawaii.soest.hioos.satlantic.Calibration;
+
 import java.lang.StringBuffer;
 import java.lang.StringBuilder;
 import java.lang.InterruptedException;
@@ -212,76 +214,101 @@ public class ISUSSource extends RBNBSource {
       ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
       int channelIndex = 0;
       
-      String sensorName           = null;
-      String sensorSerialNumber   = null;
-      String sensorDescription    = null;
+      String sensorName         = null;
+      String sensorSerialNumber = null;
+      String sensorDescription  = null;
+      boolean isImmersed        = false;
+      String[] calibrationURLs  = null;
+      String calibrationURL     = null;
       
       List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
       
-      //for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+      for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
       //  
-      //  HierarchicalConfiguration sensorConfig = 
-      //    (HierarchicalConfiguration) sIterator.next();
-      //  sensorSerialNumber = sensorConfig.getString("serialNumber");
-      //  
-      //  // find the correct sensor configuration properties
-      //  if ( sensorSerialNumber.equals(serialNumber) ) {
-      //  
-      //    sensorName = sensorConfig.getString("name");
-      //    sensorDescription = sensorConfig.getString("description");
-      //  
-      //    // the message attachment may contain one or more data sample strings,
-      //    // so iterate through them and add them to the RBNB
-      //    String[] sampleStrings = this.isusParser.getSampleStrings();
-      //    Date[]   sampleDates   = this.isusParser.getSampleDates();
-      //    
-      //    if ( sampleStrings.length > 0 && sampleStrings != null ) {
-      //      for ( int index = 0; index < sampleStrings.length; index++ ) {
-      //
-      //        // Build the RBNB channel map 
-      //
-      //        // get the sample string
-      //        String sampleString = sampleStrings[index];
-      //
-      //        // get the sample date and convert it to seconds since the epoch
-      //        Calendar sampleDateTime = Calendar.getInstance();
-      //        sampleDateTime.setTime(sampleDates[index]);
-      //        double sampleTimeAsSecondsSinceEpoch = (double)
-      //          (sampleDateTime.getTimeInMillis()/1000);
-      //
-      //        // add the sample timestamp to the rbnb channel map
-      //        //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-      //        rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-      //
-      //        // add the DecimalASCIISampleData channel to the channelMap
-      //        channelIndex = registerChannelMap.Add(getRBNBChannelName());
-      //        registerChannelMap.PutUserInfo(channelIndex, "units=none");               
-      //        channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
-      //        rbnbChannelMap.PutMime(channelIndex, "text/plain");
-      //        rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
-      //
-      //        // Now register the RBNB channels, and flush the rbnbChannelMap to the
-      //        // DataTurbine
-      //        getSource().Register(registerChannelMap);
-      //        getSource().Flush(rbnbChannelMap);
-      //        logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + sampleString);
-      //        registerChannelMap.Clear();
-      //        rbnbChannelMap.Clear();
-      //
-      //      } // end for() 
-      //
-      //    } else {
-      //      logger.debug("The are no sample strings to to insert.");
-      //      
-      //    }//end if()
-      //    // leave the for loop since we've found the correct config
-      //    break;
-      //    
-      //  } // end if()
-      //  
-      //} // end for()                                             
+        HierarchicalConfiguration sensorConfig = 
+          (HierarchicalConfiguration) sIterator.next();
+        sensorSerialNumber = sensorConfig.getString("serialNumber");
+        
+        // find the correct sensor configuration properties
+        if ( sensorSerialNumber.equals(frameMap.get("serialNumber")) ) {
+        
+          sensorName = sensorConfig.getString("name");
+          sensorDescription = sensorConfig.getString("description");
+          isImmersed = new Boolean(sensorConfig.getString("isImmersed")).booleanValue();
+          calibrationURLs = sensorConfig.getStringArray("calibrationURL");
+          
+          for ( String url : calibrationURLs ) {
+            
+            if ( url.matches((String) frameMap.get("type")) ) {
+              calibrationURL = url;
+              
+            }
+          }
+          
+          // get a Calibration instance to interpret raw sensor values
+          Calibration calibration = new Calibration();
+          
+          if ( calibration.parse(calibrationURL) ) {
+            
+            // Build the RBNB channel map 
+
+            // get the sample date and convert it to seconds since the epoch
+            Date sampleDate = (Date) frameMap.get("date");
+            Calendar sampleDateTime = Calendar.getInstance();
+            sampleDateTime.setTime(sampleDate);
+            double sampleTimeAsSecondsSinceEpoch = (double)
+              (sampleDateTime.getTimeInMillis()/1000);
+            // and create a string formatted date
+            DATE_FORMAT.setTimeZone(TZ);
+            String sampleDateAsString = DATE_FORMAT.format(sampleDate).toString();
+            
+            // get the sample data from the frame map
+            ByteBuffer rawFrame          = (ByteBuffer) frameMap.get("rawFrame");
+            ISUSFrame isusFrame          = (ISUSFrame) frameMap.get("parsedFrameObject");
+            String serialNumber          = isusFrame.getSerialNumber();
+            
+            String sampleString = "";
+            
+            // add the sample timestamp to the rbnb channel map
+            //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+            
+            // add the DecimalASCIISampleData channel to the channelMap
+            channelIndex = registerChannelMap.Add(getRBNBChannelName());
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+            
+            // add the serialNumber channel to the channelMap
+            channelIndex = registerChannelMap.Add("serialNumber");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("serialNumber");
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, serialNumber);
+            
+            // Now register the RBNB channels, and flush the rbnbChannelMap to the
+            // DataTurbine
+            getSource().Register(registerChannelMap);
+            getSource().Flush(rbnbChannelMap);
+            logger.info("Sample sent to the DataTurbine:" + sampleString);
+            
+            registerChannelMap.Clear();
+            rbnbChannelMap.Clear();
+            
+          } else {
+            
+            logger.info("Couldn't apply the calibration coefficients. " +
+                        "Skipping this sample.");
+                        
+          } // end if()
+          
+        } // end if()
+        
+      } // end for()                                             
       
       //getSource.Detach();
+      
       success = true;
       
     } catch ( Exception sapie ) {
