@@ -194,7 +194,7 @@ public class ISUSSource extends RBNBSource {
    *                    sensor properties
    * @param frameMap  - the parsed data as a HierarchicalMap object
    */
-  protected boolean process(XMLConfiguration xmlConfig, HierarchicalMap framMap) {
+  protected boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
     logger.debug("ISUSSource.process() called.");
     // do not execute the stream if there is no connection
