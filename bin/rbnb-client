@@ -47,6 +47,7 @@ start() {
      su - ${RBNB_USER} -c "/usr/bin/screen -d -m"; # assumes ~/.screenrc is in place
      sleep 5;
      # start a driver connection to the DataTurbine
+     echo "There is no DataTurbine connection yet. Starting one.";
      su - ${RBNB_USER} -c "${START_SCRIPT}";
      
    fi
