@@ -297,9 +297,6 @@ public class ISUSFrame {
       this.timestamp.put(sixBytes);
       this.timestamp.put(this.isusFrame.get());
       
-      logger.debug(this.isusFrame.toString());
-      System.out.println("-------------------------------------------------------");
-      
     } catch ( BufferUnderflowException bue ) {
       
       bue.printStackTrace();
@@ -458,8 +455,8 @@ public class ISUSFrame {
   }
 
   /* BU1 Binary frames only: A check sum validates binaryframes. Satlantic’s software rejects invalid frames. */
-  public byte getChecksum() {
-    return this.checksum.get();
+  public int getChecksum() {
+    return (new Byte(this.checksum.get())).intValue();
   }
 
   /**
