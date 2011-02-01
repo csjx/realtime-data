@@ -1,0 +1,80 @@
+#!/bin/bash
+# Init script for an RBNB client on the PacIOOS gumstix deployments
+#
+# On startup this script will archive an existing data log file, connect to a 
+# CTD over serial using the screen application, and start the DataTurbine
+# driver for a specific source name.
+
+if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/bbl/trunk; fi
+
+RBNB_ARCHIVE_LOC='/var/lib/rbnb';
+RBNB_USER='pacioos';
+SPOOL_DIR="/data/spool";
+TIMESTAMP=$(date +%Y%m%d%H%M%S);
+SOURCE_NAME="PIPL01_001CTDXXXXR00";
+START_SCRIPT="${RBNB_HOME}/bin/Start-PIPL01_001CTDXXXXR00.sh";
+STOP_SCRIPT="${RBNB_HOME}/bin/Stop-PIPL01_001CTDXXXXR00.sh";
+
+######################################################################################
+start() {
+   mkdir -p ${RBNB_ARCHIVE_LOC}
+   
+   # OE/Gumstix /var/log directory is volatile.  Re-link if necessary
+   if [ -d /var/log/rbnb ]; then
+     echo "RBNB log directory exists";
+   else
+     echo "Relinking the log directory.";
+     ln -s /usr/local/rbnb/log /var/log/rbnb;
+   fi
+   
+   # if the data log file exists, move it
+   if [ -e ${SPOOL_DIR}/${SOURCE_NAME}.log ]; then
+       echo "Moving data log file to ${SPOOL_DIR}/${SOURCE_NAME}.${TIMESTAMP}.log";
+       su - ${RBNB_USER} -c \
+       "mv ${SPOOL_DIR}/${SOURCE_NAME}.log \
+       ${SPOOL_DIR}/${SOURCE_NAME}.${TIMESTAMP}.log"
+   fi
+   
+   # is SCREEN already running?
+   PS_COUNT=$(ps -ef | grep SCREEN | wc -l);
+   
+   if [ ${PS_COUNT} -gt 1 ]; then
+     echo "There is already a serial connection. Not starting one.";
+   
+   else
+     echo "There is no serial connection yet. Starting one.";
+     # start a serial CTD connection
+     su - ${RBNB_USER} -c "/usr/bin/screen -d -m"; # assumes ~/.screenrc is in place
+     sleep 5;
+     # start a driver connection to the DataTurbine
+     su - ${RBNB_USER} -c "${START_SCRIPT}";
+     
+   fi
+   
+}
+
+######################################################################################
+stop() {
+   # start a driver connection to the DataTurbine
+   su - ${RBNB_USER} -c "${STOP_SCRIPT}";
+   sleep 5;
+}
+     
+case "$1" in
+   'start')
+       echo "Starting the ${SOURCE_NAME} driver."
+       start
+       ;;
+   'stop')
+       echo "Stopping the ${SOURCE_NAME} driver."
+       stop
+       ;;
+   'restart')
+       echo "Restarting the ${SOURCE_NAME} driver."
+       stop
+       start
+       ;;
+   *)
+       echo "Usage: $0 {start|stop|restart} "
+       ;;
+esac
