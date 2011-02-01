@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -463,10 +463,16 @@ public class Calibration {
   /**
    *  Returns the names of the variables from the calibrations map
    *
-   * @return variableNames - the list of variable names a a Set of Strings
+   * @return variableNames - the set of variable names a a List of Strings
    */
-  public Set<String> getVariableNames() {
-    return this.calibrationsMap.keySet();
+  public List<String> getVariableNames() {
+    
+    List<String> variableNames = new ArrayList<String>();
+    
+    for(String name : this.calibrationsMap.keySet()) {
+      variableNames.add(name);
+    }
+    return variableNames;
     
   }
   
