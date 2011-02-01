@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -460,6 +461,16 @@ public class Calibration {
   }
   
   /**
+   *  Returns the names of the variables from the calibrations map
+   *
+   * @return variableNames - the list of variable names a a Set of Strings
+   */
+  public Set<String> getVariableNames() {
+    return this.calibrationsMap.keySet();
+    
+  }
+  
+  /**
    * A method that parses a Satlantic calibration or telemetry definition file.
    */
   public boolean parse(String calibrationURL) throws ParseException {
@@ -587,7 +598,7 @@ public class Calibration {
       
     } // end try/catch
     
-    //logger.debug(this.calibrationsMap.toString());
+    logger.debug(this.calibrationsMap.toString());
     
     return success;
   }
