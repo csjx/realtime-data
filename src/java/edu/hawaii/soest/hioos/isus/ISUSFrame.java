@@ -330,7 +330,7 @@ public class ISUSFrame {
     try {
       
       byte[] fourBytes = new byte[4];
-      this.header.flip().position(6);
+      this.header.position(6);
       this.header.get(fourBytes);
       this.header.flip();
       return new String(fourBytes, "US-ASCII");
@@ -362,86 +362,103 @@ public class ISUSFrame {
 
   /*  in ASCII frames to 2 decimal places. */
   public double getNitrogenConcentration() {
+    this.nitrogenConcentration.flip();
     return (new Float(this.nitrogenConcentration.getFloat())).doubleValue();
   }
 
   /* BF4 The first auxiliary fitting result of the ISUS is reported. */
   public double getAuxConcentration1() {
+    this.auxConcentration1.flip();
     return (new Float(this.auxConcentration1.getFloat())).doubleValue();
   }
 
   /* BF4 The second auxiliary fitting result of the ISUS is reported. */
   public double getAuxConcentration2() {
+    this.auxConcentration2.flip();
     return (new Float(this.auxConcentration2.getFloat())).doubleValue();
   }
 
   /* BF4 The first auxiliary fitting result of the ISUS is reported. */
   public double getAuxConcentration3() {
+    this.auxConcentration3.flip();
     return (new Float(this.auxConcentration3.getFloat())).doubleValue();
   }
 
   /* BF4 The Root Mean Square Error of the ISUS’ concentration calculation is given, in ASCII frames to 6 decimal places. */
   public double getRmsError() {
+    this.rmsError.flip();
     return (new Float(this.rmsError.getFloat())).doubleValue();
   }
 
   /* The temperature inside the housing in degrees Celcius. */
   public double getInsideTemperature() {
+    this.insideTemperature.flip();
     return (new Float(this.insideTemperature.getFloat())).doubleValue();
   }
 
   /* The temperature of the spectrometer in degrees Celcius. */
   public double getSpectrometerTemperature() {
+    this.spectrometerTemperature.flip();
     return (new Float(this.spectrometerTemperature.getFloat())).doubleValue();
   }
 
   /* The temperature of the lamp in degrees Celcius. */
   public double getLampTemperature() {
+    this.lampTemperature.flip();
     return (new Float(this.lampTemperature.getFloat())).doubleValue();
   }
 
   /* BU4 The lamp on-time of the current data acquisition inseconds. */
   public double getLampTime() {
+    this.lampTime.flip();
     return (new Float(this.lampTime.getFloat())).doubleValue();
   }
 
   /* BF4 The humidity inside the instrument, given in percent. Increasing values of humidity indicate a slow leak. */
   public double getHumidity() {
+    this.humidity.flip();
     return (new Float(this.humidity.getFloat())).doubleValue();
   }
 
   /* BF4 The voltage of the lamp power supply. */
   public double getLampVoltage12() {
+    this.lampVoltage12.flip();
     return (new Float(this.lampVoltage12.getFloat())).doubleValue();
   }
 
   /* BF4 The voltage of the internal analog power supply. */
   public double getInternalPowerVoltage5() {
+    this.internalPowerVoltage5.flip();
     return (new Float(this.internalPowerVoltage5.getFloat())).doubleValue();
   }
 
   /* BF4 The voltage of the main internal supply. */
   public double getMainPowerVoltage() {
+    this.mainPowerVoltage.flip();
     return (new Float(this.mainPowerVoltage.getFloat())).doubleValue();
   }
 
   /* BF4 The average Reference Channel measurement during thesample time, in ASCII mode to 2 decimal places. */
   public double getReferenceAverage() {
+    this.referenceAverage.flip();
     return (new Float(this.referenceAverage.getFloat())).doubleValue();
   }
 
   /* BF4 The variance of the Reference Channel measurements, inASCII mode to 2 decimal places. */
   public double getReferenceVariance() {
+    this.referenceVariance.flip();
     return (new Float(this.referenceVariance.getFloat())).doubleValue();
   }
 
   /* BF4 An AF formatted field representing the Sea-Water Darkcalculation (to 2 decimal places), in spectrometer counts. */
   public double getSeaWaterDarkCounts() {
+    this.seaWaterDarkCounts.flip();
     return (new Float(this.seaWaterDarkCounts.getFloat())).doubleValue();
   }
 
   /* BF4 An AF formatted field representing the average value of all spectrometer channels, to 2 decimal places. */
   public double getAverageWavelength() {
+    this.averageWavelength.flip();
     return (new Float(this.averageWavelength.getFloat())).doubleValue();
   }
 
@@ -456,6 +473,7 @@ public class ISUSFrame {
 
   /* BU1 Binary frames only: A check sum validates binaryframes. Satlantic’s software rejects invalid frames. */
   public int getChecksum() {
+    this.checksum.flip();
     return (new Byte(this.checksum.get())).intValue();
   }
 
