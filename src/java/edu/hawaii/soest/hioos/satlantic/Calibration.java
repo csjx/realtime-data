@@ -233,8 +233,20 @@ public class Calibration {
         case POLYF:
           returnValue = applyPolyF(observedValue, coefficients);
           break;
-          
+        
+        case COUNT:
+          returnValue = observedValue;
+          break;
+        
+        case NONE:
+          returnValue = observedValue;
+          break;
+        
       }
+      
+      logger.debug("Using fitType '" + fitType + "', " + 
+                   "applied calibrationType '" + calibrationType.toString() +
+                   "', to produce value of " + returnValue);
       
     } catch (NullPointerException npe) {
       throw new IllegalArgumentException("The fit type was null. " +
