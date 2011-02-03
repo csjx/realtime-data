@@ -244,9 +244,10 @@ public class Calibration {
         
       }
       
-      logger.debug("Using fitType '" + fitType + "', " + 
-                   "applied calibrationType '" + calibrationType.toString() +
-                   "', to produce value of " + returnValue);
+      logger.debug("applied calibrationType " + calibrationType.toString() +
+                   ", produced " + returnValue   +
+                   "\t\tfrom "      + observedValue +
+                   "\t\tfor "       + variable);
       
     } catch (NullPointerException npe) {
       throw new IllegalArgumentException("The fit type was null. " +
@@ -293,7 +294,7 @@ public class Calibration {
     double returnValue = 0d;
     
     if ( coefficients.length != 3 ) {
-      throw new IllegalArgumentException("The OPTIC1 callibration requires " +
+      throw new IllegalArgumentException("The OPTIC2 callibration requires " +
                                          "exactly three coefficients, not "  +
                                          coefficients.length);
     }
@@ -616,7 +617,7 @@ public class Calibration {
       
     } // end try/catch
     
-    logger.debug(this.calibrationsMap.toString());
+    //logger.debug(this.calibrationsMap.toString());
     
     return success;
   }
