@@ -454,7 +454,8 @@ public class ISUSFrame {
   /* BU4 The lamp on-time of the current data acquisition in seconds. */
   int getLampTime() {
     this.lampTime.flip();
-    return (new Float(this.lampTime.getFloat())).intValue();
+    
+    return this.lampTime.getInt();
   }
 
   /* BF4 The humidity inside the instrument, given in percent. Increasing values of humidity indicate a slow leak. */
