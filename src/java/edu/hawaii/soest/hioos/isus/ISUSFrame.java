@@ -34,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -348,18 +349,60 @@ public class ISUSFrame {
    * BS4 The date field denotes the date at the time of the sample, using 
    * the year and Julian day. The format is YYYYDDD. 
    */
-  public byte[] getSampleDate() {
-    return this.sampleDate.array();
+  public String getSampleDate() {
+    this.sampleDate.flip();
+    int dateStamp = this.sampleDate.getInt();
+    return String.format("%7d", dateStamp);
+    
   }
 
   /* 
    * BD8 The time field gives the GMT/UTC time of the sample in decimal 
    * hours of the day. 
    */
-  public byte[] getSampleTime() {
-    return this.sampleTime.array();
+  public String getSampleTime() {
+    this.sampleTime.flip();
+    double timeStamp = this.sampleTime.getDouble();
+    return String.format("%13.10f", timeStamp);
+    
   }
 
+  /* 
+   * Return the sample date from the sampleDate and sampleTime fields combined.
+   *
+   * @return sampleDateTime - the sample date and time as a Java Date object
+   */
+  public Date getSampleDateTime() {
+    SimpleDateFormat sampleDateFormat = new SimpleDateFormat("yyyyDDDHHmmss");
+    Date sampleDateTime = new Date(0L); 
+    
+    // get hours/minutes/seconds from the decimal hours time field
+    double decimalHour     = new Double(getSampleTime()).doubleValue();
+    int wholeHour          = new Double(decimalHour).intValue();
+    double fraction        = decimalHour - wholeHour;
+    int minutes            = new Double(fraction * 60d).intValue();
+    double secondsFraction = (fraction * 60d) - minutes;
+    int seconds            = new Double(Math.round((secondsFraction * 60d))).intValue();
+    
+    // create a string version of the date
+    String dateString = getSampleDate();
+    dateString += new Integer(wholeHour).toString();
+    dateString += new Integer(minutes).toString();
+    dateString += new Integer(seconds).toString();
+    
+    // convert to a Java Date (instrument time is UTC)
+    try {
+      sampleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      sampleDateTime = sampleDateFormat.parse(dateString);
+      
+    } catch (ParseException pe) {
+      logger.debug("There was a problem parsing the sampleDateTime. The error " +
+                   "message was: " + pe.getMessage());
+    }
+    
+    return sampleDateTime;
+  }
+  
   /*  in ASCII frames to 2 decimal places. */
   public double getNitrogenConcentration() {
     this.nitrogenConcentration.flip();
@@ -408,10 +451,10 @@ public class ISUSFrame {
     return (new Float(this.lampTemperature.getFloat())).doubleValue();
   }
 
-  /* BU4 The lamp on-time of the current data acquisition inseconds. */
-  public double getLampTime() {
+  /* BU4 The lamp on-time of the current data acquisition in seconds. */
+  int getLampTime() {
     this.lampTime.flip();
-    return (new Float(this.lampTime.getFloat())).doubleValue();
+    return (new Float(this.lampTime.getFloat())).intValue();
   }
 
   /* BF4 The humidity inside the instrument, given in percent. Increasing values of humidity indicate a slow leak. */
