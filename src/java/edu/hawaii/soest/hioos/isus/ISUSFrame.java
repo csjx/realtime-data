@@ -514,10 +514,11 @@ public class ISUSFrame {
     return new Short(counts).intValue();
   }
 
-  /* BU1 Binary frames only: A check sum validates binaryframes. Satlantic’s software rejects invalid frames. */
+  /* BU1 Binary frames only: A check sum validates binary frames. Satlantic’s software rejects invalid frames. */
   public int getChecksum() {
     this.checksum.flip();
-    return (new Byte(this.checksum.get())).intValue();
+    
+    return this.checksum.get() & 0xFF;
   }
 
   /**
