@@ -53,6 +53,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.TreeMap;
 import java.util.Iterator;
@@ -142,7 +144,8 @@ public class ISUSSource extends RBNBSource {
   private String rbnbChannelName = DEFAULT_CHANNEL_NAME;
   
   /* The date format for the timestamp in the data sample string */
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+  private static final SimpleDateFormat DATE_FORMAT = 
+    new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
   
   /* The timezone used for the sample date */
   private static final TimeZone TZ = TimeZone.getTimeZone("HST");
@@ -196,7 +199,7 @@ public class ISUSSource extends RBNBSource {
    *                    sensor properties
    * @param frameMap  - the parsed data as a HierarchicalMap object
    */
-  protected boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
+  public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
     logger.debug("ISUSSource.process() called.");
     // do not execute the stream if there is no connection
@@ -220,6 +223,7 @@ public class ISUSSource extends RBNBSource {
       boolean isImmersed        = false;
       String[] calibrationURLs  = null;
       String calibrationURL     = null;
+      String type               = null;
       
       List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
       
@@ -236,12 +240,17 @@ public class ISUSSource extends RBNBSource {
           sensorDescription = sensorConfig.getString("description");
           isImmersed = new Boolean(sensorConfig.getString("isImmersed")).booleanValue();
           calibrationURLs = sensorConfig.getStringArray("calibrationURL");
+          type = (String) frameMap.get("type");
           
+          // find the correct calibrationURL from the list given the type
           for ( String url : calibrationURLs ) {
             
-            if ( url.matches((String) frameMap.get("type")) ) {
+            if ( url.indexOf(type) > 0 ) {
               calibrationURL = url;
+              break;
               
+            } else {
+              logger.debug("There was no match for " + type);
             }
           }
           
@@ -253,26 +262,138 @@ public class ISUSSource extends RBNBSource {
             // Build the RBNB channel map 
 
             // get the sample date and convert it to seconds since the epoch
-            Date sampleDate = (Date) frameMap.get("date");
-            Calendar sampleDateTime = Calendar.getInstance();
-            sampleDateTime.setTime(sampleDate);
+            Date frameDate = (Date) frameMap.get("date");
+            Calendar frameDateTime = Calendar.getInstance();
+            frameDateTime.setTime(frameDate);
             double sampleTimeAsSecondsSinceEpoch = (double)
-              (sampleDateTime.getTimeInMillis()/1000);
-            // and create a string formatted date
+              (frameDateTime.getTimeInMillis()/1000);
+            // and create a string formatted date for the given time zone
             DATE_FORMAT.setTimeZone(TZ);
-            String sampleDateAsString = DATE_FORMAT.format(sampleDate).toString();
+            String frameDateAsString = DATE_FORMAT.format(frameDate).toString();
             
             // get the sample data from the frame map
-            ByteBuffer rawFrame          = (ByteBuffer) frameMap.get("rawFrame");
-            ISUSFrame isusFrame          = (ISUSFrame) frameMap.get("parsedFrameObject");
-            String serialNumber          = isusFrame.getSerialNumber();
+            ByteBuffer rawFrame       = (ByteBuffer) frameMap.get("rawFrame");
+            ISUSFrame isusFrame       = (ISUSFrame) frameMap.get("parsedFrameObject");
+            String serialNumber       = isusFrame.getSerialNumber();
+            String sampleDate         = isusFrame.getSampleDate();
+            String sampleTime         = isusFrame.getSampleTime();
+            SimpleDateFormat dtFormat = new SimpleDateFormat();
+            Date sampleDateTime       = isusFrame.getSampleDateTime();
+            dtFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            dtFormat.applyPattern("MM/dd/yy");
+            String sampleDateUTC      = dtFormat.format(sampleDateTime);
+            dtFormat.applyPattern("HH:mm:ss");
+            String sampleTimeUTC      = dtFormat.format(sampleDateTime);
+            dtFormat.setTimeZone(TimeZone.getTimeZone("HST"));                   
+            dtFormat.applyPattern("MM/dd/yy");
+            String sampleDateHST      = dtFormat.format(sampleDateTime);
+            dtFormat.applyPattern("HH:mm:ss");
+            String sampleTimeHST      = dtFormat.format(sampleDateTime);
+            dtFormat.applyPattern("dd-MMM-yy HH:mm");
+            String sampleDateTimeHST  = dtFormat.format(sampleDateTime);
+            
+            double rawNitrogenConcentration   = isusFrame.getNitrogenConcentration();
+            double rawAuxConcentration1       = isusFrame.getAuxConcentration1();
+            double rawAuxConcentration2       = isusFrame.getAuxConcentration2();
+            double rawAuxConcentration3       = isusFrame.getAuxConcentration3();
+            double rawRmsError                = isusFrame.getRmsError();
+            double rawInsideTemperature       = isusFrame.getInsideTemperature();
+            double rawSpectrometerTemperature = isusFrame.getSpectrometerTemperature();
+            double rawLampTemperature         = isusFrame.getLampTemperature();
+            int    rawLampTime                = isusFrame.getLampTime();
+            double rawHumidity                = isusFrame.getHumidity();
+            double rawLampVoltage12           = isusFrame.getLampVoltage12();
+            double rawInternalPowerVoltage5   = isusFrame.getInternalPowerVoltage5();
+            double rawMainPowerVoltage        = isusFrame.getMainPowerVoltage();
+            double rawReferenceAverage        = isusFrame.getReferenceAverage();
+            double rawReferenceVariance       = isusFrame.getReferenceVariance();
+            double rawSeaWaterDarkCounts      = isusFrame.getSeaWaterDarkCounts();
+            double rawAverageWavelength       = isusFrame.getAverageWavelength();
+            int    checksum                   = isusFrame.getChecksum();
+            
+            //// apply calibrations to the observed data
+            double nitrogenConcentration    = calibration.apply(rawNitrogenConcentration  , isImmersed, "NITRATE");
+            double auxConcentration1        = calibration.apply(rawAuxConcentration1      , isImmersed, "AUX1");
+            double auxConcentration2        = calibration.apply(rawAuxConcentration2      , isImmersed, "AUX2");
+            double auxConcentration3        = calibration.apply(rawAuxConcentration3      , isImmersed, "AUX3");
+            double rmsError                 = calibration.apply(rawRmsError               , isImmersed, "RMSe");
+            double insideTemperature        = calibration.apply(rawInsideTemperature      , isImmersed, "T_INT");
+            double spectrometerTemperature  = calibration.apply(rawSpectrometerTemperature, isImmersed, "T_SPEC");
+            double lampTemperature          = calibration.apply(rawLampTemperature        , isImmersed, "T_LAMP");
+            int    lampTime                 = calibration.apply(rawLampTime               , isImmersed, "LAMP_TIME");                                  
+            double humidity                 = calibration.apply(rawHumidity               , isImmersed, "HUMIDITY");
+            double lampVoltage12            = calibration.apply(rawLampVoltage12          , isImmersed, "VOLT_12");
+            double internalPowerVoltage5    = calibration.apply(rawInternalPowerVoltage5  , isImmersed, "VOLT_5");
+            double mainPowerVoltage         = calibration.apply(rawMainPowerVoltage       , isImmersed, "VOLT_MAIN");
+            double referenceAverage         = calibration.apply(rawReferenceAverage       , isImmersed, "REF_AVG");
+            double referenceVariance        = calibration.apply(rawReferenceVariance      , isImmersed, "REF_STD");
+            double seaWaterDarkCounts       = calibration.apply(rawSeaWaterDarkCounts     , isImmersed, "SW_DARK");
+            double averageWavelength        = calibration.apply(rawAverageWavelength      , isImmersed, "SPEC_AVG");
+            
+            // iterate through the individual wavelengths
+            List<String> variableNames = calibration.getVariableNames();
+            TreeMap<String, Double> wavelengthsMap = new TreeMap<String, Double>();
+            Collections.sort(variableNames);
+            int rawWavelengthCounts = 0;
+            int count = 1;
+            
+            for (String name : variableNames) {
+              
+              // just handle the wavelength channels
+              if ( name.startsWith("UV_") ) {
+                rawWavelengthCounts = isusFrame.getChannelWavelengthCounts(count);
+                
+                double value = calibration.apply(rawWavelengthCounts, isImmersed, name);
+                count++;
+                wavelengthsMap.put(name, new Double(value));
+                
+              }
+              
+            }
             
             String sampleString = "";
+            sampleString += sampleDate                                        + "\t";
+            sampleString += sampleDateUTC                                     + "\t";
+            sampleString += sampleTime                                        + "\t";
+            sampleString += sampleTimeUTC                                     + "\t";
+            sampleString += sampleDateHST                                     + "\t";
+            sampleString += sampleTimeHST                                     + "\t";
+            sampleString += sampleDateTimeHST                                 + "\t";
+            sampleString += String.format("%-15.11f", nitrogenConcentration)  + "\t";
+            //sampleString += String.format("%15.11f", auxConcentration1)     + "\t";
+            //sampleString += String.format("%15.11f", auxConcentration2)     + "\t";
+            //sampleString += String.format("%15.11f", auxConcentration3)     + "\t";
+            sampleString += String.format("%15.11f", rmsError)                + "\t";
+            sampleString += String.format("%15.11f", insideTemperature)       + "\t";
+            sampleString += String.format("%15.11f", spectrometerTemperature) + "\t";
+            sampleString += String.format("%15.11f", lampTemperature)         + "\t";
+            sampleString += String.format("%6d",     lampTime)                + "\t";
+            sampleString += String.format("%15.11f", humidity)                + "\t";
+            sampleString += String.format("%15.11f", lampVoltage12)           + "\t";
+            sampleString += String.format("%15.11f", internalPowerVoltage5)   + "\t";
+            sampleString += String.format("%15.11f", mainPowerVoltage)        + "\t";
+            sampleString += String.format("%15.11f", referenceAverage)        + "\t";
+            sampleString += String.format("%15.11f", referenceVariance)       + "\t";
+            sampleString += String.format("%15.11f", seaWaterDarkCounts)      + "\t";
+            sampleString += String.format("%15.11f", averageWavelength)       + "\t";
+            
+            Collection wavelengths = wavelengthsMap.values();
+            Iterator wIterator = wavelengths.iterator();
+            
+            while ( wIterator.hasNext() ) {
+              Double wavelengthValue = (Double) wIterator.next();
+              sampleString += String.format("%6d", 
+                              new Double(wavelengthValue).intValue()) + "\t";
+              
+            }
+            
+            sampleString += String.format("%03d", checksum);
+            sampleString += "\n";
             
             // add the sample timestamp to the rbnb channel map
             //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
             rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
-            
+
             // add the DecimalASCIISampleData channel to the channelMap
             channelIndex = registerChannelMap.Add(getRBNBChannelName());
             registerChannelMap.PutUserInfo(channelIndex, "units=none");               
@@ -287,11 +408,18 @@ public class ISUSSource extends RBNBSource {
             rbnbChannelMap.PutMime(channelIndex, "text/plain");
             rbnbChannelMap.PutDataAsString(channelIndex, serialNumber);
             
+            // add the analogChannelOne channel to the channelMap
+            //channelIndex = registerChannelMap.Add("analogChannelOne");
+            //registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            //channelIndex = rbnbChannelMap.Add("analogChannelOne");
+            //rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            //rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelOne});
+
             // Now register the RBNB channels, and flush the rbnbChannelMap to the
             // DataTurbine
             getSource().Register(registerChannelMap);
             getSource().Flush(rbnbChannelMap);
-            logger.info("Sample sent to the DataTurbine:" + sampleString);
+            logger.info("Sample sent to the DataTurbine: " + sampleString);
             
             registerChannelMap.Clear();
             rbnbChannelMap.Clear();
