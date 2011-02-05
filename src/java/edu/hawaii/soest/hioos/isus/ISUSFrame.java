@@ -427,7 +427,9 @@ public class ISUSFrame {
     return (new Float(this.auxConcentration3.getFloat())).doubleValue();
   }
 
-  /* BF4 The Root Mean Square Error of the ISUS’ concentration calculation is given, in ASCII frames to 6 decimal places. */
+  /* BF4 The Root Mean Square Error of the ISUS’ concentration calculation is 
+   * given, in ASCII frames to 6 decimal places. 
+   */
   public double getRmsError() {
     this.rmsError.flip();
     return (new Float(this.rmsError.getFloat())).doubleValue();
@@ -458,7 +460,9 @@ public class ISUSFrame {
     return this.lampTime.getInt();
   }
 
-  /* BF4 The humidity inside the instrument, given in percent. Increasing values of humidity indicate a slow leak. */
+  /* BF4 The humidity inside the instrument, given in percent. Increasing 
+   * values of humidity indicate a slow leak. 
+   */
   public double getHumidity() {
     this.humidity.flip();
     return (new Float(this.humidity.getFloat())).doubleValue();
@@ -482,25 +486,33 @@ public class ISUSFrame {
     return (new Float(this.mainPowerVoltage.getFloat())).doubleValue();
   }
 
-  /* BF4 The average Reference Channel measurement during thesample time, in ASCII mode to 2 decimal places. */
+  /* BF4 The average Reference Channel measurement during thesample time, in 
+   * ASCII mode to 2 decimal places. 
+   */
   public double getReferenceAverage() {
     this.referenceAverage.flip();
     return (new Float(this.referenceAverage.getFloat())).doubleValue();
   }
 
-  /* BF4 The variance of the Reference Channel measurements, inASCII mode to 2 decimal places. */
+  /* BF4 The variance of the Reference Channel measurements, inASCII mode to 
+   * 2 decimal places.
+   */
   public double getReferenceVariance() {
     this.referenceVariance.flip();
     return (new Float(this.referenceVariance.getFloat())).doubleValue();
   }
 
-  /* BF4 An AF formatted field representing the Sea-Water Darkcalculation (to 2 decimal places), in spectrometer counts. */
+  /* BF4 An AF formatted field representing the Sea-Water Darkcalculation 
+   * (to 2 decimal places), in spectrometer counts.
+   */
   public double getSeaWaterDarkCounts() {
     this.seaWaterDarkCounts.flip();
     return (new Float(this.seaWaterDarkCounts.getFloat())).doubleValue();
   }
 
-  /* BF4 An AF formatted field representing the average value of all spectrometer channels, to 2 decimal places. */
+  /* BF4 An AF formatted field representing the average value of all 
+   * spectrometer channels, to 2 decimal places. 
+   */
   public double getAverageWavelength() {
     this.averageWavelength.flip();
     return (new Float(this.averageWavelength.getFloat())).doubleValue();
@@ -515,7 +527,9 @@ public class ISUSFrame {
     return new Short(counts).intValue();
   }
 
-  /* BU1 Binary frames only: A check sum validates binary frames. Satlantic’s software rejects invalid frames. */
+  /* BU1 Binary frames only: A check sum validates binary frames. Satlantic’s 
+   * software rejects invalid frames.
+   */
   public int getChecksum() {
     this.checksum.flip();
     
