@@ -141,7 +141,7 @@ public class ISUSFrame {
   private ByteBuffer seaWaterDarkCounts = ByteBuffer.allocate(4);
 
   /*  BF4  The average value of all spectrometer channels */
-  private ByteBuffer averageWavelength = ByteBuffer.allocate(4);
+  private ByteBuffer spectrometerAverage = ByteBuffer.allocate(4);
 
   /*  BU2  The spectrometer counts of the channel wavelengths (256 total) */
   private ByteBuffer channelWavelengths = ByteBuffer.allocate(2 * 256);
@@ -282,9 +282,9 @@ public class ISUSFrame {
 
       // set the average wavelength field
       this.isusFrame.get(twoBytes);
-      this.averageWavelength.put(twoBytes);
+      this.spectrometerAverage.put(twoBytes);
       this.isusFrame.get(twoBytes);
-      this.averageWavelength.put(twoBytes);
+      this.spectrometerAverage.put(twoBytes);
 
       // set the channel wavelengths field
       this.isusFrame.get(fiveTwelveBytes);
@@ -513,9 +513,9 @@ public class ISUSFrame {
   /* BF4 An AF formatted field representing the average value of all 
    * spectrometer channels, to 2 decimal places. 
    */
-  public double getAverageWavelength() {
-    this.averageWavelength.flip();
-    return (new Float(this.averageWavelength.getFloat())).doubleValue();
+  public double getSpectrometerAverage() {
+    this.spectrometerAverage.flip();
+    return (new Float(this.spectrometerAverage.getFloat())).doubleValue();
   }
 
   /* BU2 The counts of the given channel wavelength of thespectrometer. */
