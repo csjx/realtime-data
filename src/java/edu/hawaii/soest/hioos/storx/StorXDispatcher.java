@@ -468,8 +468,8 @@ public class StorXDispatcher extends RBNBSource {
                   // handle ISUSSource
                   ISUSSource source = (ISUSSource) sourceMap.get(sensorSerialNumber);
                   // process the data using the ISUSSource driver
-                  // messageProcessed = source.process(this.xmlConfiguration, 
-                  //                                   isusFrame);
+                  messageProcessed = 
+                    source.process(this.xmlConfiguration, frameMap);
                   
                 } catch (ClassCastException cce) {
                   
