@@ -61,6 +61,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
@@ -68,9 +70,16 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
+
+import org.dhmp.util.HierarchicalMap;
+import org.dhmp.util.BasicHierarchicalMap;
 
 import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
@@ -321,7 +330,153 @@ public class CTDSource extends RBNBSource {
     setCacheSize(cacheFrameSize);
     setRBNBClientName(rbnbClientName);
   }
-
+  
+  /**
+   * Constructor - create an instance of the CTDSource object, using the
+   * argument values for the RBNB server name and port, the archive mode,
+   * archive frame size, and cache * frame size. A frame is created at each call
+   * to flush() to an RBNB server, * and so the frame sizes below are relative
+   * to the number of bytes of data * loaded in the ChannelMap that is flushed
+   * to the RBNB server.
+   *
+   * @param serverName       the name or IP address of the RBNB server 
+   * @param serverPort       the TCP port of the RBNB server
+   * @param archiveMode      the RBNB archive mode: append, load, create, none
+   * @param archiveFrameSize the size, in frames, for the RBNB server to archive
+   * @param cacheFrameSize   the size, in frames, for the RBNB server to cache
+   * @param rbnbClientName   the unique name of the source RBNB client
+   */
+  public CTDSource(String serverName, String serverPort, 
+                   String archiveMode, int archiveFrameSize, 
+                   int cacheFrameSize, String rbnbClientName) {
+    
+    setServerName(serverName);
+    setServerPort(Integer.parseInt(serverPort));
+    setArchiveMode(archiveMode);
+    setArchiveSize(archiveFrameSize);
+    setCacheSize(cacheFrameSize);
+    setRBNBClientName(rbnbClientName);
+  }
+  
+  /**
+   * A method that processes the data object passed and flushes the
+   * data to the DataTurbine given the sensor properties in the XMLConfiguration
+   * passed in. This method is largely called from a dispatcher that is handling
+   * the data streaming, like StorXDispatcher.
+   *
+   * @param xmlConfig - the XMLConfiguration object containing the list of
+   *                    sensor properties
+   * @param frameMap  - the parsed data as a HierarchicalMap object
+   */
+  public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
+    
+    logger.debug("CTDSource.process() called.");
+    // do not execute the stream if there is no connection
+    if (  !isConnected() ) return false;
+    
+    boolean success = false;
+    
+    try {
+      
+      // add channels of data that will be pushed to the server.  
+      // Each sample will be sent to the Data Turbine as an rbnb frame.  Information
+      // on each channel is found in the XMLConfiguration file (email.account.properties.xml)
+      // and the StorXParser object (to get the data string)
+      ChannelMap rbnbChannelMap     = new ChannelMap(); // used to flush channels
+      ChannelMap registerChannelMap = new ChannelMap(); // used to register channels
+      int channelIndex = 0;
+        
+      // this.storXParser = new StorXParser(storXFrame);
+      
+      String sensorName         = null;
+      String sensorSerialNumber = null;
+      String sensorDescription  = null;
+      boolean isImmersed        = false;
+      String[] calibrationURLs  = null;
+      String calibrationURL     = null;
+      String type               = null;
+      
+      List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
+      
+      for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
+      //  
+        HierarchicalConfiguration sensorConfig = 
+          (HierarchicalConfiguration) sIterator.next();
+        sensorSerialNumber = sensorConfig.getString("serialNumber");
+        
+        // find the correct sensor configuration properties
+        if ( sensorSerialNumber.equals(frameMap.get("serialNumber")) ) {
+        
+          sensorName = sensorConfig.getString("name");
+          sensorDescription = sensorConfig.getString("description");
+          isImmersed = new Boolean(sensorConfig.getString("isImmersed")).booleanValue();
+          //calibrationURLs = sensorConfig.getStringArray("calibrationURL");
+          type = (String) frameMap.get("type");
+          
+          // Build the RBNB channel map 
+          
+          // get the sample date and convert it to seconds since the epoch
+          Date frameDate = (Date) frameMap.get("date");
+          Calendar frameDateTime = Calendar.getInstance();
+          frameDateTime.setTime(frameDate);
+          double sampleTimeAsSecondsSinceEpoch = (double)
+            (frameDateTime.getTimeInMillis()/1000);
+          // and create a string formatted date for the given time zone
+          DATE_FORMAT.setTimeZone(TZ);
+          String frameDateAsString = DATE_FORMAT.format(frameDate).toString();
+          
+          // get the sample data from the frame map
+          ByteBuffer rawFrame = (ByteBuffer) frameMap.get("rawFrame");
+          CTDFrame ctdFrame  = (CTDFrame) frameMap.get("parsedFrameObject");
+          
+          String sampleString = ctdFrame.getSample();
+          
+          // add the sample timestamp to the rbnb channel map
+          //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+          rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
+          
+          // add the BinaryRawSatlanticFrameData channel to the channelMap
+          channelIndex = registerChannelMap.Add("BinaryRawSatlanticFrameData");
+          registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+          channelIndex = rbnbChannelMap.Add("BinaryRawSatlanticFrameData");
+          rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+          rbnbChannelMap.PutDataAsByteArray(channelIndex, rawFrame.array());
+          
+          // add the DecimalASCIISampleData channel to the channelMap
+          channelIndex = registerChannelMap.Add(getRBNBChannelName());
+          registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+          channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
+          rbnbChannelMap.PutMime(channelIndex, "text/plain");
+          rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
+          
+          // Now register the RBNB channels, and flush the rbnbChannelMap to the
+          // DataTurbine
+          getSource().Register(registerChannelMap);
+          getSource().Flush(rbnbChannelMap);
+          logger.info("Sample sent to the DataTurbine: (" + 
+                      sensorSerialNumber                  + 
+                      ") "                                + 
+                      sampleString);
+          
+          registerChannelMap.Clear();
+          rbnbChannelMap.Clear();
+          
+        } // end if()
+        
+      } // end for()                                             
+      
+      success = true;
+      
+    } catch ( Exception sapie ) {
+      success = false;
+      sapie.printStackTrace();
+      return success;
+      
+    }
+    
+    return success;
+  } // end if (  !isConnected() ) 
+  
   /**
    * A method that executes the streaming of data from the source to the RBNB
    * server after all configuration of settings, connections to hosts, and
