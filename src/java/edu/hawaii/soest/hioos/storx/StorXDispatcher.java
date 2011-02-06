@@ -453,8 +453,6 @@ public class StorXDispatcher extends RBNBSource {
                   
                   // handle CTDSource
                   CTDSource source = (CTDSource) sourceMap.get(sensorSerialNumber);
-                  logger.debug("Serial: " + sensorSerialNumber);
-                  logger.debug(sourceMap.toString());
                   
                   // process the data using the CTDSource driver
                   messageProcessed = 
