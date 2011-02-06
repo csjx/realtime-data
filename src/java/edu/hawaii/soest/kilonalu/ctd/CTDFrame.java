@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
 
+import org.apache.commons.codec.binary.Hex;
+
 import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
@@ -122,6 +124,7 @@ public class CTDFrame {
     int sampleLength = endSampleIndex - this.ctdFrame.position();
     byte[] sampleBytes = new byte[sampleLength];
     this.ctdFrame.get(sampleBytes);
+    this.sample.put(sampleBytes);
     
   }
 
@@ -186,8 +189,26 @@ public class CTDFrame {
   public String getSample() {
 
     this.sample.flip();
+    String sampleString;
+    
     try {
-      return new String(this.sample.array(), "US-ASCII");
+      sampleString = new String(this.sample.array(), "US-ASCII");
+      // strip leading command and trailing null characters
+      int spaceIndex = sampleString.indexOf(" ");
+      int nullIndex = sampleString.indexOf(0);
+      
+      if ( spaceIndex > 0 ) {
+        // has leading and trailing
+        return sampleString.substring(spaceIndex, nullIndex);
+    
+      } else if ( spaceIndex == 0 ){
+        // has trailing
+        return sampleString.substring(0, nullIndex);
+        
+      } else {
+        return sampleString;
+        
+      }
       
     } catch (UnsupportedEncodingException uee) {
       logger.debug("The string encoding was not recognized: " +
