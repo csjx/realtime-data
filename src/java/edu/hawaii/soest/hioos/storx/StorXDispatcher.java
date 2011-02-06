@@ -453,9 +453,12 @@ public class StorXDispatcher extends RBNBSource {
                   
                   // handle CTDSource
                   CTDSource source = (CTDSource) sourceMap.get(sensorSerialNumber);
+                  logger.debug("Serial: " + sensorSerialNumber);
+                  logger.debug(sourceMap.toString());
+                  
                   // process the data using the CTDSource driver
-                  // messageProcessed = source.process(this.xmlConfiguration, 
-                  //                                   ctdFrame);
+                  messageProcessed = 
+                    source.process(this.xmlConfiguration, frameMap);
                   
                 } catch (ClassCastException cce) {
                   
@@ -482,8 +485,8 @@ public class StorXDispatcher extends RBNBSource {
                   // handle ISUSSource
                   ISUSSource source = (ISUSSource) sourceMap.get(sensorSerialNumber);
                   // process the data using the ISUSSource driver
-                  // messageProcessed = source.process(this.xmlConfiguration, 
-                  //                                   isusFrame);
+                  messageProcessed = 
+                    source.process(this.xmlConfiguration, frameMap);
                   
                 } catch (ClassCastException cce) {
                   
@@ -687,15 +690,15 @@ public class StorXDispatcher extends RBNBSource {
               } else if ( sourceType.equals("CTDSource") ) {
                 
                 // given the properties, create a CTDSource object
-                //CTDSource ctdSource = 
-                //  new CTDSource(this.serverName, 
-                //                (new Integer(this.serverPort)).toString(),
-                //                this.archiveMode, 
-                //                (new Integer(archiveSize).intValue()),
-                //                (new Integer(cacheSize).intValue()), 
-                //                sourceName);
-                //ctdSource.startConnection();
-                //sourceMap.put(serialNumber, ctdSource);
+                CTDSource ctdSource = 
+                  new CTDSource(this.serverName, 
+                                (new Integer(this.serverPort)).toString(),
+                                this.archiveMode, 
+                                (new Integer(archiveSize).intValue()),
+                                (new Integer(cacheSize).intValue()), 
+                                sourceName);
+                ctdSource.startConnection();
+                sourceMap.put(serialNumber, ctdSource);
                 
               } else if ( sourceType.equals("ISUSSource") ) {
                 
