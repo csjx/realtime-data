@@ -308,7 +308,7 @@ public class ISUSSource extends RBNBSource {
             double rawReferenceAverage        = isusFrame.getReferenceAverage();
             double rawReferenceVariance       = isusFrame.getReferenceVariance();
             double rawSeaWaterDarkCounts      = isusFrame.getSeaWaterDarkCounts();
-            double rawAverageWavelength       = isusFrame.getAverageWavelength();
+            double rawSpectrometerAverage     = isusFrame.getSpectrometerAverage();
             int    checksum                   = isusFrame.getChecksum();
             
             //// apply calibrations to the observed data
@@ -320,7 +320,7 @@ public class ISUSSource extends RBNBSource {
             double insideTemperature        = calibration.apply(rawInsideTemperature      , isImmersed, "T_INT");
             double spectrometerTemperature  = calibration.apply(rawSpectrometerTemperature, isImmersed, "T_SPEC");
             double lampTemperature          = calibration.apply(rawLampTemperature        , isImmersed, "T_LAMP");
-            int    lampTime                 = calibration.apply(rawLampTime               , isImmersed, "LAMP_TIME");                                  
+            int    lampTime                 = rawLampTime;                                  
             double humidity                 = calibration.apply(rawHumidity               , isImmersed, "HUMIDITY");
             double lampVoltage12            = calibration.apply(rawLampVoltage12          , isImmersed, "VOLT_12");
             double internalPowerVoltage5    = calibration.apply(rawInternalPowerVoltage5  , isImmersed, "VOLT_5");
@@ -328,7 +328,7 @@ public class ISUSSource extends RBNBSource {
             double referenceAverage         = calibration.apply(rawReferenceAverage       , isImmersed, "REF_AVG");
             double referenceVariance        = calibration.apply(rawReferenceVariance      , isImmersed, "REF_STD");
             double seaWaterDarkCounts       = calibration.apply(rawSeaWaterDarkCounts     , isImmersed, "SW_DARK");
-            double averageWavelength        = calibration.apply(rawAverageWavelength      , isImmersed, "SPEC_AVG");
+            double spectrometerAverage      = calibration.apply(rawSpectrometerAverage    , isImmersed, "SPEC_AVG");
             
             // iterate through the individual wavelengths
             List<String> variableNames = calibration.getVariableNames();
@@ -375,15 +375,21 @@ public class ISUSSource extends RBNBSource {
             sampleString += String.format("%15.11f", referenceAverage)        + "\t";
             sampleString += String.format("%15.11f", referenceVariance)       + "\t";
             sampleString += String.format("%15.11f", seaWaterDarkCounts)      + "\t";
-            sampleString += String.format("%15.11f", averageWavelength)       + "\t";
+            sampleString += String.format("%15.11f", spectrometerAverage)     + "\t";
             
-            Collection wavelengths = wavelengthsMap.values();
+            Set<String> wavelengths = wavelengthsMap.keySet();
             Iterator wIterator = wavelengths.iterator();
             
             while ( wIterator.hasNext() ) {
-              Double wavelengthValue = (Double) wIterator.next();
-              sampleString += String.format("%6d", 
-                              new Double(wavelengthValue).intValue()) + "\t";
+              String name = (String) wIterator.next();
+              Double wavelengthValue = (Double) wavelengthsMap.get(name);
+              sampleString += String.format("%6d", wavelengthValue.intValue()) + "\t";
+              channelIndex = registerChannelMap.Add(name);
+              registerChannelMap.PutUserInfo(channelIndex, "units=counts");               
+              channelIndex = rbnbChannelMap.Add(name);
+              rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+              rbnbChannelMap.PutDataAsFloat64(channelIndex, 
+                new double[]{wavelengthValue.doubleValue()});
               
             }
             
@@ -394,6 +400,13 @@ public class ISUSSource extends RBNBSource {
             //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
             rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
 
+            // add the BinaryRawSatlanticFrameData channel to the channelMap
+            channelIndex = registerChannelMap.Add("BinaryRawSatlanticFrameData");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("BinaryRawSatlanticFrameData");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsByteArray(channelIndex, rawFrame.array());
+            
             // add the DecimalASCIISampleData channel to the channelMap
             channelIndex = registerChannelMap.Add(getRBNBChannelName());
             registerChannelMap.PutUserInfo(channelIndex, "units=none");               
@@ -408,13 +421,139 @@ public class ISUSSource extends RBNBSource {
             rbnbChannelMap.PutMime(channelIndex, "text/plain");
             rbnbChannelMap.PutDataAsString(channelIndex, serialNumber);
             
-            // add the analogChannelOne channel to the channelMap
-            //channelIndex = registerChannelMap.Add("analogChannelOne");
-            //registerChannelMap.PutUserInfo(channelIndex, "units=none");               
-            //channelIndex = rbnbChannelMap.Add("analogChannelOne");
-            //rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
-            //rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{analogChannelOne});
-
+            // add the sampleDateUTC channel to the channelMap
+            channelIndex = registerChannelMap.Add("sampleDateUTC");
+            registerChannelMap.PutUserInfo(channelIndex, "units=YYYYDDD");
+            channelIndex = rbnbChannelMap.Add("sampleDateUTC");
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, sampleDate);
+            
+            // add the sampleTimeUTC channel to the channelMap
+            channelIndex = registerChannelMap.Add("sampleTimeUTC");
+            registerChannelMap.PutUserInfo(channelIndex, "units=hh.hhhhhh");
+            channelIndex = rbnbChannelMap.Add("sampleTimeUTC");
+            rbnbChannelMap.PutMime(channelIndex, "text/plain");
+            rbnbChannelMap.PutDataAsString(channelIndex, sampleTimeUTC);
+            
+            // add the nitrogenConcentration channel to the channelMap
+            channelIndex = registerChannelMap.Add("nitrogenConcentration");
+            registerChannelMap.PutUserInfo(channelIndex, "units=uM");
+            channelIndex = rbnbChannelMap.Add("nitrogenConcentration");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{nitrogenConcentration});
+            
+            // add the auxConcentration1 channel to the channelMap
+            channelIndex = registerChannelMap.Add("auxConcentration1");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");
+            channelIndex = rbnbChannelMap.Add("auxConcentration1");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{auxConcentration1});
+            
+            // add the auxConcentration3 channel to the channelMap
+            channelIndex = registerChannelMap.Add("auxConcentration2");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");
+            channelIndex = rbnbChannelMap.Add("auxConcentration2");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{auxConcentration2});
+            
+            // add the serialNumber channel to the channelMap
+            channelIndex = registerChannelMap.Add("auxConcentration3");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");
+            channelIndex = rbnbChannelMap.Add("auxConcentration3");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{auxConcentration3});
+            
+            // add the rmsError channel to the channelMap
+            channelIndex = registerChannelMap.Add("rmsError");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");
+            channelIndex = rbnbChannelMap.Add("rmsError");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{rmsError});
+            
+            // add the insideTemperature channel to the channelMap
+            channelIndex = registerChannelMap.Add("insideTemperature");
+            registerChannelMap.PutUserInfo(channelIndex, "units=Celsius");
+            channelIndex = rbnbChannelMap.Add("insideTemperature");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{insideTemperature});
+            
+            // add the spectrometerTemperature channel to the channelMap
+            channelIndex = registerChannelMap.Add("spectrometerTemperature");
+            registerChannelMap.PutUserInfo(channelIndex, "units=Celsius");
+            channelIndex = rbnbChannelMap.Add("spectrometerTemperature");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{spectrometerTemperature});
+            
+            // add the lampTemperature channel to the channelMap
+            channelIndex = registerChannelMap.Add("lampTemperature");
+            registerChannelMap.PutUserInfo(channelIndex, "units=Celsius");
+            channelIndex = rbnbChannelMap.Add("lampTemperature");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{lampTemperature});
+            
+            // add the lampTime channel to the channelMap
+            channelIndex = registerChannelMap.Add("lampTime");
+            registerChannelMap.PutUserInfo(channelIndex, "units=seconds");                               
+            channelIndex = rbnbChannelMap.Add("lampTime");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{lampTime});
+            
+            // add the humidity channel to the channelMap
+            channelIndex = registerChannelMap.Add("humidity");
+            registerChannelMap.PutUserInfo(channelIndex, "units=%");
+            channelIndex = rbnbChannelMap.Add("humidity");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{humidity});
+            
+            // add the lampVoltage12 channel to the channelMap
+            channelIndex = registerChannelMap.Add("lampVoltage12");
+            registerChannelMap.PutUserInfo(channelIndex, "units=V");
+            channelIndex = rbnbChannelMap.Add("lampVoltage12");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{lampVoltage12});
+            
+            // add the internalPowerVoltage5 channel to the channelMap
+            channelIndex = registerChannelMap.Add("internalPowerVoltage5");
+            registerChannelMap.PutUserInfo(channelIndex, "units=V");
+            channelIndex = rbnbChannelMap.Add("internalPowerVoltage5");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{internalPowerVoltage5});
+            
+            // add the mainPowerVoltage channel to the channelMap
+            channelIndex = registerChannelMap.Add("mainPowerVoltage");
+            registerChannelMap.PutUserInfo(channelIndex, "units=V");
+            channelIndex = rbnbChannelMap.Add("mainPowerVoltage");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{mainPowerVoltage});
+            
+            // add the referenceAverage channel to the channelMap
+            channelIndex = registerChannelMap.Add("referenceAverage");
+            registerChannelMap.PutUserInfo(channelIndex, "units=count");
+            channelIndex = rbnbChannelMap.Add("referenceAverage");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{referenceAverage});
+            
+            // add the referenceVariance channel to the channelMap
+            channelIndex = registerChannelMap.Add("referenceVariance");
+            registerChannelMap.PutUserInfo(channelIndex, "units=count");
+            channelIndex = rbnbChannelMap.Add("referenceVariance");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{referenceVariance});
+            
+            // add the seaWaterDarkCounts channel to the channelMap
+            channelIndex = registerChannelMap.Add("seaWaterDarkCounts");
+            registerChannelMap.PutUserInfo(channelIndex, "units=count");
+            channelIndex = rbnbChannelMap.Add("seaWaterDarkCounts");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{seaWaterDarkCounts});
+            
+            // add the spectrometerAverage channel to the channelMap
+            channelIndex = registerChannelMap.Add("spectrometerAverage");
+            registerChannelMap.PutUserInfo(channelIndex, "units=count");
+            channelIndex = rbnbChannelMap.Add("averageWavelength");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsFloat64(channelIndex, new double[]{spectrometerAverage});
+            
             // Now register the RBNB channels, and flush the rbnbChannelMap to the
             // DataTurbine
             getSource().Register(registerChannelMap);
