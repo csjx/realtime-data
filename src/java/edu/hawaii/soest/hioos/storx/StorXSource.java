@@ -202,7 +202,7 @@ public class StorXSource extends RBNBSource {
    *                    sensor properties
    * @param frameMap  - the parsed data as a HierarchicalMap object
    */
-  protected boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
+  public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
     logger.debug("StorXSource.process() called.");
     // do not execute the stream if there is no connection
@@ -301,6 +301,13 @@ public class StorXSource extends RBNBSource {
             //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
             rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
 
+            // add the BinaryRawSatlanticFrameData channel to the channelMap
+            channelIndex = registerChannelMap.Add("BinaryRawSatlanticFrameData");
+            registerChannelMap.PutUserInfo(channelIndex, "units=none");               
+            channelIndex = rbnbChannelMap.Add("BinaryRawSatlanticFrameData");
+            rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
+            rbnbChannelMap.PutDataAsByteArray(channelIndex, rawFrame.array());
+            
             // add the DecimalASCIISampleData channel to the channelMap
             channelIndex = registerChannelMap.Add(getRBNBChannelName());
             registerChannelMap.PutUserInfo(channelIndex, "units=none");               
