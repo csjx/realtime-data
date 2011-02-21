@@ -128,9 +128,11 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
         
       end
-      
+
+      % transform the array in case cells are irregular length
+      invertedDataLinesCellArray = {dataLinesCellArray{:}};
       % convert the cell array of data lines back to a character array
-      dataLinesArray = cell2mat(dataLinesCellArray);
+      dataLinesArray = cell2mat(invertedDataLinesCellArray);
       
       % now that the data string has been QA/QC'd, produce a cell array
       % via textscan
@@ -141,7 +143,7 @@ classdef DataProcessor < hgsetget & dynamicprops
           'BufSize', (10 * self.configuration.duration),        ...
           'Delimiter', self.configuration.fieldDelimiter,       ...
           'headerLines', 0 ...
-        )
+        );
       
     end %parse
     
@@ -365,7 +367,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       if ( self.configuration.debug )
         disp('DataProcessor.createDerivedVariable() called.');
       end
-      
+
       % derive each of the named variables
       switch derivedVariableName
         
