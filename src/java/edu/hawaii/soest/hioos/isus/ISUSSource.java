@@ -50,6 +50,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -558,7 +559,10 @@ public class ISUSSource extends RBNBSource {
             // DataTurbine
             getSource().Register(registerChannelMap);
             getSource().Flush(rbnbChannelMap);
-            logger.info("Sample sent to the DataTurbine: " + sampleString);
+            logger.info("Sample sent to the DataTurbine: (" + 
+                        serialNumber                        +
+                        ") "                                +
+                        sampleString);
             
             registerChannelMap.Clear();
             rbnbChannelMap.Clear();
@@ -577,9 +581,14 @@ public class ISUSSource extends RBNBSource {
       //getSource.Detach();
       
       success = true;
-      
-    } catch ( Exception sapie ) {
-    //} catch ( SAPIException sapie ) {
+    } catch ( ParseException pe ) {
+      // parsing of the calibration file failed.  Log the exception, return false
+      success = false;
+      logger.debug("There was a problem parsing the calibration file. The " +
+        "error message was: " + pe.getMessage());
+      return success;
+        
+    } catch ( SAPIException sapie ) {
       // In the event of an RBNB communication  exception, log the exception, 
       // and allow execute() to return false, which will prompt a retry.
       success = false;
