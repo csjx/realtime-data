@@ -331,12 +331,42 @@ public class StorXDispatcher extends RBNBSource {
       // get a connection to the mail server
       Properties props = System.getProperties();
       props.setProperty("mail.store.protocol", protocol);
-
+      
       try {
         
         // create the imaps mail session
         this.mailSession = Session.getDefaultInstance(props, null);
         this.mailStore   = mailSession.getStore(protocol);
+        
+      } catch (NoSuchProviderException nspe) {
+        
+        try {
+          // pause for 10 seconds
+          logger.debug("There was a problem connecting to the IMAP server. " +
+                       "Waiting 10 seconds to retry.");
+          Thread.sleep(10000L);
+          this.mailStore = mailSession.getStore(protocol);
+          
+        } catch (NoSuchProviderException nspe2) {
+          
+          logger.debug("There was an error connecting to the mail server. The " +
+                      "message was: " + nspe2.getMessage());
+          nspe2.printStackTrace();
+          failed = true;
+          return !failed;
+          
+        } catch (InterruptedException ie) {
+          
+          logger.debug("The thread was interrupted: " + ie.getMessage());
+          failed = true;
+          return !failed;
+          
+        }
+      
+      }
+      
+      try {
+
         this.mailStore.connect(server, username, password);
         
         // get folder references for the inbox and processed data box  
@@ -536,21 +566,6 @@ public class StorXDispatcher extends RBNBSource {
         //inbox.expunge();
         this.mailStore.close();
         
-      } catch (NoSuchProviderException nspe) {
-        try {
-          this.mailStore.close();
-          
-        } catch (MessagingException me) {
-          failed = true;
-          return !failed;
-          
-        }
-        logger.info("There was an error connecting to the mail server. The " +
-                    "message was: " + nspe.getMessage());
-        nspe.printStackTrace();
-        failed = true;
-        return !failed;
-        
       } catch (MessagingException me) {
         try {
           this.mailStore.close();
@@ -595,6 +610,16 @@ public class StorXDispatcher extends RBNBSource {
         failed = true;
         return !failed;
       
+      } finally {
+        
+        try {
+          this.mailStore.close();
+          
+        } catch (MessagingException me2) {
+          logger.debug("Couldn't close the mail store: " + me2.getMessage());
+          
+        }
+        
       }
       
     }
@@ -811,7 +836,7 @@ public class StorXDispatcher extends RBNBSource {
                  // disconnect CTD sources
                  CTDSource source = (CTDSource) sourceObject;
                  logger.info("Disconnecting source: " + source.getRBNBClientName());
-                 // source.stopConnection();
+                 source.stopConnection();
                  
                } // end try/catch
                
