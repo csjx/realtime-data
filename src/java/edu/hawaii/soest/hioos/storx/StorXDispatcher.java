@@ -542,7 +542,7 @@ public class StorXDispatcher extends RBNBSource {
                  
                  // message processed successfully. copy it and flag it deleted
                  inbox.copyMessages(new Message[]{message}, processed) ;
-                 //message.setFlag(Flags.Flag.DELETED, true);
+                 message.setFlag(Flags.Flag.DELETED, true);
                  logger.debug("Deleted message " + message.getMessageNumber());
                } // end if()
             
@@ -563,7 +563,7 @@ public class StorXDispatcher extends RBNBSource {
         } // end for()
 
         // expunge messages and close the mail server store once we're done
-        //inbox.expunge();
+        inbox.expunge();
         this.mailStore.close();
         
       } catch (MessagingException me) {
