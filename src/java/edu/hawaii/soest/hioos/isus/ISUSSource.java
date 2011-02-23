@@ -559,7 +559,8 @@ public class ISUSSource extends RBNBSource {
             // DataTurbine
             getSource().Register(registerChannelMap);
             getSource().Flush(rbnbChannelMap);
-            logger.info("Sample sent to the DataTurbine: (" + 
+            logger.info(frameDateAsString + " "             +
+                        "Sample sent to the DataTurbine: (" + 
                         serialNumber                        +
                         ") "                                +
                         sampleString);
