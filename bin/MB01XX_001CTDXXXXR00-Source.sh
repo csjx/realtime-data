@@ -22,6 +22,7 @@ java edu.hawaii.soest.kilonalu.ctd.CTDSource\
  -P 5111\
  -S MB01XX_001CTDXXXXR00\
  -C DecimalASCIISampleData\
+ -t socket\
  -s 192.168.103.50\
  -p 3333\
  -z 50000\

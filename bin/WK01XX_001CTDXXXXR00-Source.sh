@@ -22,6 +22,7 @@ java edu.hawaii.soest.kilonalu.ctd.CTDSource\
  -P 5113\
  -S WK01XX_001CTDXXXXR00\
  -C DecimalASCIISampleData\
+ -t socket\
  -s bbl.ancl.hawaii.edu\
  -p 3333\
  -z 50000\
