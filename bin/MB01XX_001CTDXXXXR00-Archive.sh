@@ -25,4 +25,4 @@ java edu.hawaii.soest.kilonalu.utilities.FileArchiverSink\
  -c DecimalASCIISampleData\
  -I hourly\
  -k MB01XX_001CTDXXXXR00_DecimalASCIIData_FileArchiver\
- -d /data/raw/alawai/AW02XX_001CTDXXXXR00/DecimalASCIISampleData
+ -d /data/raw/alawai/MB01XX_001CTDXXXXR00/DecimalASCIISampleData
