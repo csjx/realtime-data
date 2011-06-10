@@ -247,7 +247,9 @@ public class FileSource extends RBNBSource {
             
             // extract the date from the data line
             String[] columns      = line.trim().split(",");
-            String   dateString   = columns[columns.length - 1]; // last field
+			String dateString;
+			//dateString          = columns[columns.length - 2]; // last 2 columns [for NS03-04]
+            dateString          = columns[columns.length - 1]; // last field [for NS01-02]
 
             Date sampleDate = DATE_FORMAT.parse(dateString.trim());
             logger.debug("Sample date is: " + sampleDate.toString());
