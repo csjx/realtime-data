@@ -5,10 +5,10 @@
  *             frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy:  $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,12 +273,24 @@ public class FileSource extends RBNBSource {
               //registerChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
               rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
             
-              // then add the data line to the channel map and insert it
-              // into the DataTurbine
+              // then add the data line to the channel map
               channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
               rbnbChannelMap.PutMime(channelIndex, "text/plain");
               rbnbChannelMap.PutDataAsString(channelIndex, line + "\r\n");
-              getSource().Flush(rbnbChannelMap);
+              
+              // be sure we are connected
+              try {
+                
+                //insert into the DataTurbine
+                getSource().Flush(rbnbChannelMap);
+                
+              } catch ( SAPIException sapie ) {
+                // reconnect if an exception is thrown on Flush()
+                disconnect();
+                connect();
+                getSource().Flush(rbnbChannelMap);
+                
+              }
               
               // reset the last sample time to the sample just inserted
               lastSampleTimeAsSecondsSinceEpoch = sampleTimeAsSecondsSinceEpoch;
@@ -378,10 +390,10 @@ public class FileSource extends RBNBSource {
    */
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2010-04-13 17:57:16 -0600 (Tue, 13 Apr 2010) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 609 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/FileSource.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 
