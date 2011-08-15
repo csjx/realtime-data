@@ -18,8 +18,8 @@
 '''Utility Class for managing file archives for PacIOOS data.'''
 
 __author__  = "Christopher Jones, csjones@hawaii.edu"
-__version__ = "$LastChangedRevision:  $"
-# $LastChangedDate:  $
+__version__ = "$LastChangedRevision$"
+# $LastChangedDate$
 # $LastChangedBy$
 
 import os
