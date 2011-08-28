@@ -279,17 +279,39 @@ public class FileSource extends RBNBSource {
               rbnbChannelMap.PutDataAsString(channelIndex, line + "\r\n");
               
               // be sure we are connected
+              int numberOfChannelsFlushed = 0;
+              
               try {
                 
                 //insert into the DataTurbine
-                getSource().Flush(rbnbChannelMap);
+            	numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
+            	
+            	// in the event we just lost the network, sleep, try again
+            	while (numberOfChannelsFlushed < 1 ) {
+            		logger.debug("No channels flushed, trying again in 10 seconds.");
+            		Thread.sleep(10000L);
+                	numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
+
+            	}
                 
               } catch ( SAPIException sapie ) {
                 // reconnect if an exception is thrown on Flush()
+            	logger.debug("Error while flushing the source: " + sapie.getMessage());
+            	
+            	logger.debug("Disconnecting from the DataTurbine.");
                 disconnect();
-                connect();
+            	logger.debug("Connecting to the DataTurbine.");
+            	connect();
                 getSource().Flush(rbnbChannelMap);
-                
+            	
+                // in the event we just lost the network, sleep, try again
+            	while (numberOfChannelsFlushed < 1 ) {
+            		logger.debug("No channels flushed, trying again in 10 seconds.");
+            		Thread.sleep(10000L);
+                	numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
+
+            	}
+
               }
               
               // reset the last sample time to the sample just inserted
