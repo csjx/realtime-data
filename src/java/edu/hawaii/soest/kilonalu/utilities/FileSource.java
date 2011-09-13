@@ -115,6 +115,9 @@ public class FileSource extends RBNBSource {
   /* The date format for the timestamp in the data sample string */
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
   
+  /* The instance of TimeZone to use when parsing dates */
+  private TimeZone tz;
+  
   /* The buffered reader data representing the data file stream  */
   private BufferedReader fileReader;
   
@@ -122,7 +125,7 @@ public class FileSource extends RBNBSource {
   private Pattern dataPattern;
   
   /* The timezone that the data samples are taken in as a string (UTC, HST, etc.) */
-  private String timezone;
+  private String timezone = "UTC";
   
   /* The default log configuration file location */
   private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
@@ -249,11 +252,13 @@ public class FileSource extends RBNBSource {
             logger.debug("This line matches the data line pattern: " + line);
             
             // extract the date from the data line
-            String[] columns      = line.trim().split(",");
-			String dateString;
-			//dateString          = columns[columns.length - 2]; // last 2 columns [for NS03-04]
+            String[] columns    = line.trim().split(",");
+            String dateString;
+            //dateString        = columns[columns.length - 2]; // last 2 columns [for NS03-04]
             dateString          = columns[columns.length - 1]; // last field [for NS01-02]
-
+            
+            this.tz = TimeZone.getTimeZone(this.timezone);
+            DATE_FORMAT.setTimeZone(tz);
             Date sampleDate = DATE_FORMAT.parse(dateString.trim());
             logger.debug("Sample date is: " + sampleDate.toString());
             
