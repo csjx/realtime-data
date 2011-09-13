@@ -53,6 +53,7 @@ export SOURCE="PINM01_001CTDXXXXR00";
 java -cp $CLASSPATH edu.hawaii.soest.kilonalu.utilities.FileSource\
  -F "./log/input-file.log"\
  -e "# *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"\
+ -t UTC\
  -S $SOURCE\
  -C DecimalASCIISampleData\
  -s bbl.ancl.hawaii.edu\
