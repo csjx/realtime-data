@@ -269,6 +269,7 @@ public class FileSource extends RBNBSource {
             // and that are not in the future  (> 1 hour since the CTD clock
             // may have drifted)
             Calendar currentCal = Calendar.getInstance();
+            currentCal.setTimeZone(tz);
             currentCal.add(Calendar.HOUR, 1);
             Date currentDate = currentCal.getTime();
             
