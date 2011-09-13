@@ -344,6 +344,7 @@
           depends="compile" 
           description="jar class files, libraries, and scripts for pacioos deployment">
     <delete dir="${pacioos.dir}"/>
+    <mkdir dir="${pacioos.dir}/log" />
     <copy todir="${pacioos.dir}/build">
       <fileset dir="./build" 
                includes="**/utilities/FileSource* **/rbnb/RBNBBase* **/rbnb/RBNBSource*"
@@ -367,8 +368,10 @@
     <copy todir="${pacioos.dir}" file="build.xml" />
     <copy todir="${pacioos.dir}" file="LICENSE" />
     <jar destfile="${pacioos.dir}/lib/pacioos.jar" basedir="${pacioos.dir}/build/classes"/>
-    <zip destfile="./pacioos.zip" basedir="."
-       includes="pacioos/**"/>
+    <delete includeemptydirs="true">
+      <fileset dir="${pacioos.dir}/build" includes="**/*"/>
+    </delete>    
+    <zip destfile="./pacioos.zip" basedir="." includes="pacioos/**"/>
     <delete dir="${pacioos.dir}"/>
   </target>
   
