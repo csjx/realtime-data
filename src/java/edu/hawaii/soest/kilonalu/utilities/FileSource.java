@@ -116,10 +116,13 @@ public class FileSource extends RBNBSource {
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
   
   /* The buffered reader data representing the data file stream  */
-  BufferedReader fileReader;
+  private BufferedReader fileReader;
   
   /* The pattern used to identify data lines */
-  Pattern dataPattern;
+  private Pattern dataPattern;
+  
+  /* The timezone that the data samples are taken in as a string (UTC, HST, etc.) */
+  private String timezone;
   
   /* The default log configuration file location */
   private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
@@ -558,6 +561,14 @@ public class FileSource extends RBNBSource {
      if ( serverName != null ) setServerName(serverName);
     }
 
+    // handle the -t option
+    if ( command.hasOption("t") ) {
+      String timezone = command.getOptionValue("t");
+      if ( timezone != null ) {
+        setTimezone(timezone);
+      }
+    }
+
     // handle the -p option
     if ( command.hasOption('p') ) {
       String serverPort = command.getOptionValue('p');
@@ -623,6 +634,7 @@ public class FileSource extends RBNBSource {
     options.addOption("e", true, "regular expression for data line matching, e.g \"*[0-9][0-9]\" ");
     options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
     options.addOption("s", true,  "RBNB Server Hostname");
+    options.addOption("t", true,  "Timezone indicator (UTC, HST, EDT, etc.)");
     options.addOption("p", true,  "RBNB Server Port Number");
                       
     return options;
@@ -718,4 +730,25 @@ public class FileSource extends RBNBSource {
   public void setLogConfigurationFile(String logConfigurationFile) {
     this.logConfigurationFile = logConfigurationFile;
   }
+  
+  /**
+   * A method that gets the timezone string
+   *
+   * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+   */
+  public String getTimezone() {
+    return this.timezone;
+    
+  }
+  
+  /**
+   * A method that sets the timezone string
+   *
+   * @param timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+   */
+  public void setTimezone(String timezone) {
+    this.timezone = timezone;
+    
+  }
+  
 }
