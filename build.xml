@@ -49,6 +49,7 @@
 
     <property name="dist.dir" value="dist"/>
     <property name="gumstix.dir" value="dist-gumstix"/>
+    <property name="pacioos.dir" value="pacioos"/>
     <property name="ver.dir" value="${dist.dir}/${name}-${release}"/>
     <property name="ver.src" value="${ver.dir}/src"/>
 
@@ -258,6 +259,7 @@
       <fileset dir="${build.dest}">
         <!--include name="**/${test.class}.class" /-->
         <include name="**/StorXParserTest.class" />
+        <!--include name="**/CalibrationTest.class" /-->
       </fileset>
     </batchtest>
     </junit> 
@@ -336,6 +338,38 @@
     <gzip zipfile="./pacioos-gumstix.tar.gz"
         src="./pacioos-gumstix.tar"/>
     <delete file="./pacioos-gumstix.tar" />    
+  </target>
+  
+  <target name="dist-pacioos" 
+          depends="compile" 
+          description="jar class files, libraries, and scripts for pacioos deployment">
+    <delete dir="${pacioos.dir}"/>
+    <copy todir="${pacioos.dir}/build">
+      <fileset dir="./build" 
+               includes="**/utilities/FileSource* **/rbnb/RBNBBase* **/rbnb/RBNBSource*"
+               excludes="**/.svn* **/CVS* **/.#* **/src* **/lib/* **docs/*"/>
+    </copy>                    
+    <copy todir="${pacioos.dir}/lib">
+      <fileset dir="./lib"   
+        excludes="**/.svn* **/CVS* **/.#*" 
+        includes="commons-cli-1.0.jar log4j-1.2.8.jar log4j.properties rbnb.jar"/>
+    </copy>                    
+    <copy todir="${pacioos.dir}/bin">
+      <fileset dir="./bin"   
+               excludes="**/.svn* **/CVS* **/.#*" 
+               includes="*PINM*"/>
+    </copy>
+    <copy todir="${pacioos.dir}/src">
+      <fileset dir="./src"   
+               excludes="**/.svn* **/CVS* **/.#*" 
+               includes="**/rbnb/RBNBBase.java **/rbnb/RBNBSource.java **/utilities/FileSource.java"/>
+    </copy>
+    <copy todir="${pacioos.dir}" file="build.xml" />
+    <copy todir="${pacioos.dir}" file="LICENSE" />
+    <jar destfile="${pacioos.dir}/lib/pacioos.jar" basedir="${pacioos.dir}/build/classes"/>
+    <zip destfile="./pacioos.zip" basedir="."
+       includes="pacioos/**"/>
+    <delete dir="${pacioos.dir}"/>
   </target>
   
   <target name="distsrc" depends="dist"
