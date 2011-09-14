@@ -23,10 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * 
- * $URL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/EventMarker.java $
- * $Revision: 8702 $
- * $Date: 2007-08-17 15:53:15 -0600 (Fri, 17 Aug 2007) $
- * $Author: jphanley $
+ * $URL$
+ * $Revision$
+ * $Date$
+ * $Author$
  */
 package org.nees.rbnb;
 

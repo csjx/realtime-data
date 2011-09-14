@@ -9,10 +9,10 @@
 %             School of Ocean and Earth Science and Technology 
 %    Authors: Christopher Jones             
 %  
-% $HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/matlab/schedule_WK02XX_001CTDXXXXR00_processing.m $
-% $LastChangedDate: 2009-08-19 04:44:08 -1000 (Wed, 19 Aug 2009) $
-% $LastChangedBy: cjones $
-% $LastChangedRevision: 459 $
+% $HeadURL$
+% $LastChangedDate$
+% $LastChangedBy$
+% $LastChangedRevision$
 % 
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by

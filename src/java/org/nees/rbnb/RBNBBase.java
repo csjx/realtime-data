@@ -26,10 +26,10 @@ import org.apache.commons.cli.HelpFormatter;
  * @author Lawrence J. Miller
  * @author Jason P. Hanley
  * 
- * $LastChangedDate: 2007-08-16 14:52:15 -0600 (Thu, 16 Aug 2007) $
- * $LastChangedRevision: 8687 $
- * $LastChangedBy: jphanley $
- * $HeadURL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/RBNBBase.java $
+ * $LastChangedDate$
+ * $LastChangedRevision$
+ * $LastChangedBy$
+ * $HeadURL$
  */
 public abstract class RBNBBase
 {

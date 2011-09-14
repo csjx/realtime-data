@@ -488,10 +488,10 @@ public final class RBNBUtilities {
   
   /** left "CVS" in name for legacy compatibility */
   public static String getCVSVersionString() {
-    return ("$LastChangedDate: 2007-08-23 09:22:33 -0600 (Thu, 23 Aug 2007) $\n"
-        + "$LastChangedRevision: 8731 $"
-        + "$LastChangedBy: jphanley $"
-        + "$HeadURL: https://svn.nees.org/svn/telepresence/dataturbine/trunk/src/org/nees/rbnb/RBNBUtilities.java $");
+    return ("$LastChangedDate$\n"
+        + "$LastChangedRevision$"
+        + "$LastChangedBy$"
+        + "$HeadURL$");
   } // getCVSVersionString ()
   
   

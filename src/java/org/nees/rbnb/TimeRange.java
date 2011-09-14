@@ -24,10 +24,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * 
- * $URL: https://svn.nees.org/svn/telepresence/RDV/trunk/src/org/nees/buffalo/rdv/rbnb/TimeRange.java $
- * $Revision: 8280 $
- * $Date: 2007-07-12 17:51:20 -0400 (Thu, 12 Jul 2007) $
- * $Author: jphanley $
+ * $URL$
+ * $Revision$
+ * $Date$
+ * $Author$
  */
 
 package org.nees.rbnb;

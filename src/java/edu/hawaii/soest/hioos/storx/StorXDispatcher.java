@@ -5,10 +5,10 @@
  *             frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy:  $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -789,10 +789,10 @@ public class StorXDispatcher extends RBNBSource {
    */
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2010-04-13 17:57:16 -0600 (Tue, 13 Apr 2010) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 609 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/ctd/StorXDispatcher.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 

@@ -5,10 +5,10 @@
  *             RBNB Data Turbine channels for archival and realtime access.
  *    Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy: $
- * $LastChangedRevision: $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -438,10 +438,10 @@ public class StorXSource extends RBNBSource {
 
   public String getCVSVersionString(){
     return (
-    "$LastChangedDate: 2010-04-10 16:41:48 -0600 (Sat, 10 Apr 2010) $" +
-    "$LastChangedBy: cjones $" +
-    "$LastChangedRevision: 604 $" +
-    "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/storX/StorXSource.java $"
+    "$LastChangedDate$" +
+    "$LastChangedBy$" +
+    "$LastChangedRevision$" +
+    "$HeadURL$"
     );
   }
 
