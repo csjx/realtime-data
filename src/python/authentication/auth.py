@@ -48,7 +48,7 @@ logger.addHandler(logHandler)     # send to log file
 #consoleHandler = logging.StreamHandler()
 #consoleHandler.setFormatter(logFormatter)
 #logger.addHandler(consoleHandler) # send to console
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 class Authentication(object):
     '''Provide authentication functions for web-based WiFi services.
@@ -85,6 +85,8 @@ class Authentication(object):
     def authenticate(self, waitInterval=60):
         ''' Establish an authenticated session with the service.'''
         
+        self.logger.debug('authenticate() called.')
+        
         try:
             # continuously test the connection
             while True:
@@ -100,7 +102,7 @@ class Authentication(object):
                                       ') There is no network connection.')
                     
                     # test if the network downtime is past the threshhold
-                    if self.failureCount > 4:
+                    if self.failureCount > 2:
                         
                         # attempt to restart the network connection
                         self.disconnect()
@@ -138,6 +140,7 @@ class Authentication(object):
     def connect(self):
         '''Connect to the local network.'''
         
+        self.logger.debug('connect() called.')
         self.logger.info('Starting the network connection.')
         process = Popen(self.startNetworkCommand, 
                         stdout=PIPE, stderr=PIPE, shell=True)
@@ -149,6 +152,7 @@ class Authentication(object):
     def disconnect(self):
         '''Disconnect from the local network'''
         
+        self.logger.debug('disconnect() called.')
         self.logger.info('Stopping the network connection.')
         process = Popen(self.stopNetworkCommand, 
                         stdout=PIPE, stderr=PIPE, shell=True)
@@ -160,10 +164,12 @@ class Authentication(object):
     def has_connection(self):
         '''Check the network connection at a known URL.'''
         
+        self.logger.debug('has_connection() called.')
         # the IP address pattern needed for a match
         pattern = '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
         
         try:
+            self.logger.debug('isConnected: ' + str(self.isConnected))
             
             # first check for a local IP address
             if self.isConnected == False:
@@ -186,7 +192,7 @@ class Authentication(object):
                 self.logger.info('LAN IP address: ' + lanIP)
                 
                 # test for the correct IP address pattern
-                self.logger.debug(re.match(pattern , lanIP))
+                self.logger.debug(str(re.match(pattern , lanIP)))
                 
                 if re.match(pattern , lanIP) == None:
                     self.isConnected = False
@@ -215,9 +221,9 @@ class Authentication(object):
                     self.isConnected = True
                     self.failureCount = 0
                 
-        except urllib2.URLError as (errorNumber, errorString):
+        except urllib2.URLError , e:
             self.logger.debug('There was an error reading the URL:' +
-              'Error({0}) message: {1}'.format(errorNumber, errorString))
+              'Error message: {0}'.format(e))
             self.isConnected = False
             self.failureCount += 1
             
@@ -252,9 +258,9 @@ class Authentication(object):
             self.logger.debug(content)
             self.isAuthenticated = True
             
-        except urllib2.URLError as (errorNumber, errorString):
+        except urllib2.URLError , e:
             self.logger.debug('There was an error reading the URL:' +
-              'Error({0}) message: {1}'.format(errorNumber, errorString))
+              'Error message: {0}'.format(e))
             self.isAuthenticated = False
             
         except urllib2.HTTPError as (errorNumber, errorString):
@@ -290,9 +296,9 @@ class Authentication(object):
                               ' from ' + response.geturl() + '.')
             self.logger.debug(content)
             
-        except urllib2.URLError as (errorNumber, errorString):
+        except urllib2.URLError , e:
             self.logger.debug('There was an error reading the URL:' +
-              'Error({0}) message: {1}'.format(errorNumber, errorString))
+              'Error message: {0}'.format(e))
             self.isAuthenticated = False
             
         except:
@@ -317,7 +323,9 @@ class Authentication(object):
         '''Stop the authentication thread.'''
         self.logger.debug('stop() called.')
         
-        isLoggedIn = self.logout(self.config)
+        if not self.skipAuthentication:
+            isLoggedIn = self.logout(self.config)
+        
         sys.exit()
     
     
@@ -367,20 +375,27 @@ def main():
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'skipAuthentication': False,
+            'skipAuthentication': True,
             'login': {'url': 'http://10.22.0.1:5788/fs_login.php',
                       'params': {'name': 'loginForm',
-                                 'username': 'fsmUsername',
-                                 'password': 'fsmPassword',
+                                 'username': '11049575',
+                                 'password': '8191364531',
+                                 'sess_patronsoft1':  '2707494410',
+                                 'sess_patronsoft2':  '2707494410',
+                                 'sess_desturl':  'http:// google.com',
                                  'ok_url': 'redirect.php',
                                  'fail_url': 'login_form.php',
                                  'zero_url': 'cart.php',
                                  'cart_url': 'cart.php'
                                 }
                      },
-            'logout': {'url': 'http://10.22.0.1/disconnect.php',
-                       'params': {'name': 'logoutForm'
-                                 }
+            'logout': {'url': 'http://logout/',
+                       'params': {'ok_url': 'redirect.php',
+                                  'fail_url': 'login_form.php',
+                                  'zero_url': 'cart.php',
+                                  'cart_url': 'cart.php',
+                                  'logout': 'true'
+                                  }
                       },
             'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',
                         'params': {'name': 'forcelogout',
@@ -397,7 +412,7 @@ def main():
                        },
         },
         'AmericanSamoa': {
-            'interface': 'wlan0',
+            'interface': 'wlan1',
             'domain': None,
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
@@ -426,7 +441,7 @@ def main():
             'domain': '.ntamar.net',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
-            'skipAuthentication': False,
+            'skipAuthentication': True,
             'login': {'url': 'http://scc.ntamar.net/minta/eup/login',
                       'params': {'login_id': 'rmiUsername',
                                  'password': 'rmiPassword',
@@ -448,7 +463,7 @@ def main():
                        },
         },
         'Test': {
-            'interface': 'wlan0',
+            'interface': 'en0',
             'domain': '.ecoinformatics.org',
             'testURL': 'http://checkip.dyndns.org',
             'interval': 20.0,
