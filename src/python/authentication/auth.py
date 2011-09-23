@@ -192,7 +192,6 @@ class Authentication(object):
                 self.logger.info('LAN IP address: ' + lanIP)
                 
                 # test for the correct IP address pattern
-                self.logger.debug(str(re.match(pattern , lanIP)))
                 
                 if re.match(pattern , lanIP) == None:
                     self.isConnected = False
