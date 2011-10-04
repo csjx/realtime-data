@@ -70,8 +70,8 @@
     <username>hiooswqb</username>
     <password>sharedPW4WQB</password>
     <protocol>imaps</protocol>
-    <dataMailbox>testInbox</dataMailbox>
-    <processedMailbox>testProcessed</processedMailbox>
+    <dataMailbox>Inbox</dataMailbox>
+    <processedMailbox>processed</processedMailbox>
     <logger>
       <loggerName>WQAW01_XXXSTRX001R00</loggerName>
       <loggerSerialNumber>0062</loggerSerialNumber>
