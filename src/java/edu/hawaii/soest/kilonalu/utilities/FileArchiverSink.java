@@ -899,7 +899,7 @@ public class FileArchiverSink extends RBNBBase {
     int fetchRetryCount = 0;
     
     while (doExport) {
-      ChannelMap m = sink.Fetch(20000); // fetch with 10 sec timeout
+      ChannelMap m = sink.Fetch(1800000); // fetch with 3 min sec timeout
       
       if (m.GetIfFetchTimedOut()) {
         if (++fetchRetryCount < 10) {
