@@ -96,3 +96,4 @@ For Linux:
     > /usr/local/jython2.5.1/jython tchain.py  
 
 The Python code should run, connect to the DataTurbine, insert each sample line, and then exit cleanly.  It is configured by default to load data from a data file with only ten lines.  If you have any trouble, send me a note at csjones@hawaii.edu.
+<link rel="stylesheet" type="text/css" href="style.css">

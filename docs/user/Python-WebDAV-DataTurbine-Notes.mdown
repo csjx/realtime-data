@@ -89,16 +89,4 @@ For Linux:
     > python webdav.py  
 
 The Python code should run, connect to the DataTurbine, insert each sample line, and then exit cleanly.  It is configured by default to load data from a data file with only ten lines.  If you have any trouble, send me a note at csjones@hawaii.edu.
-<style>
-   body {
-     color: #404040;
-     padding: 10px;
-   }
-   blockquote {
-     border: 1px solid #999999;
-     padding: 5px;
-     background-color: #E3E3E3;
-     font-family: Courier;
-     font-size: .9em;
-   }
-</style>
+<link rel="stylesheet" type="text/css" href="style.css">
