@@ -192,33 +192,43 @@ Save the old */etc/localtime* file and symbolically link to the appropriate new 
   
   Add the *tun* module to the *modules* configuration file.  
 
-4.4.13. Set up the dynamic DNS client.  First, install the ddclient download into */usr/local/dyndns*.  Copy the configuration file provided into the *ddclient.conf* file.  Configure the client to use web IP detection with the *pacioos* user and password:  
-
-  > pid=/var/run/ddclient.pid  
-  > ssl=no  
-  > use=web, web=checkip.dyndns.org/, web-skip='IP Address'  
-  > login=pacioos  
-  > password=pacioos-password-goes-here  
-  > server=members.dyndns.org,              \  
-  > protocol=dyndns2                        \  
-  > pixx01.dyndns.org
-
-Hostnames so far are set up as:
-
-  > pias01.dyndns.org (American Samoa)  
-  > pifm01.dyndns.org (Micronesia)  
-  > pimi01.dyndns.org (Marshall Islands)  
-  > pipl01.dyndns.org (Palau)  
-
-Set up the ddclient service in run level 3 with the script provided.  
 
 ## 5. Set up WiFi authentication
 
-Certain deployments will require username and password-based authentication if the upstream network doesn't support MAC-based authentication.  So far, only American Samoa supports it.  For the others, install the *authwifi* service script found in the bin directory of the BBL Subversion repository.  Then, customize the Authentication.main() in auth.py for the particular site's network login and other parameters.
+Certain deployments will require username and password-based authentication if the upstream network doesn't support MAC-based authentication.  Install the *authwifi* service script found in the bin directory of the BBL Subversion repository.  Then, customize the Authentication.main() in auth.py for the particular site's network login and other parameters.  We've been able to switch all of the site's over to a network that doesn't rely on authentication other than the encryption passwords for the WiFi netoworks.  For these sites, set the 'skipAuthentication' parameter to 'True' to skip the authentication methods in this script. This script also provides network restarts in case the Gumstix network connection goes down and it can't be reached remotely. An example is:
+
+  >  location = {                                                         
+  >      'Palau': {                                                       
+  >          'interface': 'wlan0',                                        
+  >          'domain': None,                                              
+  >          'testURL': 'http://checkip.dyndns.org',                      
+  >          'interval': 20.0,                                            
+  >          'skipAuthentication': True,                                  
+  >          'login': {'url': 'http://10.22.0.1:5788/login_form.php',     
+  >                    'params': {'username': 'palauUsername',            
+  >                               'password': 'palauPassword',            
+  >                               'hiddenField': 'hiddenValue',           
+  >                              }                                        
+  >                   },                                                  
+  >          'logout': {'url': 'http://10.22.0.1:5788/login_form.php',    
+  >                     'params': {'username': 'palauUsername',           
+  >                                'password': 'palauPassword',           
+  >                                'hiddenField': 'hiddenValue',          
+  >                               }                                       
+  >                    },                                                 
+  >          'relogin': {'url': 'http://10.22.0.1:5788/login_form.php',   
+  >                      'params': {'username': 'palauUsername',          
+  >                                 'password': 'palauPassword',          
+  >                                 'hiddenField': 'hiddenValue',         
+  >                                }                                      
+  >                     },                                                
+  >      }                                                                
+  >  }
+
 
 ## 6. Connecting to the VPN server
 
-For each PacIOOS remote deployment, IP addresses are obtained in many ways.  Services providers such as Blue Sky in American Samoa provide publicly accessible IP addresses, however others do not and only assign an IP address on a private network.  To be able to manage the deployment remotely, each device on a private network must establish a connection to the PacIOOS VPN server running on *bbl.ancl.hawaii.edu*.
+For each PacIOOS remote deployment, IP addresses are obtained in many ways.  Services providers provide publicly accessible IP addresses, however others do not and only assign an IP address on a private network.  To be able to manage the deployment remotely, each device on a private network must establish a connection to the PacIOOS VPN server running on *bbl.ancl.hawaii.edu*.
 
 ### 6.1 Configuring the VPN client
 
