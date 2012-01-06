@@ -1123,7 +1123,11 @@ classdef DataProcessor < hgsetget & dynamicprops
         % set the Y axis limits based on min and max observations
         minYObservation=[]; maxYObservation=[];
         minYObservation=min(y); maxYObservation=max(y);
-        ylim([minYObservation maxYObservation]);
+        % Set the ylimits only if the range is increasing 
+        if ( minYObservation < maxYObservation )
+          ylim([minYObservation maxYObservation]);
+        end
+      
         
         % Ticks and Ticklabels
         %xtick = get(axhan,'XTick');
