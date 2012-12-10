@@ -100,7 +100,7 @@ public class CalibrationTest extends TestCase {
     coefficients.add(new Double(0.000382698d));
     String fitType = "POLYU";
     
-    Double result = this.calibration.apply(observedValue, isImmersed, coefficients, fitType);
+    Double result = this.calibration.apply(observedValue, isImmersed, fitType);
     assertTrue(result.equals(new Double(12.797519326d)));
   }
   
