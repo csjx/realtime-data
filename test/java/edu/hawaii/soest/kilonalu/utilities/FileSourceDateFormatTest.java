@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 /**
- * Tests that exercise the FileSource classes ability to apply date formats in
+ * Tests that exercise the FileSource class' ability to apply date formats
  * to date fields in ASCII sample data from typical instrument output (CTDs)
  * 
  * @author cjones
