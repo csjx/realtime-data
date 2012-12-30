@@ -1,7 +1,7 @@
 /**
  *  Copyright: 2010 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To convertlines of an  ASCII data file into RBNB Data Turbine
+ *    Purpose: To convert lines of an  ASCII data file into RBNB Data Turbine
  *             frames for archival and realtime access.
  *    Authors: Christopher Jones
  *
@@ -41,8 +41,10 @@ import java.lang.InterruptedException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import java.util.regex.Matcher;
@@ -111,9 +113,19 @@ public class FileSource extends RBNBSource {
   
   /* The address and port string for the RBNB server */
   private String server = serverName + ":" + serverPort;
-  
-  /* The date format for the timestamp in the data sample string */
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+
+  /* The default date format for the timestamp in the data sample string */
+  private static final SimpleDateFormat defaultDateFormat = 
+		  new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+
+  /* The default sample line delimiter separating columns of data */
+  private static final String DEFAULT_DELIMITER = ",";
+
+  /* A list of date format patterns to be applied to designated date/time fields */
+  private List<String> dateFormats = null;
+
+  /* A one-based list of Integers corresponding to the observation date/time field indices */
+  private List<Integer> dateFields = null;
   
   /* The instance of TimeZone to use when parsing dates */
   private TimeZone tz;
@@ -251,15 +263,12 @@ public class FileSource extends RBNBSource {
           if ( matcher.matches() ) {
             logger.debug("This line matches the data line pattern: " + line);
             
-            // extract the date from the data line
-            String[] columns    = line.trim().split(",");
-            String dateString;
-            //dateString        = columns[columns.length - 2]; // last 2 columns [for NS03-04]
-            dateString          = columns[columns.length - 1]; // last field [for NS01-02]
-            
-            this.tz = TimeZone.getTimeZone(this.timezone);
-            DATE_FORMAT.setTimeZone(tz);
-            Date sampleDate = DATE_FORMAT.parse(dateString.trim());
+            Date sampleDate = getSampleDate(line);
+                        
+            if ( this.dateFormats == null || this.dateFields == null ) {
+            	logger.warn("Using the default datetime format and field for sample data. " +
+                    "Use the -f and -d options to explicitly set date time fields.");
+            }
             logger.debug("Sample date is: " + sampleDate.toString());
             
             // convert the sample date to seconds since the epoch
@@ -269,7 +278,8 @@ public class FileSource extends RBNBSource {
             // and that are not in the future  (> 1 hour since the CTD clock
             // may have drifted)
             Calendar currentCal = Calendar.getInstance();
-            currentCal.setTimeZone(tz);
+            this.tz = TimeZone.getTimeZone(this.timezone);
+            currentCal.setTimeZone(this.tz);
             currentCal.add(Calendar.HOUR, 1);
             Date currentDate = currentCal.getTime();
             
@@ -478,7 +488,21 @@ public class FileSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
   public static void main (String args[]) {
-        
+
+	/*
+	args = new String[]{
+			 "-F", "/Users/cjones/Documents/Development/bbl/trunk/test/resources/edu/hawaii/soest/kilonalu/utilities/NS01-example-data.txt",
+			 "-e", "# *.*, *.*, *.*, *.*, *.*, *.*, *\\\\d{2} [A-Z][a-z][a-z] *\\\\d{4} *\\\\d{2}:\\\\d{2}:\\\\d{2}\\\\s*",
+			 "-S", "TEST01_001CTDXXXXR00",
+			 "-C", "DecimalASCIISampleData",
+			 "-d", "yyyy-MM-dd HH:mm:ss",
+			 "-f", "7",
+			 "-s", "127.0.0.1",
+			 "-p", "3333",
+			 "-z", "126000",
+			 "-Z", "31536000"
+	};
+	*/
     try {
       // create a new instance of the FileSource object, and parse the command 
       // line arguments as settings for this instance
@@ -575,6 +599,71 @@ public class FileSource extends RBNBSource {
       }
     }
 
+    // handle the -d option, requires the -f option
+    if ( command.hasOption("d") ) {
+    	if ( !command.hasOption("f") ) {
+    		System.out.println("The -f option is required to identify which " +
+    	        "fields in the sample correspond to observation dates/times.");
+    		return false;
+    	}
+    	
+    	List<String> formatList = new ArrayList<String>();
+      String dateFormats = command.getOptionValue("d");
+      if ( dateFormats != null ) {
+    	  String[] formats = dateFormats.split(DEFAULT_DELIMITER);
+    	  for (String format : formats) {
+    		  try {
+    			SimpleDateFormat f = new SimpleDateFormat(format);
+				formatList.add(format);
+				
+			} catch (Exception e) {
+				System.out.println("The date format " + format + 
+						" is not a proper date or time format.  See " +
+						"http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html" +
+						" for allowable character patterns.");
+				e.printStackTrace();
+				return false;
+			}
+    	  }
+          setDateFormats(formatList);
+      }
+    }
+
+    // handle the -f option
+    if ( command.hasOption("f") ) {
+    	if ( !command.hasOption("d") ) {
+    		System.out.println("The -d' option is required to identify the " +
+        	        "formats to be applied to date/time fields in the sample.");
+        		return false;
+    	}
+    	List<Integer> dateFieldList = new ArrayList<Integer>();
+    	String dateFields = command.getOptionValue("f");
+    	String[] fields = dateFields.split(",");
+    	for (String field : fields) {
+    		try {
+				Integer fieldIndex = new Integer(field);
+				dateFieldList.add(fieldIndex);
+				if ( field.equals("0") ) {
+					System.out.println("The list of date fields must start " +
+				        "with 1 (one), not 0 (zero).");
+					return false;
+				}
+				
+			} catch (NumberFormatException e) {
+				System.out.println("The date field " + field + 
+						" is not a proper field index number. Provide a " +
+						"comma-separated list of numbers, not including zero, " +
+						"that correspond to observation date, time, or datetime " +
+						"fields in the sample data.  For instance, if the " +
+						"observation timestamp was in column one of the sample, " +
+						"just use '-f 1'. If column one holds the date, and column " +
+						"two holds the time, use '-f 1,2'");
+
+			}
+    		setDateFields(dateFieldList);
+    	}
+    }
+    
     // handle the -p option
     if ( command.hasOption('p') ) {
       String serverPort = command.getOptionValue('p');
@@ -641,6 +730,8 @@ public class FileSource extends RBNBSource {
     options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
     options.addOption("s", true,  "RBNB Server Hostname");
     options.addOption("t", true,  "Timezone indicator (UTC, HST, EDT, etc.)");
+    options.addOption("d", true,  "Date formats as a comma separated list(YYYY-MM-DD,HH:MM:SS");
+    options.addOption("f", true,  "Date fields as a one-based comma separated list(1,2)");
     options.addOption("p", true,  "RBNB Server Port Number");
                       
     return options;
@@ -756,5 +847,101 @@ public class FileSource extends RBNBSource {
     this.timezone = timezone;
     
   }
-  
+
+/**
+ * Get the list of date formats that correspond to date and/or time fields in
+ * the sample data.  For instance, column one of the sample may be a timestamp
+ * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+ * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+ * @return the dateFormats
+ */
+public List<String> getDateFormats() {
+	return dateFormats;
+	
+}
+
+/**
+ * Set the list of date formats that correspond to date and/or time fields in
+ * the sample data.  For instance, column one of the sample may be a timestamp
+ * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+ * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+
+ * @param dateFormats the dateFormats to set
+ */
+public void setDateFormats(List<String> dateFormats) {
+	this.dateFormats = dateFormats;
+	
+}
+
+/**
+ * Get the list of Integers that correspond with field indices of the 
+ * sample observation's date, time, or datetime columns.
+ *
+ * @return the dateFields
+ */
+public List<Integer> getDateFields() {
+	return dateFields;
+	
+}
+
+/**
+ * Set the list of Integers that correspond with field indices of the 
+ * sample observation's date, time, or datetime columns. The list must be
+ * one-based, such as '1,2'.
+ * @param dateFields the dateFields to set
+ */
+public void setDateFields(List<Integer> dateFields) {
+	this.dateFields = dateFields;
+	
+}
+
+/* return the sample observation date given minimal sample metadata */
+public Date getSampleDate(String line) throws ParseException {
+	
+	/*
+	 * Date time formats and field locations are highly dependent on instrument
+	 * output settings.  The -d and -f options are used to set dateFormats and dateFields
+	 * 
+	 * this.dateFormats will look something like {"yyyy-MM-dd", "HH:mm:ss"} or 
+	 * {"yyyy-MM-dd HH:mm:ss"} or {"yyyy", "MM", "dd", "HH", "mm", "ss"}
+	 * 
+	 * this.dateFields will also look something like {1,2} or {1} or {1, 2, 3, 4, 5, 6}
+	 * 
+	 * NS01 sample:
+	 * # 26.1675,  4.93111,    0.695, 0.1918, 0.1163,  31.4138, 09 Dec 2012 15:46:55
+	 * NS03 sample:
+	 * #  25.4746,  5.39169,    0.401,  35.2570, 09 Dec 2012, 15:44:36
+	 */
+    // extract the date from the data line
+	SimpleDateFormat dateFormat;
+    String dateFormatStr = "";
+    String dateString    = "";
+    String[] columns     = line.trim().split(DEFAULT_DELIMITER);
+    
+    // build the total date format from the individual fields listed in dateFields
+    int index = 0;
+    for (Integer dateField : this.dateFields) {
+    	dateFormatStr += this.dateFormats.get(index); //zero-based list
+    	dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
+    	index++;
+    }
+	logger.debug("Using date format string: " + dateFormatStr);
+	logger.debug("Using date string       : " + dateString);
+
+    this.tz = TimeZone.getTimeZone(this.timezone);
+    if ( this.dateFormats == null || this.dateFields == null ) {
+    	logger.warn("Using the defaault datetime field for sample data. " +
+            "Use the -f and -d options to explicitly set date time fields.");
+    	dateFormat = this.defaultDateFormat;
+    }
+    // init the date formatter
+    dateFormat = new SimpleDateFormat(dateFormatStr);
+	dateFormat.setTimeZone(this.tz);
+
+	// parse the date string
+    Date sampleDate = dateFormat.parse(dateString.trim());
+
+    return sampleDate;
+}
+
 }
