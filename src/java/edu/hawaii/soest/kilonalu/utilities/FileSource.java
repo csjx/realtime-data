@@ -730,7 +730,7 @@ public class FileSource extends RBNBSource {
     options.addOption("C", true, "RBNB source channel name e.g. " + getRBNBChannelName());
     options.addOption("s", true,  "RBNB Server Hostname");
     options.addOption("t", true,  "Timezone indicator (UTC, HST, EDT, etc.)");
-    options.addOption("d", true,  "Date formats as a comma separated list(YYYY-MM-DD,HH:MM:SS");
+    options.addOption("d", true,  "Date formats as a comma separated list(yyyy-MM-dd,HH:mm:ss)");
     options.addOption("f", true,  "Date fields as a one-based comma separated list(1,2)");
     options.addOption("p", true,  "RBNB Server Port Number");
                       
