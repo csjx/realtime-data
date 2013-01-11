@@ -42,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,7 @@ import java.util.TimeZone;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -120,6 +122,9 @@ public class FileSource extends RBNBSource {
 
   /* The default sample line delimiter separating columns of data */
   private static final String DEFAULT_DELIMITER = ",";
+  
+  /* The delimiter separating variables in the sample line */
+  private static String delimiter = DEFAULT_DELIMITER;
 
   /* A list of date format patterns to be applied to designated date/time fields */
   private List<String> dateFormats = null;
@@ -600,33 +605,50 @@ public class FileSource extends RBNBSource {
     }
 
     // handle the -d option, requires the -f option
-    if ( command.hasOption("d") ) {
-    	if ( !command.hasOption("f") ) {
-    		System.out.println("The -f option is required to identify which " +
-    	        "fields in the sample correspond to observation dates/times.");
-    		return false;
-    	}
-    	
-    	List<String> formatList = new ArrayList<String>();
-      String dateFormats = command.getOptionValue("d");
-      if ( dateFormats != null ) {
-    	  String[] formats = dateFormats.split(DEFAULT_DELIMITER);
-    	  for (String format : formats) {
-    		  try {
-    			SimpleDateFormat f = new SimpleDateFormat(format);
-				formatList.add(format);
-				
-			} catch (Exception e) {
-				System.out.println("The date format " + format + 
-						" is not a proper date or time format.  See " +
-						"http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html" +
-						" for allowable character patterns.");
+	if (command.hasOption("d")) {
+		if (!command.hasOption("f")) {
+			System.out.println("The -f option is required to identify which " + 
+		    "fields in the sample correspond to observation dates/times.");
+			return false;
+		}
+
+		List<String> formatList = new ArrayList<String>();
+		String dateFormats = command.getOptionValue("d");
+		if (dateFormats != null) {
+			String[] formats = dateFormats.split(",");
+			for (String format : formats) {
+				try {
+					SimpleDateFormat f = new SimpleDateFormat(format);
+					formatList.add(format);
+
+				} catch (Exception e) {
+					System.out.println("The date format " + format + 
+				        " is not a proper date or time format.  See " + 
+					    "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html" + 
+				        " for allowable character patterns.");
+					e.printStackTrace();
+					return false;
+				}
+			}
+			setDateFormats(formatList);
+		}
+	}
+
+    // handle the -d option, requires the -f option
+    if ( command.hasOption("D") ) {
+		String delim = command.getOptionValue("D");
+		try {
+			Pattern pattern = Pattern.compile(delim);
+
+		} catch (PatternSyntaxException e) {
+			System.out.println("The delimiter format " + delim + 
+			    " is not a proper regular expression syntax.  See " + 
+				"http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html" + 
+			    " for allowable character patterns.");
 				e.printStackTrace();
 				return false;
-			}
-    	  }
-          setDateFormats(formatList);
-      }
+		}
+		setDelimiter(delim);
     }
 
     // handle the -f option
@@ -684,6 +706,16 @@ public class FileSource extends RBNBSource {
   }
 
   /**
+   * A method that sets the delimiter between variables in a sample string
+   * 
+   * @param delim  the delimiter string as a Java regular expression
+   */
+  public void setDelimiter(String delim) {
+	  this.delimiter = delim;
+	  
+  }
+
+/**
    * A method that sets the file name of the source data file
    *
    * @param fileName - the name of the source data file
@@ -731,6 +763,7 @@ public class FileSource extends RBNBSource {
     options.addOption("s", true,  "RBNB Server Hostname");
     options.addOption("t", true,  "Timezone indicator (UTC, HST, EDT, etc.)");
     options.addOption("d", true,  "Date formats as a comma separated list(yyyy-MM-dd,HH:mm:ss)");
+    options.addOption("D", true,  "Delimiter between variables as a regular expression (\",\", \"\\s+\")");
     options.addOption("f", true,  "Date fields as a one-based comma separated list(1,2)");
     options.addOption("p", true,  "RBNB Server Port Number");
                       
@@ -916,7 +949,9 @@ public Date getSampleDate(String line) throws ParseException {
 	SimpleDateFormat dateFormat;
     String dateFormatStr = "";
     String dateString    = "";
-    String[] columns     = line.trim().split(DEFAULT_DELIMITER);
+    String[] columns     = line.trim().split(this.delimiter);
+    logger.debug("Delimiter is: " + this.delimiter);
+    logger.debug(Arrays.toString(columns));
     
     // build the total date format from the individual fields listed in dateFields
     int index = 0;
