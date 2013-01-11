@@ -80,6 +80,7 @@ public class FileSourceDateFormatTest {
 		
 		fileSource.setDateFields(dateFields);
 		fileSource.setDateFormats(dateFormats);
+		fileSource.setDelimiter(",");
 		fileSource.setTimezone("HST");
 		
 		try {
@@ -95,6 +96,66 @@ public class FileSourceDateFormatTest {
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 			format.setTimeZone(TimeZone.getTimeZone("HST"));
 			actualDate = format.parse("09 Dec 2012 15:46:55");
+			
+		} catch (ParseException pe2) {
+			pe2.printStackTrace();
+			fail("Couldn't parse actualDate: " + pe2.getMessage());
+			
+		}
+		//are they equal ?
+		try {
+			assertEquals(sampleDate, actualDate);
+			log.info("Success");
+			
+		} catch (AssertionError ae) {
+			fail(ae.getMessage());
+			
+		}
+	}
+
+	/**
+	 * Test date parsing with the last column of the sample containing 
+	 * the single date timestamp. Typical of SBE16plus CTD ASCII output.
+	 */
+	@Test
+	public void testDatetimeFirstColumnWithWhitespaceDelim() {
+		
+		printHeader("testDatetimeFirstColumnWithWhitespaceDelim");
+		
+		Date sampleDate = null;
+		Date actualDate = null;
+		// define the data line
+		String line = "10/01/2013 14:41:09 23.39 0.323   0.16  14.634  -0.045 -4.01     9.2   0.4    2.4    12.6";
+		log.debug("Sample: " + line);
+		
+		// set the one-based date field index list
+		List<Integer> dateFields = new ArrayList<Integer>();
+		dateFields.add(new Integer(1));
+		dateFields.add(new Integer(2));
+		
+		// set the one-based date format list
+		List<String> dateFormats = new ArrayList<String>();
+		dateFormats.add("MM/dd/yyyy");
+		dateFormats.add("HH:mm:ss");
+		
+		fileSource.setDateFields(dateFields);
+		fileSource.setDateFormats(dateFormats);
+		fileSource.setDelimiter("\\s+");
+		fileSource.setTimezone("HST");
+		
+		try {
+			sampleDate = fileSource.getSampleDate(line);
+			
+		} catch (ParseException pe) {
+			pe.printStackTrace();
+			fail("Couldn't parse sampleDate: " + pe.getMessage());
+			
+		}
+		
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			format.setTimeZone(TimeZone.getTimeZone("HST"));
+			actualDate = format.parse("10/01/2013 14:41:09");
 			
 		} catch (ParseException pe2) {
 			pe2.printStackTrace();
@@ -139,6 +200,7 @@ public class FileSourceDateFormatTest {
 		
 		fileSource.setDateFields(dateFields);
 		fileSource.setDateFormats(dateFormats);
+		fileSource.setDelimiter(",");
 		fileSource.setTimezone("HST");
 		
 		try {
@@ -206,6 +268,7 @@ public class FileSourceDateFormatTest {
 		
 		fileSource.setDateFields(dateFields);
 		fileSource.setDateFormats(dateFormats);
+		fileSource.setDelimiter(",");
 		fileSource.setTimezone("HST");
 		
 		try {
