@@ -16,7 +16,7 @@ The FileSource java class can be run on the comand line using the 'java' command
 The CLASSPATH variable should be set using the command.  This can also be set in a bash script.  We first set the location of the BBL software, and then use that as a base directory to point to all of the library dependencies.
 
 > export BBL_HOME=/usr/local/bbl/trunk;  
-> export CLASSPATH=$BBL_HOME/build/classes/:\
+> export CLASSPATH=$BBL_HOME/build/classes/:\  
 > $BBL_HOME/lib/rbnb.jar:\  
 > $BBL_HOME/lib/commons-codec-1.3.jar:\  
 > $BBL_HOME/lib/commons-cli-1.0.jar:\  
@@ -39,6 +39,7 @@ The FileSource class can be called using the 'java' command with the -h option t
 > -d    Date formats as a comma separated list(YYYY-MM-DD,HH:MM:SS  
 > -f    Date fields as a one-based comma separated list(1,2)  
 > -C    RBNB source channel name e.g. DecimalASCIISampleData  
+> -D    Delimiter between variables as a regular expression (",", "\s+")  
 > -F    Data source file name e.g. /tmp/data.txt  
 > -S    RBNB Source Name *RBNBClient  
 > -Z    archive size *0  
@@ -58,6 +59,7 @@ Once the CLASSPATH environment variable is set, call the fully-qualified class n
 >  -e "# *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"\  
 >  -S PIAS01_001CTDXXXXR00\  
 >  -C DecimalASCIISampleData\  
+>  -D "\s+"\  
 >  -d "dd MMM yyyy HH:mm:ss"\  
 >  -t "HST"\  
 >  -f "7"\  
@@ -70,7 +72,7 @@ Note that the '-d' flag only has a single datetime format, followed by the '-f' 
 
 > -d "dd MMM yyyy, HH:mm:ss" -f "6,7"
 
-Also note the '-e' flag.  This tells the driver what to expect as a data sample, expressed as a regular expression pattern.  Any ASCII text lines that don't match this pattern will not be sent to the DataTurbine, such as lines that say "!!! LOW BATT !!!".  This first-pass quality control keeps that data channels pretty clean in the DataTurbine.
+The '-D' flag is used to set the sample delimiter in cases where sample variables aren't delimited by the default comma (,).  This flag uses a regular expression, so in the example above ('\s+') we're saying that each field is delimited by one or more whitespace characters.  Also note the '-e' flag.  This tells the driver what to expect as a data sample, expressed as a regular expression pattern.  Any ASCII text lines that don't match this pattern will not be sent to the DataTurbine, such as lines that say "!!! LOW BATT !!!".  This first-pass quality control keeps that data channels pretty clean in the DataTurbine.
 
 Lastly, note that time zone is set in the example using the '-t' flag, and is not encoded in the date format.
 
