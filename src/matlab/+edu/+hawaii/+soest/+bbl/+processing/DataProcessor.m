@@ -284,7 +284,7 @@ classdef DataProcessor < hgsetget & dynamicprops
             % Get the moving average line width
             movingAverageLineWidth = ...
               str2num( ...
-                char( ...
+                char( ...exp
                   figurePropertiesArray{figureNumber}(14) ...
                 ) ...
               );
@@ -1622,11 +1622,14 @@ classdef DataProcessor < hgsetget & dynamicprops
           if ~exist(outdir,'dir');
               system([mkdirpath ' ' outdir]);
           end
-          if ~exist([outdir '/' year],'dir');
-              system([mkdirpath ' ' outdir '/' year]);
+          if ~exist([outdir self.configuration.pathSeparator year],'dir');
+              system([mkdirpath ' ' outdir self.configuration.pathSeparator year]);
           end
-          if ~exist([outdir '/' year '/' month],'dir');
-              system([mkdirpath ' ' outdir '/' year '/' month]);
+          if ~exist([outdir self.configuration.pathSeparator year ...
+                  self.configuration.pathSeparator month],'dir');
+              
+              system([mkdirpath ' ' outdir self.configuration.pathSeparator ...
+                  year self.configuration.pathSeparator month]);
           end
           %if ~exist([outdir '\' year '\' month '\' day],'dir');
           %    system([mkdirpath ' ' outdir '\' year '\' month '\' day]);
@@ -1636,7 +1639,9 @@ classdef DataProcessor < hgsetget & dynamicprops
                  'The error message was:' dirException.message]);
       end
           
-      outdirectory=[outdir '/' year '/' month '/'];% day '\'];
+      outdirectory=[outdir self.configuration.pathSeparator ...
+                    year self.configuration.pathSeparator   ...
+                    month self.configuration.pathSeparator];% day '\'];
       
       % Export to Enhanced Postscript
       fileNamePrefix = [self.configuration.rbnbSource  '_' ...
@@ -1684,7 +1689,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.copyPath ' '    ... % use the copy program
                   outdirectory                       ... 
                   fileNamePrefix '.jpg ' ' '         ... % copy from file name
-                  outdir '/'                         ... 
+                  outdir self.configuration.pathSeparator                 ... 
                   'latest_' figureNameSuffix '.jpg'  ... % copy to file name                  
                 ]                                    ...
               );
@@ -1703,7 +1708,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.copyPath ' '    ... % use the copy program
                   outdirectory                       ... 
                   fileNamePrefix '.eps ' ' '         ... % copy from file name
-                  outdir '/'                         ... 
+                  outdir self.configuration.pathSeparator                         ... 
                   'latest_' figureNameSuffix '.eps'  ... % copy to file name                  
                 ]                                    ...
               );
@@ -1748,7 +1753,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       end
       
       % define the request details (get the latest 7 days of data)
-      fullChannelName = [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
+      fullChannelName = [self.configuration.rbnbSource self.configuration.pathSeparator self.configuration.rbnbChannel];
       
       % make the request to the DataTurbine and close the connection
       try
