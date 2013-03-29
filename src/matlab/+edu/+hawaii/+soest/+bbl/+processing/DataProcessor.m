@@ -184,6 +184,10 @@ classdef DataProcessor < hgsetget & dynamicprops
         return;
       end
       
+      % get the time vector
+        time=self.dataCellArray{find(strcmp ...
+                 ('serialdate',self.configuration.dataVariableNames))};      
+      
       % create figures as outlined in the configuration properties
       if ( self.configuration.createFigures )
         if ( strcmp(self.configuration.currentFigureType, 'timeSeries') )
@@ -196,7 +200,13 @@ classdef DataProcessor < hgsetget & dynamicprops
                 'currentFigureType to either timeSeries or '          ...
                 'temperatureSalinity.']);
         end
-        
+
+        % define the base output directory
+        outdir=self.configuration.outputDirectory;
+            
+        % set the output format to .eps only
+        outputFormat=self.configuration.outputFormat;
+            
         for figureNumber = 1:length(figurePropertiesArray)
           try
             % Get the figure title prefix string
@@ -320,15 +330,29 @@ classdef DataProcessor < hgsetget & dynamicprops
                 );
                            
             end
+            
             % export figures as outlined in the configuration properties
             % Todo: Needs work to make the export take format arguments
-            if ( self.configuration.exportFigures )
+            %if ( self.configuration.exportFigures )
               % call the export method
-              outputFormat = '';
-              figureNameSuffix = [num2str(figureDuration/60/60/24) 'day'];
-              self.export(figureHandle, outputFormat, figureNameSuffix);
+             % outputFormat = '';
+             % figureNameSuffix = [num2str(figureDuration/60/60/24) 'day'];
+             % self.export(figureHandle, outputFormat, figureNameSuffix);
               % self.export(TSHandle);
-            end
+            %end
+           
+            % export figures as outlined in the configuration properties
+                if ( self.configuration.exportFigures )
+                    % call the export method
+                    figureNameSuffix = [num2str(figureDuration/60/60/24) 'day'];
+                    self.export2(                 ...
+                        figureHandle            , ...
+                        time                    , ...
+                        outputFormat            , ...
+                        outdir                  , ...
+                        figureNameSuffix          ...
+                                                        );
+                end            
             
             % clean up variables
             clear figureTitlePrefix    ...
@@ -342,8 +366,57 @@ classdef DataProcessor < hgsetget & dynamicprops
             disp(figureException.message);
           end % end try statement
         end % end for loop
-        
+                
       end % end if statement
+      
+      % create figures for PacIOOS website
+        if (self.configuration.createPacIOOSFigures)
+            
+            % get the figure properties (title prefix & duration)
+            figureproperties=self.configuration.PacIOOSFigures;
+                
+            % define the base output directory
+            outdir=[self.configuration.outputDirectory 'PacIOOSplots'];
+            
+            % set the output format to .eps only
+            outputFormat={'.eps'};
+            
+            for n=1:length(figureproperties)
+                
+                % get the figure title prefix string
+                figureTitlePrefix=char(figureproperties{n}(1));
+
+                % get the figure duration
+                figureDuration=str2double(char(figureproperties{n}(2)));
+
+                % call the plotting function
+                figureHandle =                    ...
+                    self.createPacIOOSFigures(    ...
+                      figureTitlePrefix         , ...
+                      time                      , ...
+                      figureDuration              ...
+                                                        );
+
+                if ( self.configuration.exportFigures )
+                    % call the export method
+                    figureNameSuffix = [num2str(figureDuration) 'day'];
+                    self.export2(                 ...
+                        figureHandle            , ...
+                        time                    , ...
+                        outputFormat            , ...
+                        outdir                  , ...
+                        figureNameSuffix          ...
+                                                        );
+                end
+
+                % clean up variables
+                clear figureTitlePrefix    ...
+                      figureDuration       ...
+                      figureHandle
+              
+            end % end for loop
+                  
+        end % end if statement      
       
       if ( self.configuration.debug )
         disp(['Processing complete.  Next process time: ' ...
@@ -1183,6 +1256,226 @@ classdef DataProcessor < hgsetget & dynamicprops
       value = figureHandle;
     end
     
+    
+    % A method used to create a time series figure for the PacIOOS website.
+    % @returns value - handle of the figure object created
+    function value=createPacIOOSFigures(               ...
+                              self                   , ...
+                              figureTitlePrefix      , ...
+                              time                   , ...
+                              figureDuration           ...
+                                                            )
+                                                        
+                                                        
+    if ( self.configuration.debug )
+        disp('DataProcessor.createPacIOOSFigures() called.');
+    end
+    
+    close(gcf);
+    
+    % Calculate start and end times, and the timestep to be used for
+    % plotting the x axis
+    endtime=ceil(time(end))+0.25;
+    starttime=endtime-figureDuration-0.25;
+    timestep=round(figureDuration/7);
+    
+    
+    % Pull data from the dataCellArray into variables. 
+    w=find(strcmp('chlorophyll',self.configuration.dataVariableNames));
+    if w > 0
+        chlo=self.dataCellArray{w};
+    end 
+    w=find(strcmp('turbidity',self.configuration.dataVariableNames));
+    if w > 0
+        turb=self.dataCellArray{w};
+    end
+    w=find(strcmp('depth',self.configuration.dataVariableNames));
+    if w > 0
+        depth=self.dataCellArray{w};
+        cpres=depth + self.configuration.MLLWadjustment;         %correct to MLLW
+    end 
+    temp=self.dataCellArray{find(strcmp('temperature',self.configuration.dataVariableNames))};
+    sal=self.dataCellArray{find(strcmp('salinity',self.configuration.dataVariableNames))};
+   
+    % Selectively remove single data points to prevent line from connecting
+    % points more than 1/2 day apart
+    for i=2:length(time)
+    if (time(i)-time(i-1)) > 0.5
+        sal(i-1)=NaN;
+        temp(i-1)=NaN;
+        if exist('cpres','var')
+            cpres(i-1)=NaN;
+        end
+        if exist('turb','var')
+            turb(i-1)=NaN;
+        end
+        if exist('chlo','var')
+            chlo(i-1)=NaN;
+        end
+    end
+    end
+    
+    
+    %create plots
+    h=figure(); clf;
+    subplot(4,1,1);
+    
+    
+   %set up depth & temperature axes
+    ax1=gca;
+    
+    %set scale for temperature axis
+    mn=2*floor(min(temp)/2);
+    mx=2*ceil(max(temp)/2);
+    rng=ceil(mx-mn);
+    
+    set(ax1,'xlim',[starttime endtime],...
+            'xminorgrid','on','xgrid','off','ygrid','on',...
+            'ylim',[mn mx],'ytick',(mn:rng/4:mx),...
+            'xaxislocation','top','xtick',(starttime:timestep:endtime), ...
+            'yaxislocation','left','xticklabel','', ...
+            'position',[0.13 0.75 0.7750 0.1321])
+    
+    ax2=axes('Position',[0.13 0.75 0.7750 0.1321],'yaxislocation','right','xlim',get(ax1,'xlim'),'ycolor','r','xtick', ...
+        get(ax1,'xtick'),'ylim',[mn mx],'ytick',(mn:rng/4:mx),'Color','none', ...
+        'xticklabel',datestr(get(ax1,'xtick'),'mm/dd/yy'));
+    
+    
+    %plot temperature
+    line(time,temp,'color','r','parent',ax2);
+    
+    %plot depth if pressure data available  
+    if exist('cpres','var')
+        line(time,cpres,'color','k','parent',ax1);
+    
+        %set scale for depth axis
+        if min(cpres)>-0.4 && max(cpres)<1.2
+            mn=-0.4;
+            mx=1.2;
+        else if min(cpres)>-0.6 && max(cpres)<1.8
+                mn=-0.6;
+                mx=1.8;
+            else
+                mn=-0.2;
+                mx=2.2;
+            end
+        end
+
+        rng=mx-mn;
+        set(ax1,'ylim',[mn mx],'ytick',(mn:rng/4:mx))
+        ylabel(ax1,{'Actual WL (m)';'\fontsize{3} '},'fontweight','bold')
+    else
+        set(ax1,'yticklabel','')
+    end %if exist
+ 
+    if rem(rng,4) == 0
+        ylabel(ax2,{'\fontsize{5} ';'\fontsize{10}Temperature ( ^oC)'},'fontweight','bold')
+    else
+        ylabel(ax2,'Temperature ( ^oC)','fontweight','bold')
+    end
+    
+    % create figure title
+    startdate=datestr(starttime,'mm-dd-yyyy');
+    enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
+    title({['\fontsize{11}' figureTitlePrefix];      ...
+           '\fontsize{6} ';                          ...
+           [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
+        'fontweight','bold')
+
+    %set up salinity & turbidity axes
+    subplot(4,1,2)
+    
+    %plot salinity
+    line(time,sal,'color','k');
+    ax3=gca;
+   
+    %set scale for salinity axis 
+    mn=31;
+    for n=[11 21 31]
+        if length(find(sal<n))>30
+            mn=n-10;
+            break
+        end
+    end
+    mx=36;
+    rng=mx-mn;
+    set(ax3,'xlim',[starttime endtime],...
+            'xminorgrid','on','xgrid','off','ygrid','on', ...
+            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'box','on', ...
+            'xaxislocation','bottom','xtick',(starttime:timestep:endtime), ...
+            'yaxislocation','left','xticklabel',datestr(get(ax1,'xtick'),'mm/dd/yy'), ...
+            'position',[0.13 0.54 0.7750 0.1321])
+    ylabel(ax3,{'Salinity (PSU)';'\fontsize{8} '},'fontweight','bold','color',[0 0 0])
+      
+    if exist('turb','var')
+         
+        mn=0;
+        mx=25;
+    
+        %scale max range if significant number of values above threshhold
+        for n=[500 250 100 50 25];
+            if length(find(turb>n))>30
+                mx=2*n;
+                break
+            end
+        end
+
+        rng=mx-mn;
+           
+        ax4=axes('Position',[0.13 0.54 0.7750 0.1321],'yaxislocation','right', ...
+            'xlim',get(ax3,'xlim'),'ycolor',[0.63 0.4 0.31],'xtick',get(ax1,'xtick'), ...
+            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'Color','none', ...
+            'xticklabel','','xaxislocation','top');
+        set(ax3,'box','off')
+        
+        
+        line(time,turb,'color',[0.63 0.4 0.31],'parent',ax4);
+
+        if mx < 100
+            ylabel(ax4,{'';'Turbidity (NTU)'},'fontweight','bold')
+        else
+            ylabel(ax4,{'\fontsize{1} ';'\fontsize{10}Turbidity (NTU)'},'fontweight','bold')
+        end
+        
+    end
+  
+    %plot chlorophyll
+    if exist('chlo','var')
+        subplot(4,1,3)
+        cl=plot(time,chlo);
+        mn=0;
+        mx=20;
+
+        %set scale for chorophyll axis
+        for n=[40 30 20];
+            if length(find(chlo>n))>30
+                mx=n+10;
+                break
+            end
+        end
+
+        rng=mx-mn;
+        set(cl,'color',[0.1 .55 .35])
+        ax5=gca;
+        set(ax5,'xlim',[starttime endtime],'ycolor',[0.1 .55 .35], ...
+            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'xminorgrid','on', ...
+            'xtick',(starttime:timestep:endtime),'xticklabel', ...
+            datestr(get(ax1,'xtick'),'mm/dd/yy'),'position',[0.13 0.33 0.7750 0.1321])
+        
+        ax6=axes('position',[0.13 0.33 0.7750 0.1321],'color','none','xtick', ...
+        get(ax1,'xtick'),'ylim',[mn mx],'ytick',get(ax5,'ytick'), ...
+        'xgrid','off','ygrid','on', ...
+        'xticklabel','','yaxislocation','right','yticklabel','');
+        
+        ylabel(ax5,{'Chlorophyll ( \mug/L)';'\fontsize{9} '},'color',[0.1 .55 .35],'fontweight','bold')
+    end %if exist
+    
+    value=h;
+    
+    end %function
+    
+    
+    
     % A method used to export a figure to various vector and raster-based image
     % formats.  This method requires ImageMagick to be installed on the processing
     % machine.
@@ -1296,6 +1589,137 @@ classdef DataProcessor < hgsetget & dynamicprops
           end
           
     end
+    
+    % A method used to export a figure to various vector and raster-based image
+    % formats.  Used for exporting figures for the PacIOOS website.
+    % Todo: Needs work to make the export take format arguments
+    % @param inputFigure - the figure to be exported
+    % @param outputFormat - the desired raster or vector format (EPS, PNG, JPG, PDF)
+    % @param figureNameSuffix - the suffix to append to the figure name
+    % @returns void
+    function export2(                     ...
+                      self              , ...
+                      inputFigure       , ...
+                      time              , ...
+                      outputFormat      , ...
+                      outdir            , ...
+                      figureNameSuffix    ...
+                                        )
+     
+      if ( self.configuration.debug )
+        disp('DataProcessor.export2() called.');
+      end
+          
+      %endtime=ceil(time(end));
+      %starttime=endtime-figureDuration;
+      year=datestr(time(end),'yyyy');
+      month=datestr(time(end),'mm');
+      %day=datestr(time(end),'dd');
+      mkdirpath=self.configuration.mkdirPath;
+      
+      %check for existing directory and create a new one if necessary
+      try
+          if ~exist(outdir,'dir');
+              system([mkdirpath ' ' outdir]);
+          end
+          if ~exist([outdir '\' year],'dir');
+              system([mkdirpath ' ' outdir '\' year]);
+          end
+          if ~exist([outdir '\' year '\' month],'dir');
+              system([mkdirpath ' ' outdir '\' year '\' month]);
+          end
+          %if ~exist([outdir '\' year '\' month '\' day],'dir');
+          %    system([mkdirpath ' ' outdir '\' year '\' month '\' day]);
+          %end
+      catch dirException
+          disp (['There was an error finding or creating the output directory. ' ...
+                 'The error message was:' dirException.message]);
+      end
+          
+      outdirectory=[outdir '/' year '/' month '/'];% day '\'];
+      
+      % Export to Enhanced Postscript
+      fileNamePrefix = [self.configuration.rbnbSource  '_' ...
+                    ...   %datestr(starttime,'yyyymmddHHMM') '-' ...
+                        datestr(time(end),'yyyymmdd') '_' ...
+                        figureNameSuffix];
+                        
+      % Export to eps
+      if sum(strcmp(outputFormat,'.eps'))
+          if ~exist([outdirectory fileNamePrefix '.eps'],'file');           
+              try
+                print(inputFigure,'-depsc2', ...
+                  [outdirectory ...
+                   fileNamePrefix '.eps']);
+              catch saveException
+                disp(['There was an error saving the figure to EPS. ' ...
+                      'The error message was:' saveException.message]  ...
+                    );
+              end
+          end
+      end
+             
+      % Export to JPEG
+      if sum(strcmp(outputFormat,'.jpg'))
+          try
+            print(inputFigure,'-djpeg100', ...
+              [outdirectory ...
+               fileNamePrefix '.jpg']);
+          catch saveException
+            disp(['There was an error saving the figure to JPG. ' ...
+                  'The error message was:' saveException.message]  ...
+                );
+          end
+      end
+
+          
+      % Copy the latest JPG to latest_{duration}day.jpg
+      if ( ~isempty(self.configuration.copyPath) )
+            
+      % copy to latest JPG file
+      if sum(strcmp(outputFormat,'.jpg'))
+            try
+              system(                                ...
+                [                                    ...
+                  self.configuration.copyPath ' '    ... % use the copy program
+                  outdirectory                       ... 
+                  fileNamePrefix '.jpg ' ' '         ... % copy from file name
+                  outdir '/'                         ... 
+                  'latest_' figureNameSuffix '.jpg'  ... % copy to file name                  
+                ]                                    ...
+              );
+            catch copyException
+              disp(['There was an error copying the figure to latest_* JPG. ' ...
+                    'The error message was:' copyException.message]           ...
+                  );
+            end
+      end
+            
+      % copy to latest EPS file
+      if sum(strcmp(outputFormat,'.eps'))
+            try
+              system(                                ...
+                [                                    ...
+                  self.configuration.copyPath ' '    ... % use the copy program
+                  outdirectory                       ... 
+                  fileNamePrefix '.eps ' ' '         ... % copy from file name
+                  outdir '/'                         ... 
+                  'latest_' figureNameSuffix '.eps'  ... % copy to file name                  
+                ]                                    ...
+              );
+            catch copyException
+              disp(['There was an error copying the figure to latest_* EPS. ' ...
+                    'The error message was:' copyException.message]           ...
+                  );
+            end
+          else
+            disp(['Figure copying to JPG skipped.  Please set the correct ' ...
+                  'value for the Configure.copyPath property.']             ...
+                );
+      end
+     end
+          
+    end %function
     
     % A method used to fetch the ASCII data string for the given RBNB
     % Data Turbine source, channel, reference, and given time duration
