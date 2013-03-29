@@ -72,6 +72,10 @@ classdef Configure < hgsetget & dynamicprops
     % software is needed on the processing machine to produce PNG, JPG, and PDF
     % versions of the figures.
     copyPath = '/bin/cp';
+    
+    % The path to the mkdir program. Used to create additional directories
+    % to organize output plots by date.
+    mkdirPath = '/bin/mkdir';
 
     % The path of the RBNB software
     rbnbPath = '/usr/local/RBNB/current/';
@@ -198,6 +202,10 @@ classdef Configure < hgsetget & dynamicprops
     % A boolean property indicating whether or not figures should be created
     createFigures = true;
     
+    % A boolean property indicating whether or not PacIOOS figures should
+    % be created
+    createPacIOOSFigures = true;
+    
     % A boolean property indicating whether or not figures should be exported
     exportFigures = true;
     
@@ -221,6 +229,12 @@ classdef Configure < hgsetget & dynamicprops
     timeSeriesFigures = { ...
       {'7 Day' , '604800', {'temperature', 'salinity', 'depth'}, {'serialdate'}} ...
     };
+    
+
+    % A cell array property containing information for PacIOOS plots
+    % 1) figure title prefix (string)
+    % 2) figure duration in days (string)
+    PacIOOSFigures={{'7 day','7'}};
     
     % A cell array property that gives the details needed to produce multiple
     % temperature-salinity plots
@@ -276,6 +290,14 @@ classdef Configure < hgsetget & dynamicprops
     
     % The timer interval for scheduled processing in minutes
     timerInterval = 20;
+    
+    % The depth of the instrument below average Mean Low Low Water level
+    % (in meters)
+    MLLWadjustment = 0;
+    
+    % Cell array containing the output format used to export plots. 
+    % Can export as .eps, .jpg, or in both formats.
+    outputFormat={'.eps' '.jpg'};
 
   end % properties
   
