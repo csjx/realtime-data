@@ -1622,11 +1622,11 @@ classdef DataProcessor < hgsetget & dynamicprops
           if ~exist(outdir,'dir');
               system([mkdirpath ' ' outdir]);
           end
-          if ~exist([outdir '\' year],'dir');
-              system([mkdirpath ' ' outdir '\' year]);
+          if ~exist([outdir '/' year],'dir');
+              system([mkdirpath ' ' outdir '/' year]);
           end
-          if ~exist([outdir '\' year '\' month],'dir');
-              system([mkdirpath ' ' outdir '\' year '\' month]);
+          if ~exist([outdir '/' year '/' month],'dir');
+              system([mkdirpath ' ' outdir '/' year '/' month]);
           end
           %if ~exist([outdir '\' year '\' month '\' day],'dir');
           %    system([mkdirpath ' ' outdir '\' year '\' month '\' day]);
