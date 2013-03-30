@@ -200,9 +200,9 @@ set( configuration,                                                            .
                        % Figure 1  (7 day plot)
                        {'Nearshore Sensor, Waikiki Aquarium (NS04), 7 day',  ... %Title prefix
                         '7'}                                                ;  ... %Duration in days
-                       % Figure 2  (21 day plot)
-                        {'Nearshore Sensor, Waikiki Aquarium (NS04), 21 day',... %Title prefix
-                        '21'}                                                ; ... %Duration in days
+                       % Figure 2  (30 day plot)
+                        {'Nearshore Sensor, Waikiki Aquarium (NS04), 30 day',... %Title prefix
+                        '30'}                                                ; ... %Duration in days
                              }                                                 ...
                               )                                              ;
 
