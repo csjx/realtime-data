@@ -368,11 +368,11 @@ NS01ctdProcessor = DataProcessor(configuration);
 %keyboard
 %NS01ctdProcessor.process()
 
- schedule the processing
- set the timer start time based on the timer interval.
+% schedule the processing
+% set the timer start time based on the timer interval.
  set(NS01ctdProcessor, 'timerStartTime', NS01ctdProcessor.configuration.timerInterval);
 
- set the timer object instance
+% set the timer object instance
  set(NS01ctdProcessor, 'timerObject',                     ...
   timer('TimerFcn',                                      ...
         'NS01ctdProcessor.process',                      ...
