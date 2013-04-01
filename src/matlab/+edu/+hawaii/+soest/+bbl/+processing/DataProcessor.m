@@ -1650,18 +1650,16 @@ classdef DataProcessor < hgsetget & dynamicprops
                         figureNameSuffix];
                         
       % Export to eps
-      if sum(strcmp(outputFormat,'.eps'))
-          if ~exist([outdirectory fileNamePrefix '.eps'],'file');           
-              try
+      if sum(strcmp(outputFormat,'.eps'))  
+            try
                 print(inputFigure,'-depsc2', ...
-                  [outdirectory ...
-                   fileNamePrefix '.eps']);
-              catch saveException
+                [outdirectory ...
+                fileNamePrefix '.eps']);
+            catch saveException
                 disp(['There was an error saving the figure to EPS. ' ...
                       'The error message was:' saveException.message]  ...
                     );
-              end
-          end
+            end
       end
              
       % Export to JPEG
