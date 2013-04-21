@@ -301,6 +301,7 @@ public class StorXDispatcher extends RBNBSource {
     String protocol         = "";
     String dataMailbox      = "";
     String processedMailbox = "";
+    String prefetch         = "";
     
     // fetch data from each sensor in the account list
     List accountList  = this.xmlConfiguration.getList("account.accountName");
@@ -317,6 +318,7 @@ public class StorXDispatcher extends RBNBSource {
       protocol         = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").protocol");
       dataMailbox      = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").dataMailbox");
       processedMailbox = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").processedMailbox");
+      prefetch         = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").prefetch");
       
       logger.debug("\n\nACCOUNT DETAILS: \n" +
                    "accountName     : " + accountName      + "\n" +
@@ -325,12 +327,14 @@ public class StorXDispatcher extends RBNBSource {
                    "password        : " + password         + "\n" +
                    "protocol        : " + protocol         + "\n" +
                    "dataMailbox     : " + dataMailbox      + "\n" +
-                   "processedMailbox: " + processedMailbox + "\n"
+                   "processedMailbox: " + processedMailbox + "\n" +
+                   "        prefetch: " + prefetch         + "\n"
                    );
       
       // get a connection to the mail server
       Properties props = System.getProperties();
       props.setProperty("mail.store.protocol", protocol);
+      props.setProperty("mail.imaps.partialfetch", prefetch);
       
       try {
         

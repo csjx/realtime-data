@@ -19,7 +19,7 @@
   <!ELEMENT accounts (account*)>
   <!-- the email account used to store data -->
   <!ELEMENT account (accountName, server, username, password, protocol, 
-                     dataMailbox, processedMailbox, logger*)>
+                     dataMailbox, processedMailbox, prefetch, logger*)>
   <!-- The account name for the email account -->
   <!ELEMENT accountName (#PCDATA)>
   <!-- The IP/address of the IMAP mail server -->
@@ -34,6 +34,8 @@
   <!ELEMENT dataMailbox (#PCDATA)>
   <!-- The processed data mailbox for the email account -->
   <!ELEMENT processedMailbox (#PCDATA)>
+  <!-- The flag indicating whether or not to prefetch mail via imap -->
+  <!ELEMENT prefetch (#PCDATA)>
   <!-- A logger with a loggerName, loggerSerialNumber, and one to many sensors -->
   <!ELEMENT logger (loggerName, loggerSerialNumber, sensor*)>
   <!-- The name of the logger -->
@@ -72,6 +74,7 @@
     <protocol>imaps</protocol>
     <dataMailbox>Inbox</dataMailbox>
     <processedMailbox>processed</processedMailbox>
+    <prefetch>false</prefetch>
     <logger>
       <loggerName>WQAW01_XXXSTRX001R00</loggerName>
       <loggerSerialNumber>0062</loggerSerialNumber>
