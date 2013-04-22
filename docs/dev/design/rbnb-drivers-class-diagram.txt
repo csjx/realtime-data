@@ -108,7 +108,8 @@ package edu.hawaii.soest.pacioos.text {
     -List<String> dateFormats 
     -List<Integer> dateFields 
     -TimeZone tz
-    -String timezone 
+    -String timezone
+    -String connectionType
     -Pattern dataPattern 
     #int state 
     -boolean readyToStream 
@@ -137,7 +138,9 @@ package edu.hawaii.soest.pacioos.text {
     +void setDateFormats(List<String> dateFormats) 
     +List<Integer> getDateFields()
     +void setDateFields(List<Integer> dateFields)
-    +Date getSampleDate(String line) 
+    +Date getSampleDate(String line)
+    +String getConnectionType()
+    +void setConnectionType()
     +String getChannelName()
     +void setChannelName(String channelName)
   }
