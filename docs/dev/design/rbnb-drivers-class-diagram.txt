@@ -19,9 +19,9 @@ RBNB DataTurbine Base Classes
   skinparam shadowing false
   
   skinparam class {
-    BackgroundColor #EDEDED
-    BorderColor #A7A7A7
-    ArrowColor #A7A7A7
+    BackgroundColor #F5F5F5
+    BorderColor #E3E3E3
+    ArrowColor #E3E3E3
     
   }
   
@@ -32,7 +32,7 @@ RBNB DataTurbine Base Classes
   
   }
   
-  skinparam packageFontColor #666666
+  skinparam packageFontColor #9DA0A4
   skinparam package {
     BorderColor #CCCCCC
   }
