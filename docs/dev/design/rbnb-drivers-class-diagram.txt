@@ -1,0 +1,177 @@
+Overview
+========
+
+This document provides an overview architecture for the PacIOOS, HIOOS, and BBL
+intstrument driver software. Base classes include the NEES RBNBBase and
+RBNBSource classes, and all instrument-specific drivers extend these classes.
+
+
+@startuml 
+
+package org.nees.rbnb {
+
+  abstract class RBNBBase { 
+  
+    - String DEFAULT_SERVER_NAME 
+    - int    DEFAULT_SERVER_PORT 
+    - String serverName 
+    - int    serverPort 
+    - String server 
+    - String DEFAULT_RBNB_CLIENT_NAME 
+    - String rbnbClientName 
+    - String optionNotes 
+    ~ SimpleDateFormat simpleDateFormat 
+    # boolean parseArgs(String[] args) 
+    # boolean setArgs(CommandLine cmd) 
+    # boolean setBaseArgs(CommandLine cmd) 
+    + void setRBNBClientName(String clientName) 
+    + void setServerName(String name) 
+    + void setServerPort(int port) 
+    + String getServerName() 
+    + int getServerPort() 
+    + String getServer() 
+    + String getRBNBClientName() 
+    # void printUsage() 
+    # Options setOptions() 
+    # Options setBaseOptions(Options opt) 
+    # void setNotes(String notes) 
+    # String getCVSVersionString() 
+    + void writeMessage(String message) 
+    + void writeProgressMessage(String message) 
+  
+  } 
+
+
+  abstract class RBNBSource { 
+  
+  -int DEFAULT_CACHE_SIZE 
+  #int cacheSize 
+  -int DEFAULT_ARCHIVE_SIZE
+  #int archiveSize 
+  -String DEFAULT_ARCHIVE_MODE 
+  #String archiveMode 
+  -Source source 
+  -boolean connected
+  #Options setBaseOptions(Options opt) 
+  #boolean setBaseArgs(CommandLine cmd)
+  #boolean connect() 
+  #void disconnect() 
+  +boolean isConnected() 
+  +Source getSource() 
+  +int getCacheSize() 
+  +void setCacheSize(int size) 
+  +int getArchiveSize() 
+  +void setArchiveSize(int size) 
+  +String getArchiveMode() 
+  +void setArchiveMode(String mode) 
+  
+  } 
+
+}
+
+RBNBBase <|-- RBNBSource
+
+package edu.hawaii.soest.pacioos.text {
+
+  class SimpleTextSource {
+    -String DEFAULT_RBNB_CHANNEL
+    -String rbnbChannelName
+    -SimpleDateFormat defaultDateFormat 
+    -String DEFAULT_DELIMITER 
+    -String delimiter
+    -List<String> dateFormats 
+    -List<Integer> dateFields 
+    -TimeZone tz
+    -String timezone 
+    -String DEFAULT_LOG_CONFIGURATION_FILE 
+    -String logConfigurationFile 
+    -Logger logger
+    -Pattern dataPattern 
+    #int state 
+    -boolean readyToStream 
+    -Thread streamingThread 
+    -int POLL_INTERVAL 
+    -int RETRY_INTERVAL 
+    -ByteChannel channel
+    +String getRBNBChannelName()
+    +String getCVSVersionString() 
+    +boolean isRunning() 
+    -void runWork() 
+    +void setChannelName(String channelName)
+    #boolean setArgs(CommandLine command) 
+    +void setDelimiter(String delim) 
+    +void setPattern(String pattern) 
+    #Options setOptions() 
+    +boolean start() 
+    -void startThread() 
+    +boolean stop() 
+    -void stopThread()
+    +public boolean startConnection()
+    +public boolean stopConnection()
+    +String getTimezone()
+    +void setTimezone(String timezone) 
+    +List<String> getDateFormats() 
+    +void setDateFormats(List<String> dateFormats) 
+    +List<Integer> getDateFields()
+    +void setDateFields(List<Integer> dateFields)
+    +Date getSampleDate(String line) 
+    +String getChannelName()
+    +void setChannelName(String channelName)
+  }
+  
+  class FileTextSource { 
+
+    -String DEFAULT_FILE_NAME 
+    -String fileName 
+    -BufferedReader fileReader 
+    
+    +FileSource() 
+    #boolean execute() 
+    +String getFileName() 
+    +void setFileName(String fileName) 
+  
+  } 
+   
+  class SocketTextSource { 
+    -int DEFAULT_BUFFER_SIZE
+    -int bufferSize
+    -String DEFAULT_SOURCE_HOST_NAME
+    -String sourceHostName
+    -int DEFAULT_SOURCE_HOST_PORT
+    -int sourceHostPort
+    +SocketTextSource() 
+    #boolean execute() 
+    #SocketChannel getSocketConnection()
+    +int getBufferSize()
+    +void setBufferSize(int bufferSize)
+    +String getHostName()
+    +void setHostName(String hostName)
+    +int getHostPort()
+    +void setHostPort(int hostPort)
+  } 
+
+  class SerialTextSource { 
+    -int DEFAULT_BUFFER_SIZE
+    -int bufferSize
+    -String DEFAULT_SERIAL_PORT
+    -String serialPortName
+    -int DEFAULT_SOURCE_HOST_PORT
+    -int sourceHostPort
+    +SerialTextSource() 
+    #boolean execute() 
+    #ByteChannel getSerialConnection()
+    +String getSerialPort()
+    +void setSerialPort(String serialPortName)
+    +int getBufferSize()
+    +void setBufferSize(int bufferSize)
+  } 
+
+
+RBNBSource <|--- SimpleTextSource
+SimpleTextSource <|--- FileTextSource 
+SimpleTextSource <|--- SocketTextSource
+SimpleTextSource <|--- SerialTextSource
+
+} 
+
+ @enduml 
