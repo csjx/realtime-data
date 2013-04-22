@@ -5,9 +5,14 @@ This document provides an overview architecture for the PacIOOS, HIOOS, and BBL
 intstrument driver software. Base classes include the NEES RBNBBase and
 RBNBSource classes, and all instrument-specific drivers extend these classes.
 
+RBNB DataTurbine Base Classes
+-----------------------------
 
-@startuml 
+1. The following UML class diagram shows the RBNBBase and RBNBSource classes, used in all of the Java-based instrument drivers.
 
+@startuml
+skinparam layout twopi 
+skinparam linetype ortho
 package org.nees.rbnb {
 
   abstract class RBNBBase { 
@@ -73,7 +78,28 @@ RBNBBase <|-- RBNBSource
 
 package edu.hawaii.soest.pacioos.text {
 
+  class TextSourceApp {
+    +main(String[] args)
+  
+  }
+    
+  note top of TextSourceApp
+      Application Entry point
+  end note
+  
+  class TextSourceFactory {
+    +Log logger
+    -SimpleTextSource simpleTextSource
+    +SimpleTextSource getSimpleTextSource(String configLocation)
+    -SimpletextSource getFileTextSource()
+    -SimpletextSource getSocketTextSource()
+    -SimpletextSource getSerialTextSource()
+  }
+  
+  TextSourceApp .d.> TextSourceFactory
+  
   class SimpleTextSource {
+    -Log logger
     -String DEFAULT_RBNB_CHANNEL
     -String rbnbChannelName
     -SimpleDateFormat defaultDateFormat 
@@ -83,9 +109,6 @@ package edu.hawaii.soest.pacioos.text {
     -List<Integer> dateFields 
     -TimeZone tz
     -String timezone 
-    -String DEFAULT_LOG_CONFIGURATION_FILE 
-    -String logConfigurationFile 
-    -Logger logger
     -Pattern dataPattern 
     #int state 
     -boolean readyToStream 
@@ -167,10 +190,11 @@ package edu.hawaii.soest.pacioos.text {
   } 
 
 
-RBNBSource <|--- SimpleTextSource
-SimpleTextSource <|--- FileTextSource 
-SimpleTextSource <|--- SocketTextSource
-SimpleTextSource <|--- SerialTextSource
+SimpleTextSource -r|> RBNBSource
+TextSourceFactory .l> SimpleTextSource
+SimpleTextSource <|-- FileTextSource 
+SimpleTextSource <|-- SocketTextSource
+SimpleTextSource <|-- SerialTextSource
 
 } 
 
