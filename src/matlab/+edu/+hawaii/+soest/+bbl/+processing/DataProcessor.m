@@ -373,21 +373,21 @@ classdef DataProcessor < hgsetget & dynamicprops
         if (self.configuration.createPacIOOSFigures)
             
             % get the figure properties (title prefix & duration)
-            figureproperties=self.configuration.PacIOOSFigures;
+            figureProperties=self.configuration.PacIOOSFigures;
                 
             % define the base output directory
-            outdir=[self.configuration.outputDirectory 'PacIOOSplots'];
+            outDir=[self.configuration.outputDirectory 'PacIOOSplots'];
             
             % set the output format to .eps only
             outputFormat={'.eps'};
             
-            for n=1:length(figureproperties)
+            for n=1:length(figureProperties)
                 
                 % get the figure title prefix string
-                figureTitlePrefix=char(figureproperties{n}(1));
+                figureTitlePrefix=char(figureProperties{n}(1));
 
                 % get the figure duration
-                figureDuration=str2double(char(figureproperties{n}(2)));
+                figureDuration=char(figureProperties{n}(2));
 
                 % call the plotting function
                 figureHandle =                    ...
@@ -399,20 +399,32 @@ classdef DataProcessor < hgsetget & dynamicprops
 
                 if ( self.configuration.exportFigures )
                     % call the export method
-                    figureNameSuffix = [num2str(figureDuration) 'day'];
-                    self.export2(                 ...
-                        figureHandle            , ...
-                        time                    , ...
-                        outputFormat            , ...
-                        outdir                  , ...
-                        figureNameSuffix          ...
-                                                        );
+                    if strcmp(figureDuration,'monthly')
+                        figureNameSuffix = datestr(time(end),'mmm_yyyy');
+                        self.exportMonthly(           ...
+                            figureHandle            , ...
+                            time                    , ...
+                            outputFormat            , ...
+                            outDir                  , ...
+                            figureNameSuffix          ...
+                                           )        ;
+                    else
+                        figureNameSuffix = [figureDuration 'day'];                    
+                        self.export2(                 ...
+                            figureHandle            , ...
+                            time                    , ...
+                            outputFormat            , ...
+                            outDir                  , ...
+                            figureNameSuffix          ...
+                                     )              ;
+                    end                                   
                 end
 
                 % clean up variables
                 clear figureTitlePrefix    ...
                       figureDuration       ...
-                      figureHandle
+                      figureHandle         ...
+                      figureNameSuffix
               
             end % end for loop
                   
@@ -1275,49 +1287,62 @@ classdef DataProcessor < hgsetget & dynamicprops
     
     % Calculate start and end times, and the timestep to be used for
     % plotting the x axis
-    endtime=ceil(time(end))+0.25;
-    starttime=endtime-figureDuration-0.25;
-    timestep=round(figureDuration/7);
-    
+    if strcmp(figureDuration,'monthly')
+        year=str2double(datestr(time(end),'yyyy'));
+        month=str2double(datestr(time(end),'mm'));        
+        startTime=datenum(year,month,1);
+        if month ~= 12
+            endTime=datenum(year,month+1,1);
+        else
+            endTime=datenum(year+1,1,1);
+        end
+        timeStep=5;
+    else
+        duration=str2double(figureDuration);
+        endTime=ceil(time(end))+0.25;
+        startTime=endTime-duration-0.25;
+        timeStep=round(duration/7);
+    end
+
     
     % Pull data from the dataCellArray into variables. 
-    w=find(strcmp('chlorophyll',self.configuration.dataVariableNames));
-    if w > 0
-        chlo=self.dataCellArray{w};
+    index=find(strcmp('chlorophyll',self.configuration.dataVariableNames));
+    if index > 0
+        chlorophyll=self.dataCellArray{index};
     end 
-    w=find(strcmp('turbidity',self.configuration.dataVariableNames));
-    if w > 0
-        turb=self.dataCellArray{w};
+    index=find(strcmp('turbidity',self.configuration.dataVariableNames));
+    if index > 0
+        turbidity=self.dataCellArray{index};
     end
-    w=find(strcmp('depth',self.configuration.dataVariableNames));
-    if w > 0
-        depth=self.dataCellArray{w};
-        cpres=depth + self.configuration.MLLWadjustment;         %correct to MLLW
+    index=find(strcmp('depth',self.configuration.dataVariableNames));
+    if index > 0
+        depth=self.dataCellArray{index};
+        adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
     end 
-    temp=self.dataCellArray{find(strcmp('temperature',self.configuration.dataVariableNames))};
-    sal=self.dataCellArray{find(strcmp('salinity',self.configuration.dataVariableNames))};
+    temperature=self.dataCellArray{find(strcmp('temperature',self.configuration.dataVariableNames))};
+    salinity=self.dataCellArray{find(strcmp('salinity',self.configuration.dataVariableNames))};
    
     % Selectively remove single data points to prevent line from connecting
     % points more than 1/2 day apart
     for i=2:length(time)
     if (time(i)-time(i-1)) > 0.5
-        sal(i-1)=NaN;
-        temp(i-1)=NaN;
-        if exist('cpres','var')
-            cpres(i-1)=NaN;
+        salinity(i-1)=NaN;
+        temperature(i-1)=NaN;
+        if exist('adjustedDepth','var')
+            adjustedDepth(i-1)=NaN;
         end
-        if exist('turb','var')
-            turb(i-1)=NaN;
+        if exist('turbidity','var')
+            turbidity(i-1)=NaN;
         end
-        if exist('chlo','var')
-            chlo(i-1)=NaN;
+        if exist('chlorophyll','var')
+            chlorophyll(i-1)=NaN;
         end
     end
     end
     
     
     %create plots
-    h=figure(); clf;
+    figureHandle=figure(); clf;
     subplot(4,1,1);
     
     
@@ -1325,113 +1350,119 @@ classdef DataProcessor < hgsetget & dynamicprops
     ax1=gca;
     
     %set scale for temperature axis
-    mn=2*floor(min(temp)/2);
-    mx=2*ceil(max(temp)/2);
-    rng=ceil(mx-mn);
+    minTemp=2*floor(min(temperature)/2);
+    maxTemp=2*ceil(max(temperature)/2);
+    tempRange=ceil(maxTemp-minTemp);
     
-    set(ax1,'xlim',[starttime endtime],...
+    set(ax1,'xlim',[startTime endTime],...
             'xminorgrid','on','xgrid','off','ygrid','on',...
-            'ylim',[mn mx],'ytick',(mn:rng/4:mx),...
-            'xaxislocation','top','xtick',(starttime:timestep:endtime), ...
+            'ylim',[minTemp maxTemp],'ytick',(minTemp:tempRange/4:maxTemp),...
+            'xaxislocation','top','xtick',(startTime:timeStep:endTime), ...
             'yaxislocation','left','xticklabel','', ...
             'position',[0.13 0.75 0.7750 0.1321])
     
     ax2=axes('Position',[0.13 0.75 0.7750 0.1321],'yaxislocation','right','xlim',get(ax1,'xlim'),'ycolor','r','xtick', ...
-        get(ax1,'xtick'),'ylim',[mn mx],'ytick',(mn:rng/4:mx),'Color','none', ...
+        get(ax1,'xtick'),'ylim',[minTemp maxTemp],'ytick',(minTemp:tempRange/4:maxTemp),'Color','none', ...
         'xticklabel',datestr(get(ax1,'xtick'),'mm/dd/yy'));
     
     
     %plot temperature
-    line(time,temp,'color','r','parent',ax2);
+    line(time,temperature,'color','r','parent',ax2);
     
     %plot depth if pressure data available  
-    if exist('cpres','var')
-        line(time,cpres,'color','k','parent',ax1);
+    if exist('adjustedDepth','var')
+        line(time,adjustedDepth,'color','k','parent',ax1);
     
         %set scale for depth axis
-        if min(cpres)>-0.4 && max(cpres)<1.2
-            mn=-0.4;
-            mx=1.2;
-        else if min(cpres)>-0.6 && max(cpres)<1.8
-                mn=-0.6;
-                mx=1.8;
+        if min(adjustedDepth)>-0.4 && max(adjustedDepth)<1.2
+            minDepth=-0.4;
+            maxDepth=1.2;
+        else if min(adjustedDepth)>-0.6 && max(adjustedDepth)<1.8
+                minDepth=-0.6;
+                maxDepth=1.8;
             else
-                mn=-0.2;
-                mx=2.2;
+                minDepth=-0.2;
+                maxDepth=2.2;
             end
         end
 
-        rng=mx-mn;
-        set(ax1,'ylim',[mn mx],'ytick',(mn:rng/4:mx))
+        depthRange=maxDepth-minDepth;
+        set(ax1,'ylim',[minDepth maxDepth],'ytick',(minDepth:depthRange/4:maxDepth))
         ylabel(ax1,{'Actual WL (m)';'\fontsize{3} '},'fontweight','bold')
     else
         set(ax1,'yticklabel','')
     end %if exist
  
-    if rem(rng,4) == 0
+    if rem(tempRange,4) == 0
         ylabel(ax2,{'\fontsize{5} ';'\fontsize{10}Temperature ( ^oC)'},'fontweight','bold')
     else
         ylabel(ax2,'Temperature ( ^oC)','fontweight','bold')
     end
     
     % create figure title
-    startdate=datestr(starttime,'mm-dd-yyyy');
-    enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
-    title({['\fontsize{11}' figureTitlePrefix];      ...
-           '\fontsize{6} ';                          ...
-           [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
-        'fontweight','bold')
+    if strcmp(figureDuration,'monthly')
+        date=datestr(time(end),'mmm yyyy');
+        title({[figureTitlePrefix '        ' date];' '},'fontweight','bold', ...
+            'fontsize',11)
+    else
+        startdate=datestr(startTime,'mm-dd-yyyy');
+        enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
+        title({['\fontsize{11}' figureTitlePrefix];      ...
+               '\fontsize{6} ';                          ...
+               [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
+            'fontweight','bold')
+    end
 
     %set up salinity & turbidity axes
     subplot(4,1,2)
     
     %plot salinity
-    line(time,sal,'color','k');
+    line(time,salinity,'color','k');
     ax3=gca;
    
     %set scale for salinity axis 
-    mn=31;
+    minSal=31;
     for n=[11 21 31]
-        if length(find(sal<n))>30
-            mn=n-10;
+        if length(find(salinity<n))>30
+            minSal=n-10;
             break
         end
     end
-    mx=36;
-    rng=mx-mn;
-    set(ax3,'xlim',[starttime endtime],...
+    maxSal=36;
+    salRange=maxSal-minSal;
+    set(ax3,'xlim',[startTime endTime],...
             'xminorgrid','on','xgrid','off','ygrid','on', ...
-            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'box','on', ...
-            'xaxislocation','bottom','xtick',(starttime:timestep:endtime), ...
+            'ylim',[minSal maxSal],'ytick',(minSal:salRange/5:maxSal),'box','on', ...
+            'xaxislocation','bottom','xtick',(startTime:timeStep:endTime), ...
             'yaxislocation','left','xticklabel',datestr(get(ax1,'xtick'),'mm/dd/yy'), ...
             'position',[0.13 0.54 0.7750 0.1321])
     ylabel(ax3,{'Salinity (PSU)';'\fontsize{8} '},'fontweight','bold','color',[0 0 0])
       
-    if exist('turb','var')
+    if exist('turbidity','var')
          
-        mn=0;
-        mx=25;
+        minTurb=0;
+        maxTurb=25;
     
         %scale max range if significant number of values above threshhold
         for n=[500 250 100 50 25];
-            if length(find(turb>n))>30
-                mx=2*n;
+            if length(find(turbidity>n))>30
+                maxTurb=2*n;
                 break
             end
         end
 
-        rng=mx-mn;
+        turbRange=maxTurb-minTurb;
            
         ax4=axes('Position',[0.13 0.54 0.7750 0.1321],'yaxislocation','right', ...
             'xlim',get(ax3,'xlim'),'ycolor',[0.63 0.4 0.31],'xtick',get(ax1,'xtick'), ...
-            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'Color','none', ...
+            'ylim',[minTurb maxTurb],'ytick',(minTurb:turbRange/5:maxTurb),'Color','none', ...
             'xticklabel','','xaxislocation','top');
         set(ax3,'box','off')
         
         
-        line(time,turb,'color',[0.63 0.4 0.31],'parent',ax4);
+        line(time,turbidity,'color',[0.63 0.4 0.31],'parent',ax4);
 
-        if mx < 100
+        if maxTurb < 100
             ylabel(ax4,{'';'Turbidity (NTU)'},'fontweight','bold')
         else
             ylabel(ax4,{'\fontsize{1} ';'\fontsize{10}Turbidity (NTU)'},'fontweight','bold')
@@ -1440,37 +1471,37 @@ classdef DataProcessor < hgsetget & dynamicprops
     end
   
     %plot chlorophyll
-    if exist('chlo','var')
+    if exist('chlorophyll','var')
         subplot(4,1,3)
-        cl=plot(time,chlo);
-        mn=0;
-        mx=20;
+        chloHandle=plot(time,chlorophyll);
+        minChlo=0;
+        maxChlo=20;
 
         %set scale for chorophyll axis
         for n=[40 30 20];
-            if length(find(chlo>n))>30
-                mx=n+10;
+            if length(find(chlorophyll>n))>30
+                maxChlo=n+10;
                 break
             end
         end
 
-        rng=mx-mn;
-        set(cl,'color',[0.1 .55 .35])
+        chloRange=maxChlo-minChlo;
+        set(chloHandle,'color',[0.1 .55 .35])
         ax5=gca;
-        set(ax5,'xlim',[starttime endtime],'ycolor',[0.1 .55 .35], ...
-            'ylim',[mn mx],'ytick',(mn:rng/5:mx),'xminorgrid','on', ...
-            'xtick',(starttime:timestep:endtime),'xticklabel', ...
+        set(ax5,'xlim',[startTime endTime],'ycolor',[0.1 .55 .35], ...
+            'ylim',[minChlo maxChlo],'ytick',(minChlo:chloRange/5:maxChlo),'xminorgrid','on', ...
+            'xtick',(startTime:timeStep:endTime),'xticklabel', ...
             datestr(get(ax1,'xtick'),'mm/dd/yy'),'position',[0.13 0.33 0.7750 0.1321])
         
         ax6=axes('position',[0.13 0.33 0.7750 0.1321],'color','none','xtick', ...
-        get(ax1,'xtick'),'ylim',[mn mx],'ytick',get(ax5,'ytick'), ...
+        get(ax1,'xtick'),'ylim',[minChlo maxChlo],'ytick',get(ax5,'ytick'), ...
         'xgrid','off','ygrid','on', ...
         'xticklabel','','yaxislocation','right','yticklabel','');
         
         ylabel(ax5,{'Chlorophyll ( \mug/L)';'\fontsize{9} '},'color',[0.1 .55 .35],'fontweight','bold')
     end %if exist
     
-    value=h;
+    value=figureHandle;
     
     end %function
     
@@ -1592,7 +1623,6 @@ classdef DataProcessor < hgsetget & dynamicprops
     
     % A method used to export a figure to various vector and raster-based image
     % formats.  Used for exporting figures for the PacIOOS website.
-    % Todo: Needs work to make the export take format arguments
     % @param inputFigure - the figure to be exported
     % @param outputFormat - the desired raster or vector format (EPS, PNG, JPG, PDF)
     % @param figureNameSuffix - the suffix to append to the figure name
@@ -1602,7 +1632,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                       inputFigure       , ...
                       time              , ...
                       outputFormat      , ...
-                      outdir            , ...
+                      outDir            , ...
                       figureNameSuffix    ...
                                         )
      
@@ -1610,42 +1640,45 @@ classdef DataProcessor < hgsetget & dynamicprops
         disp('DataProcessor.export2() called.');
       end
           
-      %endtime=ceil(time(end));
-      %starttime=endtime-figureDuration;
+      %endTime=ceil(time(end));
+      %startTime=endTime-figureDuration;
       year=datestr(time(end),'yyyy');
       month=datestr(time(end),'mm');
       %day=datestr(time(end),'dd');
       mkdirpath=self.configuration.mkdirPath;
+      pathSeparator=self.configuration.pathSeparator;
       
       %check for existing directory and create a new one if necessary
       try
-          if ~exist(outdir,'dir');
-              system([mkdirpath ' ' outdir]);
+          if ~exist(outDir,'dir');
+              system([mkdirpath ' ' outDir]);
           end
-          if ~exist([outdir self.configuration.pathSeparator year],'dir');
-              system([mkdirpath ' ' outdir self.configuration.pathSeparator year]);
+          if ~exist([outDir pathSeparator year],'dir');
+              system([mkdirpath ' ' outDir pathSeparator year]);
           end
-          if ~exist([outdir self.configuration.pathSeparator year ...
-                  self.configuration.pathSeparator month],'dir');
+          if ~exist([outDir pathSeparator year ...
+                  pathSeparator month],'dir');
               
-              system([mkdirpath ' ' outdir self.configuration.pathSeparator ...
-                  year self.configuration.pathSeparator month]);
+              system([mkdirpath ' ' outDir pathSeparator ...
+                  year pathSeparator month]);
           end
-          %if ~exist([outdir '\' year '\' month '\' day],'dir');
-          %    system([mkdirpath ' ' outdir '\' year '\' month '\' day]);
+          %if ~exist([outDir pathSeparator year pathSeparator month ...
+          %           pathSeparator day],'dir');
+          %    system([mkdirpath ' ' outDir pathSeparator year ...
+          %            pathSeparator month pathSeparator day]);
           %end
       catch dirException
           disp (['There was an error finding or creating the output directory. ' ...
                  'The error message was:' dirException.message]);
       end
           
-      outdirectory=[outdir self.configuration.pathSeparator ...
-                    year self.configuration.pathSeparator   ...
-                    month self.configuration.pathSeparator];% day '\'];
+      outDirectory=[outDir pathSeparator ...
+                    year pathSeparator   ...
+                    month pathSeparator];   % day pathSeparator];
       
       % Export to Enhanced Postscript
       fileNamePrefix = [self.configuration.rbnbSource  '_' ...
-                    ...   %datestr(starttime,'yyyymmddHHMM') '-' ...
+                    ...   %datestr(startTime,'yyyymmddHHMM') '-' ...
                         datestr(time(end),'yyyymmdd') '_' ...
                         figureNameSuffix];
                         
@@ -1653,7 +1686,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       if sum(strcmp(outputFormat,'.eps'))  
             try
                 print(inputFigure,'-depsc2', ...
-                [outdirectory ...
+                [outDirectory ...
                 fileNamePrefix '.eps']);
             catch saveException
                 disp(['There was an error saving the figure to EPS. ' ...
@@ -1666,7 +1699,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       if sum(strcmp(outputFormat,'.jpg'))
           try
             print(inputFigure,'-djpeg100', ...
-              [outdirectory ...
+              [outDirectory ...
                fileNamePrefix '.jpg']);
           catch saveException
             disp(['There was an error saving the figure to JPG. ' ...
@@ -1685,9 +1718,9 @@ classdef DataProcessor < hgsetget & dynamicprops
               system(                                ...
                 [                                    ...
                   self.configuration.copyPath ' '    ... % use the copy program
-                  outdirectory                       ... 
+                  outDirectory                       ... 
                   fileNamePrefix '.jpg ' ' '         ... % copy from file name
-                  outdir self.configuration.pathSeparator                 ... 
+                  outDir pathSeparator               ... 
                   'latest_' figureNameSuffix '.jpg'  ... % copy to file name                  
                 ]                                    ...
               );
@@ -1704,9 +1737,9 @@ classdef DataProcessor < hgsetget & dynamicprops
               system(                                ...
                 [                                    ...
                   self.configuration.copyPath ' '    ... % use the copy program
-                  outdirectory                       ... 
+                  outDirectory                       ... 
                   fileNamePrefix '.eps ' ' '         ... % copy from file name
-                  outdir self.configuration.pathSeparator                         ... 
+                  outDir pathSeparator               ... 
                   'latest_' figureNameSuffix '.eps'  ... % copy to file name                  
                 ]                                    ...
               );
@@ -1721,6 +1754,81 @@ classdef DataProcessor < hgsetget & dynamicprops
                 );
       end
      end
+          
+    end %function
+    
+    
+    % A method used to export a figure to various vector and raster-based image
+    % formats.  Used specifically for exporting monthly plots for the PacIOOS website.
+    % @param inputFigure - the figure to be exported
+    % @param outputFormat - the desired raster or vector format (EPS, PNG, JPG, PDF)
+    % @param figureNameSuffix - the suffix to append to the figure name
+    % @returns void 
+    
+    function exportMonthly(               ...
+                      self              , ...
+                      inputFigure       , ...
+                      time              , ...
+                      outputFormat      , ...
+                      outDir            , ...
+                      figureNameSuffix    ...
+                                        )
+     
+      if ( self.configuration.debug )
+        disp('DataProcessor.exportMonthly() called.');
+      end
+
+      year=datestr(time(end),'yyyy');
+      mkdirpath=self.configuration.mkdirPath;
+      pathSeparator=self.configuration.pathSeparator;
+      
+      %check for existing directory and create a new one if necessary
+      try
+          if ~exist(outDir,'dir');
+              system([mkdirpath ' ' outDir]);
+          end
+          if ~exist([outDir pathSeparator year],'dir');
+              system([mkdirpath ' ' outDir pathSeparator year]);
+          end
+
+      catch dirException
+          disp (['There was an error finding or creating the output directory. ' ...
+                 'The error message was:' dirException.message]);
+      end
+      
+      % Define Output Directory
+      outDirectory=[outDir pathSeparator ...
+                    year pathSeparator];
+      
+      % Export to Enhanced Postscript
+      fileNamePrefix = [self.configuration.rbnbSource  '_' ...
+                        figureNameSuffix];
+                        
+      % Export to eps
+      if sum(strcmp(outputFormat,'.eps'))  
+            try
+                print(inputFigure,'-depsc2', ...
+                [outDirectory ...
+                fileNamePrefix '.eps']);
+            catch saveException
+                disp(['There was an error saving the figure to EPS. ' ...
+                      'The error message was:' saveException.message]  ...
+                    );
+            end
+      end
+             
+      % Export to JPEG
+      if sum(strcmp(outputFormat,'.jpg'))
+          try
+            print(inputFigure,'-djpeg100', ...
+              [outDirectory ...
+               fileNamePrefix '.jpg']);
+          catch saveException
+            disp(['There was an error saving the figure to JPG. ' ...
+                  'The error message was:' saveException.message]  ...
+                );
+          end
+      end
           
     end %function
     
@@ -1751,7 +1859,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       end
       
       % define the request details (get the latest 7 days of data)
-      fullChannelName = [self.configuration.rbnbSource self.configuration.pathSeparator self.configuration.rbnbChannel];
+      fullChannelName = [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
       
       % make the request to the DataTurbine and close the connection
       try
