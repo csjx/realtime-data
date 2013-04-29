@@ -84,7 +84,7 @@ public class CalibrationTest extends TestCase {
   public static Test suite() {
     
     TestSuite suite = new TestSuite();
-    suite.addTest(new CalibrationTest("testApplyPolyU"));
+    //suite.addTest(new CalibrationTest("testApplyPolyU"));
     
     return suite;
   }
