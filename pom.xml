@@ -85,13 +85,28 @@
     	<artifactId>activation</artifactId>
     	<version>1.0.2</version>
     </dependency>
+    <dependency>
+        <groupId>edu.ucsb.nceas</groupId>
+        <artifactId>utilities</artifactId>
+        <version>1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.dataturbine</groupId>
+        <artifactId>rbnb</artifactId>
+        <version>3.2b6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.dhmp</groupId>
+        <artifactId>dhmp</artifactId>
+        <version>1.0</version>
+    </dependency>
     </dependencies>
   <build>
-    <sourceDirectory>trunk/src/main/java</sourceDirectory>
-    <testSourceDirectory>trunk/src/test</testSourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
     <testResources>
       <testResource>
-        <directory>trunk/src/test</directory>
+        <directory>src/test/resources</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
