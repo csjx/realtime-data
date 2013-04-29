@@ -1,0 +1,9 @@
+The binary KNRT_20061120162608_000r.007 file is a data file created by 
+an RDI Workhorse Monitor ADCP.  The file is in RDI's 'PD0' data format, 
+described in the RDI PDF document entitled 'WorkHorse Commands and Output 
+Data Format'. (P/N 957-6156-00 (March 2005)).  This file is used to 
+generate a fake streaming data source in order to emulate an 
+ADCP in the water during testing.
+
+Likewise, the binary ALE31X_015ADCP015R00_20060921.10.1.000 file is also an
+ADCP file, and contains ensembles with 514 bytes each, and is used for testing.
