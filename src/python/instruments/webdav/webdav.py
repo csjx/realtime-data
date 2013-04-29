@@ -173,8 +173,8 @@ def main():
                                 sourceHostName, sourceHostPort)
     
     # set the source file name (demo only, not needed with TCP sockets)
-    sourceFile = os.path.join('..', '..', '..', '..', 'test', 'tchain.short.log')
-    #sourceFile = os.path.join('..', '..', '..', '..', 'test', 'tchain.long.log')
+    sourceFile = os.path.join('..', 'resources', 'tchain.short.log')
+    #sourceFile = os.path.join('..', 'resources', 'tchain.long.log')
     
     webDAVSource.setSourceFile(sourceFile)
     
