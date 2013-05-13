@@ -28,7 +28,10 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -459,6 +462,60 @@ public abstract class SimpleTextSource extends RBNBSource {
 	public void setDateFields(List<Integer> dateFields) {
 		this.dateFields = dateFields;
 		
+	}
+
+	/**
+	 *  return the sample observation date given minimal sample metadata
+	 */
+	public Date getSampleDate(String line) throws ParseException {
+		
+		/*
+		 * Date time formats and field locations are highly dependent on instrument
+		 * output settings.  The -d and -f options are used to set dateFormats and dateFields,
+		 * or in the XML-based configuration file
+		 * 
+		 * this.dateFormats will look something like {"yyyy-MM-dd", "HH:mm:ss"} or 
+		 * {"yyyy-MM-dd HH:mm:ss"} or {"yyyy", "MM", "dd", "HH", "mm", "ss"}
+		 * 
+		 * this.dateFields will also look something like {1,2} or {1} or {1, 2, 3, 4, 5, 6}
+		 * 
+		 * NS01 sample:
+		 * # 26.1675,  4.93111,    0.695, 0.1918, 0.1163,  31.4138, 09 Dec 2012 15:46:55
+		 * NS03 sample:
+		 * #  25.4746,  5.39169,    0.401,  35.2570, 09 Dec 2012, 15:44:36
+		 */
+	    // extract the date from the data line
+		SimpleDateFormat dateFormat;
+	    String dateFormatStr = "";
+	    String dateString    = "";
+	    String[] columns     = line.trim().split(this.delimiter);
+	    log.debug("Delimiter is: " + this.delimiter);
+	    log.debug(Arrays.toString(columns));
+	    
+	    // build the total date format from the individual fields listed in dateFields
+	    int index = 0;
+	    for (Integer dateField : this.dateFields) {
+	    	dateFormatStr += this.dateFormats.get(index); //zero-based list
+	    	dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
+	    	index++;
+	    }
+		log.debug("Using date format string: " + dateFormatStr);
+		log.debug("Using date string       : " + dateString);
+
+	    this.tz = TimeZone.getTimeZone(this.timezone);
+	    if ( this.dateFormats == null || this.dateFields == null ) {
+	    	log.warn("Using the defaault datetime field for sample data. " +
+	            "Use the -f and -d options to explicitly set date time fields.");
+	    	dateFormat = this.defaultDateFormat;
+	    }
+	    // init the date formatter
+	    dateFormat = new SimpleDateFormat(dateFormatStr);
+		dateFormat.setTimeZone(this.tz);
+
+		// parse the date string
+	    Date sampleDate = dateFormat.parse(dateString.trim());
+
+	    return sampleDate;
 	}
 
 
