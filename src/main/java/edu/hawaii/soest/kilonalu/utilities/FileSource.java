@@ -928,7 +928,9 @@ public void setDateFields(List<Integer> dateFields) {
 	
 }
 
-/* return the sample observation date given minimal sample metadata */
+/**
+ *  return the sample observation date given minimal sample metadata
+ */
 public Date getSampleDate(String line) throws ParseException {
 	
 	/*
