@@ -378,5 +378,22 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    
 	  }
 
+	/**
+	 * a method that gets the field delimiter set for the data sample
+	 * @return the delimiter
+	 */
+	public String getDelimiter() {
+		return delimiter;
+	}
+
+	/**
+	 * Sets the delimiter used in the data sample (e.g. ',')
+	 * 
+	 * @param delimiter the delimiter to set
+	 */
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
+	}
+
 
 }
