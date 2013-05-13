@@ -439,4 +439,27 @@ public abstract class SimpleTextSource extends RBNBSource {
 		
 	}
 
+	/**
+	 * Get the list of Integers that correspond with field indices of the 
+	 * sample observation's date, time, or datetime columns.
+	 *
+	 * @return the dateFields
+	 */
+	public List<Integer> getDateFields() {
+		return dateFields;
+		
+	}
+
+	/**
+	 * Set the list of Integers that correspond with field indices of the 
+	 * sample observation's date, time, or datetime columns. The list must be
+	 * one-based, such as '1,2'.
+	 * @param dateFields the dateFields to set
+	 */
+	public void setDateFields(List<Integer> dateFields) {
+		this.dateFields = dateFields;
+		
+	}
+
+
 }
