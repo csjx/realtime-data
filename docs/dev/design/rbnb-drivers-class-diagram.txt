@@ -159,8 +159,6 @@ RBNB DataTurbine Base Classes
       -void runWork() 
       +void setChannelName(String channelName)
       #boolean setArgs(CommandLine command) 
-      +void setDelimiter(String delim) 
-      +void setPattern(String pattern) 
       #Options setOptions() 
       +boolean start() 
       -void startThread() 
@@ -181,6 +179,10 @@ RBNB DataTurbine Base Classes
       +void setChannelName(String channelName)
       +String getIdentifier()
       +void setIdentifier(String identifier)
+      +String getPattern()
+      +void setPattern(String pattern)
+      +String getDelimiter()
+      +void setDelimiter(String delimiter)
     }
     
     class FileTextSource { 
