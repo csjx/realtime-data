@@ -138,10 +138,9 @@ RBNB DataTurbine Base Classes
     
     class SimpleTextSource {
       -Log logger
-      -String DEFAULT_RBNB_CHANNEL
+      -String identifier
       -String rbnbChannelName
       -SimpleDateFormat defaultDateFormat 
-      -String DEFAULT_DELIMITER 
       -String delimiter
       -List<String> dateFormats 
       -List<Integer> dateFields 
@@ -150,12 +149,11 @@ RBNB DataTurbine Base Classes
       -String connectionType
       -Pattern dataPattern 
       #int state 
-      -boolean readyToStream 
+      -boolean readyToStream
       -Thread streamingThread 
-      -int POLL_INTERVAL 
-      -int RETRY_INTERVAL 
+      -int pollInterval 
+      -int retryInterval 
       -ByteChannel channel
-      +String getRBNBChannelName()
       +String getCVSVersionString() 
       +boolean isRunning() 
       -void runWork() 
@@ -181,6 +179,8 @@ RBNB DataTurbine Base Classes
       +void setConnectionType()
       +String getChannelName()
       +void setChannelName(String channelName)
+      +String getIdentifier()
+      +void setIdentifier(String identifier)
     }
     
     class FileTextSource { 
