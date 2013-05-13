@@ -358,4 +358,25 @@ public abstract class SimpleTextSource extends RBNBSource {
 		return this.identifier;
 	}
 
+	  /**
+	   * A method that gets the timezone string
+	   *
+	   * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+	   */
+	  public String getTimezone() {
+	    return this.timezone;
+	    
+	  }
+	  
+	  /**
+	   * A method that sets the timezone string
+	   *
+	   * @param timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+	   */
+	  public void setTimezone(String timezone) {
+	    this.timezone = timezone;
+	    
+	  }
+
+
 }
