@@ -395,5 +395,48 @@ public abstract class SimpleTextSource extends RBNBSource {
 		this.delimiter = delimiter;
 	}
 
+	/**
+	 * a method that gets data pattern for the data sample
+	 * 
+	 * @return dataPattern  the pattern as a string
+	 */
+	public String getPattern() {
+		return this.dataPattern.toString();
+	}
+
+	/**
+	 * A method that sets the regular expression pattern for matching data lines
+	 *
+	 * @param pattern - the pattern string used to match data lines
+	 */
+	public void setPattern(String pattern) {
+	  this.dataPattern = Pattern.compile(pattern);
+	  
+	}
+
+	/**
+	 * Get the list of date formats that correspond to date and/or time fields in
+	 * the sample data.  For instance, column one of the sample may be a timestamp
+	 * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+	 * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+	 * @return the dateFormats
+	 */
+	public List<String> getDateFormats() {
+		return dateFormats;
+		
+	}
+
+	/**
+	 * Set the list of date formats that correspond to date and/or time fields in
+	 * the sample data.  For instance, column one of the sample may be a timestamp
+	 * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+	 * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+
+	 * @param dateFormats the dateFormats to set
+	 */
+	public void setDateFormats(List<String> dateFormats) {
+		this.dateFormats = dateFormats;
+		
+	}
 
 }
