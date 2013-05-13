@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instrument>
+    <identifier>NS02</identifier>
+    <connectionType>file</connectionType>
+    <connectionParams>        
+        <filePath>
+            /Users/cjones/docs/dev/clean/bbl/trunk/src/test/resources/AW02XX001CTDXXXXR00.log
+        </filePath>
+        <!-- OR
+        <hostName>127.0.0.1</hostName>
+        <hostPort>5111</hostPort> -->
+        <!-- OR
+        <serialPort>/dev/ttyUSB0</serialPort>
+        <serialPortParams>
+            <baudRate>9600</baudRate>
+            <dataBits>8</dataBits>
+            <stopBits>1</stopBits>
+            <parity>NONE</parity>
+        </serialPortParams> -->         
+        </connectionParams>
+    <rbnbName>AW02XX001CTDXXXXR00</rbnbName>
+    <rbnbServer>localhost</rbnbServer>
+    <rbnbPort>3333</rbnbPort>
+    <archiveMemory>126000</archiveMemory>
+    <archiveSize>31536000</archiveSize>
+    <channels>
+        <channel default="true">
+            <name>DecimalASCIISampleData</name>
+            <dataType>String</dataType>
+            <!-- Best to keep data pattern on one line below -->
+            <dataPattern># *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <fieldDelimiter>,</fieldDelimiter>
+            <!-- Use Hex notation for non-printing characters -->
+            <recordDelimiter>\x0A\x0D</recordDelimiter>
+            <!-- One or more date formats are required, reflecting the date/time variables in the data -->
+            <dateFormats>
+                <dateFormat>dd mmm YYYY HH:MM:SS</dateFormat>
+            </dateFormats>
+            <!-- One or more date fields are required, corresponding to the date/time variable positions in the data -->        
+            <dateFields>
+                <dateField>7</dateField>
+            </dateFields>
+        </channel>
+    </channels>   
+</instrument>
