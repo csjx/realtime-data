@@ -79,22 +79,28 @@ public class TextSourceFactory {
 		
 		// return the correct configuration type
 		if ( connectionType.equals("file") ) {
-			simpleTextSource = getFileTextSource();
+			FileTextSource fileTextSource = getFileTextSource();
 			String filePath = xmlConfig.getString ("connectionParams.filePath");
 
+			simpleTextSource = (SimpleTextSource) fileTextSource;
+
 		} else if ( connectionType.equals("socket") ) {
-			simpleTextSource = getSocketTextSource();
+			SocketTextSource socketTextSource = getSocketTextSource();
 			String hostName = xmlConfig.getString ("connectionParams.hostName");
 			String hostPort = xmlConfig.getString ("connectionParams.hostPort");
 
+			simpleTextSource = (SimpleTextSource) socketTextSource;
+
 		} else if ( connectionType.equals("serial") ) {
-			simpleTextSource = getSerialTextSource();
+			SerialTextSource serialTextSource = getSerialTextSource();
 			String serialPort = xmlConfig.getString ("connectionParams.serialPort");
 			String baudRate = xmlConfig.getString ("connectionParams.serialPortParams.baudRate");
 			String dataBits = xmlConfig.getString ("connectionParams.serialPortParams.dataBits");
 			String stopBits = xmlConfig.getString ("connectionParams.serialPortParams.stopBits");
 			String parity = xmlConfig.getString ("connectionParams.serialPortParams.parity");
 
+			simpleTextSource = (SimpleTextSource) serialTextSource;
+			
 		} else {
 			throw new ConfigurationException("There was an issue parsing the configuration." +
 		         " The connection type of " + connectionType + " wasn't recognized.");
@@ -129,7 +135,7 @@ public class TextSourceFactory {
      * 
      * @return a new instance of SimpleTextSource
      */
-	private static SimpleTextSource getSerialTextSource() {
+	private static SerialTextSource getSerialTextSource() {
 		return new SerialTextSource();
 	}
 
@@ -138,7 +144,7 @@ public class TextSourceFactory {
      * 
      * @return a new instance of SimpleTextSource
      */
-	private static SimpleTextSource getSocketTextSource() {
+	private static SocketTextSource getSocketTextSource() {
 		return new SocketTextSource();
 	}
 
@@ -148,7 +154,7 @@ public class TextSourceFactory {
      * 
      * @return a new instance of SimpleTextSource
      */
-	private static SimpleTextSource getFileTextSource() {
+	private static FileTextSource getFileTextSource() {
 		return new FileTextSource();
 	}
 }
