@@ -37,6 +37,9 @@ import org.apache.commons.cli.Options;
  */
 public class FileTextSource extends SimpleTextSource {
 
+	/* The full path to the data file with the incoming data being appended */
+	private String dataFilePath;
+	
 	/**
 	 * constructor: create an instance of the SerialTextSource 
 	 */
@@ -70,6 +73,25 @@ public class FileTextSource extends SimpleTextSource {
 	protected Options setOptions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Return the path to the data file as a string
+	 * 
+	 * @return dataFilePath - the path to the data file
+	 */
+	public String getDataFilePath() {
+		return dataFilePath;
+	}
+
+	/**
+	 * Set the full path to the data file that is receiving incoming data
+	 * 
+	 * @param dataFilePath  the path to the data file
+	 */
+	public void setDataFilePath(String dataFilePath) {
+		this.dataFilePath = dataFilePath;
+		
 	}
 
 }
