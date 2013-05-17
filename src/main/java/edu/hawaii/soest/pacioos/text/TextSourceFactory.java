@@ -80,24 +80,32 @@ public class TextSourceFactory {
 		// return the correct configuration type
 		if ( connectionType.equals("file") ) {
 			FileTextSource fileTextSource = getFileTextSource();
-			String filePath = xmlConfig.getString ("connectionParams.filePath");
+			String filePath = xmlConfig.getString("connectionParams.filePath");
+			fileTextSource.setDataFilePath(filePath);
 
 			simpleTextSource = (SimpleTextSource) fileTextSource;
 
 		} else if ( connectionType.equals("socket") ) {
 			SocketTextSource socketTextSource = getSocketTextSource();
-			String hostName = xmlConfig.getString ("connectionParams.hostName");
-			String hostPort = xmlConfig.getString ("connectionParams.hostPort");
+			String hostName = xmlConfig.getString("connectionParams.hostName");
+			socketTextSource.setHostName(hostName);
+			int hostPort = xmlConfig.getInt("connectionParams.hostPort");
+			socketTextSource.setHostPort(hostPort);
 
 			simpleTextSource = (SimpleTextSource) socketTextSource;
 
 		} else if ( connectionType.equals("serial") ) {
 			SerialTextSource serialTextSource = getSerialTextSource();
-			String serialPort = xmlConfig.getString ("connectionParams.serialPort");
-			String baudRate = xmlConfig.getString ("connectionParams.serialPortParams.baudRate");
-			String dataBits = xmlConfig.getString ("connectionParams.serialPortParams.dataBits");
-			String stopBits = xmlConfig.getString ("connectionParams.serialPortParams.stopBits");
-			String parity = xmlConfig.getString ("connectionParams.serialPortParams.parity");
+			String serialPort = xmlConfig.getString("connectionParams.serialPort");
+			serialTextSource.setSerialPort(serialPort);
+			int baudRate = xmlConfig.getInt("connectionParams.serialPortParams.baudRate");
+			serialTextSource.setBaudRate(baudRate);
+			int dataBits = xmlConfig.getInt("connectionParams.serialPortParams.dataBits");
+			serialTextSource.setDataBits(dataBits);
+			int stopBits = xmlConfig.getInt("connectionParams.serialPortParams.stopBits");
+			serialTextSource.setStopBits(stopBits);
+			String parity = xmlConfig.getString("connectionParams.serialPortParams.parity");
+			serialTextSource.setParity(parity);
 
 			simpleTextSource = (SimpleTextSource) serialTextSource;
 			
@@ -110,21 +118,21 @@ public class TextSourceFactory {
 		simpleTextSource.setConnectionType(connectionType);
 		String channelName = xmlConfig.getString("channelName");
 		simpleTextSource.setChannelName(channelName);
-		String identifier = xmlConfig.getString ("identifier");
+		String identifier = xmlConfig.getString("identifier");
 		simpleTextSource.setIdentifier(identifier);
-		String rbnbName = xmlConfig.getString ("rbnbName");
-		String rbnbServer = xmlConfig.getString ("rbnbServer");
-		String rbnbPort = xmlConfig.getString ("rbnbPort");
-		String archiveMemory = xmlConfig.getString ("archiveMemory");
-		String archiveSize = xmlConfig.getString ("archiveSize");
-		String name = xmlConfig.getString ("channels.channel.name");
-		String dataType = xmlConfig.getString ("channels.channel.dataType");
-		String dataPattern = xmlConfig.getString ("channels.channel.dataPattern");
-		String fieldDelimiter = xmlConfig.getString ("channels.channel.fieldDelimiter");
-		String recordDelimiter = xmlConfig.getString ("channels.channel.recordDelimiter");
-		String dateFormat = xmlConfig.getString ("channels.channel.dateFormats.dateFormat");
-		String dateField = xmlConfig.getString ("channels.channel.dateFields.dateField");
-		String defaultChannel = xmlConfig.getString ("channels.channel[@default]");
+		String rbnbName = xmlConfig.getString("rbnbName");
+		String rbnbServer = xmlConfig.getString("rbnbServer");
+		String rbnbPort = xmlConfig.getString("rbnbPort");
+		String archiveMemory = xmlConfig.getString("archiveMemory");
+		String archiveSize = xmlConfig.getString("archiveSize");
+		String name = xmlConfig.getString("channels.channel.name");
+		String dataType = xmlConfig.getString("channels.channel.dataType");
+		String dataPattern = xmlConfig.getString("channels.channel.dataPattern");
+		String fieldDelimiter = xmlConfig.getString("channels.channel.fieldDelimiter");
+		String recordDelimiter = xmlConfig.getString("channels.channel.recordDelimiter");
+		String dateFormat = xmlConfig.getString("channels.channel.dateFormats.dateFormat");
+		String dateField = xmlConfig.getString("channels.channel.dateFields.dateField");
+		String defaultChannel = xmlConfig.getString("channels.channel[@default]");
 
 		return simpleTextSource;
 		
