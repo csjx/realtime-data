@@ -27,7 +27,9 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -61,9 +63,10 @@ public class TextSourceFactory {
 		throws ConfigurationException {
 		
 		// Get the per-driver configuration
-		char delimiter = "|".charAt(0);
-		AbstractConfiguration.setDefaultListDelimiter(delimiter);
-		Configuration xmlConfig = new XMLConfiguration(configLocation);
+		XMLConfiguration xmlConfig = new XMLConfiguration();
+		xmlConfig.setDelimiterParsingDisabled(true);
+		xmlConfig.setAttributeSplittingDisabled(true);
+		xmlConfig.load(configLocation);
 		String connectionType = xmlConfig.getString("connectionType");
 		
 		if ( log.isDebugEnabled() ) {
@@ -114,6 +117,9 @@ public class TextSourceFactory {
 		         " The connection type of " + connectionType + " wasn't recognized.");
 		}
 		
+		// set the XML configuration in the simple text source for later use
+		simpleTextSource.setConfiguration(xmlConfig);
+		
 		// set the common configuration fields
 		simpleTextSource.setConnectionType(connectionType);
 		String channelName = xmlConfig.getString("channelName");
@@ -121,18 +127,39 @@ public class TextSourceFactory {
 		String identifier = xmlConfig.getString("identifier");
 		simpleTextSource.setIdentifier(identifier);
 		String rbnbName = xmlConfig.getString("rbnbName");
+		simpleTextSource.setRBNBClientName(rbnbName);
 		String rbnbServer = xmlConfig.getString("rbnbServer");
-		String rbnbPort = xmlConfig.getString("rbnbPort");
-		String archiveMemory = xmlConfig.getString("archiveMemory");
-		String archiveSize = xmlConfig.getString("archiveSize");
-		String name = xmlConfig.getString("channels.channel.name");
-		String dataType = xmlConfig.getString("channels.channel.dataType");
-		String dataPattern = xmlConfig.getString("channels.channel.dataPattern");
-		String fieldDelimiter = xmlConfig.getString("channels.channel.fieldDelimiter");
-		String recordDelimiter = xmlConfig.getString("channels.channel.recordDelimiter");
-		String dateFormat = xmlConfig.getString("channels.channel.dateFormats.dateFormat");
-		String dateField = xmlConfig.getString("channels.channel.dateFields.dateField");
-		String defaultChannel = xmlConfig.getString("channels.channel[@default]");
+		simpleTextSource.setServerName(rbnbServer);
+		int rbnbPort = xmlConfig.getInt("rbnbPort");
+		simpleTextSource.setServerPort(rbnbPort);
+		int archiveMemory = xmlConfig.getInt("archiveMemory");
+		simpleTextSource.setCacheSize(archiveMemory);
+		int archiveSize = xmlConfig.getInt("archiveSize");
+		simpleTextSource.setArchiveSize(archiveSize);
+		
+		// set the default channel information 
+		Object channels = xmlConfig.getList("channels.channel.name");
+		int totalChannels = 1;
+		if ( channels instanceof Collection) {
+			totalChannels = ((Collection<?>) channels).size();
+			
+		}		
+		// find the default channel with the ASCII data string
+		for (int i = 0; i < totalChannels; i++) {
+			boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
+			if ( isDefaultChannel ) {
+				String name = xmlConfig.getString("channels.channel(" + i + ").name");
+				simpleTextSource.setChannelName(name);
+				String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
+				simpleTextSource.setPattern(dataPattern);
+				String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
+				simpleTextSource.setDelimiter(fieldDelimiter);
+				String recordDelimiter = xmlConfig.getString("channels.channel(" + i + ").recordDelimiter");
+				simpleTextSource.setRecordDelimiter(recordDelimiter);
+				break;
+			}
+			
+		}
 
 		return simpleTextSource;
 		
