@@ -187,23 +187,19 @@ RBNB DataTurbine Base Classes
     
     class FileTextSource { 
   
-      -String DEFAULT_FILE_NAME 
       -String fileName 
       -BufferedReader fileReader 
       
       +FileSource() 
       #boolean execute() 
-      +String getFileName() 
-      +void setFileName(String fileName) 
+      +String getDataFilePath() 
+      +void setDataFilePath(String dataFilePath) 
     
     } 
      
     class SocketTextSource { 
-      -int DEFAULT_BUFFER_SIZE
       -int bufferSize
-      -String DEFAULT_SOURCE_HOST_NAME
       -String sourceHostName
-      -int DEFAULT_SOURCE_HOST_PORT
       -int sourceHostPort
       +SocketTextSource() 
       #boolean execute() 
@@ -217,12 +213,12 @@ RBNB DataTurbine Base Classes
     } 
   
     class SerialTextSource { 
-      -int DEFAULT_BUFFER_SIZE
       -int bufferSize
-      -String DEFAULT_SERIAL_PORT
-      -String serialPortName
-      -int DEFAULT_SOURCE_HOST_PORT
-      -int sourceHostPort
+      -String serialPort
+      -int baudRate
+      -int dataBits
+      -int stopBits
+      -String parity
       +SerialTextSource() 
       #boolean execute() 
       #ByteChannel getSerialConnection()
@@ -235,6 +231,13 @@ RBNB DataTurbine Base Classes
   
   SimpleTextSource -r|> RBNBSource
   TextSourceFactory .l> SimpleTextSource
+  note on link
+      Based on configuration, returns
+      a subclass of the
+      SimpleTextSource driver
+  end note
+  
+  
   SimpleTextSource <|-- FileTextSource 
   SimpleTextSource <|-- SocketTextSource
   SimpleTextSource <|-- SerialTextSource
