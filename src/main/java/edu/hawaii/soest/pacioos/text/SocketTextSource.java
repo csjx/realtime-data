@@ -37,6 +37,12 @@ import org.apache.commons.cli.Options;
  */
 public class SocketTextSource extends SimpleTextSource {
 
+	/* The FQDN or IP of the source instrument host */ 
+	private String sourceHostName;
+	
+	/* The connection port of the source instrument host */
+	private int sourceHostPort;
+	
 	/**
 	 * constructor: create an instance of the SerialTextSource 
 	 */
@@ -70,6 +76,46 @@ public class SocketTextSource extends SimpleTextSource {
 	protected Options setOptions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Return the name (FQDN) or IP of the instrument host
+	 * 
+	 * @return sourceHostName  the name or IP of the instrument host 
+	 */
+	public String getHostName() {
+		return sourceHostName;
+		
+	}
+
+	/**
+	 * Set the name (FQDN) or IP of the instrument host
+	 * 
+	 * @param sourceHostName  the name or IP of the instrument host
+	 */
+	public void setHostName(String hostName) {
+		this.sourceHostName = hostName;
+		
+	}
+
+	/**
+	 * Return the connection port of the instrument host
+	 * 
+	 * @return sourceHostPort  the connection port of the instrument host 
+	 */
+	public int getHostPort() {
+		return sourceHostPort;
+		
+	}
+
+	/**
+	 * Set the connection port of the instrument host
+	 * 
+	 * @param sourceHostPort  the connection port of the instrument host
+	 */
+	public void setHostPort(int hostPort) {
+		this.sourceHostPort = hostPort;
+		
 	}
 
 }
