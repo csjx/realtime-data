@@ -142,6 +142,7 @@ RBNB DataTurbine Base Classes
       -String rbnbChannelName
       -SimpleDateFormat defaultDateFormat 
       -String delimiter
+      -String recordDelimiter
       -List<String> dateFormats 
       -List<Integer> dateFields 
       -TimeZone tz
@@ -154,6 +155,7 @@ RBNB DataTurbine Base Classes
       -int pollInterval 
       -int retryInterval 
       -ByteChannel channel
+      -XMLConfiguration xmlConfig
       +String getCVSVersionString() 
       +boolean isRunning() 
       -void runWork() 
@@ -183,6 +185,10 @@ RBNB DataTurbine Base Classes
       +void setPattern(String pattern)
       +String getDelimiter()
       +void setDelimiter(String delimiter)
+      +void setRecordDelimiter(String recordDelimiter)
+      +String getRecordDelimiter()
+      +void setConfiguration(XMLConfiguration xmlConfig)
+      +XMLConfiguration getConfiguration()
     }
     
     class FileTextSource { 
@@ -231,14 +237,7 @@ RBNB DataTurbine Base Classes
   
   SimpleTextSource -r|> RBNBSource
   TextSourceFactory .l> SimpleTextSource
-  note on link
-      Based on configuration, returns
-      a subclass of the
-      SimpleTextSource driver
-  end note
-  
-  
-  SimpleTextSource <|-- FileTextSource 
+  SimpleTextSource <|-- FileTextSource
   SimpleTextSource <|-- SocketTextSource
   SimpleTextSource <|-- SerialTextSource
   

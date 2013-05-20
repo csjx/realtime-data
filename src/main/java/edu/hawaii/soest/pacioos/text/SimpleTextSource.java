@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nees.rbnb.RBNBSource;
@@ -81,6 +82,9 @@ public abstract class SimpleTextSource extends RBNBSource {
     /* The delimiter separating variables in the sample line */
     private String delimiter;
 
+	/* The record delimiter between separate ASCII sample lines (like \r\n) */
+	private String recordDelimiter;
+	
     /* The default date format for the timestamp in the data sample string */
     private SimpleDateFormat defaultDateFormat;
     
@@ -121,6 +125,9 @@ public abstract class SimpleTextSource extends RBNBSource {
 
     /* The identifier of the instrument (e.g. NS01) */
 	private String identifier;
+
+	/* The XMl-based configuration instance used to configure the class */
+	private XMLConfiguration xmlConfig;
 
     /**
      * Constructor: create an instance of the simple SimpleTextSource
@@ -518,5 +525,43 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    return sampleDate;
 	}
 
+	/**
+	 * Return the record delimiter string that separates saple lines of data
+	 * 
+	 * @return recordDelimiter - the record delimiter between samples
+	 */
+	public String getRecordDelimiter() {
+		return this.recordDelimiter;
+		
+	}
 
+	/**
+	 * Set the record delimiter string that separates saple lines of data
+	 * 
+	 * @param recordDelimiter  the record delimiter between samples
+	 */
+	public void setRecordDelimiter(String recordDelimiter) {
+		this.recordDelimiter = recordDelimiter;
+		
+	}
+
+	/**
+	 * Set the XML configuration object for this simple text source
+	 * 
+	 * @param xmlConfig  the XML configuration instance
+	 */
+	public void setConfiguration(XMLConfiguration xmlConfig) {
+		this.xmlConfig = xmlConfig;
+		
+	}
+
+	/**
+	 * Return the XML configuration for this simple text source
+	 * 
+	 * @return xmlConfig  the XML configuration instance
+	 */
+	public XMLConfiguration getConfiguration(){
+		return this.xmlConfig;
+		
+	}
 }
