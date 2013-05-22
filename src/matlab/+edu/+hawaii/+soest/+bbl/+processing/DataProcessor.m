@@ -2396,10 +2396,6 @@ classdef DataProcessor < hgsetget & dynamicprops
                     'The error message was:' copyException.message]           ...
                   );
             end
-          else
-            disp(['Figure copying to JPG skipped.  Please set the correct ' ...
-                  'value for the Configure.copyPath property.']             ...
-                );
       end
      end
           
