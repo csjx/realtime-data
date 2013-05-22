@@ -1,4 +1,4 @@
-% schedule_WQAW01_XXXCTDX001R00_processing 
+% schedule_WQKN01_XXXCTDX001R00_processing 
 %   This is a short runtime script that kicks off processing and
 %   display of CTD data.  It depends on configuration information
 %   found in the Configure class, and creates an instance of the
