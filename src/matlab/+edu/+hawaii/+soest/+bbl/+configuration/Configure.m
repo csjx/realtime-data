@@ -170,7 +170,19 @@ classdef Configure < hgsetget & dynamicprops
     
     % The string used to designate which variable name represents a dissolved
     % oxygen column in the data.  
-    oxygenFieldName = 'oxygen';
+    dissolvedOxygenFieldName = 'dissolvedOxygen';
+    
+    % The string used to designate which variable name represents a dissolved
+    % oxygen column in the data.  
+    dissolvedOxygenPhaseFieldName = 'dissolvedOxygenPhase';
+    
+    % The string used to designate which variable name represents a
+    % thermistor voltage column in the data.  
+    thermistorVoltageFieldName = 'thermistorVolts';
+    
+    % The string used to designate which variable name represents a oxygen
+    % saturation column in the data.  
+    oxygenSaturationFieldName = 'oxygenSaturation';
     
     % The string used to designate which variable name represents a serial
     % date column in the data.  
