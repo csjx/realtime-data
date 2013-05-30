@@ -1863,8 +1863,8 @@ classdef DataProcessor < hgsetget & dynamicprops
     depthAxes=gca;
     
     %set scale for temperature axis
-    minTemp=4*floor(min(temperature)/4);
-    maxTemp=4*ceil(max(temperature)/4);
+    minTemp=2*floor(min(temperature)/2);
+    maxTemp=2*ceil(max(temperature)/2);
     tempRange=ceil(maxTemp-minTemp);
     
     set(depthAxes,'xlim',          [startTime endTime],            ...
