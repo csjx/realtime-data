@@ -145,6 +145,10 @@ classdef Configure < hgsetget & dynamicprops
     chlorophyllVoltageFieldName = 'chlorophyllVolts';
     
     % The string used to designate which variable name represents a chlorophyll
+    % column in the data that has been converted into RFU units.  
+    chlorophyllRFUFieldName = 'chlorophyllRFU';
+    
+    % The string used to designate which variable name represents a chlorophyll
     % dark count calibration value to interpret the chlorophylVoltages.  
     chlorophyllDarkCountsFieldName = 'chlorophyllDarkCounts';
     
@@ -175,6 +179,10 @@ classdef Configure < hgsetget & dynamicprops
     % The string used to designate which variable name represents a dissolved
     % oxygen column in the data.  
     dissolvedOxygenPhaseFieldName = 'dissolvedOxygenPhase';
+    
+    % The string used to designate which variable name represents a dissolved
+    % oxygen column in the data that has already been converted to mL/L.  
+    dissolvedOxygenMetricFieldName = 'dissolvedOxygenMetric';
     
     % The string used to designate which variable name represents a
     % thermistor voltage column in the data.  
