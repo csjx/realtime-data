@@ -1824,7 +1824,16 @@ classdef DataProcessor < hgsetget & dynamicprops
     index=find(strcmp('depth',self.configuration.dataVariableNames));
     if index > 0
         depth=self.dataCellArray{index};
-        adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
+        if ~isempty(self.configuration.MLLWadjustmentDate) && ...
+                length(self.configuration.MLLWadjustment)>1
+           adjustedDepth=depth;
+           t1=find(time<datenum(char(self.configuration.MLLWadjustmentDate)));
+           adjustedDepth(t1)=depth(t1) + self.configuration.MLLWadjustment(1);
+           t2=find(time>=datenum(char(self.configuration.MLLWadjustmentDate)));
+           adjustedDepth(t2)=depth(t2) + self.configuration.MLLWadjustment(2);
+        else
+           adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
+        end
     end 
     temperature=self.dataCellArray{find(strcmp('temperature',self.configuration.dataVariableNames))};
     salinity=self.dataCellArray{find(strcmp('salinity',self.configuration.dataVariableNames))};

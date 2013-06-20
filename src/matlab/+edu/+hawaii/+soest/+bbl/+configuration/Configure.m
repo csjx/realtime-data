@@ -306,7 +306,10 @@ classdef Configure < hgsetget & dynamicprops
     % The depth of the instrument below average Mean Low Low Water level
     % (in meters)
     MLLWadjustment = 0;
-    
+   
+    % The date and time a change was made in sensor depth relative to MLLW
+    MLLWadjustmentDate={};
+ 
     % Cell array containing the output format used to export plots. 
     % Can export as .eps, .jpg, or in both formats.
     outputFormat={'.eps' '.jpg'};
