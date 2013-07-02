@@ -1961,15 +1961,17 @@ classdef DataProcessor < hgsetget & dynamicprops
         line(time,adjustedDepth,'color','k','parent',depthAxes);
     
         %set scale for depth axis
-        if min(adjustedDepth)>-0.4 && max(adjustedDepth)<1.2
+        if length(find(adjustedDepth<-0.4))<15 &&                ...
+             length(find(adjustedDepth>1.2))<15
             minDepth=-0.4;
             maxDepth=1.2;
-        else if min(adjustedDepth)>-0.6 && max(adjustedDepth)<1.8
+        else if length(find(adjustedDepth<-0.6))<15 &&           ...
+                  length(find(adjustedDepth>1.8))<15
                 minDepth=-0.6;
                 maxDepth=1.8;
             else
-                minDepth=-0.2;
-                maxDepth=2.2;
+                minDepth=0.4*floor(min(adjustedDepth)/0.4);
+                maxDepth=0.4*ceil(max(adjustedDepth)/0.4);
             end
         end
 
