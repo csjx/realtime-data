@@ -801,7 +801,7 @@ classdef DataProcessor < hgsetget & dynamicprops
           end % end if statement (~isempty(self.dataCellArray))
                     
         % derive dissolved oxygen (uM) from dissolved oxygen phase
-        % (or from mL/L)
+        % (or from mg/L)
         case self.configuration.dissolvedOxygenFieldName
           if ( ~isempty(self.dataCellArray) )              
 
@@ -821,8 +821,8 @@ classdef DataProcessor < hgsetget & dynamicprops
                   ) ...
                 };
             
-            % convert from mL/L to micro Molar
-              value = dissolvedOxygenMetricArray * 44.66                               ;
+            % convert from mg/L to micro Molar
+              value = dissolvedOxygenMetricArray * 35.2152                               ;
             
             % update the field names and units arrays
               updateDataVariableNames(self, self.configuration.dissolvedOxygenFieldName);
@@ -2172,7 +2172,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
         chloHandle=plot(time,chlorophyll);
         minChlo=0;
-        maxChlo=20;
+        maxChlo=10;
         chlorophyllColor=[0.1 .55 .35];
 
         %set scale for chorophyll axis
