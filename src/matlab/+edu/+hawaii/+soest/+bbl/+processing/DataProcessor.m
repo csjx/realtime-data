@@ -376,7 +376,8 @@ classdef DataProcessor < hgsetget & dynamicprops
             figureProperties=self.configuration.PacIOOSFigures;
                 
             % define the base output directory
-            outDir=[self.configuration.outputDirectory 'PacIOOSplots'];
+            outDir=[self.configuration.outputDirectory 'PacIOOSplots'  ...
+                    self.configuration.pathSeparator];
             
             % set the output format to .eps only
             outputFormat={'.eps'};
@@ -2365,18 +2366,15 @@ classdef DataProcessor < hgsetget & dynamicprops
           if ~exist(outDir,'dir');
               system([mkdirpath ' ' outDir]);
           end
-          if ~exist([outDir pathSeparator year],'dir');
-              system([mkdirpath ' ' outDir pathSeparator year]);
+          if ~exist([outDir year],'dir');
+              system([mkdirpath ' ' outDir year]);
           end
-          if ~exist([outDir pathSeparator year ...
-                  pathSeparator month],'dir');
-              
-              system([mkdirpath ' ' outDir pathSeparator ...
-                  year pathSeparator month]);
+          if ~exist([outDir year pathSeparator month],'dir'); 
+              system([mkdirpath ' ' outDir year pathSeparator month]);
           end
-          %if ~exist([outDir pathSeparator year pathSeparator month ...
+          %if ~exist([outDir year pathSeparator month ...
           %           pathSeparator day],'dir');
-          %    system([mkdirpath ' ' outDir pathSeparator year ...
+          %    system([mkdirpath ' ' outDir year ...
           %            pathSeparator month pathSeparator day]);
           %end
       catch dirException
@@ -2384,8 +2382,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                  'The error message was:' dirException.message]);
       end
           
-      outDirectory=[outDir pathSeparator ...
-                    year pathSeparator   ...
+      outDirectory=[outDir year pathSeparator   ...
                     month pathSeparator];   % day pathSeparator];
       
       % Export to Enhanced Postscript
@@ -2432,7 +2429,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.copyPath ' '    ... % use the copy program
                   outDirectory                       ... 
                   fileNamePrefix '.jpg ' ' '         ... % copy from file name
-                  outDir pathSeparator               ... 
+                  outDir                             ... 
                   'latest_' figureNameSuffix '.jpg'  ... % copy to file name                  
                 ]                                    ...
               );
@@ -2451,7 +2448,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                   self.configuration.copyPath ' '    ... % use the copy program
                   outDirectory                       ... 
                   fileNamePrefix '.eps ' ' '         ... % copy from file name
-                  outDir pathSeparator               ... 
+                  outDir                             ... 
                   'latest_' figureNameSuffix '.eps'  ... % copy to file name                  
                 ]                                    ...
               );
