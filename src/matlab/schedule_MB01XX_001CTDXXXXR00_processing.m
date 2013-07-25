@@ -268,10 +268,10 @@ set( configuration, 'outputFormat', {'.eps' '.jpg'});
 % Moving Average Line Width : The width of the moving average line (as a string)
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
-                         % Figure 2                                    
-                         {'Maunalua Bay (NS10), 3 Day Water Quality'   , ... % titlePrefix
+                         % Figure 1                                    
+                         {'Maunalua Bay (NS10), 7 Day Water Quality'   , ... % titlePrefix
                           ''                                           , ... % figure start in UTC
-                          '259200'                                     , ... % duration
+                          '604800'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
                            'chlorophyll'                               , ... 
@@ -294,10 +294,10 @@ set( configuration,                                                    ...
                           [128/255 128/255 128/255]                    , ... % moving avg color: gray
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
-                         % Figure 3                                    
-                         {'Maunalua Bay (NS10), 7 Day Water Quality'   , ... % titlePrefix
+                         % Figure 2                                    
+                         {'Maunalua Bay (NS10), 10 Day Water Quality'   , ... % titlePrefix
                           ''                                           , ... % figure start in UTC
-                          '604800'                                     , ... % duration
+                          '864000'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
                            'chlorophyll'                               , ... 
@@ -320,10 +320,10 @@ set( configuration,                                                    ...
                           [128/255 128/255 128/255]                    , ... % moving avg color: gray
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
-                         % Figure 4                                    
-                         {'Maunalua Bay (NS10), 21 Day Water Quality'  , ... % titlePrefix
+                         % Figure 3                                    
+                         {'Maunalua Bay (NS10), 30 Day Water Quality'  , ... % titlePrefix
                           ''                                           , ... % figure start in UTC
-                          '1814400'                                    , ... % duration
+                          '2592000'                                    , ... % duration
                           {'temperature'                               , ... % xAxisVars
                            'salinity'                                  , ... 
                            'chlorophyll'                               , ... 

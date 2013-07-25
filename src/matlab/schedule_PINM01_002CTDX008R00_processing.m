@@ -230,7 +230,7 @@ set( configuration, 'currentFigureType', 'timeSeries');
 
 % Tell the DataProcessor what format to use when exporting TS or timeseries
 % figures
-set( configuration, 'outputFormat', {'.eps' '.jpg'});
+set( configuration, 'outputFormat', {'.jpg'});
 
 % Set the configuration parameters for the time series figures that should
 % be generated.  The timeSeriesFigures property is a cell array that includes
@@ -278,36 +278,8 @@ set( configuration, 'outputFormat', {'.eps' '.jpg'});
 % Moving Average Line Width : The width of the moving average line (as a string)
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
-                         % 3-day plot
-                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, Daily Water Quality'  , ... % titlePrefix
-                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
-                          '259200'                                     , ... % duration
-                          {'temperature'                               , ... % xAxisVars
-                           'salinity'                                  , ... 
-                           'chlorophyll'                               , ... 
-                           'turbidity'                                 , ... 
-                           'depth'                                     , ... 
-                           'batteryVoltage'}                           , ... 
-                          {'serialdate'}                               , ... % yAxisVar
-                          '1'                                          , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'},{'.'}]        , ... % marker
-                          [{1.0},{1.0},{1.0},{1.0},{1.0},{1.0}]        , ... % markerSize
-                          [                                              ...
-                            {[255/255 0       0      ]}                , ... % red
-                            {[0        0       255/255]}               , ... % blue
-                            {[0        255/255 0      ]}               , ... % green
-                            {[102/255  047/255 0      ]}               , ... % brown
-                            {[0        0       0      ]}               , ... % black
-                            {[102/255  102/255 102/255]}                 ... % gray
-                          ]                                            , ...
-                          '0'                                          , ... % include moving avg
-                          '1200'                                       , ... % moving avg duration
-                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
-                          '1'                                            ... % moving avg linewidth
-                         }                                             , ...
                          % 7-day plot
-                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, Daily Water Quality'  , ... % titlePrefix
+                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, 7 Day Water Quality'  , ... % titlePrefix
                           '06-30-2010 00:00:00'                        , ... % figure start in UTC
                           '604800'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
@@ -334,8 +306,36 @@ set( configuration,                                                    ...
                           [128/255 128/255 128/255]                    , ... % moving avg color: gray
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
+                         % 10-day plot
+                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, 10 Day Water Quality'  , ... % titlePrefix
+                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
+                          '864000'                                     , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'                                 , ... 
+                           'depth'                                     , ... 
+                           'batteryVoltage'}                           , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '1'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'},{'.'},{'.'}]        , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0},{1.0}]        , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}               , ... % brown
+                            {[0        0       0      ]}               , ... % black
+                            {[102/255  102/255 102/255]}                 ... % gray
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
                          % 30-day plot
-                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, Daily Water Quality'  , ... % titlePrefix
+                         {'Lao Lao Bay, Saipan, Northern Mariana Islands, 30 Day Water Quality'  , ... % titlePrefix
                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
                           '2592000'                                    , ... % duration
                           {'temperature'                               , ... % xAxisVars

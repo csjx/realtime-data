@@ -263,29 +263,7 @@ set( configuration, 'outputFormat', {'.eps' '.jpg'});
 % Moving Average Line Width : The width of the moving average line (as a string)
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
-                         % Figure 2                                  
-                         {'Waikiki (NS03), 3 Day Water Quality'      , ... % titlePrefix
-                          ''                                         , ... % figure start in UTC
-                          '259200'                                   , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'depth'}                                  , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '1'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'}]            , ... % tickFormat
-                          [{'.'},{'.'},{'.'}]                        , ... % marker
-                          [{1.0},{1.0},{1.0}]                        , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0       0       255/255]}              , ... % blue
-                            {[0       0       0      ]}                ... % black
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 3                                  
+                         % Figure 1                                  
                          {'Waikiki (NS03), 7 Day Water Quality'      , ... % titlePrefix
                           ''                                         , ... % figure start in UTC
                           '604800'                                   , ... % duration
@@ -307,10 +285,32 @@ set( configuration,                                                    ...
                           [128/255 128/255 128/255]                  , ... % moving avg color: gray
                           '1'                                          ... % moving avg linewidth
                          }                                           , ...
-                         % Figure 4                                  
-                         {'Waikiki (NS03), 21 Day Water Quality'     , ... % titlePrefix
+                         % Figure 2                                  
+                         {'Waikiki (NS03), 10 Day Water Quality'      , ... % titlePrefix
                           ''                                         , ... % figure start in UTC
-                          '1814400'                                  , ... % duration
+                          '864000'                                   , ... % duration
+                          {'temperature'                             , ... % xAxisVars
+                           'salinity'                                , ... 
+                           'depth'}                                  , ... 
+                          {'serialdate'}                             , ... % yAxisVar
+                          '1'                                        , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'}]            , ... % tickFormat
+                          [{'.'},{'.'},{'.'}]                        , ... % marker
+                          [{1.0},{1.0},{1.0}]                        , ... % markerSize
+                          [                                            ...
+                            {[255/255 0       0      ]}              , ... % red
+                            {[0       0       255/255]}              , ... % blue
+                            {[0       0       0      ]}                ... % black
+                          ]                                          , ...
+                          '0'                                        , ... % include moving avg
+                          '1200'                                     , ... % moving avg duration
+                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
+                          '1'                                          ... % moving avg linewidth
+                         }                                           , ...
+                         % Figure 3                                  
+                         {'Waikiki (NS03), 30 Day Water Quality'     , ... % titlePrefix
+                          ''                                         , ... % figure start in UTC
+                          '2592000'                                  , ... % duration
                           {'temperature'                             , ... % xAxisVars
                            'salinity'                                , ... 
                            'depth'}                                  , ... 

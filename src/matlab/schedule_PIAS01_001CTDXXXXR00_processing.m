@@ -94,7 +94,7 @@ set( configuration,                                                         ...
 'rbnbSource'          , 'PIAS01_001CTDXXXXR00'                            , ...
 'rbnbChannel'         , 'DecimalASCIISampleData'                          , ...
 'dataStartDate'       , '05-01-2010 23:00:00'                             , ... % UTC
-'duration'            ,  5184000                                          , ...
+'duration'            ,  2764800                                          , ...
 'reference'           , 'newest'                                            ...
 );                                                                        
 
@@ -104,7 +104,7 @@ set( configuration,                                                         ...
 % exportFigures     - is a flag to export (to EPS) or not to export figures                                                                         
 set( configuration,                                                         ...
 'createFigures'       , true                                              , ...
-'createPacIOOSFigures', true                                              , ...
+'createPacIOOSFigures', false                                              , ...
 'exportFigures'       , true                                                ...
 );                                                                        
 
@@ -213,9 +213,9 @@ set( configuration,                                                            .
                        % Figure 1  (7 day plot)
                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 7 day',  ... %Title prefix
                         '7'}                                                ;  ... %Duration in days
-                       % Figure 2  (21 day plot)
-                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 21 day',... %Title prefix
-                        '21'}                                                ; ... %Duration in days
+                       % Figure 2  (30 day plot)
+                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 30 day',... %Title prefix
+                        '30'}                                                ; ... %Duration in days
                              }                                                 ...
                               )                                              ;
                           
@@ -225,7 +225,7 @@ set( configuration, 'currentFigureType', 'timeSeries');
 
 % Tell the DataProcessor what format to use when exporting TS or timeseries
 % figures
-set( configuration, 'outputFormat', {'.eps' '.jpg'});
+set( configuration, 'outputFormat', {'.jpg'});
 
 % Set the configuration parameters for the time series figures that should
 % be generated.  The timeSeriesFigures property is a cell array that includes
@@ -273,60 +273,8 @@ set( configuration, 'outputFormat', {'.eps' '.jpg'});
 % Moving Average Line Width : The width of the moving average line (as a string)
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
-                         % 1-day plot
-                         {'Pago Pago Harbor, Fagatogo, American Samoa, Daily Water Quality'  , ... % titlePrefix
-                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
-                          '86400'                                      , ... % duration
-                          {'temperature'                               , ... % xAxisVars
-                           'salinity'                                  , ... 
-                           'chlorophyll'                               , ... 
-                           'turbidity'                                 , ... 
-                           'depth'}                                    , ... 
-                          {'serialdate'}                               , ... % yAxisVar
-                          '.25'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
-                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
-                          [                                              ...
-                            {[255/255 0       0      ]}                , ... % red
-                            {[0        0       255/255]}               , ... % blue
-                            {[0        255/255 0      ]}               , ... % green
-                            {[102/255  047/255 0      ]}               , ... % brown
-                            {[102/255  102/255 102/255]}                 ... % gray
-                          ]                                            , ...
-                          '0'                                          , ... % include moving avg
-                          '1200'                                       , ... % moving avg duration
-                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
-                          '1'                                            ... % moving avg linewidth
-                         }                                             , ...
-                         % 3-day plot
-                         {'Pago Pago Harbor, Fagatogo, American Samoa, 3-day Water Quality'  , ... % titlePrefix
-                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
-                          '259200'                                     , ... % duration
-                          {'temperature'                               , ... % xAxisVars
-                           'salinity'                                  , ... 
-                           'chlorophyll'                               , ... 
-                           'turbidity'                                 , ... 
-                           'depth'}                                    , ... 
-                          {'serialdate'}                               , ... % yAxisVar
-                          '1'                                          , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
-                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
-                          [                                              ...
-                            {[255/255 0       0      ]}                , ... % red
-                            {[0        0       255/255]}               , ... % blue
-                            {[0        255/255 0      ]}               , ... % green
-                            {[102/255  047/255 0      ]}               , ... % brown
-                            {[102/255  102/255 102/255]}                 ... % gray
-                          ]                                            , ...
-                          '0'                                          , ... % include moving avg
-                          '1200'                                       , ... % moving avg duration
-                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
-                          '1'                                            ... % moving avg linewidth
-                         }                                             , ...
                          % 7-day plot
-                         {'Pago Pago Harbor, Fagatogo, American Samoa, Weekly Water Quality'  , ... % titlePrefix
+                         {'Pago Pago Harbor, Fagatogo, American Samoa, 7 Day Water Quality'  , ... % titlePrefix
                           '06-30-2010 00:00:00'                        , ... % figure start in UTC
                           '604800'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
@@ -351,8 +299,34 @@ set( configuration,                                                    ...
                           [128/255 128/255 128/255]                    , ... % moving avg color: gray
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
+                         % 10-day plot
+                         {'Pago Pago Harbor, Fagatogo, American Samoa, 10 Day Water Quality'  , ... % titlePrefix
+                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
+                          '864000'                                     , ... % duration
+                          {'temperature'                               , ... % xAxisVars
+                           'salinity'                                  , ... 
+                           'chlorophyll'                               , ... 
+                           'turbidity'                                 , ... 
+                           'depth'}                                    , ... 
+                          {'serialdate'}                               , ... % yAxisVar
+                          '1'                                          , ... % xTickStep
+                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
+                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
+                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
+                          [                                              ...
+                            {[255/255 0       0      ]}                , ... % red
+                            {[0        0       255/255]}               , ... % blue
+                            {[0        255/255 0      ]}               , ... % green
+                            {[102/255  047/255 0      ]}               , ... % brown
+                            {[102/255  102/255 102/255]}                 ... % gray
+                          ]                                            , ...
+                          '0'                                          , ... % include moving avg
+                          '1200'                                       , ... % moving avg duration
+                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
+                          '1'                                            ... % moving avg linewidth
+                         }                                             , ...
                          % 30-day plot
-                         {'Pago Pago Harbor, Fagatogo, American Samoa, Monthly Water Quality'  , ... % titlePrefix
+                         {'Pago Pago Harbor, Fagatogo, American Samoa, 30 Day Water Quality'  , ... % titlePrefix
                          '06-30-2010 00:00:00'                        , ... % figure start in UTC
                           '2592000'                                    , ... % duration
                           {'temperature'                               , ... % xAxisVars
@@ -376,33 +350,7 @@ set( configuration,                                                    ...
                           '1200'                                       , ... % moving avg duration
                           [128/255 128/255 128/255]                    , ... % moving avg color: gray
                           '1'                                            ... % moving avg linewidth
-                         }                                             , ...
-                         % 60-day plot
-                         {'Pago Pago Harbor, Fagatogo, American Samoa, 60 Day Water Quality'  , ... % titlePrefix
-                         '06-30-2010 00:00:00'                         , ... % figure start in UTC
-                          '5184000'                                    , ... % duration
-                          {'temperature'                               , ... % xAxisVars
-                           'salinity'                                  , ... 
-                           'chlorophyll'                               , ... 
-                           'turbidity'                                 , ... 
-                           'depth'}                                    , ... 
-                          {'serialdate'}                               , ... % yAxisVar
-                          '5'                                          , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'},{'%3.2f'}]    , ... % tickFormat
-                          [{'.'},{'.'},{'.'},{'.'},{'.'}]              , ... % marker
-                          [{1.0},{1.0},{1.0},{1.0},{1.0}]              , ... % markerSize
-                          [                                              ...
-                            {[255/255 0       0      ]}                , ... % red
-                            {[0        0       255/255]}               , ... % blue
-                            {[0        255/255 0      ]}               , ... % green
-                            {[102/255  047/255 0      ]}               , ... % brown
-                            {[102/255  102/255 102/255]}                 ... % gray
-                          ]                                            , ...
-                          '0'                                          , ... % include moving avg
-                          '1200'                                       , ... % moving avg duration
-                          [128/255 128/255 128/255]                    , ... % moving avg color: gray
-                          '1'                                            ... % moving avg linewidth
-                         }                                             , ...
+                         }                                               ...
                        }                                                 ...
 );
 
@@ -413,7 +361,7 @@ set( configuration,                                                    ...
 % timerInterval     - the interval (in minutes) that the timer process should fire
 set( configuration,                                                      ...
 'startTime'           , 0                                              , ...
-'timerInterval'       , 20                                               ...
+'timerInterval'       , 10080                                            ...
 );                                                                 
 
 % Set up directory paths, and create a new DataProcessor instance
