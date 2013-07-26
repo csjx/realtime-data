@@ -2173,7 +2173,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
         chloHandle=plot(time,chlorophyll);
         minChlo=0;
-        maxChlo=10;
+        maxChlo=20;
         chlorophyllColor=[0.1 .55 .35];
 
         %set scale for chorophyll axis
