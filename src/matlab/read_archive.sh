@@ -2,7 +2,7 @@
 
 # this script reads 31 days of data from the archive in DT
 
-cd /usr/local/bbl/trunk/src/matlab/read_archive 
+cd /data/processed/read_archive 
 
 NAME='REPLACENAME'    
 

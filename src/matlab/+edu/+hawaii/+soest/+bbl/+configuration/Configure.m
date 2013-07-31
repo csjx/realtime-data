@@ -234,7 +234,7 @@ classdef Configure < hgsetget & dynamicprops
     readArchive = false;
     
     % A string containing the path to the read_archive scripts
-    read_archivePath='/usr/local/bbl/trunk/src/matlab/read_archive/'
+    read_archivePath='/data/processed/read_archive/'
     
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
