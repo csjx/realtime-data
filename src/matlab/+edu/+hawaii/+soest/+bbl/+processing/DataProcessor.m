@@ -159,9 +159,15 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       set(self, 'processTime', now());
       % get the most recent interval of data
-      [self.dataString, ...
-       self.dataTimes,  ...
-       self.dataName] = self.getRBNBData();
+      if ( self.configuration.readArchive )
+        [self.dataString, ...
+         self.dataTimes,  ...
+         self.dataName] = self.getArchiveData();
+      else
+        [self.dataString, ...
+         self.dataTimes,  ...
+         self.dataName] = self.getRBNBData();
+      end
       
       % parse the data string into a cell array used to create graphics
       self.dataCellArray = self.parse();
@@ -2598,6 +2604,43 @@ classdef DataProcessor < hgsetget & dynamicprops
         dataName = '';
       end
     end % getRBNBData
+    
+    % A method used to fetch the ASCII data string from the given RBNB
+    % archive, for use when the Data Turbine channel is incomplete
+    function [dataString, dataTimes, dataName] = getArchiveData(self)
+        
+      if ( self.configuration.debug )
+        disp('DataProcessor.getArchiveData() called.');
+      end
+
+      %IF reading from archive; be sure to change 'duration' to 2678400 (31 days) 
+      %Grab the data for 31 days - saved in data_'rbnbSource'.dat in read_archive folder
+      read_archiveSourceFile=[self.configuration.read_archivePath 'read_archive_' self.configuration.rbnbSource '.sh'];
+      
+      if ~exist(read_archiveSourceFile,'file')
+         read_archiveFile=[self.configuration.read_archivePath 'read_archive.sh'];
+         eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ ' read_archiveFile ' > ' read_archiveSourceFile]);
+      end
+      eval(['!sh ' read_archiveSourceFile]);
+        
+	  %read in file reading from archive
+	  fid=fopen([self.configuration.read_archivePath 'data_' self.configuration.rbnbSource '.dat']); 
+	  tline=fgets(fid);
+        dataString(1,:)=tline;
+        dataTimes(1,:)=datenum(clock);%(tline(end-20:end));
+	  i=2; 
+      while ischar(tline); 
+		dataString(i,:)=tline;
+	%	dataTimes(i,:)=datenum(tline(end-20:end)); 
+	 	tline=fgets(fid); 
+	 	i=i+1; 
+      end
+      fclose(fid);
+      clear fid i tline;
+
+      dataName =  [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
+       
+    end %getArchiveData
     
     % A method that appends a new variable field name to the dataVariableNames
     % property in order to keep track of variable names inside of the 

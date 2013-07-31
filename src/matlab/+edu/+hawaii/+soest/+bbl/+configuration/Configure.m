@@ -229,6 +229,13 @@ classdef Configure < hgsetget & dynamicprops
     % A boolean property indicating whether or not figures should be exported
     exportFigures = true;
     
+    % A boolean property indicating whether or not data should be read in
+    % from the archives (rather than the ring buffer)
+    readArchive = false;
+    
+    % A string containing the path to the read_archive scripts
+    read_archivePath='/usr/local/bbl/trunk/src/matlab/read_archive/'
+    
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
     currentFigureType = '';
