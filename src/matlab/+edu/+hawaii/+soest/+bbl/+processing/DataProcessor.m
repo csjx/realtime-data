@@ -2634,13 +2634,14 @@ classdef DataProcessor < hgsetget & dynamicprops
           end
           tline=fgets(fid);
       end
-	  i=2; 
+	  i=2;
+      stringLength=length(dataString);
       while ischar(tline); 
 		tline=fgets(fid);
-        if length(tline)==length(dataString)
+        if length(tline)==stringLength
           dataString(i,:)=tline;
-        end
-	 	i=i+1; 
+          i=i+1;
+        end 
       end
       fclose(fid);
       clear fid i tline;
