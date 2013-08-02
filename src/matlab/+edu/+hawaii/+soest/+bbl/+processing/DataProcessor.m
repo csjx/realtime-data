@@ -2626,13 +2626,20 @@ classdef DataProcessor < hgsetget & dynamicprops
 	  %read in file reading from archive
 	  fid=fopen([self.configuration.read_archivePath 'data_' self.configuration.rbnbSource '.dat']); 
 	  tline=fgets(fid);
-        dataString(1,:)=tline;
-        dataTimes(1,:)=datenum(clock);%(tline(end-20:end));
+      while ischar(tline);
+          if length(tline)>40
+            dataString(1,:)=tline;
+            dataTimes(1,:)=datenum(clock);%(tline(end-20:end));
+            break
+          end
+          tline=fgets(fid);
+      end
 	  i=2; 
       while ischar(tline); 
-		dataString(i,:)=tline;
-	%	dataTimes(i,:)=datenum(tline(end-20:end)); 
-	 	tline=fgets(fid); 
+		tline=fgets(fid);
+        if length(tline)==length(dataString)
+          dataString(i,:)=tline;
+        end
 	 	i=i+1; 
       end
       fclose(fid);
