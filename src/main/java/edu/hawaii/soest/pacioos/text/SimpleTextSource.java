@@ -28,14 +28,18 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import org.apache.commons.cli.Options;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -43,6 +47,9 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nees.rbnb.RBNBSource;
+
+import com.rbnb.sapi.ChannelMap;
+import com.rbnb.sapi.SAPIException;
 
 /**
  * a class that represents a simple text-based instrument as a Source driver
@@ -126,35 +133,96 @@ public abstract class SimpleTextSource extends RBNBSource {
     /* The identifier of the instrument (e.g. NS01) */
 	private String identifier;
 
-	/* The XMl-based configuration instance used to configure the class */
+	/* The XML-based configuration instance used to configure the class */
 	private XMLConfiguration xmlConfig;
 
+	/* The list of record delimiter characters provided by the config (usually 0x0D,0x0A) */
+	private String[] recordDelimiters;
+
+	/* The first record delimiter byte */
+	private byte firstDelimiterByte;
+
+	/* The second record delimiter byte */
+	private byte secondDelimiterByte;
+	  
     /**
      * Constructor: create an instance of the simple SimpleTextSource
+     * @param xmlConfig 
      */
-    public SimpleTextSource() {
+    public SimpleTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
     	
+    	this.xmlConfig = xmlConfig;
     	// Pull the general configuration from the properties file
-    	try {
-			Configuration config   = new PropertiesConfiguration("pacioos.properties");
-			this.archiveMode       = config.getString("pacioos.textsource.archive_mode");
-			this.rbnbChannelName   = config.getString("pacioos.textsource.rbnb_channel");
-			this.serverName        = config.getString("pacioos.textsource.server_name ");
-			this.delimiter         = config.getString("pacioos.textsource.delimiter");
-			this.pollInterval      = config.getInt("pacioos.textsource.poll_interval");
-			this.retryInterval     = config.getInt("pacioos.textsource.retry_interval");
-			this.defaultDateFormat = new SimpleDateFormat(
-			    config.getString("pacioos.textsource.default_date_format"));
+		Configuration config   = new PropertiesConfiguration("pacioos.properties");
+		this.archiveMode       = config.getString("pacioos.textsource.archive_mode");
+		this.rbnbChannelName   = config.getString("pacioos.textsource.rbnb_channel");
+		this.serverName        = config.getString("pacioos.textsource.server_name ");
+		this.delimiter         = config.getString("pacioos.textsource.delimiter");
+		this.pollInterval      = config.getInt("pacioos.textsource.poll_interval");
+		this.retryInterval     = config.getInt("pacioos.textsource.retry_interval");
+		this.defaultDateFormat = new SimpleDateFormat(
+		    config.getString("pacioos.textsource.default_date_format"));
 
-		} catch (ConfigurationException e) {
-			log.error("Couldn't configure the text source driver. The error was: " + e.getMessage());
+    	
+		// parse the record delimiter from the config file
+		// set the XML configuration in the simple text source for later use
+		this.setConfiguration(xmlConfig);
+		
+		// set the common configuration fields
+		String connectionType = this.xmlConfig.getString("connectionType");
+		this.setConnectionType(connectionType);
+		String channelName = xmlConfig.getString("channelName");
+		this.setChannelName(channelName);
+		String identifier = xmlConfig.getString("identifier");
+		this.setIdentifier(identifier);
+		String rbnbName = xmlConfig.getString("rbnbName");
+		this.setRBNBClientName(rbnbName);
+		String rbnbServer = xmlConfig.getString("rbnbServer");
+		this.setServerName(rbnbServer);
+		int rbnbPort = xmlConfig.getInt("rbnbPort");
+		this.setServerPort(rbnbPort);
+		int archiveMemory = xmlConfig.getInt("archiveMemory");
+		this.setCacheSize(archiveMemory);
+		int archiveSize = xmlConfig.getInt("archiveSize");
+		this.setArchiveSize(archiveSize);
+		
+		// set the default channel information 
+		Object channels = xmlConfig.getList("channels.channel.name");
+		int totalChannels = 1;
+		if ( channels instanceof Collection) {
+			totalChannels = ((Collection<?>) channels).size();
 			
-			if ( log.isDebugEnabled() ) {
-				e.printStackTrace();
+		}		
+		// find the default channel with the ASCII data string
+		for (int i = 0; i < totalChannels; i++) {
+			boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
+			if ( isDefaultChannel ) {
+				String name = xmlConfig.getString("channels.channel(" + i + ").name");
+				this.setChannelName(name);
+				String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
+				this.setPattern(dataPattern);
+				String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
+				this.setDelimiter(fieldDelimiter);
+				String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
+				this.setRecordDelimiters(recordDelimiters);
+				break;
 			}
-			System.exit(1);
 			
 		}
+
+		// Check the record delimiters length and set the first and optionally second delim characters
+		if ( this.recordDelimiters.length == 1 ) {
+			this.firstDelimiterByte = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
+		} else if ( this.recordDelimiters.length == 2 ) {
+			this.firstDelimiterByte  = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
+			this.secondDelimiterByte = (byte) Integer.decode(this.recordDelimiters[1]).byteValue();
+
+		} else {
+			throw new ConfigurationException("The recordDelimiter must be one or two characters, " +
+		        "separated by a comma if there is more than one delimiter character");
+		}
+		byte[] delimiters = new byte[]{};
+
     }
     
     /**
@@ -241,8 +309,10 @@ public abstract class SimpleTextSource extends RBNBSource {
             Thread.sleep(retryInterval);
             
           } catch ( Exception e ){
-            log.info("There was an execution problem. Retrying. Message is: " +
-            e.getMessage());
+            log.info("There was an execution problem. Retrying. Message is: " + e.getMessage());
+            if ( log.isDebugEnabled() ) {
+            	e.printStackTrace();
+            }
             
           }
         }
@@ -526,22 +596,22 @@ public abstract class SimpleTextSource extends RBNBSource {
 	}
 
 	/**
-	 * Return the record delimiter string that separates saple lines of data
+	 * Return the record delimiters string array that separates sample lines of data
 	 * 
-	 * @return recordDelimiter - the record delimiter between samples
+	 * @return recordDelimiters - the record delimiters array between samples
 	 */
-	public String getRecordDelimiter() {
-		return this.recordDelimiter;
+	public String[] getRecordDelimiters() {
+		return this.recordDelimiters;
 		
 	}
 
 	/**
-	 * Set the record delimiter string that separates saple lines of data
+	 * Set the record delimiters string array that separates sample lines of data
 	 * 
-	 * @param recordDelimiter  the record delimiter between samples
+	 * @param recordDelimiters  the record delimiters array between samples
 	 */
-	public void setRecordDelimiter(String recordDelimiter) {
-		this.recordDelimiter = recordDelimiter;
+	public void setRecordDelimiters(String[] recordDelimiters) {
+		this.recordDelimiters = recordDelimiters;
 		
 	}
 
@@ -564,4 +634,87 @@ public abstract class SimpleTextSource extends RBNBSource {
 		return this.xmlConfig;
 		
 	}
+	
+	/**
+	 * A method that sets the command line options for this class.  This method 
+	 * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+	 * properties such as the sourceHostName, sourceHostPort, serverName, and
+	 * serverPort.
+	 * 
+	 * Note: We no longer use command-line options for the drivers.  Instead, configuration
+	 * is set using an XML-based configuration file.
+	 */
+	@Override
+	protected Options setOptions() {
+	    
+		//Options options = setBaseOptions(new Options());
+		Options options = new Options();
+	  
+	    options.addOption("h", true,  
+	        "The SimpleTextSource driver is used to connect to file, serial, or socket" +
+	        "-based instruments.  To configure an instrument, provide the path to the XML" +
+	        "-based configuration file.  See the driver documentation for creating the " +
+	        "configuration file");
+	                    
+	    return options;
+	}
+
+	/**
+	 * Send the sample to the DataTurbine
+	 * 
+	 * @param sample the ASCII sample string to send
+	 * @throws IOException
+	 * @throws SAPIException
+	 */
+	public boolean sendSample(String sample) throws IOException, SAPIException {
+		boolean sent = false;
+        
+	    // add a channel of data that will be pushed to the server.  
+	    // Each sample will be sent to the Data Turbine as an rbnb frame.
+	    ChannelMap rbnbChannelMap = new ChannelMap();
+        
+        // send the sample to the data turbine
+        rbnbChannelMap.PutTimeAuto("server");
+        int channelIndex = rbnbChannelMap.Add(getChannelName());
+        rbnbChannelMap.PutMime(channelIndex, "text/plain");
+        rbnbChannelMap.PutDataAsString(channelIndex, sample);
+        getSource().Flush(rbnbChannelMap);
+        log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
+        		 " sent data to the DataTurbine.");
+        
+        sent = true;
+        rbnbChannelMap.Clear();                      
+
+		return sent;
+	}
+
+	/**
+	 * Validate the sample string against the sample pattern provided in the configuration
+	 * 
+	 * @param sample  the sample string to validate
+	 * @return isValid  true if the sample string match the sample pattern
+	 */
+	public boolean validateSample(String sample) {
+		boolean isValid = false;
+		
+		// TODO: flesh this out
+		
+		return isValid;
+		
+	}
+	
+	/**
+	 * Return the first delimiter character as a byte
+	 */
+	public byte getFirstDelimiterByte() {
+		return this.firstDelimiterByte;
+	}
+
+	/**
+	 * Return the second delimiter character as a byte
+	 */
+	public byte getSecondDelimiterByte() {
+		return this.secondDelimiterByte;
+	}
+
 }
