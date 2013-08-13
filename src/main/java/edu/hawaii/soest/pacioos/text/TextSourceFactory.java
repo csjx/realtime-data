@@ -64,8 +64,7 @@ public class TextSourceFactory {
 		
 		// Get the per-driver configuration
 		XMLConfiguration xmlConfig = new XMLConfiguration();
-		xmlConfig.setDelimiterParsingDisabled(true);
-		xmlConfig.setAttributeSplittingDisabled(true);
+		xmlConfig.setListDelimiter(new String("|").charAt(0));
 		xmlConfig.load(configLocation);
 		String connectionType = xmlConfig.getString("connectionType");
 		
@@ -82,14 +81,14 @@ public class TextSourceFactory {
 		
 		// return the correct configuration type
 		if ( connectionType.equals("file") ) {
-			FileTextSource fileTextSource = getFileTextSource();
+			FileTextSource fileTextSource = getFileTextSource(xmlConfig);
 			String filePath = xmlConfig.getString("connectionParams.filePath");
 			fileTextSource.setDataFilePath(filePath);
 
 			simpleTextSource = (SimpleTextSource) fileTextSource;
 
 		} else if ( connectionType.equals("socket") ) {
-			SocketTextSource socketTextSource = getSocketTextSource();
+			SocketTextSource socketTextSource = getSocketTextSource(xmlConfig);
 			String hostName = xmlConfig.getString("connectionParams.hostName");
 			socketTextSource.setHostName(hostName);
 			int hostPort = xmlConfig.getInt("connectionParams.hostPort");
@@ -98,7 +97,7 @@ public class TextSourceFactory {
 			simpleTextSource = (SimpleTextSource) socketTextSource;
 
 		} else if ( connectionType.equals("serial") ) {
-			SerialTextSource serialTextSource = getSerialTextSource();
+			SerialTextSource serialTextSource = getSerialTextSource(xmlConfig);
 			String serialPort = xmlConfig.getString("connectionParams.serialPort");
 			serialTextSource.setSerialPort(serialPort);
 			int baudRate = xmlConfig.getInt("connectionParams.serialPortParams.baudRate");
@@ -117,79 +116,41 @@ public class TextSourceFactory {
 		         " The connection type of " + connectionType + " wasn't recognized.");
 		}
 		
-		// set the XML configuration in the simple text source for later use
-		simpleTextSource.setConfiguration(xmlConfig);
-		
-		// set the common configuration fields
-		simpleTextSource.setConnectionType(connectionType);
-		String channelName = xmlConfig.getString("channelName");
-		simpleTextSource.setChannelName(channelName);
-		String identifier = xmlConfig.getString("identifier");
-		simpleTextSource.setIdentifier(identifier);
-		String rbnbName = xmlConfig.getString("rbnbName");
-		simpleTextSource.setRBNBClientName(rbnbName);
-		String rbnbServer = xmlConfig.getString("rbnbServer");
-		simpleTextSource.setServerName(rbnbServer);
-		int rbnbPort = xmlConfig.getInt("rbnbPort");
-		simpleTextSource.setServerPort(rbnbPort);
-		int archiveMemory = xmlConfig.getInt("archiveMemory");
-		simpleTextSource.setCacheSize(archiveMemory);
-		int archiveSize = xmlConfig.getInt("archiveSize");
-		simpleTextSource.setArchiveSize(archiveSize);
-		
-		// set the default channel information 
-		Object channels = xmlConfig.getList("channels.channel.name");
-		int totalChannels = 1;
-		if ( channels instanceof Collection) {
-			totalChannels = ((Collection<?>) channels).size();
-			
-		}		
-		// find the default channel with the ASCII data string
-		for (int i = 0; i < totalChannels; i++) {
-			boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
-			if ( isDefaultChannel ) {
-				String name = xmlConfig.getString("channels.channel(" + i + ").name");
-				simpleTextSource.setChannelName(name);
-				String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
-				simpleTextSource.setPattern(dataPattern);
-				String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
-				simpleTextSource.setDelimiter(fieldDelimiter);
-				String recordDelimiter = xmlConfig.getString("channels.channel(" + i + ").recordDelimiter");
-				simpleTextSource.setRecordDelimiter(recordDelimiter);
-				break;
-			}
-			
-		}
-
 		return simpleTextSource;
 		
 	}
 
     /**
      * Provides an instance of a text-based source driver using data from a serial connection
+     * @param xmlConfig 
      * 
      * @return a new instance of SimpleTextSource
+     * @throws ConfigurationException 
      */
-	private static SerialTextSource getSerialTextSource() {
-		return new SerialTextSource();
+	private static SerialTextSource getSerialTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+		return new SerialTextSource(xmlConfig);
 	}
 
     /**
      * Provides an instance of a text-based source driver using data from a socket connection
+     * @param xmlConfig 
      * 
      * @return a new instance of SimpleTextSource
+     * @throws ConfigurationException 
      */
-	private static SocketTextSource getSocketTextSource() {
-		return new SocketTextSource();
+	private static SocketTextSource getSocketTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+		return new SocketTextSource(xmlConfig);
 	}
 
 
     /**
      * Provides an instance of a text-based source driver using data from a file
+     * @param xmlConfig 
      * 
      * @return a new instance of SimpleTextSource
+     * @throws ConfigurationException 
      */
-	private static FileTextSource getFileTextSource() {
-		return new FileTextSource();
+	private static FileTextSource getFileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+		return new FileTextSource(xmlConfig);
 	}
 }
