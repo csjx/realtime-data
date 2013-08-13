@@ -49,17 +49,38 @@ public class TextSourceApp {
 	 */
 	public static void main(String[] args) {
 		
+		String xmlConfiguration = null;
+		if (args.length != 1) {
+			log.error("Please provide the path to the instrument's XML configuration file " +
+		              "as a single parameter.");
+			System.exit(1);
+		} else {
+			xmlConfiguration = args[0];
+		}
 		try {
-		    textSource = TextSourceFactory.getSimpleTextSource(null);
+		    textSource = TextSourceFactory.getSimpleTextSource(xmlConfiguration);
 		    
 		    if ( textSource != null ) {
-		    	//textSource.start();
+		    	textSource.start();	
 		    	
 		    }
+		    
+		    // Handle ctrl-c's and other abrupt death signals to the process
+		    Runtime.getRuntime().addShutdownHook(new Thread() {
+		      // stop the streaming process
+		      public void run() {
+		    	  log.info("Stopping the SimpleTextSource driver due to user request");
+		          textSource.stop();		          
+		      }
+		    });
+
 		} catch (ConfigurationException e) {
 			if (log.isDebugEnabled() ) {
 				e.printStackTrace();				
 			}
+			
+			log.error("There was a problem configuring the driver.  The error message was: " +
+			          e.getMessage());
 			System.exit(1);
 
 		}
