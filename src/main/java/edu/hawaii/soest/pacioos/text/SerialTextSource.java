@@ -30,6 +30,8 @@ package edu.hawaii.soest.pacioos.text;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 
 /**
  * @author cjones
@@ -54,9 +56,11 @@ public class SerialTextSource extends SimpleTextSource {
 	
 	/**
 	 * constructor: create an instance of the SerialTextSource 
+	 * @param xmlConfig 
+	 * @throws ConfigurationException 
 	 */
-	public SerialTextSource() {
-		super();
+	public SerialTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+		super(xmlConfig);
 		
 	}
 	
@@ -76,15 +80,6 @@ public class SerialTextSource extends SimpleTextSource {
 	protected boolean setArgs(CommandLine cmd) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.nees.rbnb.RBNBBase#setOptions()
-	 */
-	@Override
-	protected Options setOptions() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
