@@ -123,9 +123,9 @@ RBNB DataTurbine Base Classes
       +Log logger
       -SimpleTextSource simpleTextSource
       +SimpleTextSource getSimpleTextSource(String configLocation)
-      -SimpletextSource getFileTextSource()
-      -SimpletextSource getSocketTextSource()
-      -SimpletextSource getSerialTextSource()
+      -SimpletextSource getFileTextSource(XMLConfiguration xmlConfig)
+      -SimpletextSource getSocketTextSource(XMLConfiguration xmlConfig)
+      -SimpletextSource getSerialTextSource(XMLConfiguration xmlConfig)
     }
     
     TextSourceApp .d.> TextSourceFactory
@@ -142,7 +142,7 @@ RBNB DataTurbine Base Classes
       -String rbnbChannelName
       -SimpleDateFormat defaultDateFormat 
       -String delimiter
-      -String recordDelimiter
+      -String[] recordDelimiters
       -List<String> dateFormats 
       -List<Integer> dateFields 
       -TimeZone tz
@@ -185,10 +185,12 @@ RBNB DataTurbine Base Classes
       +void setPattern(String pattern)
       +String getDelimiter()
       +void setDelimiter(String delimiter)
-      +void setRecordDelimiter(String recordDelimiter)
-      +String getRecordDelimiter()
+      +void setRecordDelimiters(String[] recordDelimiters)
+      +String[] getRecordDelimiters()
       +void setConfiguration(XMLConfiguration xmlConfig)
       +XMLConfiguration getConfiguration()
+      +boolean validateSample()
+      +boolean sendSample()
     }
     
     class FileTextSource { 
@@ -196,18 +198,19 @@ RBNB DataTurbine Base Classes
       -String fileName 
       -BufferedReader fileReader 
       
-      +FileSource() 
+      +FileSource(XMLConfiguration xmlConfig) 
       #boolean execute() 
       +String getDataFilePath() 
       +void setDataFilePath(String dataFilePath) 
-    
+      #boolean setOptions()
+      #boolean setArgs(CommandLine)
     } 
      
     class SocketTextSource { 
       -int bufferSize
       -String sourceHostName
       -int sourceHostPort
-      +SocketTextSource() 
+      +SocketTextSource(XMLConfiguration xmlConfig) 
       #boolean execute() 
       #SocketChannel getSocketConnection()
       +int getBufferSize()
@@ -216,6 +219,8 @@ RBNB DataTurbine Base Classes
       +void setHostName(String hostName)
       +int getHostPort()
       +void setHostPort(int hostPort)
+      #boolean setOptions()
+      #boolean setArgs(CommandLine)
     } 
   
     class SerialTextSource { 
@@ -225,13 +230,15 @@ RBNB DataTurbine Base Classes
       -int dataBits
       -int stopBits
       -String parity
-      +SerialTextSource() 
+      +SerialTextSource(XMLConfiguration xmlConfig) 
       #boolean execute() 
       #ByteChannel getSerialConnection()
       +String getSerialPort()
       +void setSerialPort(String serialPortName)
       +int getBufferSize()
       +void setBufferSize(int bufferSize)
+      #boolean setOptions()
+      #boolean setArgs(CommandLine)
     } 
   
   
