@@ -19,8 +19,8 @@
         </serialPortParams>      
         </connectionParams>
     <rbnbName>AW02XX001CTDXXXXR00</rbnbName>
-    <rbnbServer>localhost</rbnbServer>
-    <rbnbPort>3333</rbnbPort>
+    <rbnbServer>127.0.0.1</rbnbServer>
+    <rbnbPort>33333</rbnbPort>
     <archiveMemory>126000</archiveMemory>
     <archiveSize>31536000</archiveSize>
     <channels>
