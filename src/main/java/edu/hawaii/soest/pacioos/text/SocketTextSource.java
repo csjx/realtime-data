@@ -202,6 +202,7 @@ public class SocketTextSource extends SimpleTextSource {
 		                    byteThree = 0x00;
 		                    byteFour  = 0x00;
 		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+		                    state = 0;
                   
 		              	} else {
 			                  // still in the middle of the sample, keep adding bytes
@@ -243,6 +244,7 @@ public class SocketTextSource extends SimpleTextSource {
 			                byteThree = 0x00;
 			                byteFour  = 0x00;
 		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+		                    state = 0;
 		                    
 	              		} else {
 			                  // still in the middle of the sample, keep adding bytes
