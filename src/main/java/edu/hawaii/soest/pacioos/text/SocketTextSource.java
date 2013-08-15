@@ -120,7 +120,7 @@ public class SocketTextSource extends SimpleTextSource {
 	        // while there are unread bytes in the ByteBuffer
 	        while ( buffer.hasRemaining() ) {
 	          byteOne = buffer.get();
-	         log.debug("char: " + (char) byteOne                                   + "\t" + 
+	         log.debug("char: " + (char) byteOne                                      + "\t" + 
 	                      "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
 	                      "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
 	                      "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
@@ -203,7 +203,21 @@ public class SocketTextSource extends SimpleTextSource {
 		                    byteFour  = 0x00;
 		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   
-		              	}
+		              	} else {
+			                  // still in the middle of the sample, keep adding bytes
+			                  sampleByteCount++; // add each byte found
+	                  
+			                  if ( sampleBuffer.remaining() > 0 ) {
+			                    sampleBuffer.put(byteOne);
+			                  } else {
+			                    sampleBuffer.compact();
+			                    log.debug("Compacting sampleBuffer ...");
+			                    sampleBuffer.put(byteOne);
+			                    
+			                  }
+			                  
+			                  break;		              		
+		              	} 
                   
 	              	} else if ( getRecordDelimiters().length == 1 ){
 	              		if ( byteOne == getFirstDelimiterByte() ) {
@@ -230,22 +244,21 @@ public class SocketTextSource extends SimpleTextSource {
 			                byteFour  = 0x00;
 		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
 		                    
-	              		}
-	              		
-	              	} else {
-		                  // still in the middle of the sample, keep adding bytes
-		                  sampleByteCount++; // add each byte found
-                  
-		                  if ( sampleBuffer.remaining() > 0 ) {
-		                    sampleBuffer.put(byteOne);
-		                  } else {
-		                    sampleBuffer.compact();
-		                    log.debug("Compacting sampleBuffer ...");
-		                    sampleBuffer.put(byteOne);
-		                    
-		                  }
-		                  
-		                  break;
+	              		} else {
+			                  // still in the middle of the sample, keep adding bytes
+			                  sampleByteCount++; // add each byte found
+	                  
+			                  if ( sampleBuffer.remaining() > 0 ) {
+			                    sampleBuffer.put(byteOne);
+			                  } else {
+			                    sampleBuffer.compact();
+			                    log.debug("Compacting sampleBuffer ...");
+			                    sampleBuffer.put(byteOne);
+			                    
+			                  }
+			                  
+			                  break;		              		
+		              	} 
 	              		
 	              	} // end getRecordDelimiters().length
 	                	          
@@ -375,7 +388,7 @@ public class SocketTextSource extends SimpleTextSource {
 	    disconnect();
 	    dataSocket = null;
 	  } catch (IOException nioe ) {
-	    log.info("Couldn't get I/O connection to: " + host);
+	    log.info("Couldn't get I/O connection to: " + host + ":" + portNumber);
 	    disconnect();
 	    dataSocket = null;
 	  }
