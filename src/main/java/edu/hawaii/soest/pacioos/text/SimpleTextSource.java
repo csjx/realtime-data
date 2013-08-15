@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Options;
@@ -696,8 +697,16 @@ public abstract class SimpleTextSource extends RBNBSource {
 	 */
 	public boolean validateSample(String sample) {
 		boolean isValid = false;
+
+        // test the line for the expected data pattern
+        Matcher matcher = this.dataPattern.matcher(sample);
+
+		if ( matcher.matches() ) {
+			isValid = true;
+		}
 		
-		// TODO: flesh this out
+		log.debug("Data pattern is: '" + this.dataPattern.toString() + "'");
+		log.debug("Sample is      :  " + sample);
 		
 		return isValid;
 		
