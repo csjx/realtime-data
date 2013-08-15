@@ -32,9 +32,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -206,6 +208,52 @@ public abstract class SimpleTextSource extends RBNBSource {
 				this.setDelimiter(fieldDelimiter);
 				String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
 				this.setRecordDelimiters(recordDelimiters);
+				// iterate through the date formats list
+				List<String> dateFormatsList = new ArrayList<String>();
+				List<?> dateFormats = xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
+				if ( dateFormats.size() != 0 ) {
+					int numDateFormats = 1;
+					if (dateFormats instanceof Collection) {
+						numDateFormats = ((Collection<?>) dateFormats).size();
+					}
+					for (int j = 0; j < numDateFormats; j++) {
+						String dateFormat = 
+							xmlConfig.getString("channels.channel(" + i + ").dateFormats(" + j + ").dateFormat");
+						try {
+							SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+							dateFormatsList.add(dateFormat);
+						} catch (IllegalFormatException ife) {
+							String msg = "There was an error parsing the date format " +
+						        dateFormat + ". The message was: " + ife.getMessage();
+							if ( log.isDebugEnabled() ) {
+								ife.printStackTrace();
+							}
+							throw new ConfigurationException(msg);
+						}
+					}
+					setDateFormats(dateFormatsList);
+				} else {
+					log.warn("No date formats have been configured for this instrument.");
+				}
+				// iterate through the date fields list
+				List<Integer> dateFieldsList = new ArrayList<Integer>();
+				List<?> dateFields = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
+				if ( dateFields.size() != 0 ) {
+					int numDateFields = 1;
+					if (dateFields instanceof Collection) {
+						numDateFields = ((Collection<?>) dateFields).size();
+					}
+					for (int j = 0; j < numDateFields; j++) {
+						Integer dateField = 
+							new Integer(xmlConfig.getInt("channels.channel(" + i + ").dateFields(" + j + ").dateField"));
+						dateFieldsList.add(dateField);
+					}
+					setDateFields(dateFieldsList);
+				} else {
+					log.warn("No date fields have been configured for this instrument.");
+				}
+				String timeZone = xmlConfig.getString("channels.channel(" + i + ").timeZone");
+				this.setTimezone(timeZone);
 				break;
 			}
 			
@@ -573,8 +621,17 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    // build the total date format from the individual fields listed in dateFields
 	    int index = 0;
 	    for (Integer dateField : this.dateFields) {
-	    	dateFormatStr += this.dateFormats.get(index); //zero-based list
-	    	dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
+	    	try {
+				dateFormatStr += this.dateFormats.get(index); //zero-based list
+				dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
+			} catch (IndexOutOfBoundsException e) {
+				String msg = "There was an error parsing the date from the sample using the date format '" +
+				        dateFormatStr + "' and the date field index of " + dateField.intValue();
+				if ( log.isDebugEnabled() ) {				
+					e.printStackTrace();
+				}
+				throw new ParseException(msg, 0);
+			}
 	    	index++;
 	    }
 		log.debug("Using date format string: " + dateFormatStr);
@@ -582,8 +639,7 @@ public abstract class SimpleTextSource extends RBNBSource {
 
 	    this.tz = TimeZone.getTimeZone(this.timezone);
 	    if ( this.dateFormats == null || this.dateFields == null ) {
-	    	log.warn("Using the defaault datetime field for sample data. " +
-	            "Use the -f and -d options to explicitly set date time fields.");
+	    	log.warn("Using the defaault datetime field for sample data.");
 	    	dateFormat = this.defaultDateFormat;
 	    }
 	    // init the date formatter
@@ -673,9 +729,18 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    // add a channel of data that will be pushed to the server.  
 	    // Each sample will be sent to the Data Turbine as an rbnb frame.
 	    ChannelMap rbnbChannelMap = new ChannelMap();
+	    Date sampleDate = new Date();
+        try {
+			sampleDate = getSampleDate(sample);
+			
+		} catch (ParseException e) {
+			log.warn("A sample date couldn't be parsed from the sample.  Using the current date." +
+		        " the error message was: " + e.getMessage());
+		}
+        long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
         
         // send the sample to the data turbine
-        rbnbChannelMap.PutTimeAuto("server");
+        rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
         rbnbChannelMap.PutDataAsString(channelIndex, sample);
