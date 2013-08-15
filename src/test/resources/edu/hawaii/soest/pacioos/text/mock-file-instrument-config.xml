@@ -34,12 +34,13 @@
             <recordDelimiters>0x0D|0x0A</recordDelimiters>
             <!-- One or more date formats are required, reflecting the date/time variables in the data -->
             <dateFormats>
-                <dateFormat>dd mmm YYYY HH:MM:SS</dateFormat>
+                <dateFormat>dd MMM yyyy HH:MM:SS</dateFormat>
             </dateFormats>
             <!-- One or more date fields are required, corresponding to the date/time variable positions in the data -->        
             <dateFields>
                 <dateField>7</dateField>
             </dateFields>
+            <timeZone>HST</timeZone>
         </channel>
     </channels>   
 </instrument>
