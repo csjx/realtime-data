@@ -110,9 +110,10 @@ public class MockDataSource implements Runnable {
 			    out = new PrintWriter(clientSocket.getOutputStream(), true);
 				// loop through the file and send each line over the wire
 				for ( String line : lines ) {
-					line = "\r\n" + line + "\r\n";
+					line = line + "\r\n";
 			    	log.debug("Line bytes: " + new String(Hex.encodeHex(line.getBytes("US-ASCII"))));
-			    	out.println(line);
+			    	out.print(line);
+			    	out.flush();
 			    	Thread.sleep(1000);
 			    }
 				out.close();
