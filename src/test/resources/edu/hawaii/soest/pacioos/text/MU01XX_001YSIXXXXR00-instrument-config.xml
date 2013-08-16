@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instrument>
+    <identifier>MU01XX_001YSIXXXXR00</identifier>
+    <connectionType>socket</connectionType>
+    <connectionParams>        
+        <!-- OR
+        <filePath>
+            /Users/cjones/docs/dev/clean/bbl/trunk/src/test/resources/AW02XX001CTDXXXXR00.log
+        </filePath> -->
+        <hostName>127.0.0.1</hostName>
+        <hostPort>5111</hostPort>
+        <!-- OR
+        <serialPort>/dev/ttyUSB0</serialPort>
+        <serialPortParams>
+            <baudRate>9600</baudRate>
+            <dataBits>8</dataBits>
+            <stopBits>1</stopBits>
+            <parity>NONE</parity>
+        </serialPortParams> -->         
+        </connectionParams>
+    <rbnbName>MU01XX_001YSIXXXXR00</rbnbName>
+    <rbnbServer>127.0.0.1</rbnbServer>
+    <rbnbPort>33333</rbnbPort>
+    <archiveMemory>126000</archiveMemory>
+    <archiveSize>31536000</archiveSize>
+    <channels>
+        <channel default="true">
+            <name>DecimalASCIISampleData</name>
+            <dataType>String</dataType>
+            <!-- Best to keep data pattern on one line below -->
+            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*\s*</dataPattern>
+            <!-- Use Hex notation for non-printing, whitespace characters (like space) -->
+            <fieldDelimiter>0x20</fieldDelimiter>
+            <!-- Use Hex notation for non-printing characters, separate characters with a pipe -->
+            <recordDelimiters>0x0d|0x0A</recordDelimiters>
+            <!-- One or more date formats are required, reflecting the date/time variables in the data -->
+            <dateFormats>
+              <dateFormat>MM/dd/yyyy</dateFormat>
+              <dateFormat>HH:mm:ss</dateFormat>
+            </dateFormats>
+            <!-- One or more date fields are required, corresponding to the date/time variable positions in the data -->        
+            <dateFields>
+              <dateField>1</dateField>
+              <dateField>2</dateField>
+            </dateFields>
+            <timeZone>HST</timeZone>
+        </channel>
+    </channels>   
+</instrument>
