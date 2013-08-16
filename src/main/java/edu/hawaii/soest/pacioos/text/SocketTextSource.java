@@ -33,7 +33,9 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -120,152 +122,124 @@ public class SocketTextSource extends SimpleTextSource {
 	        // while there are unread bytes in the ByteBuffer
 	        while ( buffer.hasRemaining() ) {
 	          byteOne = buffer.get();
-	         log.debug("char: " + (char) byteOne                                      + "\t" + 
-	                      "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
-	                      "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
-	                      "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
-	                      "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
-	                      "sample pos: "   + sampleBuffer.position()                  + "\t" +
-	                      "sample rem: "   + sampleBuffer.remaining()                 + "\t" +
-	                      "sample cnt: "   + sampleByteCount                          + "\t" +
-	                      "buffer pos: "   + buffer.position()                        + "\t" +
-	                      "buffer rem: "   + buffer.remaining()                       + "\t" +
-	                      "state: "        + state
-	         );
 	          
-	          // Use a State Machine to process the byte stream.
-	          // Start building an rbnb frame for the entire sample, first by 
-	          // inserting a timestamp into the channelMap.  This time is merely
-	          // the time of insert into the data turbine, not the time of
-	          // observations of the measurements.  That time should be parsed out
-	          // of the sample in the Sink client code
-	    
-	          switch( state ) {
-	    
-	              case 0:
-	                  
-	                    // note bytes are in reverse order in the FIFO window
-	                  if (getRecordDelimiters().length == 2 ) {
-	                  	    if ( byteTwo == getFirstDelimiterByte() && 
-	                  	    	 byteOne == getSecondDelimiterByte() ) {
-	                  	        state = 1; //found the line ending, move on
-	                  	        break;
-	                  	        
-	                  	    } else {
-	                  	        break; // haven't found the line ending yet
-	                  	        
-	                  	    }
-	                  	    
-	                  } else {
-	                      if ( byteOne == getFirstDelimiterByte() ) {
-	                          state = 1; //found the line ending, move on
-	                      	  break;
-	                      	  
-	                      } else {
-	                      	  break; // haven't found the line ending yet
-	                      	  
-	                      }
-	                  }
-	                  
-	              case 1: // read the rest of the bytes to the next EOL characters
-	                
-	                // sample line is terminated by record delimiter bytes (usually \r\n or \n)
-	                // note bytes are in reverse order in the FIFO window
-	              	
-	              	boolean sent = false;
-	              	
-	              	if ( getRecordDelimiters().length == 2 ) {
-	              		if ( byteTwo == getFirstDelimiterByte() && 
-		              	     byteOne == getSecondDelimiterByte() ) {
-	  	                    sampleBuffer.put(byteTwo);
-		                    sampleByteCount++;
-		                    sampleBuffer.put(byteOne);
-		                    sampleByteCount++;
-			          		// extract just the length of the sample bytes out of the
-			                // sample buffer, and place it in the channel map as a 
-			                // byte array.  Then, send it to the data turbine.
-			                byte[] sampleArray = new byte[sampleByteCount];
-			                sampleBuffer.flip();
-			                sampleBuffer.get(sampleArray);
-			                String sampleString = new String(sampleArray, "US-ASCII");
-
-		                    if ( validateSample(sampleString) ) {
-			                    sent = sendSample(sampleString);		                    	
-		                    } else {
-		                    	log.warn("The sample did not validate, and was not sent.");
-		                    }
-
-			                sampleBuffer.clear();
-			                sampleByteCount = 0;
-			                byteOne   = 0x00;
-		                    byteTwo   = 0x00;
-		                    byteThree = 0x00;
-		                    byteFour  = 0x00;
-		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-		                    state = 0;
+	          // log the byte stream
+	          String character = new String(new byte[]{byteOne});
+	          if ( log.isDebugEnabled() ) {
+				  List<Byte> whitespaceBytes = new ArrayList<Byte>();
+				  whitespaceBytes.add(new Byte((byte) 0x0A));
+				  whitespaceBytes.add(new Byte((byte) 0x0D));
+				  if (whitespaceBytes.contains(new Byte(byteOne))) {
+				  	character = new String(Hex.encodeHex((new byte[] { byteOne })));
                   
-		              	} else {
-			                  // still in the middle of the sample, keep adding bytes
-			                  sampleByteCount++; // add each byte found
-	                  
-			                  if ( sampleBuffer.remaining() > 0 ) {
-			                    sampleBuffer.put(byteOne);
-			                  } else {
-			                    sampleBuffer.compact();
-			                    log.debug("Compacting sampleBuffer ...");
-			                    sampleBuffer.put(byteOne);
-			                    
-			                  }
-			                  
-			                  break;		              		
-		              	} 
-                  
-	              	} else if ( getRecordDelimiters().length == 1 ){
-	              		if ( byteOne == getFirstDelimiterByte() ) {
-			                  sampleBuffer.put(byteOne);
-			                  sampleByteCount++;
-			          		// extract just the length of the sample bytes out of the
-			                // sample buffer, and place it in the channel map as a 
-			                // byte array.  Then, send it to the data turbine.
-			                byte[] sampleArray = new byte[sampleByteCount];
-			                sampleBuffer.flip();
-			                sampleBuffer.get(sampleArray);
-			                String sampleString = new String(sampleArray, "US-ASCII");
-
-		                    if ( validateSample(sampleString) ) {
-		                    	sent = sendSample(sampleString);
-		                    } else {
-		                    	log.warn("The sample did not validate, and was not sent.");
-		                    }
-			                sampleBuffer.clear();
-			                sampleByteCount = 0;
-			                byteOne   = 0x00;
-			                byteTwo   = 0x00;
-			                byteThree = 0x00;
-			                byteFour  = 0x00;
-		                    log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
-		                    state = 0;
-		                    
-	              		} else {
-			                  // still in the middle of the sample, keep adding bytes
-			                  sampleByteCount++; // add each byte found
-	                  
-			                  if ( sampleBuffer.remaining() > 0 ) {
-			                    sampleBuffer.put(byteOne);
-			                  } else {
-			                    sampleBuffer.compact();
-			                    log.debug("Compacting sampleBuffer ...");
-			                    sampleBuffer.put(byteOne);
-			                    
-			                  }
-			                  
-			                  break;		              		
-		              	} 
-	              		
-	              	} // end getRecordDelimiters().length
-	                	          
-	          } // end switch statement
+				  }
+			  }
+			  log.debug("char: " + character                                          + "\t" + 
+	                    "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))     + "\t" + 
+	                    "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))     + "\t" + 
+	                    "b3: " + new String(Hex.encodeHex((new byte[]{byteThree})))   + "\t" + 
+	                    "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))    + "\t" +
+	                    "sample pos: "   + sampleBuffer.position()                    + "\t" +
+	                    "sample rem: "   + sampleBuffer.remaining()                   + "\t" +
+	                    "sample cnt: "   + sampleByteCount                            + "\t" +
+	                    "buffer pos: "   + buffer.position()                          + "\t" +
+	                    "buffer rem: "   + buffer.remaining()                         + "\t" +
+	                    "state: "        + state);
 	          
+	    	  
+			  // evaluate each byte to find the record delimiter(s), and when found, validate and
+			  // send the sample to the DataTurbine.
+	          boolean sent = false;
+	          
+	          if ( getRecordDelimiters().length == 2 ) {
+	          	  // have we hit the delimiters in the stream yet?
+	        	  if ( byteTwo == getFirstDelimiterByte() && 
+		        	   byteOne == getSecondDelimiterByte() ) {
+	  	              sampleBuffer.put(byteOne);
+		              sampleByteCount++;
+			    	  // extract just the length of the sample bytes out of the
+			          // sample buffer, and place it in the channel map as a 
+			          // byte array.  Then, send it to the DataTurbine.
+		              log.debug("Sample byte count: " + sampleByteCount);
+			          byte[] sampleArray = new byte[sampleByteCount];
+			          sampleBuffer.flip();
+			          sampleBuffer.get(sampleArray);
+			          String sampleString = new String(sampleArray, "US-ASCII");
+
+		              if ( validateSample(sampleString) ) {
+			              sent = sendSample(sampleString);		                    	
+		              } else {
+		              	log.warn("The sample did not validate, and was not sent.");
+		              }
+
+			          sampleBuffer.clear();
+			          sampleByteCount = 0;
+			          byteOne   = 0x00;
+		              byteTwo   = 0x00;
+		              byteThree = 0x00;
+		              byteFour  = 0x00;
+		              log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+		              
+		          } else {
+			          // still in the middle of the sample, keep adding bytes
+			          sampleByteCount++; // add each byte found
+	              
+			          if ( sampleBuffer.remaining() > 0 ) {
+			            sampleBuffer.put(byteOne);
+			            
+			          } else {
+			            sampleBuffer.compact();
+			            log.debug("Compacting sampleBuffer ...");
+			            sampleBuffer.put(byteOne);
+			            
+			          }
+			          
+		          } 
+              
+	          } else if ( getRecordDelimiters().length == 1 ){
+	          	  // have we hit the delimiter in the stream yet?
+	        	  if ( byteOne == getFirstDelimiterByte() ) {
+				      sampleBuffer.put(byteOne);
+				      sampleByteCount++;
+				      // extract just the length of the sample bytes out of the
+				      // sample buffer, and place it in the channel map as a 
+				      // byte array.  Then, send it to the DataTurbine.
+				      byte[] sampleArray = new byte[sampleByteCount];
+				      sampleBuffer.flip();
+				      sampleBuffer.get(sampleArray);
+				      String sampleString = new String(sampleArray, "US-ASCII");
+	                  
+			          if ( validateSample(sampleString) ) {
+			          	sent = sendSample(sampleString);
+			          } else {
+			          	log.warn("The sample did not validate, and was not sent.");
+			          }
+				      sampleBuffer.clear();
+				      sampleByteCount = 0;
+				      byteOne   = 0x00;
+				      byteTwo   = 0x00;
+				      byteThree = 0x00;
+				      byteFour  = 0x00;
+			          log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+		                
+	          	  } else {
+				      // still in the middle of the sample, keep adding bytes
+				      sampleByteCount++; // add each byte found
+		              
+				      if ( sampleBuffer.remaining() > 0 ) {
+				        sampleBuffer.put(byteOne);
+				        
+				      } else {
+				        sampleBuffer.compact();
+				        log.debug("Compacting sampleBuffer ...");
+				        sampleBuffer.put(byteOne);
+				        
+				      }
+			              
+		          } 
+	          	
+	          } // end getRecordDelimiters().length
+	                	          	          
 	          // shift the bytes in the FIFO window
 	          byteFour = byteThree;
 	          byteThree = byteTwo;
