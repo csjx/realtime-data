@@ -122,6 +122,7 @@ public class SocketTextSourceTest {
 		testMockInstruments = new ArrayList<String>();
 		testMockInstruments.add("AW02XX_001CTDXXXXR00");
 		testMockInstruments.add("WK01XX_001CTDXXXXR00");
+		testMockInstruments.add("KN0101_010TCHNXXXR00");
 		
 		// test each mock instrument file, using file ending naming conventions
 		for (String instrument : testMockInstruments) {
