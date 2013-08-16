@@ -26,11 +26,15 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -41,7 +45,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rbnb.api.AddressException;
+import com.rbnb.api.SerializeException;
 import com.rbnb.api.Server;
+import com.rbnb.sapi.ChannelMap;
+import com.rbnb.sapi.SAPIException;
+import com.rbnb.sapi.Sink;
 
 /**
  * Exercises the SocketTextSource by starting a mock data source server, a mock DataTurbine,
@@ -63,7 +72,8 @@ public class SocketTextSourceTest {
 		
 	private Thread mockDataSourceThread;
 	
-
+    private List<String> testMockInstruments;
+    
 	/**
 	 * Start a mock DataTurbine and a MockDataSource, both of which will be connected to 
 	 * by the SocketTextSource class being tested.
@@ -84,19 +94,13 @@ public class SocketTextSourceTest {
 		}
 		
 		// start up a mock DataTurbine instance
-		//FileUtils.deleteDirectory(new File("/tmp/dt"));
+		FileUtils.deleteDirectory(new File("/tmp/dt"));
 		FileUtils.forceMkdir(new File("/tmp/dt"));
 		String[] options = new String[]{"-a", "127.0.0.1:33333", "-H", "/tmp/dt"};
 		mockDT = Server.launchNewServer(options);
 		log.info("Dataturbine is running on " + mockDT.getAddress());
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		
-		// start up the mock data source
-		mockCTDData = testResourcesDirectory + 
-			"edu/hawaii/soest/pacioos/text/AW02XX001CTDXXXXR00-mock-data.txt";
-		mockDataSource = new MockDataSource(mockCTDData);
-		mockDataSourceThread = new Thread(mockDataSource);
-		mockDataSourceThread.start();
 	}
 
 	/**
@@ -104,52 +108,127 @@ public class SocketTextSourceTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		// shut down the DT
-		log.info("Stopping the mock DataTurbine");
-		if ( mockDT != null ) {
-			mockDT.stop();
-			
-		}
-		// shut down the data source
-		if ( mockDataSource != null ) {			
-			mockDataSource.stop();
-			
-		}
 	}
 
 	/**
+	 * Test multiple instrument file formats and instrument configurations:
+	 * Data from NS02
+	 * Data from NS03
 	 * Test method for {@link edu.hawaii.soest.pacioos.text.SocketTextSource#SocketTextSource(org.apache.commons.configuration.XMLConfiguration)}.
 	 */
 	@Test
 	public void testSocketTextSource() {
 		
-		String configLocation = testResourcesDirectory +
-				"edu/hawaii/soest/pacioos/text/mock-socket-instrument-config.xml";
+		testMockInstruments = new ArrayList<String>();
+		testMockInstruments.add("AW02XX_001CTDXXXXR00");
+		testMockInstruments.add("WK01XX_001CTDXXXXR00");
+		
+		// test each mock instrument file, using file ending naming conventions
+		for (String instrument : testMockInstruments) {
+			// start up the mock data source
+			mockCTDData = testResourcesDirectory + 
+						  "edu/hawaii/soest/pacioos/text/" +
+						  instrument + 
+						  "-mock-data.txt";
+			mockDataSource = new MockDataSource(mockCTDData);
+			mockDataSourceThread = new Thread(mockDataSource);
+			mockDataSourceThread.start();
 
-		//fail("Not yet implemented");
-		SimpleTextSource socketTextSource = null;
-		try {
+			String configLocation = testResourcesDirectory + 
+									"edu/hawaii/soest/pacioos/text/" +
+									instrument + 
+									"-instrument-config.xml";
 
-			// start the SocketTextSource
-			socketTextSource = TextSourceFactory.getSimpleTextSource(configLocation);
-			socketTextSource.start();
-			
-			// wait while data are streamed from the mock data source
-			while ( mockDataSourceThread.isAlive() ) {
-				Thread.sleep(1000);
+			SimpleTextSource socketTextSource = null;
+			try {
+
+				// start the SocketTextSource
+				socketTextSource = TextSourceFactory.getSimpleTextSource(configLocation);
+				socketTextSource.start();
 				
+				// wait while data are streamed from the mock data source
+				while ( mockDataSourceThread.isAlive() ) {
+					Thread.sleep(1000);
+					
+				}
+							
+				// stop the SocketTextSource
+				socketTextSource.stop();
+				
+				// count the number of samples intended to be sent to the DataTurbine
+			    File ctdData = new File(mockCTDData);
+			    int numberOfIntendedSamples = 0;
+			    List<String> lines = new ArrayList<String>();
+				try {
+					lines = FileUtils.readLines(ctdData);
+					for (String line : lines ) {
+						if ( line.matches(socketTextSource.getPattern()) ) {
+							numberOfIntendedSamples++;
+						}
+					}
+					//numberOfIntendedSamples = lines.size();
+				} catch (IOException e) {
+					fail("Couldn't read data file: " + e.getMessage());
+					
+				}
+
+				// retreive the data from the DataTurbine
+			    ChannelMap requestMap = new ChannelMap();
+			    int entryIndex = requestMap.Add(socketTextSource.getRBNBClientName() + "/" + socketTextSource.getChannelName());
+			    log.debug("Request Map: " + requestMap.toString());
+			    Sink sink = new Sink();
+			    sink.OpenRBNBConnection(socketTextSource.getServer(), "lastEntrySink");
+			    sink.Request(requestMap, 0., 6000., "newest");
+			    ChannelMap responseMap = sink.Fetch(60000); // get data within 60 seconds
+			    String[] dtLines = responseMap.GetDataAsString(entryIndex);
+			    int numberOfSuccessfulSamples = dtLines.length;
+			    
+			    log.info("Intended samples  : " + numberOfIntendedSamples);
+			    log.info("Successful samples: " + numberOfSuccessfulSamples);
+			    
+			    assertEquals(numberOfIntendedSamples, numberOfSuccessfulSamples);
+				
+				// shut down the data source
+				if ( mockDataSource != null ) {			
+					mockDataSource.stop();
+					
+				}
+				
+			} catch (ConfigurationException e) {
+				log.error(e.getMessage());
+				e.printStackTrace();
+				fail("Couldn't configure a driver using " + configLocation);
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			
+			} catch (SAPIException e) {
+				e.printStackTrace();
 			}
-						
-			// stop the SocketTextSource
-			socketTextSource.stop();
+
+		}
+		
+		// shut down the DT
+		log.info("Stopping the mock DataTurbine");
+		if ( mockDT != null ) {
+			try {
+				mockDT.stop();
+			} catch (AddressException e) {
+				e.printStackTrace();
+				
+			} catch (SerializeException e) {
+				e.printStackTrace();
+				
+			} catch (EOFException e) {
+				e.printStackTrace();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
-		} catch (ConfigurationException e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-			fail("Couldn't configure a driver using " + configLocation);
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 
 	}
