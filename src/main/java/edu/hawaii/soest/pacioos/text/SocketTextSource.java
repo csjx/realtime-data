@@ -168,9 +168,7 @@ public class SocketTextSource extends SimpleTextSource {
 
 		              if ( validateSample(sampleString) ) {
 			              sent = sendSample(sampleString);		                    	
-		              } else {
-		              	log.warn("The sample did not validate, and was not sent.");
-		              }
+		              } 
 
 			          sampleBuffer.clear();
 			          sampleByteCount = 0;
@@ -211,9 +209,8 @@ public class SocketTextSource extends SimpleTextSource {
 	                  
 			          if ( validateSample(sampleString) ) {
 			          	sent = sendSample(sampleString);
-			          } else {
-			          	log.warn("The sample did not validate, and was not sent.");
-			          }
+			          } 
+			          
 				      sampleBuffer.clear();
 				      sampleByteCount = 0;
 				      byteOne   = 0x00;

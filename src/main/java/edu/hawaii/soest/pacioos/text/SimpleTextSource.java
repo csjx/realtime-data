@@ -769,6 +769,12 @@ public abstract class SimpleTextSource extends RBNBSource {
 
 		if ( matcher.matches() ) {
 			isValid = true;
+		} else {
+        	String sampleAsReadableText = sample.replaceAll("\\x0D", "0D");
+        	sampleAsReadableText = sampleAsReadableText.replaceAll("\\x0A", "0A");
+        	
+          	log.warn("The sample did not validate, and was not sent. The text was: " +
+            sampleAsReadableText);
 		}
 		
     	try {
