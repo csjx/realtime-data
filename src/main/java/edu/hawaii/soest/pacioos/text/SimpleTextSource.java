@@ -7,10 +7,10 @@
  *
  *   Authors: Christopher Jones
  *
- * $HeadURL: $
- * $LastChangedDate: $
- * $LastChangedBy:  $
- * $LastChangedRevision:  $
+ * $HeadURL$
+ * $LastChangedDate$
+ * $LastChangedBy$
+ * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,10 +317,10 @@ public abstract class SimpleTextSource extends RBNBSource {
      */
     public String getCVSVersionString(){
       return (
-      "$LastChangedDate: 2013-01-10 20:39:51 -0700 (Thu, 10 Jan 2013) $" +
-      "$LastChangedBy: cjones $" +
-      "$LastChangedRevision: 935 $" +
-      "$HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/utilities/FileSource.java $"
+      "$LastChangedDate$" +
+      "$LastChangedBy$" +
+      "$LastChangedRevision$" +
+      "$HeadURL$"
       );
     }
 
