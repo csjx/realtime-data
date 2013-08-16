@@ -207,7 +207,17 @@ public abstract class SimpleTextSource extends RBNBSource {
 				String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
 				this.setPattern(dataPattern);
 				String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
-				this.setDelimiter(fieldDelimiter);
+				// handle hex-encoded field delimiters
+				if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
+					
+					Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2));
+					String delim = delimBytes.toString();
+					this.setDelimiter(delim);
+					
+				} else {
+					this.setDelimiter(fieldDelimiter);
+
+				}
 				String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
 				this.setRecordDelimiters(recordDelimiters);
 				// set the date formats list
@@ -617,38 +627,44 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    String[] columns     = line.trim().split(this.delimiter);
 	    log.debug("Delimiter is: " + this.delimiter);
 	    log.debug(Arrays.toString(columns));
-	    
+	    Date sampleDate = new Date();
 	    // build the total date format from the individual fields listed in dateFields
 	    int index = 0;
-	    for (Integer dateField : this.dateFields) {
-	    	try {
-				dateFormatStr += this.dateFormats.get(index); //zero-based list
-				dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
-			} catch (IndexOutOfBoundsException e) {
-				String msg = "There was an error parsing the date from the sample using the date format '" +
-				        dateFormatStr + "' and the date field index of " + dateField.intValue();
-				if ( log.isDebugEnabled() ) {				
-					e.printStackTrace();
+	    if ( this.dateFields != null && this.dateFormats != null ) {
+			for (Integer dateField : this.dateFields) {
+				try {
+					dateFormatStr += this.dateFormats.get(index); //zero-based list
+					dateString += columns[dateField.intValue() - 1].trim(); //zero-based list
+				} catch (IndexOutOfBoundsException e) {
+					String msg = "There was an error parsing the date from the sample using the date format '"
+							+ dateFormatStr
+							+ "' and the date field index of "
+							+ dateField.intValue();
+					if (log.isDebugEnabled()) {
+						e.printStackTrace();
+					}
+					throw new ParseException(msg, 0);
 				}
-				throw new ParseException(msg, 0);
+				index++;
 			}
-	    	index++;
-	    }
-		log.debug("Using date format string: " + dateFormatStr);
-		log.debug("Using date string       : " + dateString);
-		log.debug("Using time zone         : " + this.timezone);
-
-	    this.tz = TimeZone.getTimeZone(this.timezone);
-	    if ( this.dateFormats == null || this.dateFields == null ) {
-	    	log.warn("Using the defaault datetime field for sample data.");
-	    	dateFormat = this.defaultDateFormat;
-	    }
-	    // init the date formatter
-	    dateFormat = new SimpleDateFormat(dateFormatStr);
-		dateFormat.setTimeZone(this.tz);
-
-		// parse the date string
-	    Date sampleDate = dateFormat.parse(dateString.trim());
+		    log.debug("Using date format string: " + dateFormatStr);
+		    log.debug("Using date string       : " + dateString);
+		    log.debug("Using time zone         : " + this.timezone);
+            
+	        this.tz = TimeZone.getTimeZone(this.timezone);
+	        if ( this.dateFormats == null || this.dateFields == null ) {
+	        	log.warn("Using the default datetime field for sample data.");
+	        	dateFormat = this.defaultDateFormat;
+	        }
+	        // init the date formatter
+	        dateFormat = new SimpleDateFormat(dateFormatStr);
+		    dateFormat.setTimeZone(this.tz);
+            
+		    // parse the date string
+	        sampleDate = dateFormat.parse(dateString.trim());
+		} else {
+			log.info("No date formats or date fields were configured. Using the current date for this sample.");
+		}
 
 	    return sampleDate;
 	}
