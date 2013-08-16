@@ -114,7 +114,7 @@ public class MockDataSource implements Runnable {
 			    	log.debug("Line bytes: " + new String(Hex.encodeHex(line.getBytes("US-ASCII"))));
 			    	out.print(line);
 			    	out.flush();
-			    	Thread.sleep(1000);
+			    	Thread.sleep(500);
 			    }
 				out.close();
 			}  else {
