@@ -123,6 +123,7 @@ public class SocketTextSourceTest {
 		testMockInstruments.add("AW02XX_001CTDXXXXR00");
 		testMockInstruments.add("WK01XX_001CTDXXXXR00");
 		testMockInstruments.add("KN0101_010TCHNXXXR00");
+		testMockInstruments.add("MU01XX_001YSIXXXXR00");
 		
 		// test each mock instrument file, using file ending naming conventions
 		for (String instrument : testMockInstruments) {
@@ -179,7 +180,7 @@ public class SocketTextSourceTest {
 			    log.debug("Request Map: " + requestMap.toString());
 			    Sink sink = new Sink();
 			    sink.OpenRBNBConnection(socketTextSource.getServer(), "lastEntrySink");
-			    sink.Request(requestMap, 0., 6000., "newest");
+			    sink.Request(requestMap, 0., 60000., "newest");
 			    ChannelMap responseMap = sink.Fetch(60000); // get data within 60 seconds
 			    String[] dtLines = responseMap.GetDataAsString(entryIndex);
 			    int numberOfSuccessfulSamples = dtLines.length;
