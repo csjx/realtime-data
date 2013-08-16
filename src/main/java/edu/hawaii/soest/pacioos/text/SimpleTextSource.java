@@ -29,6 +29,7 @@
 package edu.hawaii.soest.pacioos.text;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Options;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -208,20 +210,15 @@ public abstract class SimpleTextSource extends RBNBSource {
 				this.setDelimiter(fieldDelimiter);
 				String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
 				this.setRecordDelimiters(recordDelimiters);
-				// iterate through the date formats list
-				List<String> dateFormatsList = new ArrayList<String>();
-				List<?> dateFormats = xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
+				// set the date formats list
+				List<String> dateFormats = (List<String>) xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
 				if ( dateFormats.size() != 0 ) {
-					int numDateFormats = 1;
-					if (dateFormats instanceof Collection) {
-						numDateFormats = ((Collection<?>) dateFormats).size();
-					}
-					for (int j = 0; j < numDateFormats; j++) {
-						String dateFormat = 
-							xmlConfig.getString("channels.channel(" + i + ").dateFormats(" + j + ").dateFormat");
+					for (String dateFormat : dateFormats) {
+						
+						// validate the date format string
 						try {
 							SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-							dateFormatsList.add(dateFormat);
+							
 						} catch (IllegalFormatException ife) {
 							String msg = "There was an error parsing the date format " +
 						        dateFormat + ". The message was: " + ife.getMessage();
@@ -231,24 +228,27 @@ public abstract class SimpleTextSource extends RBNBSource {
 							throw new ConfigurationException(msg);
 						}
 					}
-					setDateFormats(dateFormatsList);
+					setDateFormats(dateFormats);
 				} else {
 					log.warn("No date formats have been configured for this instrument.");
 				}
-				// iterate through the date fields list
-				List<Integer> dateFieldsList = new ArrayList<Integer>();
-				List<?> dateFields = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
-				if ( dateFields.size() != 0 ) {
-					int numDateFields = 1;
-					if (dateFields instanceof Collection) {
-						numDateFields = ((Collection<?>) dateFields).size();
+				
+				// set the date fields list
+				List<String> dateFieldList = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
+				List<Integer> dateFields = new ArrayList<Integer>();
+				if ( dateFieldList.size() != 0 ) {
+					for ( String dateField : dateFieldList ) {
+						try {
+							Integer newDateField = new Integer(dateField);
+							dateFields.add(newDateField);
+						} catch (NumberFormatException e) {
+							String msg = "There was an error parsing the dateFields. The message was: " +
+									e.getMessage();
+							throw new ConfigurationException(msg);
+						}
 					}
-					for (int j = 0; j < numDateFields; j++) {
-						Integer dateField = 
-							new Integer(xmlConfig.getInt("channels.channel(" + i + ").dateFields(" + j + ").dateField"));
-						dateFieldsList.add(dateField);
-					}
-					setDateFields(dateFieldsList);
+					setDateFields(dateFields);
+					
 				} else {
 					log.warn("No date fields have been configured for this instrument.");
 				}
@@ -636,6 +636,7 @@ public abstract class SimpleTextSource extends RBNBSource {
 	    }
 		log.debug("Using date format string: " + dateFormatStr);
 		log.debug("Using date string       : " + dateString);
+		log.debug("Using time zone         : " + this.timezone);
 
 	    this.tz = TimeZone.getTimeZone(this.timezone);
 	    if ( this.dateFormats == null || this.dateFields == null ) {
@@ -770,6 +771,11 @@ public abstract class SimpleTextSource extends RBNBSource {
 			isValid = true;
 		}
 		
+    	try {
+			log.debug("Sample bytes: " + new String(Hex.encodeHex(sample.getBytes("US-ASCII"))));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		log.debug("Data pattern is: '" + this.dataPattern.toString() + "'");
 		log.debug("Sample is      :  " + sample);
 		
