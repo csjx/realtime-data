@@ -91,9 +91,11 @@ public class SocketTextSource extends SimpleTextSource {
 	    // do not execute the stream if there is no connection
 	    if (  !isConnected() ) return false;
 	    
-	      boolean failed = false;
+	    boolean failed = false;
 	    
-	      SocketChannel socket = getSocketConnection();
+	    /* Get a connection to the instrument */
+	    SocketChannel socket = getSocketConnection();
+	    if ( socket == null ) return false;
 	    
 	    // while data are being sent, read them into the buffer
 	    try {
