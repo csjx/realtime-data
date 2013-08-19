@@ -7,10 +7,10 @@
 #
 #   Authors: Christopher Jones
 #
-# $HeadURL:$
-# $LastChangedDate:$
-# $LastChangedBy:$
-# $LastChangedRevision:$
+# $HeadURL$
+# $LastChangedDate$
+# $LastChangedBy$
+# $LastChangedRevision$
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,7 +113,6 @@ fi
 
 # iterate through the list and perform the start or stop operation
 for instrument in $instruments; do
-    echo $instrument;
     existingPid="";
     if [ -e $BBL_HOME/conf/$instrument ]; then
         
