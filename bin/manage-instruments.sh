@@ -65,7 +65,7 @@ start() {
     # Run the instrument driver
     java -cp $BBL_HOME/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
         edu.hawaii.soest.pacioos.text.TextSourceApp \
-        $BBL_HOME/conf/$instrumentName 2>&1 &
+        $BBL_HOME/conf/$instrumentName.xml 2>&1 &
     pid=$!;
     sleep 2;        
     echo $pid > $BBL_HOME/run/${instrumentName}.pid
