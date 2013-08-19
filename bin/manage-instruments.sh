@@ -116,7 +116,6 @@ for instrument in $instruments; do
     echo $instrument;
     existingPid="";
     if [ -e $BBL_HOME/conf/$instrument ]; then
-        echo "Starting ${instrument%.xml}";
         
         # Stop the running instrument driver (even on start if needed)
         if [ -e $BBL_HOME/run/${instrument%.xml}.pid ]; then
