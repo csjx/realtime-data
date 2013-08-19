@@ -114,13 +114,16 @@ fi
 # iterate through the list and perform the start or stop operation
 for instrument in $instruments; do
     existingPid="";
+    runningPid="";
     if [ -e $BBL_HOME/conf/$instrument ]; then
         
         # Stop the running instrument driver (even on start if needed)
         if [ -e $BBL_HOME/run/${instrument%.xml}.pid ]; then
             existingPid=$(cat $BBL_HOME/run/${instrument%.xml}.pid);
         fi
-        if [ ! -z "$existingPid" ]; then
+        
+        runningPid=$(ps -o pid $existingPid | grep -v PID);
+        if [ ! -z "$existingPid" -a ! -z runningPid ]; then
             stop $existingPid ${instrument%.xml};            
         fi
         
