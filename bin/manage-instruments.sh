@@ -25,8 +25,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-BBL_HOME="/Users/cjones/pacioos"; # installed BBL software location
+if [[ -z ${BBL_HOME} ]]; then
+BBL_HOME=".";                     # installed BBL software location
+fi
 VERSION="1.0.0";                  # keep track of this script's version
 instruments="";                   # the instruments list to be processed
 operation="";                     # operation to perform, either start or stop
@@ -123,7 +124,7 @@ for instrument in ${instruments}; do
         fi
         
         runningPid=$(ps -o pid ${existingPid} | grep -v PID);
-        if [ ! -z "${existingPid}" -a ! -z ${runningPid} ]; then
+        if [ ! -z "${existingPid}" -a ! -z "${runningPid}" ]; then
             stop ${existingPid} ${instrument%.xml};            
         fi
         
