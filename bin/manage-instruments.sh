@@ -36,7 +36,7 @@ unset option;
 usage() {
     cat << EOF
 
-usage: $(basename $0) -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+Usage: $(basename $0) -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
 
 Start or stop one or more instrument drivers by optionally providing the instrument id.
 
@@ -82,31 +82,33 @@ stop() {
 }
 
 # figure out how we were called
-while getopts ":ahi:o:" option
-    do
-        case "option" in
-          "a") instruments=$(ls $BBL_HOME/conf);;
-          "h") usage;;
-          "i") instruments="${instruments} ${OPTARG}.xml";;
-          "o") operation=$OPTARG;;
-          \?)  echo "ERROR:   Invalid option: -$OPTARG";usage; exit 1;;
-        esac
-    done
+while getopts ":ahVi:o:" OPTION; do
+    case $OPTION in
+      "a") instruments=$(ls $BBL_HOME/conf);;
+      "h") usage;;
+      "i") instruments="${instruments} ${OPTARG}.xml";;
+      "o") operation=${OPTARG};;
+      "V") show_version;;
+       \?) echo "ERROR:   Invalid option: -$OPTARG";usage; exit 1;;
+    esac
+done
 
 # ensure options are passed
-if [ -z $option ]; then
+if [ -z $instruments ]; then
+    echo -e "\nWARN: Use the -a option to start or stop all instrument drivers, ";
+    echo "or optionally use the -i option one or more times."
     usage;
 fi
     
 # validate the operation
-if [ "$operation" != "start" -a "$operation" != "stop" ]; then
+if [ "$operation" != "start" -a "$operation" != "stop" -a "$option" != "V" ]; then
     echo "ERROR: The -o option value must be either start or stop.";
     usage;
 fi
 
-# if needed, make a directory to store running driver processes
+# if needed, make the directory to store running driver processes
 if [ ! -d $BBL_HOME/run ]; then
-    mkdir - $BBL_HOME/run;
+    mkdir -p $BBL_HOME/run;
 fi
 
 # iterate through the list and perform the start or stop operation
@@ -117,13 +119,15 @@ for instrument in $instruments; do
         echo "Starting ${instrument%.xml}";
         
         # Stop the running instrument driver (even on start if needed)
-        existingPid=$(cat $BBL_HOME/run/${instrument%.xml}.pid);
+        if [ -e $BBL_HOME/run/${instrument%.xml}.pid ]; then
+            existingPid=$(cat $BBL_HOME/run/${instrument%.xml}.pid);
+        fi
         if [ ! -z "$existingPid" ]; then
             stop $existingPid ${instrument%.xml};            
         fi
         
         # Conditionally start the instrument driver
-        if [ "$operation" == "start"]; then
+        if [ "$operation" == "start" ]; then
             start ${instrument%.xml};
         fi
               
