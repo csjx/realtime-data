@@ -36,7 +36,7 @@ unset option;
 usage() {
     cat << EOF
 
-Usage: $(basename $0) -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+Usage: $(basename ${0}) -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
 
 Start or stop one or more instrument drivers by optionally providing the instrument id.
 
@@ -60,80 +60,80 @@ show_version() {
 
 # start the source driver given the instrument name
 start() {
-    instrumentName=$1;
+    instrumentName=${1};
     echo "Starting the source driver for ${instrumentName}.";
     # Run the instrument driver
-    java -cp $BBL_HOME/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
+    java -cp ${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
         edu.hawaii.soest.pacioos.text.TextSourceApp \
-        $BBL_HOME/conf/$instrumentName.xml 2>&1 &
+        ${BBL_HOME}/conf/${instrumentName}.xml 2>&1 &
     pid=$!;
     sleep 2;        
-    echo $pid > $BBL_HOME/run/${instrumentName}.pid
+    echo ${pid} > ${BBL_HOME}/run/${instrumentName}.pid
 }
 
 # stop the source driver given a process id and instrument name
 stop() {
-    pidToKill=$1;
-    instrumentName=$2;
+    pidToKill=${1};
+    instrumentName=${2};
     echo "Stopping the source driver for ${instrumentName}.";
-    kill -15 $pidToKill;
+    kill -15 ${pidToKill};
     sleep 1;
-    rm $BBL_HOME/run/$instrumentName.pid
+    rm ${BBL_HOME}/run/${instrumentName}.pid
 }
 
 # figure out how we were called
 while getopts ":ahVi:o:" OPTION; do
-    case $OPTION in
-      "a") instruments=$(ls $BBL_HOME/conf);;
+    case ${OPTION} in
+      "a") instruments=$(ls ${BBL_HOME}/conf);;
       "h") usage;;
       "i") instruments="${instruments} ${OPTARG}.xml";;
       "o") operation=${OPTARG};;
       "V") show_version;;
-       \?) echo "ERROR:   Invalid option: -$OPTARG";usage; exit 1;;
+       \?) echo "ERROR:   Invalid option: -${OPTARG}";usage; exit 1;;
     esac
 done
 
 # ensure options are passed
-if [ -z $instruments ]; then
+if [ -z ${instruments} ]; then
     echo -e "\nWARN: Use the -a option to start or stop all instrument drivers, ";
     echo "or optionally use the -i option one or more times."
     usage;
 fi
     
 # validate the operation
-if [ "$operation" != "start" -a "$operation" != "stop" -a "$option" != "V" ]; then
+if [ "${operation}" != "start" -a "${operation}" != "stop" -a "${OPTION}" != "V" ]; then
     echo "ERROR: The -o option value must be either start or stop.";
     usage;
 fi
 
 # if needed, make the directory to store running driver processes
-if [ ! -d $BBL_HOME/run ]; then
-    mkdir -p $BBL_HOME/run;
+if [ ! -d ${BBL_HOME}/run ]; then
+    mkdir -p ${BBL_HOME}/run;
 fi
 
 # iterate through the list and perform the start or stop operation
-for instrument in $instruments; do
+for instrument in ${instruments}; do
     existingPid="";
     runningPid="";
-    if [ -e $BBL_HOME/conf/$instrument ]; then
+    if [ -e ${BBL_HOME}/conf/${instrument} ]; then
         
         # Stop the running instrument driver (even on start if needed)
-        if [ -e $BBL_HOME/run/${instrument%.xml}.pid ]; then
-            existingPid=$(cat $BBL_HOME/run/${instrument%.xml}.pid);
+        if [ -e ${BBL_HOME}/run/${instrument%.xml}.pid ]; then
+            existingPid=$(cat ${BBL_HOME}/run/${instrument%.xml}.pid);
         fi
         
-        runningPid=$(ps -o pid $existingPid | grep -v PID);
-        if [ ! -z "$existingPid" -a ! -z runningPid ]; then
-            stop $existingPid ${instrument%.xml};            
+        runningPid=$(ps -o pid ${existingPid} | grep -v PID);
+        if [ ! -z "${existingPid}" -a ! -z ${runningPid} ]; then
+            stop ${existingPid} ${instrument%.xml};            
         fi
         
         # Conditionally start the instrument driver
-        if [ "$operation" == "start" ]; then
+        if [ "${operation}" == "start" ]; then
             start ${instrument%.xml};
         fi
               
     else
-      echo "WARN: Couldn't find config file $BBL_HOME/conf/$instrument. Skipping it.";
+      echo "WARN: Couldn't find config file ${BBL_HOME}/conf/${instrument}. Skipping it.";
     fi
 done
 
