@@ -35,7 +35,7 @@
             <recordDelimiters>0x0d|0x0A</recordDelimiters>
             <!-- One or more date formats are required, reflecting the date/time variables in the data -->
             <dateFormats>
-              <dateFormat>MM/dd/yyyy</dateFormat>
+              <dateFormat>dd/MM/yyyy</dateFormat>
               <dateFormat>HH:mm:ss</dateFormat>
             </dateFormats>
             <!-- One or more date fields are required, corresponding to the date/time variable positions in the data -->        

@@ -210,8 +210,16 @@ public abstract class SimpleTextSource extends RBNBSource {
 				// handle hex-encoded field delimiters
 				if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
 					
-					Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2));
-					String delim = delimBytes.toString();
+					Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+					byte[] delimAsByteArray = new byte[]{delimBytes.byteValue()};
+					String delim = null;
+					try {
+						delim = new String(delimAsByteArray, 0, delimAsByteArray.length, "ASCII");
+						
+					} catch (UnsupportedEncodingException e) {
+						throw new ConfigurationException("There was an error parsing the field delimiter." +
+					        " The message was: " + e.getMessage());
+					}
 					this.setDelimiter(delim);
 					
 				} else {
