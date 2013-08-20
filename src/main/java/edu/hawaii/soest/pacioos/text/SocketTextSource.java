@@ -54,7 +54,7 @@ import com.rbnb.sapi.SAPIException;
  */
 public class SocketTextSource extends SimpleTextSource {
 
-    private static final Log log = LogFactory.getLog(SimpleTextSource.class);
+    private static final Log log = LogFactory.getLog(SocketTextSource.class);
 
 	/* The FQDN or IP of the source instrument host */ 
 	private String sourceHostName;

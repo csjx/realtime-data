@@ -15,6 +15,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A base for RBNB Widgets. Includes base parameters and constents. For actual usage
@@ -33,7 +35,8 @@ import org.apache.commons.cli.HelpFormatter;
  */
 public abstract class RBNBBase
 {
-	private static final String DEFAULT_SERVER_NAME = "localhost";
+    private final static Log log = LogFactory.getLog(RBNBBase.class);
+    private static final String DEFAULT_SERVER_NAME = "localhost";
 	private static final int DEFAULT_SERVER_PORT = 3333;
 	private String serverName = DEFAULT_SERVER_NAME;
 	private int serverPort = DEFAULT_SERVER_PORT;
@@ -229,8 +232,8 @@ public abstract class RBNBBase
    * @param message  the message to write
    */
   public static void writeMessage(String message) {
-    Date now = new Date();
-    System.out.println(simpleDateFormat.format(now) + ": " + message);
+	  log.debug(message);
+	
   }
   
   /**
