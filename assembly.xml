@@ -9,17 +9,33 @@
   <baseDirectory>pacioos</baseDirectory>
   <fileSets>
     <fileSet>
+      <directory>bin</directory>
+      <outputDirectory>scripts/shell</outputDirectory>
+      <includes>
+        <include>manage-instruments.sh</include>
+      </includes>
+      <excludes>
+        <exclude>*Archive*</exclude>
+        <exclude>*Source*</exclude>
+        <exclude>*Start*</exclude>
+        <exclude>*Stop*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>     
+      <directory>src</directory>
       <outputDirectory>scripts</outputDirectory>
       <includes>
-        <include>bin/*</include>
+        <include>matlab/+edu/**</include>
+        <include>matlab/schedule*m</include>
       </includes>
     </fileSet>
-    <fileSet>
+    <fileSet>     
+      <directory>lib</directory>
       <outputDirectory>scripts</outputDirectory>
       <includes>
-        <include>src/matlab/+edu/*</include>
-        <include>src/matlab/schedule*m</include>
-        <include>lib/matlab/**/*</include>
+        <include>matlab/+edu/*</include>
+        <include>matlab/schedule*m</include>
+        <include>matlab/**/*</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -35,12 +51,6 @@
       <excludes>
         <exclude>docs/user/Python*pdf</exclude>
       </excludes>
-    </fileSet>
-    <fileSet>
-      <outputDirectory>scripts</outputDirectory>
-      <includes>
-        <include>src/matlab/*</include>
-      </includes>
     </fileSet>
   </fileSets>
   <files>
