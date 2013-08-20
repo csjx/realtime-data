@@ -64,7 +64,7 @@ start() {
     instrumentName=${1};
     echo "Starting the source driver for ${instrumentName}.";
     # Run the instrument driver
-    java -cp ${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
+    java -cp /etc/bbl:${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
         edu.hawaii.soest.pacioos.text.TextSourceApp \
         ${BBL_HOME}/conf/${instrumentName}.xml 2>&1 &
     pid=$!;
