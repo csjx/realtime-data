@@ -49,6 +49,9 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
 
 /**
+ * A class that provides properties and methods 
+ * for a simple instrument driver streaming data from a
+ * text-based, TCP socket connection.
  * @author cjones
  *
  */
