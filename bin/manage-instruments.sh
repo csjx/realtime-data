@@ -25,13 +25,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 if [[ -z ${BBL_HOME} ]]; then
 BBL_HOME=".";                     # installed BBL software location
+LOG_DIR="/var/log/bbl";           # log files location
+fi
+CLASSPATH="${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
+if [[ -e /etc/bb/log4j.properties ]]; then
+    CLASSPATH="/etc/bbl:${CLASSPATH}";
 fi
 VERSION="1.0.0";                  # keep track of this script's version
 instruments="";                   # the instruments list to be processed
 operation="";                     # operation to perform, either start or stop
-unset option;
+unset option;                     # command line options variable
+
+# ensure the logging file is writable
+if [[ ! -d $LOG_DIR ]]; then
+    echo "WARN: The logging directory does not exist. Please issue:";
+    echo "sudo mkdir -p $LOG_DIR";
+    echo "sudo chown -R $USER $LOG_DIR";
+    exit 1;
+fi
 
 # show usage
 usage() {
@@ -64,7 +78,7 @@ start() {
     instrumentName=${1};
     echo "Starting the source driver for ${instrumentName}.";
     # Run the instrument driver
-    java -cp /etc/bbl:${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar \
+    java -cp ${CLASSPATH} \
         edu.hawaii.soest.pacioos.text.TextSourceApp \
         ${BBL_HOME}/conf/${instrumentName}.xml 2>&1 &
     pid=$!;
