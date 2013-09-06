@@ -443,6 +443,10 @@ classdef DataProcessor < hgsetget & dynamicprops
                       'mm-dd-yyyy HH:MM')]);
       end
       
+      if self.configuration.closePlotWindow
+          close
+      end
+      
     end %process
     
     % A method used to produce derived variables from the raw data.  This 

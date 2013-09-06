@@ -229,6 +229,10 @@ classdef Configure < hgsetget & dynamicprops
     % A boolean property indicating whether or not figures should be exported
     exportFigures = true;
     
+    % A boolean property indicating whether or not to close the plot window
+    % after export
+    closePlotWindow = true;
+    
     % A boolean property indicating whether or not data should be read in
     % from the archives (rather than the ring buffer)
     readArchive = false;
