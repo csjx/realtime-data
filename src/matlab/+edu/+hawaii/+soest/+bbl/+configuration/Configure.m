@@ -181,6 +181,10 @@ classdef Configure < hgsetget & dynamicprops
     dissolvedOxygenPhaseFieldName = 'dissolvedOxygenPhase';
     
     % The string used to designate which variable name represents a dissolved
+    % oxygen column in the data.  
+    dissolvedOxygenVoltsFieldName = 'dissolvedOxygenVolts';
+    
+    % The string used to designate which variable name represents a dissolved
     % oxygen column in the data that has already been converted to mL/L.  
     dissolvedOxygenMetricFieldName = 'dissolvedOxygenMetric';
     
