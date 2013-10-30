@@ -821,7 +821,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                  length(self.configuration.dataVariableNames) ==                ...
                  length(self.configuration.dataVariableUnits) )
              
-            % get a reference to the dissolved oxygen phase array
+            % get a reference to the dissolved oxygen array
               dissolvedOxygenMetricArray = ...
                 self.dataCellArray{ ...
                   find( ...
@@ -839,6 +839,7 @@ classdef DataProcessor < hgsetget & dynamicprops
               updateDataVariableNames(self, self.configuration.dissolvedOxygenFieldName);
               updateDataVariableUnits(self, '\muM');
             
+            % Derive dissolved oxygen and oxygen saturation values from voltage (membrane sensors)  
             else if ( any(strcmp(self.configuration.dissolvedOxygenVoltsFieldName,   ...
                                       self.configuration.dataVariableNames)) && ...
                       length(self.configuration.dataVariableNames) ==                ...
@@ -952,7 +953,8 @@ classdef DataProcessor < hgsetget & dynamicprops
               updateDataVariableUnits(self, '\muM');
             
             
-            
+            % Derive dissolved oxygen from DO phase and thermistor values
+            % (optical sensors)
             else if ( any(strcmp(self.configuration.dissolvedOxygenPhaseFieldName,   ...
                                       self.configuration.dataVariableNames)) && ...
                  any(strcmp(self.configuration.thermistorVoltageFieldName,      ...
@@ -1456,7 +1458,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                 };
             
             OxSol=4.774;
-            value=dissolvedOxygenArray/44.66/OxSol;
+            value=100*dissolvedOxygenArray/44.66/OxSol;
              
             clear OxSol
             
@@ -2066,6 +2068,12 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
     end
     end
+    
+    % remove negative data points
+    i=dissolvedOxygen<0;
+    dissolvedOxygen(i)=NaN;
+    oxygenSaturation(i)=NaN;
+    
     
     
     %create plots
