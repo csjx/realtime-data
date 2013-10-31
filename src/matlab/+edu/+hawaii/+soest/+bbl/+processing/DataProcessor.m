@@ -2070,9 +2070,11 @@ classdef DataProcessor < hgsetget & dynamicprops
     end
     
     % remove negative data points
-    i=dissolvedOxygen<0;
-    dissolvedOxygen(i)=NaN;
-    oxygenSaturation(i)=NaN;
+    if exist('dissolvedOxygen','var')
+       i=dissolvedOxygen<0;
+       dissolvedOxygen(i)=NaN;
+       oxygenSaturation(i)=NaN;
+    end
     
     
     
