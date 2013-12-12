@@ -211,12 +211,15 @@ set(configuration,                                                     ...
 set( configuration,                                                            ...
     'PacIOOSFigures', {                                                        ...
                        % Figure 1  (7 day plot)
-                       {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 7 day',  ... %Title prefix
-                        '7'}                                                ;  ... %Duration in days
+                       {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 7 day'  , ... %Title prefix
+                        '7'}                                                                ; ... %Duration in days
                        % Figure 2  (30 day plot)
-                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 30 day',... %Title prefix
-                        '30'}                                                ; ... %Duration in days
-                             }                                                 ...
+                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05), 30 day', ... %Title prefix
+                        '30'}                                                               ; ... %Duration in days
+                       % Figure 3 (monthly plot)
+                        {'Nearshore Sensor, Pago Pago Harbor, American Samoa (NS05)'        , ... %Title prefix
+                         'monthly'}                                                           ...
+                             }                                                                ...
                               )                                              ;
                           
 % Tell the DataProcessor which type of figure to create
