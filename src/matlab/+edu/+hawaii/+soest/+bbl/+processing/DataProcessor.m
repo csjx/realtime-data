@@ -197,9 +197,20 @@ classdef DataProcessor < hgsetget & dynamicprops
       end
       
       % get the time vector
-        time=self.dataCellArray{find(strcmp ...
-                 ('serialdate',self.configuration.dataVariableNames))};      
-      
+        time = self.dataCellArray{find(strcmp ...
+                 ('serialdate',self.configuration.dataVariableNames))};
+             
+      % remove data prior to the Data Start Date
+      dataStartDate = datenum(self.configuration.dataStartDate,        ...
+         'mm-dd-yyyy HH:MM:SS') + self.configuration.sensorTimeOffset / 24;
+      if time(1) < dataStartDate
+          index=find(time>dataStartDate);
+          time=time(index);
+          for i=1:length(self.dataCellArray)
+              self.dataCellArray{i}=self.dataCellArray{i}(index);
+          end
+      end
+          
       % create figures as outlined in the configuration properties
       if ( self.configuration.createFigures )
         if ( strcmp(self.configuration.currentFigureType, 'timeSeries') )

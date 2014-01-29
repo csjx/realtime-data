@@ -317,6 +317,9 @@ classdef Configure < hgsetget & dynamicprops
     % The time reference of the channel data query
     reference = 'newest';
     
+    % The difference in hours between sensor time and UTC
+    sensorTimeOffset = 0;
+    
     % The start time of the channel data query
     startTime = 0;
     
