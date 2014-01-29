@@ -324,7 +324,7 @@ classdef Configure < hgsetget & dynamicprops
     startTime = 0;
     
     % The start date of the channel data query
-    dataStartDate = '';
+    dataStartDate = '05-01-2008 00:00:00';
     
     % The timer interval for scheduled processing in minutes
     timerInterval = 20;
