@@ -2027,6 +2027,14 @@ classdef DataProcessor < hgsetget & dynamicprops
 
     
     % Pull data from the dataCellArray into variables. 
+    index=find(strcmp('temperature',self.configuration.dataVariableNames));
+    if index > 0
+        temperature=self.dataCellArray{index};
+    end
+    index=find(strcmp('salinity',self.configuration.dataVariableNames));
+    if index > 0
+        salinity=self.dataCellArray{index};
+    end
     index=find(strcmp('chlorophyll',self.configuration.dataVariableNames));
     if index > 0
         chlorophyll=self.dataCellArray{index};
@@ -2043,10 +2051,13 @@ classdef DataProcessor < hgsetget & dynamicprops
     if index > 0
         oxygenSaturation=self.dataCellArray{index};
     end
+    index=find(strcmp('pH',self.configuration.dataVariableNames));
+    if index > 0
+        pH=self.dataCellArray{index};
+    end
     index=find(strcmp('depth',self.configuration.dataVariableNames));
     if index > 0
         depth=self.dataCellArray{index};
-
         if ~isempty(self.configuration.MLLWadjustmentDate) && ...
                 length(self.configuration.MLLWadjustment)>1
            adjustedDepth=depth;
@@ -2057,17 +2068,18 @@ classdef DataProcessor < hgsetget & dynamicprops
         else
            adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
         end
-
-    end 
-    temperature=self.dataCellArray{find(strcmp('temperature',self.configuration.dataVariableNames))};
-    salinity=self.dataCellArray{find(strcmp('salinity',self.configuration.dataVariableNames))};
+    end
    
     % Selectively remove single data points to prevent line from connecting
-    % points more than 1/2 day apart
+    % points more than 1/4 day apart
     for i=2:length(time)
-    if (time(i)-time(i-1)) > 0.5
-        salinity(i-1)=NaN;
-        temperature(i-1)=NaN;
+    if (time(i)-time(i-1)) > 0.25
+        if exist('salinity','var')
+            salinity(i-1)=NaN;
+        end
+        if exist('temperature','var')
+            temperature(i-1)=NaN;
+        end
         if exist('adjustedDepth','var')
             adjustedDepth(i-1)=NaN;
         end
@@ -2082,6 +2094,9 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
         if exist('oxygenSaturation','var')
             oxygenSaturation(i-1)=NaN;
+        end
+        if exist('pH','var')
+            pH(i-1)=NaN;
         end
     end
     end
@@ -2322,7 +2337,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                            'ycolor',        turbidityColor,               ...
                            'xtick',         get(depthAxes,'xtick'),       ...
                            'ylim',          [minTurb maxTurb],            ...
-                           'ytick',(        minTurb:turbRange/5:maxTurb), ...
+                           'ytick',         (minTurb:turbRange/5:maxTurb),...
                            'Color',         'none',                       ...
                            'xticklabel',    '',                           ...
                            'xaxislocation', 'top'                         ...
@@ -2374,9 +2389,13 @@ classdef DataProcessor < hgsetget & dynamicprops
                              'xticklabel', datestr(get(depthAxes,'xtick'),'mm/dd/yy'), ...
                              'position',   chlorophyllAxesPosition                     ...
              )
+         
+        ylabel(chlorophyllAxes,{'Chlorophyll ( \mug/L)';'\fontsize{9} '},      ...
+                                'color',chlorophyllColor,                      ...
+                                'fontweight','bold')
         
         ax6=axes('position',      chlorophyllAxesPosition,       ...
-                 'color',         'none',                        ...
+                 'color',         'none',                        ...                     
                  'xtick',         get(depthAxes,'xtick'),        ...
                  'ylim',          [minChlo maxChlo],             ...
                  'ytick',         get(chlorophyllAxes,'ytick'),  ...
@@ -2386,10 +2405,33 @@ classdef DataProcessor < hgsetget & dynamicprops
                  'yaxislocation', 'right',                       ...
                  'yticklabel',    ''                             ...
                  );
+             
+        if exist('pH','var')
+          
+          minpH=7.8;
+          maxpH=8.3;
+          pHRange=maxpH-minpH;
+          pHColor=[1 0.5 0.2];
+          
+          pHAxes=axes('position', chlorophyllAxesPosition,       ...
+                 'color',         'none',                        ...
+                 'ycolor',        pHColor,                       ...
+                 'xlim',          get(chlorophyllAxes,'xlim'),   ...
+                 'xtick',         get(depthAxes,'xtick'),        ...
+                 'ylim',          [minpH maxpH],                 ...
+                 'ytick',         (minpH:pHRange/5:maxpH),       ...
+                 'xgrid',         'off',                         ...
+                 'ygrid',         'off',                         ...
+                 'xticklabel',    '',                            ...
+                 'yaxislocation', 'right'                        ...
+                 );
+             
+          line(time,pH,'color',pHColor,'parent',pHAxes);
+          ylabel(pHAxes,{'\fontsize{1} ';'\fontsize{10}pH'},'fontweight','bold')
+          
+        end
         
-        ylabel(chlorophyllAxes,{'Chlorophyll ( \mug/L)';'\fontsize{9} '},      ...
-                                'color',chlorophyllColor,                      ...
-                                'fontweight','bold')
+        
     end %if exist
     
     value=figureHandle;
