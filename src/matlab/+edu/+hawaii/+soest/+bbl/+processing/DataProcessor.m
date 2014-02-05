@@ -2787,11 +2787,17 @@ classdef DataProcessor < hgsetget & dynamicprops
 
       %IF reading from archive; be sure to change 'duration' to 2678400 (31 days) 
       %Grab the data for 31 days - saved in data_'rbnbSource'.dat in read_archive folder
-      read_archiveSourceFile=[self.configuration.read_archivePath 'read_archive_' self.configuration.rbnbSource '.sh'];
+      read_archiveSourceFile=[self.configuration.read_archivePath ...
+                              'read_archive_' self.configuration.rbnbSource '.sh'];
       
+      % Create a new read_archive source file from a template (if necessary)
       if ~exist(read_archiveSourceFile,'file')
          read_archiveFile=[self.configuration.read_archivePath 'read_archive.sh'];
-         eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ ' read_archiveFile ' > ' read_archiveSourceFile]);
+         eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ ' ...
+                 read_archiveFile ' > ' [read_archiveSourceFile '.tmp']]);
+         eval(['!sed -e "s/REPLACEFIELD/"' self.configuration.archiveDirectory '/ ' ...
+                 [read_archiveSourceFile '.tmp'] ' > ' read_archiveSourceFile]);
+         system(['rm' ' ' [read_archiveSourceFile '.tmp']]);
       end
       eval(['!sh ' read_archiveSourceFile]);
         

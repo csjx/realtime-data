@@ -244,6 +244,9 @@ classdef Configure < hgsetget & dynamicprops
     % A string containing the path to the read_archive scripts
     read_archivePath='/data/processed/read_archive/'
     
+    % A string containing the name of the base archive directory for the sensor
+    archiveDirectory='alawai'
+    
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
     currentFigureType = '';
