@@ -1,4 +1,4 @@
-#  Copyright: 2011 Regents of the University of Hawaii and the
+#  Copyright: 2014 Regents of the University of Hawaii and the
 #       School of Ocean and Earth Science and Technology
 #
 # This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 
 '''Utility Class for managing file archives for PacIOOS data.'''
 
-__author__  = "Christopher Jones, csjones@hawaii.edu"
+__author__ = "Christopher Jones, csjones@hawaii.edu"
 __version__ = "$LastChangedRevision$"
 # $LastChangedDate$
 # $LastChangedBy$
@@ -42,7 +42,7 @@ class FileArchiver(object):
     self._timeZone = self.config.get('timeZone')    
     self._archiveDirectory = self.config.get('archiveDirectory')
     self._start = self.config.get('start')
-    self._stop= self.config.get('stop')
+    self._stop = self.config.get('stop')
     self._dataFileName = self.config.get('dataFileName')
     self._interval = self.config.get('interval')
     
@@ -313,15 +313,15 @@ def main():
   # property values by uncommenting the setter methods and change the values
   try:
     fileArchiver = FileArchiver(location.get('NS10'))
-    #fileArchiver.sourceName = 'Change this to your sourceName'
-    #fileArchiver.channelName = 'Change this to your channelName'
-    #fileArchiver.archiveDirectory = 'Change this to your archive directory'
+    # fileArchiver.sourceName = 'Change this to your sourceName'
+    # fileArchiver.channelName = 'Change this to your channelName'
+    # fileArchiver.archiveDirectory = 'Change this to your archive directory'
     fileArchiver.dataFileName = '/Users/cjones/NS10.backup.txt'
-    #fileArchiver.start = 'Change this to your start timestamp'
-    #fileArchiver.stop = 'Change this to your stop timestamp'
-    #fileArchiver.timeZone = 'Change this to your timeZone'
-    #fileArchiver.interval = 'daily'
-    #fileArchiver.dateFormat = 'YYYY-MMM-DD, HH:MM:SS'
+    # fileArchiver.start = 'Change this to your start timestamp'
+    # fileArchiver.stop = 'Change this to your stop timestamp'
+    # fileArchiver.timeZone = 'Change this to your timeZone'
+    # fileArchiver.interval = 'daily'
+    # fileArchiver.dateFormat = 'YYYY-MMM-DD, HH:MM:SS'
     
     fileArchiver.validate()
     
@@ -337,12 +337,12 @@ def main():
     interval        : %s\n\
     dateFormat      : %s\n"\
     % \
-    (fileArchiver.sourceName, 
-     fileArchiver.channelName, 
+    (fileArchiver.sourceName,
+     fileArchiver.channelName,
      fileArchiver.archiveDirectory,
-     fileArchiver.dataFileName, 
-     fileArchiver.start, 
-     fileArchiver.stop, 
+     fileArchiver.dataFileName,
+     fileArchiver.start,
+     fileArchiver.stop,
      fileArchiver.timeZone,
      fileArchiver.interval,
      fileArchiver.dateFormat)
