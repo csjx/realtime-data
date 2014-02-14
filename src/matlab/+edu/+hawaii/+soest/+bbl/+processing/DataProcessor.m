@@ -200,6 +200,12 @@ classdef DataProcessor < hgsetget & dynamicprops
         time = self.dataCellArray{find(strcmp ...
                  ('serialdate',self.configuration.dataVariableNames))};
              
+      % create a depth column adjusted to MLLW (if applicable)
+      if any(strcmp('depth',self.configuration.dataVariableNames))
+          self.dataCellArray{length(self.dataCellArray) + 1} = ...
+              depthAdjustment(self,time);
+      end
+             
       % remove data prior to the Data Start Date
       dataStartDate = datenum(self.configuration.dataStartDate,        ...
          'mm-dd-yyyy HH:MM:SS') + self.configuration.sensorTimeOffset / 24;
@@ -394,31 +400,56 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       % create figures for PacIOOS website
         if (self.configuration.createPacIOOSFigures)
-            
-            % get the figure properties (title prefix & duration)
-            figureProperties=self.configuration.PacIOOSFigures;
                 
             % define the base output directory
-            outDir=[self.configuration.outputDirectory 'PacIOOSplots'  ...
-                    self.configuration.pathSeparator];
+            outDir = [self.configuration.outputDirectory 'PacIOOSplots'  ...
+                      self.configuration.pathSeparator];           
             
-            % set the output format to .eps only
-            outputFormat={'.eps'};
+            % get the figure graphing properties
+            figureProperties = self.configuration.PacIOOSFigureProperties;
             
-            for n=1:length(figureProperties)
+            % get the variable names
+                yVariables = figureProperties{1};
+                
+                % get the axis labels
+                yAxisLabels = figureProperties{2};
+                
+                % get the plot locations
+                plotLocations = cell2mat(figureProperties{3});
+                
+                % get the plot colors
+                plotColors = figureProperties{4};
+                
+                % get the range info for the y-axis
+                variableRanges = figureProperties{5};
+                
+            
+            % get the figure info (title prefix & duration)
+            figureInfo=self.configuration.PacIOOSFigures;
+
+            % create the figures
+            for plotNumber=1:length(figureInfo)
                 
                 % get the figure title prefix string
-                figureTitlePrefix=char(figureProperties{n}(1));
+                figureTitlePrefix = char(figureInfo{plotNumber}{1});
 
                 % get the figure duration
-                figureDuration=char(figureProperties{n}(2));
-
+                figureDuration = char(figureInfo{plotNumber}{2});
+                
+                % get the output format
+                outputFormat = char(figureInfo{plotNumber}{3});
+                                         
                 % call the plotting function
                 figureHandle =                    ...
                     self.createPacIOOSFigures(    ...
-                      figureTitlePrefix         , ...
                       time                      , ...
-                      figureDuration              ...
+                      figureTitlePrefix         , ...                      
+                      figureDuration            , ...
+                      yVariables                , ...
+                      yAxisLabels               , ...
+                      plotLocations             , ...
+                      plotColors                , ...
+                      variableRanges              ...
                                                         );
 
                 if ( self.configuration.exportFigures )
@@ -1500,6 +1531,40 @@ classdef DataProcessor < hgsetget & dynamicprops
       
     end % end createDerivedVariable function
     
+    % A method to create an adjusted depth variable corrected to MLLW based
+    % on input from the schedule script. Appends the resulting column to
+    % the data cell array.
+    % @returns value - variable array
+    function value = depthAdjustment(self,time)
+        
+    if ( self.configuration.debug )
+        disp('DataProcessor.depthAdjustment() called.');
+    end
+
+    index=find(strcmp('depth',self.configuration.dataVariableNames));
+    if index > 0
+        depth=self.dataCellArray{index};
+        if ~isempty(self.configuration.MLLWadjustmentDate) && ...
+                length(self.configuration.MLLWadjustment)>1
+           adjustedDepth=depth;
+           t1=find(time<datenum(char(self.configuration.MLLWadjustmentDate)));
+           adjustedDepth(t1)=depth(t1) + self.configuration.MLLWadjustment(1);
+           t2=find(time>=datenum(char(self.configuration.MLLWadjustmentDate)));
+           adjustedDepth(t2)=depth(t2) + self.configuration.MLLWadjustment(2);
+        else
+           adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
+        end
+       value = adjustedDepth;
+    
+     % update the field names and units arrays
+       updateDataVariableNames(self, 'adjustedDepth');
+       updateDataVariableUnits(self, 'm');
+
+    else
+       value = [];    
+    end
+end
+
     % A method used to create a Temperature/Salinity figure.
     % @returns value - the handle to the figure object that is created  
     function value = createTSFigure(self                   , ...
@@ -1989,14 +2054,20 @@ classdef DataProcessor < hgsetget & dynamicprops
       value = figureHandle;
     end
     
+   
     
-    % A method used to create a time series figure for the PacIOOS website.
-    % @returns value - handle of the figure object created
-    function value=createPacIOOSFigures(               ...
+   % A method used to create a time series figure for the PacIOOS website.
+   % @returns value - handle of the figure object created
+    function value = createPacIOOSFigures(               ...
                               self                   , ...
+                              time                   , ...                              
                               figureTitlePrefix      , ...
-                              time                   , ...
-                              figureDuration           ...
+                              figureDuration         , ...
+                              yVariables             , ...
+                              yAxisLabels            , ...
+                              plotLocations          , ...
+                              plotColors             , ...
+                              variableRanges           ...
                                                             )
                                                         
                                                         
@@ -2006,8 +2077,8 @@ classdef DataProcessor < hgsetget & dynamicprops
     
     close(gcf);
     
-    % Calculate start and end times, and the timestep to be used for
-    % plotting the x axis
+   % Calculate start and end times, and the timestep to be used for
+   % plotting the x axis
     if strcmp(figureDuration,'monthly')
         year=str2double(datestr(time(end),'yyyy'));
         month=str2double(datestr(time(end),'mm'));        
@@ -2025,418 +2096,192 @@ classdef DataProcessor < hgsetget & dynamicprops
         timeStep=round(duration/7);
     end
 
+    xTicks=(startTime:timeStep:endTime);
     
-    % Pull data from the dataCellArray into variables. 
-    index=find(strcmp('temperature',self.configuration.dataVariableNames));
-    if index > 0
-        temperature=self.dataCellArray{index};
-    end
-    index=find(strcmp('salinity',self.configuration.dataVariableNames));
-    if index > 0
-        salinity=self.dataCellArray{index};
-    end
-    index=find(strcmp('chlorophyll',self.configuration.dataVariableNames));
-    if index > 0
-        chlorophyll=self.dataCellArray{index};
-    end 
-    index=find(strcmp('turbidity',self.configuration.dataVariableNames));
-    if index > 0
-        turbidity=self.dataCellArray{index};
-    end
-    index=find(strcmp('dissolvedOxygen',self.configuration.dataVariableNames));
-    if index > 0
-        dissolvedOxygen=self.dataCellArray{index};
-    end
-    index=find(strcmp('oxygenSaturation',self.configuration.dataVariableNames));
-    if index > 0
-        oxygenSaturation=self.dataCellArray{index};
-    end
-    index=find(strcmp('pH',self.configuration.dataVariableNames));
-    if index > 0
-        pH=self.dataCellArray{index};
-    end
-    index=find(strcmp('depth',self.configuration.dataVariableNames));
-    if index > 0
-        depth=self.dataCellArray{index};
-        if ~isempty(self.configuration.MLLWadjustmentDate) && ...
-                length(self.configuration.MLLWadjustment)>1
-           adjustedDepth=depth;
-           t1=find(time<datenum(char(self.configuration.MLLWadjustmentDate)));
-           adjustedDepth(t1)=depth(t1) + self.configuration.MLLWadjustment(1);
-           t2=find(time>=datenum(char(self.configuration.MLLWadjustmentDate)));
-           adjustedDepth(t2)=depth(t2) + self.configuration.MLLWadjustment(2);
-        else
-           adjustedDepth=depth + self.configuration.MLLWadjustment;         %correct to MLLW
-        end
-    end
-   
-    % Selectively remove single data points to prevent line from connecting
-    % points more than 1/4 day apart
-    for i=2:length(time)
-    if (time(i)-time(i-1)) > 0.25
-        if exist('salinity','var')
-            salinity(i-1)=NaN;
-        end
-        if exist('temperature','var')
-            temperature(i-1)=NaN;
-        end
-        if exist('adjustedDepth','var')
-            adjustedDepth(i-1)=NaN;
-        end
-        if exist('turbidity','var')
-            turbidity(i-1)=NaN;
-        end
-        if exist('chlorophyll','var')
-            chlorophyll(i-1)=NaN;
-        end
-        if exist('dissolvedOxygen','var')
-            dissolvedOxygen(i-1)=NaN;
-        end
-        if exist('oxygenSaturation','var')
-            oxygenSaturation(i-1)=NaN;
-        end
-        if exist('pH','var')
-            pH(i-1)=NaN;
-        end
-    end
-    end
+   % Create arrays for the axis properties
+    numberofAxes=ceil(max(plotLocations)/2);
+    baseAxisProperties=cell(numberofAxes,1);
+    axisProperties=cell(length(yVariables),1);
     
-    % remove negative data points
-    if exist('dissolvedOxygen','var')
-       i=dissolvedOxygen<0;
-       dissolvedOxygen(i)=NaN;
-       oxygenSaturation(i)=NaN;
-    end
-    
-    
-    
-    %create plots
     figureHandle=figure(); clf;
-    subplot(4,1,1);
-    
-    
-   %set up depth & temperature axes
-    depthAxes=gca;
-    
-    %set scale for temperature axis
-    minTemp=2*floor(min(temperature)/2);
-    maxTemp=2*ceil(max(temperature)/2);
-    tempRange=ceil(maxTemp-minTemp);
-    
-    set(depthAxes,'xlim',          [startTime endTime],            ...
-                  'xminorgrid',    'on',                           ...
-                  'xgrid',         'off',                          ...
-                  'ygrid',         'on',                           ...
-                  'ylim',          [minTemp maxTemp],              ...
-                  'ytick',         (minTemp:tempRange/4:maxTemp),  ...
-                  'xaxislocation', 'top',                          ...
-                  'xtick',         (startTime:timeStep:endTime),   ...
-                  'yaxislocation', 'left',                         ...
-                  'xticklabel',    '',                             ...
-                  'position',      [0.13 0.75 0.7750 0.1321]       ...
-                  )
-    
-    temperatureAxes=axes('Position',      [0.13 0.75 0.7750 0.1321],             ...
-                         'yaxislocation', 'right',                               ...
-                         'xlim',          get(depthAxes,'xlim'),                 ...
-                         'ycolor',        'r',                                   ...
-                         'xtick',         get(depthAxes,'xtick'),                ...
-                         'ylim',          [minTemp maxTemp],                     ...
-                         'ytick',         (minTemp:tempRange/4:maxTemp),         ...
-                         'Color',         'none',                                ...
-                         'xticklabel',    datestr(get(depthAxes,'xtick'),'mm/dd/yy'));
-    
-    
-    %plot temperature
-    line(time,temperature,'color','r','parent',temperatureAxes);
-    
-    %plot depth if pressure data available  
-    if exist('adjustedDepth','var')
-        line(time,adjustedDepth,'color','k','parent',depthAxes);
-    
-        %set scale for depth axis
-        if length(find(adjustedDepth<-0.4))<15 &&                ...
-             length(find(adjustedDepth>1.2))<15
-            minDepth=-0.4;
-            maxDepth=1.2;
-        else if length(find(adjustedDepth<-0.6))<15 &&           ...
-                  length(find(adjustedDepth>1.8))<15
-                minDepth=-0.6;
-                maxDepth=1.8;
-            else
-                minDepth=0.4*floor(min(adjustedDepth)/0.4);
-                maxDepth=0.4*ceil(max(adjustedDepth)/0.4);
-            end
-        end
 
-        depthRange=maxDepth-minDepth;
-        set(depthAxes, 'ylim',  [minDepth maxDepth],             ...
-                       'ytick', (minDepth:depthRange/4:maxDepth) ...
-                       )
-        ylabel(depthAxes,{'Actual WL (m)';'\fontsize{3} '},      ...
-                         'fontweight','bold')
-    else
-        set(depthAxes,'yticklabel','')
-    end %if exist
- 
-    if rem(tempRange,4) == 0
-        ylabel(temperatureAxes,{'\fontsize{5} ';'\fontsize{10}Temperature ( ^oC)'}, ...
-                               'fontweight','bold')
-    else
-        ylabel(temperatureAxes,'Temperature ( ^oC)',              ...
-                               'fontweight','bold')
-    end
-    
-    % create figure title
-    if strcmp(figureDuration,'monthly')
+   % Set up the base axes
+    for axisNumber = 1:numberofAxes
+        subplot(4,1,axisNumber)
+        baseAxisProperties{axisNumber}=gca;
+        set(baseAxisProperties{axisNumber},                                 ...
+                  'xlim',          [startTime endTime],                     ...
+                  'xminorgrid',    'on',                                    ...
+                  'xgrid',         'off',                                   ...
+                  'ygrid',         'on',                                    ...
+                  'xtick',         xTicks,                                  ...
+                  'xticklabel',    datestr(xTicks,'mm/dd/yy'),              ...
+                  'box',           'on',                                    ...
+                  'position',      [0.13 0.96-0.21*axisNumber 0.7750 0.1321]...
+                  )
+  
+  % Create the figure title
+     if axisNumber == 1
+      if strcmp(figureDuration,'monthly')
         date=datestr(time(end),'mmm yyyy');
         title({[figureTitlePrefix '        ' date];' '},        ...
                'fontweight','bold',                             ...
                'fontsize',11)
-    else
+      else
         startdate=datestr(startTime,'mm-dd-yyyy');
         enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
         title({['\fontsize{11}' figureTitlePrefix];                       ...
                '\fontsize{6} ';                                           ...
                [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
                'fontweight','bold')
-    end
-    
-    %set up dissolved oxygen and oxygen saturation axes
-    if exist('dissolvedOxygen','var')
-        subplot(4,1,2)
-       
-        DOHandle=line(time,dissolvedOxygen);
-        DOAxes=gca;
-        DOAxesPosition=[0.13 0.54 0.7750 0.1321];
-        DOColor=[0 .4 1];
-        minDO=50*floor(min(dissolvedOxygen)/50);
-        maxDO=50*ceil(max(dissolvedOxygen)/50);
-        DORange=maxDO-minDO;
-        
-        set(DOHandle,'color',DOColor)
-        set(DOAxes,'xlim',[startTime endTime],                     ...
-                   'xminorgrid',    'on',                          ...
-                   'xgrid',         'off',                         ...
-                   'ygrid',         'off',                         ...
-                   'ylim',          [minDO maxDO],                 ...
-                   'ytick',         (minDO:DORange/5:maxDO),       ...
-                   'ycolor',        DOColor,                       ...
-                   'box',           'on',                          ...
-                   'xaxislocation', 'bottom',                      ...
-                   'xtick',         (startTime:timeStep:endTime),  ...
-                   'yaxislocation', 'left', ...
-                   'xticklabel',    datestr(get(depthAxes,'xtick'),'mm/dd/yy'), ...
-                   'position',      DOAxesPosition                 ...
-            )
-        ylabel(DOAxes,{'DO Conc (\muM)';'\fontsize{4} '},          ...
-                       'fontweight', 'bold',                       ...
-                       'color', DOColor)
-                  
-        oxSatAxes=axes('position',      DOAxesPosition,            ...
-                       'color',         'none',                    ...
-                       'xtick',         get(depthAxes,'xtick'),    ...
-                       'xlim',          [startTime endTime],       ...
-                       'ylim',          [minDO maxDO],             ...
-                       'ytick',         get(DOAxes,'ytick'),       ...
-                       'xgrid',         'off',                     ...
-                       'ygrid',         'on',                      ...
-                       'xticklabel',    '',                        ...
-                       'yaxislocation', 'right',                   ...
-                       'yticklabel',    ''                         ...
-                       );
-
-     %set up oxygen saturation axes    
-        if exist('oxygenSaturation','var')
-            minOxSat=60;
-            maxOxSat=160;
-            oxSatRange=maxOxSat-minOxSat;
-            oxSatTicks=(minOxSat:oxSatRange/5:maxOxSat);
-            oxSatTickLabels=cell(length(oxSatTicks));
-            for n=1:length(oxSatTicks)
-                oxSatTickLabels{n}=strcat(num2str(oxSatTicks(n)),'%');
-            end
-            
-            set(oxSatAxes,'ylim',       [minOxSat maxOxSat],  ...
-                          'ytick',      oxSatTicks,           ...
-                          'yticklabel', oxSatTickLabels,      ...
-                          'fontsize',   9                     ...
-                )
-            
-            ylabel(oxSatAxes,'DO Saturation',         ...
-                             'fontsize',   10,             ...
-                             'fontweight', 'bold')
- 
-       %plot oxygen saturation     
-            line(time,oxygenSaturation,'color','k','parent',oxSatAxes);
-        
-        end
-    end
-        
+      end
+     end
      
-    
-    %set up salinity & turbidity axes
-    if ~exist('dissolvedOxygen','var')
-        subplot(4,1,2)
-        salinityAxesPosition=[0.13 0.54 0.7750 0.1321];
-    else
-        subplot(4,1,3)
-        salinityAxesPosition=[0.13 0.33 0.7750 0.1321];
     end
     
-    %plot salinity
-    line(time,salinity,'color','k');
-    salinityAxes=gca;
+   % Plot the data
+    for variableNumber=1:length(yVariables)
+        
+        yVariableName = char(yVariables{variableNumber});
+        
+        yDataLocation = find( ...
+                         strcmp( ...
+                          yVariableName, ...
+                          self.configuration.dataVariableNames ...
+                               ) ...
+                              );
+                          
+   % Get the data for the y-axis  
+        yVar = self.dataCellArray{yDataLocation};
+   % Get the data units     
+        yDataUnits = char(self.configuration.dataVariableUnits{yDataLocation});
+   % Get the range for the current variable
+        yRange = variableRanges{variableNumber};
    
-    %set scale for salinity axis 
-    minSal=31;
-    for n=[11 21 31]
-        if length(find(salinity<n))>30
-            minSal=n-10;
-            break
-        end
-    end
-    maxSal=36;
-    salRange=maxSal-minSal;
-    set(salinityAxes, 'xlim',          [startTime endTime],                        ...
-                      'xminorgrid',    'on',                                       ...
-                      'xgrid',         'off',                                      ...
-                      'ygrid',         'on',                                       ...
-                      'ylim',          [minSal maxSal],                            ...
-                      'ytick',         (minSal:salRange/5:maxSal),                 ...
-                      'box',           'on',                                       ...
-                      'xaxislocation', 'bottom',                                   ...
-                      'xtick',         (startTime:timeStep:endTime),               ...
-                      'yaxislocation', 'left',                                     ...
-                      'xticklabel',    datestr(get(depthAxes,'xtick'),'mm/dd/yy'), ...
-                      'position',      salinityAxesPosition                        ...
-        )
-    ylabel(salinityAxes,{'Salinity (PSU)';'\fontsize{8} '},     ...
-                         'fontweight','bold',                   ...
-                         'color',[0 0 0])
-      
-    if exist('turbidity','var')
-         
-        minTurb=0;
-        maxTurb=25;
-        turbidityColor=[0.63 0.4 0.31];
-    
-        %scale max range if significant number of values above threshhold
-        for n=[500 250 100 50 25];
-            if length(find(turbidity>n))>30
-                maxTurb=2*n;
-                break
+   % Set the limits and ticks for the y-axis
+        if strcmp(yRange{1},'fixed')
+            minY = min(yRange{2});
+            maxY = max(yRange{2});
+            if length(yRange{2}) > 2
+                if yRange{2}(3) > yRange{2}(2)
+                    for n = 1:length(yRange{2})-1
+                        if length(find(yVar>yRange{2}(n)))>30
+                                maxY = yRange{2}(n+1);      
+                        end
+                    end
+                else
+                    for n = 1:length(yRange{2})-1
+                        if length(find(yVar<yRange{2}(n)))>30
+                                minY = yRange{2}(n+1);
+                        end
+                    end
+                end
             end
-        end
-
-        turbRange=maxTurb-minTurb;
-           
-        turbidityAxes=axes('Position',      salinityAxesPosition,         ...
-                           'yaxislocation', 'right',                      ...
-                           'xlim',          get(salinityAxes,'xlim'),     ...
-                           'ycolor',        turbidityColor,               ...
-                           'xtick',         get(depthAxes,'xtick'),       ...
-                           'ylim',          [minTurb maxTurb],            ...
-                           'ytick',         (minTurb:turbRange/5:maxTurb),...
-                           'Color',         'none',                       ...
-                           'xticklabel',    '',                           ...
-                           'xaxislocation', 'top'                         ...
-                           );
-        set(salinityAxes,'box','off')
-        
-        
-        line(time,turbidity,'color',turbidityColor,'parent',turbidityAxes);
-
-        if maxTurb < 100
-            ylabel(turbidityAxes,{'';'Turbidity (NTU)'},'fontweight','bold')
         else
-            ylabel(turbidityAxes,{'\fontsize{1} ';'\fontsize{10}Turbidity (NTU)'},'fontweight','bold')
-        end
-        
-    end
-  
-    %plot chlorophyll
-    if exist('chlorophyll','var')
-        if ~exist('dissolvedOxygen','var')
-            subplot(4,1,3)
-            chlorophyllAxesPosition=[0.13 0.33 0.7750 0.1321];
-        else
-            subplot(4,1,4)
-            chlorophyllAxesPosition=[0.13 0.12 0.7750 0.1321];
-        end
-        chloHandle=plot(time,chlorophyll);
-        minChlo=0;
-        maxChlo=20;
-        chlorophyllColor=[0.1 .55 .35];
-
-        %set scale for chorophyll axis
-        for n=[40 30 20];
-            if length(find(chlorophyll>n))>30
-                maxChlo=n+10;
-                break
+            if length(yRange) > 1
+                multiplier = yRange{2}(1);
+            else
+                multiplier = 10;
             end
+            minY = multiplier*floor(min(yVar)/multiplier);
+            maxY = multiplier*ceil(max(yVar)/multiplier);
         end
+        
+   % Set the ticks for the y-axis     
+        if length(yRange) == 3
+            numberofTicks = yRange{3}(1);
+        else
+            numberofTicks = 5;
+        end
+        
+        range = maxY - minY;
+        
+        yTicks = (minY:range/numberofTicks:maxY);
+        
+   % Create the tick labels for the y-axis     
+        yTickLabels = cell(length(yTicks),1);
+        
+        if strcmp(yDataUnits,'%')
+            for j=1:length(yTicks)
+                yTickLabels{j}=strcat(num2str(yTicks(j)),'%');
+            end
+            tickLabelSize=9;
+        else
+            for j=1:length(yTicks)
+                yTickLabels{j}=num2str(yTicks(j));
+            end
+            tickLabelSize=10;
+        end
+                
+        
+   % Get the location of the y-axis (left or right) for the current plot   
+        if mod(plotLocations(variableNumber),2)
+            yLocation='left';
+        else
+            yLocation='right';
+        end
+   
+   % Get the properties of the base axis for the current plot     
+        baseAxis=baseAxisProperties{ceil(plotLocations(variableNumber)/2)};
+   % Set the axis properties for the current plot
+        axisProperties{variableNumber} = axes(                         ...
+                       'position',      get(baseAxis,'position'),  ...
+                       'color',         'none',                    ...
+                       'xtick',         xTicks,                    ...
+                       'xlim',          [startTime endTime],       ...
+                       'ylim',          [minY maxY],               ...
+                       'ytick',         yTicks,                    ...
+                       'ycolor',        plotColors{variableNumber},    ...
+                       'xgrid',         'off',                     ...
+                       'ygrid',         'off',                     ...
+                       'xticklabel',    '',                        ...
+                       'yaxislocation', yLocation,                 ...
+                       'yticklabel',    yTickLabels,               ...
+                       'fontsize',      tickLabelSize              ...
+                       );
+                   
+   % Selectively remove single data points to prevent line from connecting
+   % points more than 1/4 day apart
+        for i=2:length(time)
+           if (time(i)-time(i-1)) > 0.25
+                yVar(i-1) = NaN;
+           end
+        end
+   
+   % Plot the current variable vs time               
+        line(time,yVar,                                            ...
+                       'color',         plotColors{variableNumber},    ...
+                       'parent',        axisProperties{variableNumber} ...
+                       )
+   
+   % Match the y-axis properties of the base axis to the current plot                   
+        set(baseAxisProperties{ceil(plotLocations(variableNumber)/2)},                                 ...
+                       'ylim',          get(axisProperties         ...
+                                           {variableNumber},'ylim'),   ...
+                       'ytick',         get(axisProperties         ...
+                                           {variableNumber},'ytick'),  ...
+                       'yticklabel',    ''                         ...
+                  )
 
-        chloRange=maxChlo-minChlo;
-        set(chloHandle,'color',chlorophyllColor)
-        chlorophyllAxes=gca;
-        set(chlorophyllAxes, 'xlim',       [startTime endTime],                        ...
-                             'ycolor',     chlorophyllColor,                           ...
-                             'ylim',       [minChlo maxChlo],                          ...
-                             'ytick',      (minChlo:chloRange/5:maxChlo),              ...
-                             'xminorgrid', 'on',                                       ...
-                             'xtick',      (startTime:timeStep:endTime),               ...
-                             'xticklabel', datestr(get(depthAxes,'xtick'),'mm/dd/yy'), ...
-                             'position',   chlorophyllAxesPosition                     ...
-             )
-         
-        ylabel(chlorophyllAxes,{'Chlorophyll ( \mug/L)';'\fontsize{9} '},      ...
-                                'color',chlorophyllColor,                      ...
-                                'fontweight','bold')
-        
-        ax6=axes('position',      chlorophyllAxesPosition,       ...
-                 'color',         'none',                        ...                     
-                 'xtick',         get(depthAxes,'xtick'),        ...
-                 'ylim',          [minChlo maxChlo],             ...
-                 'ytick',         get(chlorophyllAxes,'ytick'),  ...
-                 'xgrid',         'off',                         ...
-                 'ygrid',         'on',                          ...
-                 'xticklabel',    '',                            ...
-                 'yaxislocation', 'right',                       ...
-                 'yticklabel',    ''                             ...
-                 );
-             
-        if exist('pH','var')
-          
-          minpH=7.8;
-          maxpH=8.3;
-          pHRange=maxpH-minpH;
-          pHColor=[1 0.5 0.2];
-          
-          pHAxes=axes('position', chlorophyllAxesPosition,       ...
-                 'color',         'none',                        ...
-                 'ycolor',        pHColor,                       ...
-                 'xlim',          get(chlorophyllAxes,'xlim'),   ...
-                 'xtick',         get(depthAxes,'xtick'),        ...
-                 'ylim',          [minpH maxpH],                 ...
-                 'ytick',         (minpH:pHRange/5:maxpH),       ...
-                 'xgrid',         'off',                         ...
-                 'ygrid',         'off',                         ...
-                 'xticklabel',    '',                            ...
-                 'yaxislocation', 'right'                        ...
-                 );
-             
-          line(time,pH,'color',pHColor,'parent',pHAxes);
-          ylabel(pHAxes,{'\fontsize{1} ';'\fontsize{10}pH'},'fontweight','bold')
-          
+              
+   % Label the y-axis           
+        hylab = ylabel(yAxisLabels{variableNumber},                 ...
+                       'fontsize',10,'fontweight','bold');
+        set(hylab,'units','normalized');
+        yLabelPosition = get(hylab,'position');
+        if strcmp(yLocation,'left')
+           yLabelPosition(1) = -0.065;
+        else
+           yLabelPosition(1) = 1.065;
         end
-        
-        
-    end %if exist
+        set(hylab,'position',yLabelPosition);      
+              
+    end
     
-    value=figureHandle;
+    value = figureHandle;
     
     end %function
+    
     
     
     
@@ -2829,8 +2674,7 @@ classdef DataProcessor < hgsetget & dynamicprops
 
       %IF reading from archive; be sure to change 'duration' to 2678400 (31 days) 
       %Grab the data for 31 days - saved in data_'rbnbSource'.dat in read_archive folder
-      read_archiveSourceFile=[self.configuration.read_archivePath ...
-                              'read_archive_' self.configuration.rbnbSource '.sh'];
+      read_archiveSourceFile=[self.configuration.read_archivePath 'read_archive_' self.configuration.rbnbSource '.sh'];
       
       % Create a new read_archive source file from a template (if necessary)
       if ~exist(read_archiveSourceFile,'file')
@@ -2894,6 +2738,8 @@ classdef DataProcessor < hgsetget & dynamicprops
         variableNameCellArray{length(variableNameCellArray) + 1} = newFieldName;      
         set(config, 'dataVariableNames', variableNameCellArray);     
         clear config variableNameCellArray;
+      else
+      disp('Error: Variable already exists!')
       end
     end
     
@@ -2905,23 +2751,13 @@ classdef DataProcessor < hgsetget & dynamicprops
       if ( self.configuration.debug )
         disp('DataProcessor.updateDataVariableUnits() called.');
       end
-      
-      % if the variable name does not already exist
-      if ( ~any( ...
-             strcmp( ...
-               newUnitName, ...
-               self.configuration.dataVariableUnits ...
-             ) ...
-           ) ...
-         )
-      
+          
         % add the new data column into the variable name and unit properties
         config = get(self, 'configuration');
         variableUnitCellArray = get(config, 'dataVariableUnits');           
         variableUnitCellArray{length(variableUnitCellArray) + 1} = newUnitName;      
         set(config, 'dataVariableUnits', variableUnitCellArray);      
         clear config variableUnitCellArray;
-      end
     end
     
     % --------------%

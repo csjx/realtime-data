@@ -242,10 +242,10 @@ classdef Configure < hgsetget & dynamicprops
     readArchive = false;
     
     % A string containing the path to the read_archive scripts
-    read_archivePath='/data/processed/read_archive/'
+    read_archivePath = '/data/processed/read_archive/'
     
     % A string containing the name of the base archive directory for the sensor
-    archiveDirectory='alawai'
+    archiveDirectory = 'alawai'
     
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
@@ -272,7 +272,27 @@ classdef Configure < hgsetget & dynamicprops
     % A cell array property containing information for PacIOOS plots
     % 1) figure title prefix (string)
     % 2) figure duration in days (string)
-    PacIOOSFigures={{'7 day','7'}};
+    % 3) output format for the figure (string)
+    PacIOOSFigures = {{'7 day','7','.eps'}};
+    
+    % A cell array property containing configuration info for PacIOOS plots
+    % 1) cell array of variables to plot (as strings)
+    % 2) cell array of axis labels (as strings)
+    % 3) cell array of axis locations (positions are 1-8, 1 being topmost-left
+    %    8 being bottommost-right
+    % 4) cell array of plot colors, each color represented as a 3x1 array
+    % 5) cell array containing info for y-axis range and scaling.
+    %    1st parameter determines dynamic vs fixed/semi dynamic axis.
+    %    2nd parameter is the multiple used in dynamic scaling or the
+    %    min/max values used for fixed or semi-dynamic axis
+    %    3rd parameter is the number of ticks for the axis
+    PacIOOSFigureProperties = {                                     ...
+        {'adjustedDepth','temperature','salinity'}                , ...
+        {'Actual WL (m)','Temperature (\circC)','Salinity (PSU)'} , ...
+        {1 2 3}                                                   , ...
+        {[0 0 0],[1 0 0],[0 0 0]}                                 , ...
+        {{'fixed', [-0.4 1.2], 4},{'dynamic',  2, 4},{'fixed', [36 31 21 11 1 -4], 5}} ...
+        };
     
     % A cell array property that gives the details needed to produce multiple
     % temperature-salinity plots
