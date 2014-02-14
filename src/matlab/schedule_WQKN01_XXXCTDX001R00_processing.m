@@ -80,8 +80,12 @@ set( configuration,                                                         ...
 % rbnbSinkName      - is the name of the sink client to be used when connecting
 % rbnbSource        - is the name of the DataTurbine source for the instrument
 % rbnbChannel       - is the name of the DataTurbine channel for the instrument
+% archiveDirectory  - is the name up the upper level archive directory for
+%                     the instrument
 % startDate         - is the start date in UTC(mm-dd-yyyy HH:MM:SS) that the 
 %                     DataTurbine queries will use
+% timeOffset        - is the difference in hours between the sensor time and UTC
+%                     (ie. local timezone)
 % duration          - is the duration (in seconds) that DataTurbine queries will use
 % reference         - is the channel reference point (oldest, newest, absolute)
 %                     If reference is newest, the query will fetch duration in
@@ -94,7 +98,9 @@ set( configuration,                                                         ...
 'rbnbSinkName'        , 'MatlabWQKN01_XXXCTDX001R00PlottingSink'          , ...
 'rbnbSource'          , 'WQKN01_XXXCTDX001R00'                            , ...
 'rbnbChannel'         , 'DecimalASCIISampleData'                          , ...
-'dataStartDate'       , '05-01-2010 23:00:00'                             , ... % UTC
+'archiveDirectory'    , 'kilonalu'                                        , ...
+'dataStartDate'       , '05-08-2010 00:00:00'                             , ... % UTC
+'sensorTimeOffset'    , -10                                               , ...
 'duration'            ,  2764800                                          , ...
 'reference'           , 'newest'                                            ...
 );                                                                        
@@ -260,27 +266,100 @@ set(configuration,                                                     ...
 );
 
 
-% Set configuration parameters for PaciOOS time series plots
+% Set title and duration for PaciOOS time series plots
 % PacIOOSFigures = { {figure 1 properties}; {figure 2 properties}; ...}
 % Set properties in order listed below for each figure to be created:
 %
 % Figure Title Prefix       : Sensor location and name   (string)
 %
 % Figure Duration           : Duration of figures in days (string)
+%
+% Output format             : Output as .eps and/or .jpg  
+%                             (set as {.eps,.jpg} for both)
 
 set( configuration,                                                            ...
     'PacIOOSFigures', {                                                        ...
                        % Figure 1  (7 day plot)
-                       {'Water Quality Buoy, Kilo Nalu  (WQBKN), 7 day'      , ... %Title prefix
-                        '7'}                                                 ; ... %Duration in days
+                       {{'Water Quality Buoy, Kilo Nalu  (WQBKN), 7 day'}    , ... %Title prefix
+                        {'7'}                                                , ... %Duration in days
+                        {'.eps'}                                               ... %Output format
+                        }                                                    ; ...
                        % Figure 2  (21 day plot)
-                        {'Water Quality Buoy, Kilo Nalu  (WQBKN), 30 day'    , ... %Title prefix
-                        '30'}                                                ; ... %Duration in days
+                       {{'Water Quality Buoy, Kilo Nalu  (WQBKN), 30 day'}   , ... %Title prefix
+                        {'30'}                                               , ... %Duration in days
+                        {'.eps'}                                               ... %Output format
+                        }                                                    ; ...
                        % Figure 3  (monthly plot)
-                        {'Water Quality Buoy, Kilo Nalu  (WQBKN))'           , ... %Title prefix
-                         'monthly'}                                            ...
-                             }                                                 ...
-                              )                                              ;
+                       {{'Water Quality Buoy, Kilo Nalu  (WQBKN))'}          , ... %Title prefix
+                        {'monthly'}                                          , ...
+                        {'.eps'}                                               ... %Output format
+                        }                                                      ...
+                       }                                                       ...
+                     )                                                       ;
+                 
+% Set the configuration parameters for the PacIOOS figures that should
+% be generated.  PacIOOSFigureProperties is a cell array that includes
+% five sub cell arrays that contain figure properties.
+% For the figures to be generated, the following properties must be included,
+% in the order listed below:
+%
+% 1) cell array of variables to plot (as strings)
+% 2) cell array of axis labels (as strings)
+% 3) cell array of axis locations (positions are 1-8, 1 being topmost-left
+%    8 being bottommost-right
+% 4) cell array of plot colors, each color represented as a 3x1 array
+% 5) cell array containing info for y-axis range and scaling.
+%    set 1st parameter to 'dynamic' or 'fixed'
+%    if 'dynamic' then 2nd parameter is the multiple used in dynamic scaling
+%    if 'fixed' then 2nd parameter is the min/max values
+%     if more than 2 values input, will result in step-scaling between the
+%     values (upwards if values in numerical order, downwards if in reverse
+%     numerical order)
+%    3rd parameter is the number of ticks for the axis (will default to 5
+%     if no value set)
+
+set(configuration,                                                 ...
+    'PacIOOSFigureProperties',{                                    ...
+                         {                                ... %Figure Variables
+                         'adjustedDepth'                         , ...
+                         'temperature'                           , ...
+                         'dissolvedOxygen'                       , ...
+                         'oxygenSaturation'                      , ...
+                         'salinity'                              , ...
+                         'turbidity'                             , ...
+                         'chlorophyll'                             ...
+                         }                                       , ...
+                        {                                ... %Axis Labels
+                         'Actual WL (m)'                         , ...
+                         'Temperature (\circC)'                  , ...
+                         'DO conc (\muM)'                        , ...
+                         'DO Saturation'                         , ...
+                         'Salinity (PSU)'                        , ...
+                         'Turbidity (NTU)'                       , ...
+                         'Chlorophyll (\mug/L)'                    ...
+                         }                                       , ...
+                         {1 2 3 4 5 6 7}               , ... %Plot Locations
+                         {                               ... %Plot Colors
+                          [0    0    0   ]                       , ... %WL
+                          [1    0    0   ]                       , ... %Temp
+                          [0    0.4  1   ]                       , ... %DO
+                          [0    0    0   ]                       , ... %DOS
+                          [0    0    0   ]                       , ... %Sal
+                          [0.63 0.4  0.31]                       , ... %Turb
+                          [0.1  0.55 0.35]                         ... %Chlo
+                          }                                      , ...
+                          {                              ... %y-axis ranges
+                           {'fixed', [-0.4 1.2], 4}              , ... %WL
+                           {'dynamic',  2, 4}                    , ... %Temp
+                           {'dynamic', 50, 5}                    , ... %DO
+                           {'fixed', [60 160], 5}                , ... %DOS
+                           {'fixed', [36 31 21 11 1 -4], 5}      , ... %Sal
+                           {'fixed', [0 25 50 100 250 500 1000]} , ... %Turb
+                           {'fixed', [0 10 20 30 40 50]}           ... %Chlo
+                           }                                       ...
+                          }                                        ...
+                         )                                       ;                 
+                 
                           
 % Tell the DataProcessor which type of figure to create
 % Either: temperatureSalinity or timeSeries
