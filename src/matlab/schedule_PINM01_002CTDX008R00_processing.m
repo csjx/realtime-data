@@ -484,6 +484,9 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 PINM01ctdProcessor = DataProcessor(configuration);
 
+%keyboard
+PINM01ctdProcessor.process()
+
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(PINM01ctdProcessor, 'timerStartTime', PINM01ctdProcessor.configuration.timerInterval);

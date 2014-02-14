@@ -428,7 +428,7 @@ addpath(configuration.libraryDirectory);
 NS02ctdProcessor = DataProcessor(configuration);
 
 %keyboard
-%NS02ctdProcessor.process()
+NS02ctdProcessor.process()
 
 
 % schedule the processing

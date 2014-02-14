@@ -440,6 +440,9 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 NS10ctdProcessor = DataProcessor(configuration);
 
+%keyboard
+NS10ctdProcessor.process()
+
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(NS10ctdProcessor, 'timerStartTime', NS10ctdProcessor.configuration.timerInterval);
