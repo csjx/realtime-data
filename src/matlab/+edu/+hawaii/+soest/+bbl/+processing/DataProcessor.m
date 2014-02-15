@@ -2738,8 +2738,8 @@ end
         variableNameCellArray{length(variableNameCellArray) + 1} = newFieldName;      
         set(config, 'dataVariableNames', variableNameCellArray);     
         clear config variableNameCellArray;
-      else
-      disp('Error: Variable already exists!')
+     % else
+     % disp('Error: Variable already exists!')
       end
     end
     
@@ -2751,13 +2751,17 @@ end
       if ( self.configuration.debug )
         disp('DataProcessor.updateDataVariableUnits() called.');
       end
-          
+      
+      if length(self.configuration.dataVariableNames) > ...
+              length(self.configuration.dataVariableUnits)
+        
         % add the new data column into the variable name and unit properties
         config = get(self, 'configuration');
         variableUnitCellArray = get(config, 'dataVariableUnits');           
         variableUnitCellArray{length(variableUnitCellArray) + 1} = newUnitName;      
         set(config, 'dataVariableUnits', variableUnitCellArray);      
         clear config variableUnitCellArray;
+      end
     end
     
     % --------------%
