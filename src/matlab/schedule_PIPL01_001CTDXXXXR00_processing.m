@@ -283,7 +283,7 @@ set(configuration,                                                 ...
                           [0.1  0.55 0.35]                         ... %Chlo
                           }                                      , ...
                           {                              ... %y-axis ranges
-                           {'fixed', [-0.4 1.2], 4}              , ... %WL
+                           {'fixed', [-0.4 2.0], 4}              , ... %WL
                            {'dynamic',  2, 4}                    , ... %Temp
                            {'fixed', [36 31 21 11 1 -4], 5}      , ... %Sal
                            {'fixed', [0 25 50 100 250 500 1000]} , ... %Turb
