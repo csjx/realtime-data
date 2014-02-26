@@ -2702,10 +2702,21 @@ end
       stringLength=length(dataString);
       while ischar(tline); 
 		tline=fgets(fid);
-        if length(tline)==stringLength
-          dataString(i,:)=tline;
-          i=i+1;
-        end 
+        if length(tline)>40
+     % Pad string or array with blank spacing to account for length differences   
+          if length(tline)<stringLength
+                dsSize=size(dataString);
+                tline=[tline,blanks(dsSize(2)-length(tline))];
+          else if length(tline)>stringLength
+                dsSize=size(dataString);
+                pads=repmat(blanks(length(tline)-dsSize(2)),dsSize(1),1);
+                dataString=[dataString pads];
+                stringLength=length(tline);
+               end
+          end
+        dataString(i,:)=tline;
+        i=i+1;
+        end
       end
       fclose(fid);
       clear fid i tline;
