@@ -209,10 +209,10 @@ set(configuration,                                                     ...
   'calibrationCoefficientValues'                                     , ...
                              {                                         ...
 ...                          % Flourometer
-                               0.060                                 , ... %CDC
-                               15                                    , ... %CSF
-                               0.076                                 , ... %TDC
-                               40                                    , ... %TSF
+                               0.078                                 , ... %CDC
+                               16                                    , ... %CSF
+                               0.057                                 , ... %TDC
+                               42                                    , ... %TSF
 ...                          % Dissolved Oxygen
                                0.3968                                , ... %Soc
                               -0.4725                                , ... %Voffset
