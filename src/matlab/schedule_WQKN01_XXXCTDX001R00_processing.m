@@ -290,7 +290,7 @@ set( configuration,                                                            .
                         {'.eps'}                                               ... %Output format
                         }                                                    ; ...
                        % Figure 3  (monthly plot)
-                       {{'Water Quality Buoy, Kilo Nalu  (WQBKN))'}          , ... %Title prefix
+                       {{'Water Quality Buoy, Kilo Nalu  (WQBKN)'}          , ... %Title prefix
                         {'monthly'}                                          , ...
                         {'.eps'}                                               ... %Output format
                         }                                                      ...
@@ -489,9 +489,6 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 WQKN01ctdProcessor = DataProcessor(configuration);
 
-%keyboard
-WQKN01ctdProcessor.process()
-
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(WQKN01ctdProcessor, 'timerStartTime', WQKN01ctdProcessor.configuration.timerInterval);
@@ -505,3 +502,6 @@ set(WQKN01ctdProcessor, 'timerObject',                     ...
         'executionmode',                                   ...
         'fixeddelay'));
 startat(WQKN01ctdProcessor.timerObject, WQKN01ctdProcessor.timerStartTime);
+
+% start the process now
+WQKN01ctdProcessor.process()

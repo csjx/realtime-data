@@ -76,6 +76,10 @@ classdef Configure < hgsetget & dynamicprops
     % The path to the mkdir program. Used to create additional directories
     % to organize output plots by date.
     mkdirPath = '/bin/mkdir';
+    
+    % The path to the wget program.  Used for data retrieval from remote
+    % sources.
+    wgetPath = '/usr/bin/wget';
 
     % The path of the RBNB software
     rbnbPath = '/usr/local/RBNB/current/';
@@ -247,6 +251,14 @@ classdef Configure < hgsetget & dynamicprops
     % A string containing the name of the base archive directory for the sensor
     archiveDirectory = 'alawai'
     
+    % A string containing URL info for LOBOViz data
+    LOBOVizURL=['http://hawaii.loboviz.com/cgi-data/nph-data.cgi?' ...
+                'node=29&data_format=text&x=date&y=cdom,fluorescence,' ...
+                'nitrate,oxygen,oxygen_percent,salinity,temperature,turbidity'];
+    
+    % A string containing the path to the LOBOViz data directory on BBL       
+    LOBOVizPath='/data/processed/LOBOViz/';
+    
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
     currentFigureType = '';
@@ -325,6 +337,11 @@ classdef Configure < hgsetget & dynamicprops
 
     %The record delimiter for the ASCII text data string (end of line)
     recordDelimiter = '\n';
+    
+    %A boolean property that tells the parsing function whether to treat
+    %multiple delimiters as one (may be necessary if whitespace delimiters
+    %are used)
+    ignoreMultipleDelims = false;
     
     % The number of header lines for the ASCII text data string (end of line)
     numberOfHeaderLines = '0';

@@ -103,17 +103,12 @@ classdef DataProcessor < hgsetget & dynamicprops
         
         if ( ~isempty(dataLinesCellArray{lineNumber}) ) 
             try
-              if strcmp(self.configuration.fieldDelimiter,' ')
-                  multDelims=1;
-              else
-                  multDelims=0;
-              end
               textscan(                                               ...
                 dataLinesCellArray{lineNumber},                       ...
                 self.configuration.dataFormatString,                  ...
                 'ReturnOnError', 0,                                   ...
                 'Delimiter', self.configuration.fieldDelimiter,       ...
-                'MultipleDelimsAsOne', multDelims                     ...
+                'MultipleDelimsAsOne', self.configuration.ignoreMultipleDelims ...
               );
               
               % add the line ending that was stripped off
@@ -147,7 +142,7 @@ classdef DataProcessor < hgsetget & dynamicprops
           self.configuration.dataFormatString,                  ...
           'BufSize', (10 * self.configuration.duration),        ...
           'Delimiter', self.configuration.fieldDelimiter,       ...
-          'MultipleDelimsAsOne', multDelims,                    ...
+          'MultipleDelimsAsOne', self.configuration.ignoreMultipleDelims, ...
           'headerLines', 0 ...
         );
       
@@ -161,18 +156,23 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       if ( self.configuration.debug )
         disp('DataProcessor.process() called.');
-      end
-      
+      end      
       set(self, 'processTime', now());
+      
       % get the most recent interval of data
-      if ( self.configuration.readArchive )
+      if strcmp(self.configuration.rbnbServer,'LOBOViz')
         [self.dataString, ...
          self.dataTimes,  ...
-         self.dataName] = self.getArchiveData();
-      else
-        [self.dataString, ...
-         self.dataTimes,  ...
-         self.dataName] = self.getRBNBData();
+         self.dataName] = self.getLOBOVizData();
+      else if ( self.configuration.readArchive )
+             [self.dataString, ...
+              self.dataTimes,  ...
+              self.dataName] = self.getArchiveData();
+          else
+             [self.dataString, ...
+              self.dataTimes,  ...
+              self.dataName] = self.getRBNBData();
+          end
       end
       
       % parse the data string into a cell array used to create graphics
@@ -455,6 +455,10 @@ classdef DataProcessor < hgsetget & dynamicprops
                 if ( self.configuration.exportFigures )
                     % call the export method
                     if strcmp(figureDuration,'monthly')
+                      if strcmp(datestr(time(end),'yyyy_mm'), ...
+                                 datestr(now,'yyyy_mm')) || ...
+                         strcmp(datestr(time(end)+1,'yyyy_mm'), ...
+                                 datestr(now,'yyyy_mm'))
                         figureNameSuffix = datestr(time(end),'yyyy_mm');
                         self.exportMonthly(           ...
                             figureHandle            , ...
@@ -463,6 +467,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                             outDir                  , ...
                             figureNameSuffix          ...
                                            )        ;
+                      end
                     else
                         figureNameSuffix = [figureDuration 'day'];                    
                         self.export2(                 ...
@@ -880,15 +885,33 @@ classdef DataProcessor < hgsetget & dynamicprops
                   ) ...
                 };
             
-            % convert from mg/L to micro Molar
-              value = dissolvedOxygenMetricArray * 35.2152                               ;
+            % get a reference to the units for dissolved oxygen
+              dissolvedOxygenUnits = ...
+                self.configuration.dataVariableUnits{ ...
+                  find( ...
+                    strcmp( ...
+                      self.configuration.dissolvedOxygenMetricFieldName, ...
+                      self.configuration.dataVariableNames ...
+                    ) ...
+                  ) ...
+                };
+            
+            % convert from mg/L or mL/L to micro Molar
+              if strcmp(dissolvedOxygenUnits,'mg/L') 
+                value = dissolvedOxygenMetricArray * 35.2152;
+              else if strcmp(dissolvedOxygenUnits,'mL/L')
+                      value = dissolvedOxygenMetricArray * 44.9826;
+                  else
+                      value = dissolvedOxygenMetricArray;
+                  end
+              end
             
             % update the field names and units arrays
               updateDataVariableNames(self, self.configuration.dissolvedOxygenFieldName);
               updateDataVariableUnits(self, '\muM');
             
             % Derive dissolved oxygen and oxygen saturation values from voltage (membrane sensors)  
-            else if ( any(strcmp(self.configuration.dissolvedOxygenVoltsFieldName,   ...
+          else if ( any(strcmp(self.configuration.dissolvedOxygenVoltsFieldName,   ...
                                       self.configuration.dataVariableNames)) && ...
                       length(self.configuration.dataVariableNames) ==                ...
                       length(self.configuration.dataVariableUnits) )
@@ -2079,6 +2102,7 @@ end
     
    % Calculate start and end times, and the timestep to be used for
    % plotting the x axis
+    
     if strcmp(figureDuration,'monthly')
         year=str2double(datestr(time(end),'yyyy'));
         month=str2double(datestr(time(end),'mm'));        
@@ -2091,7 +2115,7 @@ end
         timeStep=5;
     else
         duration=str2double(figureDuration);
-        endTime=ceil(time(end))+0.25;
+        endTime=ceil(now)+0.25;
         startTime=endTime-duration-0.25;
         timeStep=round(duration/7);
     end
@@ -2128,12 +2152,19 @@ end
                'fontweight','bold',                             ...
                'fontsize',11)
       else
-        startdate=datestr(startTime,'mm-dd-yyyy');
-        enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
-        title({['\fontsize{11}' figureTitlePrefix];                       ...
-               '\fontsize{6} ';                                           ...
-               [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
-               'fontweight','bold')
+        if time(end) > startTime
+          startdate=datestr(startTime,'mm-dd-yyyy');
+          enddate=datestr(time(end),'mm-dd-yyyy HH:MM');
+          title({['\fontsize{11}' figureTitlePrefix];                       ...
+                 '\fontsize{6} ';                                           ...
+                 [ '\fontsize{10}' startdate '  ' 'to' '  ' enddate];' '},  ...
+                 'fontweight','bold')
+        else
+          title({['\fontsize{11}' figureTitlePrefix];                       ...
+                 '\fontsize{6} ';                                           ...
+                 '\fontsize{10}No Data for this Period';' '},  ...
+                 'fontweight','bold')
+        end
       end
      end
      
@@ -2417,11 +2448,11 @@ end
       if ( self.configuration.debug )
         disp('DataProcessor.export2() called.');
       end
-          
+      
       %endTime=ceil(time(end));
       %startTime=endTime-figureDuration;
-      year=datestr(time(end),'yyyy');
-      month=datestr(time(end),'mm');
+      year=datestr(now,'yyyy');
+      month=datestr(now,'mm');
       %day=datestr(time(end),'dd');
       mkdirpath=self.configuration.mkdirPath;
       pathSeparator=self.configuration.pathSeparator;
@@ -2453,7 +2484,7 @@ end
       % Export to Enhanced Postscript
       fileNamePrefix = [self.configuration.rbnbSource  '_' ...
                     ...   %datestr(startTime,'yyyymmddHHMM') '-' ...
-                        datestr(time(end),'yyyymmdd') '_' ...
+                        datestr(now,'yyyymmdd') '_' ...
                         figureNameSuffix];
                         
       % Export to eps
@@ -2547,7 +2578,7 @@ end
       if ( self.configuration.debug )
         disp('DataProcessor.exportMonthly() called.');
       end
-
+      
       year=datestr(time(end),'yyyy');
       mkdirpath=self.configuration.mkdirPath;
       pathSeparator=self.configuration.pathSeparator;
@@ -2693,7 +2724,7 @@ end
       while ischar(tline);
           if length(tline)>40
             dataString(1,:)=tline;
-            dataTimes(1,:)=datenum(clock);%(tline(end-20:end));
+            dataTimes(1,:)=now;%(tline(end-20:end));
             break
           end
           tline=fgets(fid);
@@ -2724,6 +2755,69 @@ end
       dataName =  [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
        
     end %getArchiveData
+    
+    % A method used to fetch ASCII data from the LOBOViz database
+    function [dataString, dataTimes, dataName] = getLOBOVizData(self)
+
+     % Set the reference dates 
+     min_date=datestr(now-32,'yyyymmdd');
+     max_date=datestr(now,'yyyymmdd');
+     
+     % Create the URL string
+     LOBOVizSource=['"' self.configuration.LOBOVizURL ...
+                    '&min_date=' min_date '&max_date=' max_date '"'];
+    
+     % Get the file path for temporary local data storage
+     LOBOVizFilePath=[self.configuration.LOBOVizPath self.configuration.rbnbSource];
+    
+     % Retrieve the last 32 days of data from the LOBOViz database 
+     % and write to a local directory 
+     try
+      system([self.configuration.wgetPath ' ' LOBOVizSource ...
+              ' --output-document=' LOBOVizFilePath]);     
+     catch dataException
+          disp (['There was an error retrieving data from the LOBOViz Database. ' ...
+                 'The error message was:' dataException.message]);
+     end
+    
+     % Read the data from the local file into a string array 
+     fid=fopen(LOBOVizFilePath);
+     tline=fgets(fid);
+     while ischar(tline);
+      if str2num(tline(1))
+         if length(tline)>40
+            dataString(1,:)=tline;
+            dataTimes(1,:)=now;
+            break
+         end
+      end
+      tline=fgets(fid);
+     end
+     i=2;
+      stringLength=length(dataString);
+      while ischar(tline); 
+		tline=fgets(fid);
+        if length(tline)>40
+     % Pad string or array with blank spacing to account for length differences   
+          if length(tline)<stringLength
+                dsSize=size(dataString);
+                tline=[tline,blanks(dsSize(2)-length(tline))];
+          else if length(tline)>stringLength
+                dsSize=size(dataString);
+                pads=repmat(blanks(length(tline)-dsSize(2)),dsSize(1),1);
+                dataString=[dataString pads];
+                stringLength=length(tline);
+               end
+          end
+        dataString(i,:)=tline;
+        i=i+1;
+        end
+      end
+      fclose(fid);
+      clear fid i tline;
+
+      dataName =  [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
+end  %getLOBOVizData
     
     % A method that appends a new variable field name to the dataVariableNames
     % property in order to keep track of variable names inside of the 
