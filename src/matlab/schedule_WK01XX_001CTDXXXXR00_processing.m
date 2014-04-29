@@ -388,9 +388,6 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 NS03ctdProcessor = DataProcessor(configuration);
 
-%keyboard
-NS03ctdProcessor.process()
-
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(NS03ctdProcessor, 'timerStartTime', NS03ctdProcessor.configuration.timerInterval);
@@ -404,3 +401,6 @@ set(NS03ctdProcessor, 'timerObject',                     ...
         'executionmode',                               ...
         'fixeddelay'));
 startat(NS03ctdProcessor.timerObject, NS03ctdProcessor.timerStartTime);
+
+%keyboard
+NS03ctdProcessor.process()

@@ -445,9 +445,6 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 PIAS01ctdProcessor = DataProcessor(configuration);
 
-%keyboard
-PIAS01ctdProcessor.process()
-
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(PIAS01ctdProcessor, 'timerStartTime', PIAS01ctdProcessor.configuration.timerInterval);
@@ -461,3 +458,6 @@ set(PIAS01ctdProcessor, 'timerObject',                     ...
         'executionmode',                                   ...
         'fixeddelay'));
 startat(PIAS01ctdProcessor.timerObject, PIAS01ctdProcessor.timerStartTime);
+
+%keyboard
+PIAS01ctdProcessor.process()
