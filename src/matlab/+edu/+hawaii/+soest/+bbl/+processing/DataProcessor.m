@@ -166,6 +166,11 @@ classdef DataProcessor < hgsetget & dynamicprops
               round(now - datenum(self.configuration.dataStartDate));
       end
       
+      %Check dataEndDate
+      if strcmp(self.configuration.dataEndDate, 'now')
+          self.configuration.dataEndDate = ' ';
+      end
+      
       %Match import duration in seconds with import duration in days
       if self.configuration.duration_days ~= 0
           self.configuration.duration = self.configuration.duration_days*24*3600;
@@ -2830,12 +2835,14 @@ end
          eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ '        ...
                 read_archiveFile ' > ' [read_archiveSourceFile '.tmp']]);
          eval(['!sed -e "s/REPLACEFIELD/"' self.configuration.archiveDirectory '/ ' ...
-               [read_archiveSourceFile '.tmp'] ' > ' [read_archiveSourceFile '.tmp']]);
-         eval(['!sed -e "s/REPLACEENDDAY/"' endDate '/ ' ...
-               [read_archiveSourceFile '.tmp'] ' > ' [read_archiveSourceFile '.tmp']]);
+               [read_archiveSourceFile '.tmp'] ' > ' [read_archiveSourceFile '.tmp2']]);
+         eval(['!sed -e "s/REPLACEENDDAY/""' endDate '"/ ' ...
+               [read_archiveSourceFile '.tmp2'] ' > ' [read_archiveSourceFile '.tmp3']]);
          eval(['!sed -e "s/REPLACEDURATION/"' num2str(self.configuration.duration_days) ...
-               '/ ' [read_archiveSourceFile '.tmp'] ' > ' read_archiveSourceFile]);  
+               '/ ' [read_archiveSourceFile '.tmp3'] ' > ' read_archiveSourceFile]);  
          system(['rm' ' ' [read_archiveSourceFile '.tmp']]);
+         system(['rm' ' ' [read_archiveSourceFile '.tmp2']]);
+         system(['rm' ' ' [read_archiveSourceFile '.tmp3']]);
       end
       eval(['!sh ' read_archiveSourceFile]);
         
