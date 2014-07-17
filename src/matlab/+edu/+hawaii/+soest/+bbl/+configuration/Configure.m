@@ -370,7 +370,7 @@ classdef Configure < hgsetget & dynamicprops
     dataStartDate = '05-01-2008 00:00:00';
     
     % The end date of the desired data set
-    dataEndDate = ' '
+    dataEndDate = ' ';
     
     % The timer interval for scheduled processing in minutes
     timerInterval = 20;
