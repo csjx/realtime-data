@@ -159,6 +159,20 @@ classdef DataProcessor < hgsetget & dynamicprops
       end      
       set(self, 'processTime', now());
       
+      %Check if importing all data from Data Start Date
+      if strcmp('full',self.configuration.duration) || ...
+              strcmp('full',self.configuration.duration_days)
+          self.configuration.duration_days = ...
+              round(now - datenum(self.configuration.dataStartDate));
+      end
+      
+      %Match import duration in seconds with import duration in days
+      if self.configuration.duration_days ~= 0
+          self.configuration.duration = self.configuration.duration_days*24*3600;
+      else
+          self.configuration.duration_days = self.configuration.duration/3600/24;
+      end
+      
       % get the most recent interval of data
       if strcmp(self.configuration.rbnbServer,'LOBOViz')
         [self.dataString, ...
@@ -207,15 +221,39 @@ classdef DataProcessor < hgsetget & dynamicprops
       end
              
       % remove data prior to the Data Start Date
-      dataStartDate = datenum(self.configuration.dataStartDate,        ...
-         'mm-dd-yyyy HH:MM:SS') + self.configuration.sensorTimeOffset / 24;
-      if time(1) < dataStartDate
+      try
+       dataStartDate = datenum(self.configuration.dataStartDate,        ...
+         'mm-dd-yyyy HH:MM:SS');
+       if time(1) < dataStartDate
           index=find(time>dataStartDate);
           time=time(index);
           for i=1:length(self.dataCellArray)
               self.dataCellArray{i}=self.dataCellArray{i}(index);
           end
+          clear i index
+       end
+      catch dataStartDateException
+          disp(dataStartDateException.message);
       end
+      
+      %Remove data following the Data End Date
+      if ~strcmp(self.configuration.dataEndDate,' ')
+          try 
+          dataEndDate = datenum(self.configuration.dataEndDate,         ...
+              'mm-dd-yyyy HH:MM:SS');
+       if time(end) > dataEndDate
+          index=find(time<dataEndDate);
+          time=time(index);
+          for i=1:length(self.dataCellArray)
+              self.dataCellArray{i}=self.dataCellArray{i}(index);
+          end
+          clear i index
+       end
+      catch dataEndDateException
+          disp(dataEndDateException.message);
+          end
+      end
+      
           
       % create figures as outlined in the configuration properties
       if ( self.configuration.createFigures )
@@ -231,7 +269,7 @@ classdef DataProcessor < hgsetget & dynamicprops
         end
 
         % define the base output directory
-        outdir=self.configuration.outputDirectory;
+        outdirectory=self.configuration.outputDirectory;
             
         % set the output format(s)
         outputFormat=self.configuration.outputFormat;
@@ -378,7 +416,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                         figureHandle            , ...
                         time                    , ...
                         outputFormat            , ...
-                        outdir                  , ...
+                        outdirectory            , ...
                         figureNameSuffix          ...
                                                         );
                 end            
@@ -438,9 +476,81 @@ classdef DataProcessor < hgsetget & dynamicprops
                 
                 % get the output format
                 outputFormat = char(figureInfo{plotNumber}{3});
-                                         
-                % call the plotting function
-                figureHandle =                    ...
+                
+                %check if making multiple monthly plots
+                if strcmp(figureDuration,'monthly') &&                  ...
+                        self.configuration.duration_days > 32
+                  DCA=self.dataCellArray;    
+                  yearSpan = (str2double(datestr(time(end),'yyyy'))     ...
+                            : -1 : str2double(datestr(time(1),'yyyy')));
+                  if length(yearSpan) > 1         
+                     monthSpan = (12 : -1 : 1);
+                  else
+                      monthSpan = (str2double(datestr(time(end),'mm'))  ...
+                            : -1 : str2double(datestr(time(1),'mm')));
+                  end
+                  
+                  for yr = 1:length(yearSpan)
+                      for mo=1:length(monthSpan)
+                          startDay=datenum(yearSpan(yr),monthSpan(mo),1);
+                          if mo ~= 12
+                              endDay=datenum(yearSpan(yr),monthSpan(mo)+1,1);
+                          else
+                              endDay=datenum(yearSpan(yr)+1,1,1);
+                          end
+                          if startDay <= time(1)-1
+                              break
+                          else
+                              %Pull out individual months of data
+                              index=find(time>startDay & time<endDay);
+                              for i=1:length(self.dataCellArray)
+                                 self.dataCellArray{i}=DCA{i}(index);
+                              end
+                                 
+                                  % call the plotting function
+                                  figureHandle =                 ...
+                                    self.createPacIOOSFigures(   ...
+                                     time(index)               , ...
+                                     figureTitlePrefix         , ...                      
+                                     figureDuration            , ...
+                                     yVariables                , ...
+                                     yAxisLabels               , ...
+                                     plotLocations             , ...
+                                     plotColors                , ...
+                                     variableRanges              ...
+                                                                      );
+
+                               if ( self.configuration.exportFigures )
+                                 % call the export method
+                                  figureNameSuffix = datestr(startDay,'yyyy_mm');
+                                  
+                                     self.exportMonthly(           ...
+                                         figureHandle            , ...
+                                         time(index)             , ...
+                                         outputFormat            , ...
+                                         outDir                  , ...
+                                         figureNameSuffix          ...
+                                                                )        ;
+                               end
+                          end
+                          clear i index
+                      end  %month loop
+                  end    %year loop
+                  
+                  self.dataCellArray = DCA;
+                 %clear the loop variables
+                  clear yearSpan            ...
+                        monthSpan           ...
+                        yr                  ...
+                        mo                  ...
+                        startDay            ...
+                        endDay              ...
+                        DCA                 
+                  
+                else
+                                             
+                 % call the plotting function
+                 figureHandle =                   ...
                     self.createPacIOOSFigures(    ...
                       time                      , ...
                       figureTitlePrefix         , ...                      
@@ -452,7 +562,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                       variableRanges              ...
                                                         );
 
-                if ( self.configuration.exportFigures )
+                 if ( self.configuration.exportFigures )
                     % call the export method
                     if strcmp(figureDuration,'monthly')
                       if strcmp(datestr(time(end),'yyyy_mm'), ...
@@ -478,6 +588,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                             figureNameSuffix          ...
                                      )              ;
                     end                                   
+                 end
                 end
 
                 % clean up variables
@@ -2081,7 +2192,7 @@ end
     
    % A method used to create a time series figure for the PacIOOS website.
    % @returns value - handle of the figure object created
-    function value = createPacIOOSFigures(               ...
+    function value = createPacIOOSFigures(             ...
                               self                   , ...
                               time                   , ...                              
                               figureTitlePrefix      , ...
@@ -2478,23 +2589,22 @@ end
                  'The error message was:' dirException.message]);
       end
           
-      outDirectory=[outDir year pathSeparator   ...
+      outDirectory=[outDir year pathSeparator                    ...
                     month pathSeparator];   % day pathSeparator];
       
       % Export to Enhanced Postscript
-      fileNamePrefix = [self.configuration.rbnbSource  '_' ...
+      fileNamePrefix = [self.configuration.rbnbSource  '_'       ...
                     ...   %datestr(startTime,'yyyymmddHHMM') '-' ...
-                        datestr(now,'yyyymmdd') '_' ...
+                        datestr(now,'yyyymmdd') '_'              ...
                         figureNameSuffix];
                         
       % Export to eps
       if sum(strcmp(outputFormat,'.eps'))  
             try
-                print(inputFigure,'-depsc2', ...
-                [outDirectory ...
-                fileNamePrefix '.eps']);
+                print(inputFigure,'-depsc2',                           ...
+                [outDirectory fileNamePrefix '.eps']);
             catch saveException
-                disp(['There was an error saving the figure to EPS. ' ...
+                disp(['There was an error saving the figure to EPS. '  ...
                       'The error message was:' saveException.message]  ...
                     );
             end
@@ -2503,11 +2613,10 @@ end
       % Export to JPEG
       if sum(strcmp(outputFormat,'.jpg'))
           try
-            print(inputFigure,'-djpeg100', ...
-              [outDirectory ...
-               fileNamePrefix '.jpg']);
+            print(inputFigure,'-djpeg100',                         ...
+              [outDirectory fileNamePrefix '.jpg']);
           catch saveException
-            disp(['There was an error saving the figure to JPG. ' ...
+            disp(['There was an error saving the figure to JPG. '  ...
                   'The error message was:' saveException.message]  ...
                 );
           end
@@ -2608,11 +2717,10 @@ end
       % Export to eps
       if sum(strcmp(outputFormat,'.eps'))  
             try
-                print(inputFigure,'-depsc2', ...
-                [outDirectory ...
-                fileNamePrefix '.eps']);
+                print(inputFigure,'-depsc2',                           ...
+                [outDirectory fileNamePrefix '.eps']);
             catch saveException
-                disp(['There was an error saving the figure to EPS. ' ...
+                disp(['There was an error saving the figure to EPS. '  ...
                       'The error message was:' saveException.message]  ...
                     );
             end
@@ -2621,11 +2729,10 @@ end
       % Export to JPEG
       if sum(strcmp(outputFormat,'.jpg'))
           try
-            print(inputFigure,'-djpeg100', ...
-              [outDirectory ...
-               fileNamePrefix '.jpg']);
+            print(inputFigure,'-djpeg100',                         ...
+              [outDirectory fileNamePrefix '.jpg']);
           catch saveException
-            disp(['There was an error saving the figure to JPG. ' ...
+            disp(['There was an error saving the figure to JPG. '  ...
                   'The error message was:' saveException.message]  ...
                 );
           end
@@ -2705,21 +2812,36 @@ end
 
       %IF reading from archive; be sure to change 'duration' to 2678400 (31 days) 
       %Grab the data for 31 days - saved in data_'rbnbSource'.dat in read_archive folder
-      read_archiveSourceFile=[self.configuration.read_archivePath 'read_archive_' self.configuration.rbnbSource '.sh'];
+      read_archiveSourceFile=[self.configuration.read_archivePath       ...
+                'read_archive_' self.configuration.rbnbSource '.sh'];
       
       % Create a new read_archive source file from a template (if necessary)
-      if ~exist(read_archiveSourceFile,'file')
+      if ~exist(read_archiveSourceFile,'file') || self.configuration.duration_days  ...
+              > 32 || ~strcmp(self.configuration.dataEndDate, ' ')
+          
+          if ~strcmp(self.configuration.dataEndDate, ' ')
+               endDate = datestr(datenum(self.configuration.dataEndDate, ...
+                           'mm-dd-yyyy HH:MM:SS'),'yyyymmdd');
+          else
+               endDate = '+2 days';
+          end
+          
          read_archiveFile=[self.configuration.read_archivePath 'read_archive.sh'];
-         eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ ' ...
-                 read_archiveFile ' > ' [read_archiveSourceFile '.tmp']]);
+         eval(['!sed -e "s/REPLACENAME/"' self.configuration.rbnbSource '/ '        ...
+                read_archiveFile ' > ' [read_archiveSourceFile '.tmp']]);
          eval(['!sed -e "s/REPLACEFIELD/"' self.configuration.archiveDirectory '/ ' ...
-                 [read_archiveSourceFile '.tmp'] ' > ' read_archiveSourceFile]);
+               [read_archiveSourceFile '.tmp'] ' > ' [read_archiveSourceFile '.tmp']]);
+         eval(['!sed -e "s/REPLACEENDDAY/"' endDate '/ ' ...
+               [read_archiveSourceFile '.tmp'] ' > ' [read_archiveSourceFile '.tmp']]);
+         eval(['!sed -e "s/REPLACEDURATION/"' num2str(self.configuration.duration_days) ...
+               '/ ' [read_archiveSourceFile '.tmp'] ' > ' read_archiveSourceFile]);  
          system(['rm' ' ' [read_archiveSourceFile '.tmp']]);
       end
       eval(['!sh ' read_archiveSourceFile]);
         
 	  %read in file reading from archive
-	  fid=fopen([self.configuration.read_archivePath 'data_' self.configuration.rbnbSource '.dat']); 
+	  fid=fopen([self.configuration.read_archivePath 'data_'       ...
+                  self.configuration.rbnbSource '.dat']); 
 	  tline=fgets(fid);
       while ischar(tline);
           if length(tline)>40
@@ -2760,8 +2882,13 @@ end
     function [dataString, dataTimes, dataName] = getLOBOVizData(self)
 
      % Set the reference dates 
-     min_date=datestr(now-32,'yyyymmdd');
-     max_date=datestr(now,'yyyymmdd');
+     min_date=datestr(now - self.configuration.duration_days, 'yyyymmdd');
+     if ~strcmp(self.configuration.dataEndDate, ' ')
+         max_date=datestr(datenum(self.configuration.dataEndDate, ...
+             'mm-dd-yyyy HH:MM:SS'),'yyyymmdd');
+     else
+         max_date=datestr(now, 'yyyymmdd');
+     end
      
      % Create the URL string
      LOBOVizSource=['"' self.configuration.LOBOVizURL ...

@@ -351,6 +351,9 @@ classdef Configure < hgsetget & dynamicprops
     %duration = 2592000; % 60 sec x 60 min x 24 hr x 7 days
     duration = 31536000; % 60 sec x 60 min x 24 hr x 365 days
     
+    % The duration in days of the channel data query
+    duration_days = 0;
+    
     % The rate at which each sample is taken by the instrument (in seconds)
     instrumentSampleRate = 15;
     
@@ -365,6 +368,9 @@ classdef Configure < hgsetget & dynamicprops
     
     % The start date of the channel data query
     dataStartDate = '05-01-2008 00:00:00';
+    
+    % The end date of the desired data set
+    dataEndDate = ' '
     
     % The timer interval for scheduled processing in minutes
     timerInterval = 20;
