@@ -198,7 +198,7 @@ RBNB DataTurbine Base Classes
       -String fileName 
       -BufferedReader fileReader 
       
-      +FileSource(XMLConfiguration xmlConfig) 
+      +FileTextSource(XMLConfiguration xmlConfig) 
       #boolean execute() 
       +String getDataFilePath() 
       +void setDataFilePath(String dataFilePath) 
