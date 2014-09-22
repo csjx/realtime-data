@@ -503,7 +503,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                           else
                               endDay=datenum(yearSpan(yr)+1,1,1);
                           end
-                          if startDay <= time(1)-1
+                          if startDay <= time(1)-27
                               break
                           else
                               %Pull out individual months of data
