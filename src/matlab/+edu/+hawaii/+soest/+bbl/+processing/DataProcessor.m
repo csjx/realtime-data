@@ -159,6 +159,20 @@ classdef DataProcessor < hgsetget & dynamicprops
       end      
       set(self, 'processTime', now());
       
+      %Check if using start date based on last month of plotted data 
+      %(non real-time sensors)
+      if strcmp('yes',self.configuration.check_last) || ...
+                     self.configuration.check_last==true
+          if exist([self.configuration.read_archivePath self.configuration.rbnbSource ...
+                     '_latestMonth.txt'],'file')
+                 self.configuration.dataStartDate=dlmread(   ...
+                     [self.configuration.read_archivePath self.configuration.rbnbSource ...
+                     '_latestMonth.txt']);
+          end
+          self.configuration.duration = 'full';
+      end
+      
+      
       %Check if importing all data from Data Start Date
       if strcmp('full',self.configuration.duration) || ...
               strcmp('full',self.configuration.duration_days)
@@ -227,8 +241,7 @@ classdef DataProcessor < hgsetget & dynamicprops
              
       % remove data prior to the Data Start Date
       try
-       dataStartDate = datenum(self.configuration.dataStartDate,        ...
-         'mm-dd-yyyy HH:MM:SS');
+       dataStartDate = datenum(self.configuration.dataStartDate);
        if time(1) < dataStartDate
           index=find(time>dataStartDate);
           time=time(index);
@@ -614,6 +627,15 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       if self.configuration.closePlotWindow
           close
+      end
+      
+      if strcmp('yes',self.configuration.check_last) || ...
+              self.configuration.check_last==true
+          lastMonth=[datestr(time(end),'yyyy mm') ' 01'];
+          fid=fopen([self.configuration.read_archivePath self.configuration.rbnbSource ...
+                     '_latestMonth.txt'],'w');
+          fprintf(fid,'%s',lastMonth);
+          fclose(fid);
       end
       
     end %process

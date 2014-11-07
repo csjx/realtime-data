@@ -354,6 +354,10 @@ classdef Configure < hgsetget & dynamicprops
     % The duration in days of the channel data query
     duration_days = 0;
     
+    % A boolean property that tells the processor whether to check for the
+    % last month of plotted data to determine the data start date
+    check_last = false;
+    
     % The rate at which each sample is taken by the instrument (in seconds)
     instrumentSampleRate = 15;
     
