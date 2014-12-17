@@ -348,8 +348,8 @@ classdef Configure < hgsetget & dynamicprops
     
     % The duration of the channel data query
     %duration = 604800; % 60 sec x 60 min x 24 hr x 7 days
-    %duration = 2592000; % 60 sec x 60 min x 24 hr x 7 days
-    duration = 31536000; % 60 sec x 60 min x 24 hr x 365 days
+    duration = 2764800; % 60 sec x 60 min x 24 hr x 32 days
+    %duration = 31536000; % 60 sec x 60 min x 24 hr x 365 days
     
     % The duration in days of the channel data query
     duration_days = 0;
