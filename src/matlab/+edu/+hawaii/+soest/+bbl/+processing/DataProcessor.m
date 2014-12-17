@@ -173,11 +173,15 @@ classdef DataProcessor < hgsetget & dynamicprops
       end
       
       
-      %Check if importing all data from Data Start Date
-      if strcmp('full',self.configuration.duration) || ...
-              strcmp('full',self.configuration.duration_days)
+      %Check if importing data from Data Start Date
+      if strcmp('full',self.configuration.duration)           || ...
+              strcmp('full',self.configuration.duration_days) || ...
+              now - datenum(self.configuration.dataStartDate) <  ...
+                  self.configuration.duration / 24 / 3600     || ...
+              now - datenum(self.configuration.dataStartDate) <  ...
+                  self.configuration.duration_days
           self.configuration.duration_days = ...
-              round(now - datenum(self.configuration.dataStartDate));
+              now - datenum(self.configuration.dataStartDate);
       end
       
       %Check dataEndDate
@@ -187,7 +191,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       %Match import duration in seconds with import duration in days
       if self.configuration.duration_days ~= 0
-          self.configuration.duration = self.configuration.duration_days*24*3600;
+          self.configuration.duration = round(self.configuration.duration_days*24*3600);
       else
           self.configuration.duration_days = self.configuration.duration/3600/24;
       end
