@@ -161,7 +161,7 @@ classdef DataProcessor < hgsetget & dynamicprops
       
       %Check if using start date based on last month of plotted data 
       %(non real-time sensors)
-      if strcmp('yes',self.configuration.check_last) || ...
+      if strcmp('yes',self.configuration.check_last) | ...
                      self.configuration.check_last==true
           if exist([self.configuration.read_archivePath self.configuration.rbnbSource ...
                      '_latestMonth.txt'],'file')
@@ -181,7 +181,7 @@ classdef DataProcessor < hgsetget & dynamicprops
               now - datenum(self.configuration.dataStartDate) <  ...
                   self.configuration.duration_days
           self.configuration.duration_days = ...
-              now - datenum(self.configuration.dataStartDate);
+              floor(now - datenum(self.configuration.dataStartDate));
       end
       
       %Check dataEndDate
@@ -633,7 +633,7 @@ classdef DataProcessor < hgsetget & dynamicprops
           close
       end
       
-      if strcmp('yes',self.configuration.check_last) || ...
+      if strcmp('yes',self.configuration.check_last) | ...
               self.configuration.check_last==true
           lastMonth=[datestr(time(end),'yyyy mm') ' 01'];
           fid=fopen([self.configuration.read_archivePath self.configuration.rbnbSource ...
