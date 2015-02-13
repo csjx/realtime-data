@@ -2909,7 +2909,7 @@ end
       eval(['!sh ' read_archiveSourceFile]);
         
 	  %read in file reading from archive
-	  fid=fopen([self.configuration.read_archivePath 'data_'       ...
+	  fid=fopen(['/dev/shm/' 'data_'       ...
                   self.configuration.rbnbSource '.dat']); 
 	  tline=fgets(fid);
       while ischar(tline);
