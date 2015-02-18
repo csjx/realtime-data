@@ -527,7 +527,7 @@ classdef DataProcessor < hgsetget & dynamicprops
                   for yr = 1:length(yearSpan)
                       for mo=1:length(monthSpan)
                           startDay=datenum(yearSpan(yr),monthSpan(mo),1);
-                          if mo ~= 12
+                          if monthSpan(mo) ~= 12
                               endDay=datenum(yearSpan(yr),monthSpan(mo)+1,1);
                           else
                               endDay=datenum(yearSpan(yr)+1,1,1);
