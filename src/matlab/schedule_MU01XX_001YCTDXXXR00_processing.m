@@ -454,9 +454,6 @@ addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
 MU01ctdProcessor = DataProcessor(configuration);
 
-%keyboard
-MU01ctdProcessor.process()
-
 % schedule the processing
 % set the timer start time based on the timer interval.
 set(MU01ctdProcessor, 'timerStartTime', MU01ctdProcessor.configuration.timerInterval);
@@ -470,3 +467,6 @@ set(MU01ctdProcessor, 'timerObject',                     ...
         'executionmode',                                 ...
         'fixeddelay'));
 startat(MU01ctdProcessor.timerObject, MU01ctdProcessor.timerStartTime);
+
+%keyboard
+MU01ctdProcessor.process()

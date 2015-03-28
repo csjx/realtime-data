@@ -257,7 +257,7 @@ classdef Configure < hgsetget & dynamicprops
                 'nitrate,oxygen,oxygen_percent,salinity,temperature,turbidity'];
     
     % A string containing the path to the LOBOViz data directory on BBL       
-    LOBOVizPath='/data/processed/LOBOViz/';
+    LOBOVizPath='/dev/shm/';
     
     % Astring indicating the type of figure to produce.  This is currently
     % limited to 'timeSeries' and 'temperatureSalinity'
