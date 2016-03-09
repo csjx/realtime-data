@@ -2812,6 +2812,11 @@ end
       end
       fclose(fid);
       clear fid i tline;
+      
+      if floor(self.configuration.duration_days) > 32  || ...
+              ~strcmp(self.configuration.dataEndDate, ' ')
+          system(['rm' ' ' read_archiveSourceFile]);
+      end
 
       dataName =  [self.configuration.rbnbSource '/' self.configuration.rbnbChannel];
        

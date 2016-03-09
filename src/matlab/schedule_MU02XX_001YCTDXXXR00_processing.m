@@ -214,7 +214,7 @@ set( configuration,                                                   ...
            %             {'.eps'}                                      ... %Output format
            %             }                                           ; ...
                        % Figure 3  (monthly plot)
-                        {{'Nearshore Sensor, Kahului Harbor'}       , ... %Title prefix
+                        {{'Nearshore Sensor, Kalama Beach Park'}    , ... %Title prefix
                          {'monthly'}                                , ... %Figure Duration
                          {'.eps'}                                     ... %Output format
                           }                                           ...
@@ -343,7 +343,7 @@ set( configuration, 'outputFormat', {'.jpg'});
 set( configuration,                                                    ...
 'timeSeriesFigures'   , {                                              ...
                          % 7-day plot
-                         {'Kahului Harbor (NS13), 7 Day Water Quality' , ... % titlePrefix
+                         {'Kalama Beach Park (NS12), 7 Day Water Quality' , ... % titlePrefix
                           '01-25-2014 00:00:00'                        , ... % figure start in UTC
                           '604800'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
@@ -374,7 +374,7 @@ set( configuration,                                                    ...
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
                          % 10-day plot
-                         {'Kahului Harbor (NS13), 10 Day Water Quality', ... % titlePrefix
+                         {'Kalama Beach Park (NS12), 10 Day Water Quality', ... % titlePrefix
                           '01-25-2014 00:00:00'                        , ... % figure start in UTC
                           '864000'                                     , ... % duration
                           {'temperature'                               , ... % xAxisVars
@@ -405,7 +405,7 @@ set( configuration,                                                    ...
                           '1'                                            ... % moving avg linewidth
                          }                                             , ...
                          % 30-day plot
-                         {'Kahului Harbor (NS13), 30 Day Water Quality', ... % titlePrefix
+                         {'Kalama Beach Park (NS12), 30 Day Water Quality', ... % titlePrefix
                          '01-25-2014 00:00:00'                         , ... % figure start in UTC
                           '2592000'                                    , ... % duration
                           {'temperature'                               , ... % xAxisVars

@@ -1,4 +1,4 @@
-% schedule_WK01XX_001CTDXXXXR00_processing 
+% schedule_WK02XX_001CTDXXXXR00_processing 
 %   This is a short runtime script that kicks off processing and
 %   display of CTD data.  It depends on configuration information
 %   found in the Configure class, and creates an instance of the
@@ -9,10 +9,10 @@
 %             School of Ocean and Earth Science and Technology 
 %    Authors: Christopher Jones             
 %  
-% $HeadURL$
-% $LastChangedDate$
-% $LastChangedBy$
-% $LastChangedRevision$
+% $HeadURL: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/matlab/schedule_WK02XX_001CTDXXXXR00_processing.m $
+% $LastChangedDate: 2014-07-16 17:52:45 -1000 (Wed, 16 Jul 2014) $
+% $LastChangedBy: kilonalu $
+% $LastChangedRevision: 1135 $
 % 
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ configuration = Configure;
 % rbnbMatlabPath    - is the matlab library directory for the DataTurbine
 set( configuration,                                                         ...
 'baseDirectory'       , '/usr/local/bbl/trunk/'                           , ...
-'outputDirectory'     , '/var/www/html/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/' , ...
+'outputDirectory'     , '/var/www/html/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/' , ...
 'libraryDirectory'    , '/usr/local/bbl/trunk/lib/matlab'                 , ...
 'convertPath'         , '/usr/bin/gs'                                     , ...
 'convertOptions'      , [' -q'                                              ...
@@ -89,13 +89,14 @@ set( configuration,                                                         ...
 % reference         - is the channel reference point (get oldest or newest data)
 set( configuration,                                                         ...
 'rbnbServer'          , 'bbl.ancl.hawaii.edu'                             , ...
-'rbnbSinkName'        , 'MatlabWK01XX_001CTDXXXXR00ProcessingSink'        , ...
-'rbnbSource'          , 'WK01XX_001CTDXXXXR00'                            , ...
+'rbnbSinkName'        , 'MatlabWK02XX_001CTDXXXXR00ProcessingSink'        , ...
+'rbnbSource'          , 'WK02XX_001CTDXXXXR00'                            , ...
 'rbnbChannel'         , 'DecimalASCIISampleData'                          , ...
 'archiveDirectory'    , 'alawai'                                          , ...
-'dataStartDate'       , '01-15-2009 00:00:00'                             , ...
+'dataStartDate'       , '01-01-2016 00:00:00'                             , ...
+'dataEndDate'         , '02-01-2016 00:00:00'                             , ...
 'sensorTimeOffset'    , -10                                               , ...
-'duration'            , 2678400                                           , ...
+'duration'            , 'full'                                            , ...
 'reference'           , 'newest'                                            ...
 );                                                                        
 
@@ -106,8 +107,8 @@ set( configuration,                                                         ...
 % createFigures     - is a flag to either create or not create figures
 % exportFigures     - is a flag to export (to EPS) or not to export figures                                                                         
 set( configuration,                                                         ...
-'readArchive'         , true                                             , ...
-'createFigures'       , true                                              , ...
+'readArchive'         , true                                              , ...    
+'createFigures'       , false                                             , ...
 'createPacIOOSFigures', true                                              , ...
 'exportFigures'       , true                                                ...
 );                                                                        
@@ -166,7 +167,7 @@ set(configuration,                                                          ...
 % Set the depth (in meters) of the sensor below average Mean Low Low Water 
 % level to correct output to MLLW  
 set(configuration,                                                     ...
-    'MLLWadjustment', -0.4                                                ...
+    'MLLWadjustment', -1.6                                                ...
     );
 
 % Set title and duration for PaciOOS time series plots
@@ -180,25 +181,15 @@ set(configuration,                                                     ...
 % Output format             : Output as .eps and/or .jpg  
 %                             (set as {.eps,.jpg} for both)
 
-set( configuration,                                                                   ...
-    'PacIOOSFigures', {                                                               ...
-                       % Figure 1  (7 day plot)
-                       {{'Nearshore Sensor, Atlantis Submarine Dock (NS03), 7 day'} , ... %Title prefix
-                        {'7'}                                                       , ... %Duration in days
-                        {'.eps'}                                                      ... %Output format
-                        }                                                           ; ...
-                       % Figure 2  (30 day plot)
-                       {{'Nearshore Sensor, Atlantis Submarine Dock (NS03), 30 day'}, ... %Title prefix
-                        {'30'}                                                      , ... %Duration in days
-                        {'.eps'}                                                      ... %Output format
-                        }                                                           ; ...
+set( configuration,                                                            ...
+    'PacIOOSFigures', {                                                        ...
                        % Figure 3  (monthly plot)
-                       {{'Nearshore Sensor, Atlantis Submarine Dock (NS03)'}        , ... %Title prefix
-                        {'monthly'}                                                 , ...
-                        {'.eps'}                                                      ... %Output format
-                        }                                                             ...
-                       }                                                              ...
-                      )                                                             ;
+                       {{'Nearshore Sensor, Waikiki Aquarium (NS04)'}        , ... %Title prefix
+                        {'monthly'}                                          , ...
+                        {'.eps'}                                               ... %Output format
+                        }                                                      ...
+                       }                                                       ...
+                      )                                                      ;
                   
 % Set the configuration parameters for the PacIOOS figures that should
 % be generated.  PacIOOSFigureProperties is a cell array that includes
@@ -242,7 +233,7 @@ set(configuration,                                                 ...
                           {                              ... %y-axis ranges
                            {'fixed', [-0.4 1.2], 4}              , ... %WL
                            {'dynamic',  2, 4}                    , ... %Temp
-                           {'fixed', [36 31 21 11 1 -4], 5}        ... %Sal
+                           {'fixed', [36 31 21 11 1 -4], 5}      , ... %Sal
                            }                                       ...
                           }                                        ...
                          )                                       ;                  
@@ -256,120 +247,6 @@ set( configuration, 'currentFigureType', 'timeSeries');
 % figures
 set( configuration, 'outputFormat', {'.eps' '.jpg'});
 
-% Set the configuration parameters for the time series figures that should
-% be generated.  The timeSeriesFigures property is a cell array that includes
-% one or more cell arrays that contain figure properties:
-% timeSeriesFigures = { {figure 1 properties}, {figure 2 properties}, ...}
-% For each figure to be generated, the following properties must be included,
-% in the order listed below:
-%
-% Figure Title Prefix       : The prefix string used at the top of the figure. This
-%                             will be followed by 'latest observation period ...'
-% Figure Start Date         : the start date (mm-dd-yyyy HH:MM:SS) in UTC, this
-%                             is for TS plots only, set to empty string for timeSeries
-% Figure Duration           : the number of seconds that the plots in the figure will
-%                             represent (given as an integer)
-% {YAxis Variables}         : A cell array of Y axis variable names as strings, 
-%                             one for each subplot to be rendered in the figure. 
-%                             The variable names must exactly match one of the 
-%                             variable names in the dataVariableNames cell array, and
-%                             can include derived variable names that are added.
-%                             (typically 'temperature', 'chlorophyll', etc.)
-% {XAxis Variable}          : A cell array with the X axis variable name as a string, 
-%                             The variable name must exactly match one of the 
-%                             variable names in the dataVariableNames cell array, and
-%                             can include derived variable names that are added.
-%                             (typically 'serialdate')
-% XTick Step                : A number that is used as the step factor in determining
-%                             how many tick labels will be placed on the X axis.  A
-%                             smaller number will increase the number of tick labels
-%                             (e.g. '.125' to produce hourly ticks), and larger values
-%                             will decrease the number of tick labels (e.g. '3' on
-%                             on a 21 day plot will reduce the labels to 7)
-% Tick Format               : An array with number format strings, one for each
-%                             subplot being produced.  Tick label numbers will be 
-%                             formatted withthis string.
-% Graphic Marker            : The graphic marker used to represent individual
-%                             observations in the timeseries plot, one per subplot
-% Graphic Markersize        : The size of each of the graphic markers, one per subplot
-% Graphic Colors            : The graphic colors used for observations, one per subplot
-% Moving Average Flag       : A '1' or '0' indicating whether or not a moving average
-%                             should be calculated and rendered on the plots.
-% Moving Average Duration   : A number (as a string) that indicates the duration
-%                             of the moving average in seconds (e.g 1200 for a
-%                             20 minute moving average)
-% Moving Average Color      : The color to be used for the moving average line
-% Moving Average Line Width : The width of the moving average line (as a string)
-set( configuration,                                                    ...
-'timeSeriesFigures'   , {                                              ...
-                         % Figure 1                                  
-                         {'Waikiki (NS03), 7 Day Water Quality'      , ... % titlePrefix
-                          ''                                         , ... % figure start in UTC
-                          '604800'                                   , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'depth'}                                  , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '1'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'}]            , ... % tickFormat
-                          [{'.'},{'.'},{'.'}]                        , ... % marker
-                          [{1.0},{1.0},{1.0}]                        , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0       0       255/255]}              , ... % blue
-                            {[0       0       0      ]}                ... % black
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 2                                  
-                         {'Waikiki (NS03), 10 Day Water Quality'      , ... % titlePrefix
-                          ''                                         , ... % figure start in UTC
-                          '864000'                                   , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'depth'}                                  , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '1'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'}]            , ... % tickFormat
-                          [{'.'},{'.'},{'.'}]                        , ... % marker
-                          [{1.0},{1.0},{1.0}]                        , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0       0       255/255]}              , ... % blue
-                            {[0       0       0      ]}                ... % black
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                         % Figure 3                                  
-                         {'Waikiki (NS03), 30 Day Water Quality'     , ... % titlePrefix
-                          ''                                         , ... % figure start in UTC
-                          '2592000'                                  , ... % duration
-                          {'temperature'                             , ... % xAxisVars
-                           'salinity'                                , ... 
-                           'depth'}                                  , ... 
-                          {'serialdate'}                             , ... % yAxisVar
-                          '3'                                        , ... % xTickStep
-                          [{'%3.2f'},{'%3.2f'},{'%3.2f'}]            , ... % tickFormat
-                          [{'.'},{'.'},{'.'}]                        , ... % marker
-                          [{1.0},{1.0},{1.0}]                        , ... % markerSize
-                          [                                            ...
-                            {[255/255 0       0      ]}              , ... % red
-                            {[0       0       255/255]}              , ... % blue
-                            {[0       0       0      ]}                ... % black
-                          ]                                          , ...
-                          '0'                                        , ... % include moving avg
-                          '1200'                                     , ... % moving avg duration
-                          [128/255 128/255 128/255]                  , ... % moving avg color: gray
-                          '1'                                          ... % moving avg linewidth
-                         }                                           , ...
-                       }                                               ...
-);
 
 % Set the timer specific configuration details for periodically running the code
 % where:
@@ -386,21 +263,6 @@ import edu.hawaii.soest.bbl.processing.DataProcessor;
 javaaddpath(configuration.rbnbLibraryPath);
 addpath(configuration.rbnbMatlabPath);
 addpath(configuration.libraryDirectory);
-NS03ctdProcessor = DataProcessor(configuration);
+NS04ctdProcessor = DataProcessor(configuration);
 
-% schedule the processing
-% set the timer start time based on the timer interval.
-set(NS03ctdProcessor, 'timerStartTime', NS03ctdProcessor.configuration.timerInterval);
-
-% set the timer object instance
-set(NS03ctdProcessor, 'timerObject',                     ...
-  timer('TimerFcn',                                    ...
-        'NS03ctdProcessor.process',                      ...
-        'period',                                      ...
-        NS03ctdProcessor.configuration.timerInterval*60, ...
-        'executionmode',                               ...
-        'fixeddelay'));
-startat(NS03ctdProcessor.timerObject, NS03ctdProcessor.timerStartTime);
-
-%keyboard
-NS03ctdProcessor.process()
+NS04ctdProcessor.process()
