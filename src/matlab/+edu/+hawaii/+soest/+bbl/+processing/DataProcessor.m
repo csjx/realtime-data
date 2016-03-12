@@ -2447,6 +2447,10 @@ end
                 yVar(i-1) = NaN;
            end
         end
+        
+   % Remove values greater or less than the specified max and min values
+        yVar(yVar<minY)=NaN;
+        yVar(yVar>maxY)=NaN;
    
    % Plot the current variable vs time               
         line(time,yVar,                                            ...
