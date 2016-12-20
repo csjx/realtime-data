@@ -78,7 +78,6 @@ public class MockDataSource implements Runnable {
 	 * of the mock data file to the client.
 	 * @see java.lang.Runnable#run()
 	 */
-	@Override
 	public void run() {
 		String host = "127.0.0.1";
 		int portNumber = 5111;
@@ -144,6 +143,4 @@ public class MockDataSource implements Runnable {
 			log.error("Couldn't close the server socket: " + e.getMessage());
 		}
 	}
-
-
 }
