@@ -52,7 +52,13 @@ Start one or more instrument drivers with the management script. Get the usage w
 
     $ $BBL_HOME/scripts/shell/manage-instruments.sh -h
 
+Development
+-----------
+For Java development, a few libraries need to be loaded that are not found via Maven Central.  Add the `utilities.jar`, `dhmp.jar`, and `rbnb.jar` files to your Maven repository using:
 
+    mvn install:install-file -DgroupId=org.dataturbine -DartifactId=rbnb -Dversion=3.2b6 -Dpackaging=jar -Dfile=$BBL_HOME/lib/rbnb.jar
+    mvn install:install-file -DgroupId=edu.ucsb.nceas -DartifactId=utilities -Dversion=1.1 -Dpackaging=jar -Dfile=$BBL_HOME/lib/utilities.jar
+    mvn install:install-file -DgroupId=org.dhmp -DartifactId=dhmp -Dversion=1.0 -Dpackaging=jar -Dfile=$BBL_HOME/lib/dhmp.jar
 
 
 
