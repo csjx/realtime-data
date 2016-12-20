@@ -31,7 +31,7 @@ BBL_HOME=".";                     # installed BBL software location
 LOG_DIR="/var/log/bbl";           # log files location
 fi
 CLASSPATH="${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
-if [[ -e /etc/bb/log4j.properties ]]; then
+if [[ -e /etc/bbl/log4j.properties ]]; then
     CLASSPATH="/etc/bbl:${CLASSPATH}";
 fi
 VERSION="1.0.0";                  # keep track of this script's version
