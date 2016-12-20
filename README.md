@@ -1,7 +1,7 @@
-BBL Project
-===========
+Realtime Data
+=============
 
-The Benthic Boundary Layer (BBL) Project provides software for realtime streaming of oceanographic data, and uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server.  The BBL Project is associated with the [Kilo Nalu Nearshore Observatory](http://www.soest.hawaii.edu/OE/KiloNalu/), the [Hawaii Ocean Observing System](http://soest.hawaii.edu/hioos), and the [Pacific Islands Ocean Observing System](http://pacioos.org). This project is supported by a National Science Foundation grant (NSF Award #OCE-0536607-000) to the University of Hawaii.
+Realtime data provides software for streaming data from oceanographic instruments, and uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server. The software originated with the Benthic Boundary Layer (BBL) Project at the University of Hawaii, Manoa. The BBL Project was associated with the [Kilo Nalu Nearshore Observatory](http://www.soest.hawaii.edu/OE/KiloNalu/), the [Hawaii Ocean Observing System](http://soest.hawaii.edu/hioos), and the [Pacific Islands Ocean Observing System](http://pacioos.org). The project was supported by a National Science Foundation grant (NSF Award #OCE-0536607-000) to the University of Hawaii.
 
 * Contributors: Christopher Jones, Margaret McManus, Geno Pawlak, Judith Wells, KR MacDonald, Ross Timmerman, Conor Jerolmon, Joseph Gilmore
 * Developed at: [School of Ocean and Earth Science and Technology, University of Hawaii at Manoa](http://soest.hawaii.edu)
