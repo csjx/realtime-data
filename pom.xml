@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.hawaii.soest</groupId>
   <artifactId>bbl</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>PacIOOS Streaming Software</name>
   <description>Software for streaming and managing instrument data for the PacIOOS project. http://pacioos.org</description>
   <properties>
