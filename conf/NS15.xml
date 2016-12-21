@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instrument [
+    <!ELEMENT instrument (identifier, connectionType, connectionParams, rbnbName, 
+                          rbnbServer, rbnbPort, archiveMemory, archiveSize, channels)>
+    <!ELEMENT identifier (#PCDATA)>
+    <!ELEMENT connectionType (#PCDATA)>
+    <!ELEMENT connectionParams ((hostName, hostPort) | filePath | (serialPort, serialPortParams))>
+    <!ELEMENT hostName (#PCDATA)>
+    <!ELEMENT hostPort (#PCDATA)>
+    <!ELEMENT filePath (#PCDATA)>
+    <!ELEMENT serialPort (#PCDATA)>
+    <!ELEMENT serialPortParams (baudRate, dataBits, stopBits, parity)>
+    <!ELEMENT baudRate (#PCDATA)>
+    <!ELEMENT dataBits (#PCDATA)>
+    <!ELEMENT stopBits (#PCDATA)>
+    <!ELEMENT parity (#PCDATA)>
+    <!ELEMENT rbnbName (#PCDATA)>
+    <!ELEMENT rbnbServer (#PCDATA)>
+    <!ELEMENT rbnbPort (#PCDATA)>
+    <!ELEMENT archiveMemory (#PCDATA)>
+    <!ELEMENT archiveSize (#PCDATA)>
+    <!ELEMENT channels (channel*)>
+    <!ELEMENT channel (name, dataType, dataPattern, fieldDelimiter, recordDelimiters, dateFormats, dateFields, timeZone)>
+    <!ATTLIST channel default (true|false) "true" >
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT dataType (#PCDATA)>
+    <!ELEMENT dataPattern (#PCDATA)>
+    <!ELEMENT fieldDelimiter (#PCDATA)>
+    <!ELEMENT recordDelimiters (#PCDATA)>
+    <!ELEMENT dateFormats (dateFormat*)>
+    <!ELEMENT dateFields (dateField*)>
+    <!ELEMENT timeZone (#PCDATA)>
+    <!ELEMENT dateFormat (#PCDATA)>
+    <!ELEMENT dateField (#PCDATA)>
+]>
 <instrument>
     <!-- The instrument identifier -->
     <identifier>NS15</identifier>
@@ -16,7 +50,7 @@
         <filePath>
             /data/spool/NS15.log
         </filePath> -->
-        <!-- OR
+        <!-- OR (not implemented yet)
         <serialPort>/dev/ttyUSB0</serialPort>
         <serialPortParams>
             <baudRate>9600</baudRate>
@@ -24,7 +58,7 @@
             <stopBits>1</stopBits>
             <parity>NONE</parity>
         </serialPortParams> -->         
-        </connectionParams>
+    </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
     <rbnbName>NS15</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
