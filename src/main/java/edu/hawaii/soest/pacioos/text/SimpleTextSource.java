@@ -286,7 +286,7 @@ public abstract class SimpleTextSource extends RBNBSource {
 
 		} else {
 			throw new ConfigurationException("The recordDelimiter must be one or two characters, " +
-		        "separated by a comma if there is more than one delimiter character");
+		        "separated by a pipe symbol (|) if there is more than one delimiter character.");
 		}
 		byte[] delimiters = new byte[]{};
 
