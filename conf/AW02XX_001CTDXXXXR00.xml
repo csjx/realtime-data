@@ -17,7 +17,7 @@
     <!-- The name of the instrument source as it appears in the DataTurbine -->
     <rbnbName>AW02XX_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
-    <rbnbServer>128.171.128.184</rbnbServer>
+    <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
     <rbnbPort>3333</rbnbPort>
     <!-- The number of in-memory bytes to request for this instrument source -->
