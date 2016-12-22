@@ -2,7 +2,7 @@
 <!DOCTYPE instrument SYSTEM "instrument.xsd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>AW02XX_001CTDXXXXR00</identifier>
+    <identifier>MB01XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -11,11 +11,11 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams> 
-        <hostName>68.25.32.149</hostName>
+        <hostName>24.221.193.197</hostName>
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>AW02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>MB01XX_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>128.171.128.184</rbnbServer>
     <!-- The port number of the DataTurbine server -->
