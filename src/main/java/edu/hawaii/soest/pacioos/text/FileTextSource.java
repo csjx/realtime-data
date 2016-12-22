@@ -39,54 +39,54 @@ import org.apache.commons.configuration.XMLConfiguration;
  */
 public class FileTextSource extends SimpleTextSource {
 
-	/* The full path to the data file with the incoming data being appended */
-	private String dataFilePath;
-	
-	/**
-	 * constructor: create an instance of the SerialTextSource 
-	 * @param xmlConfig 
-	 * @throws ConfigurationException 
-	 */
-	public FileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-		super(xmlConfig);
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.hawaii.soest.pacioos.text.SimpleTextSource#execute()
-	 */
-	@Override
-	protected boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /* The full path to the data file with the incoming data being appended */
+    private String dataFilePath;
+    
+    /**
+     * constructor: create an instance of the SerialTextSource 
+     * @param xmlConfig 
+     * @throws ConfigurationException 
+     */
+    public FileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+        super(xmlConfig);
+        
+    }
+    
+    /* (non-Javadoc)
+     * @see edu.hawaii.soest.pacioos.text.SimpleTextSource#execute()
+     */
+    @Override
+    protected boolean execute() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.nees.rbnb.RBNBBase#setArgs(org.apache.commons.cli.CommandLine)
-	 */
-	@Override
-	protected boolean setArgs(CommandLine cmd) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.nees.rbnb.RBNBBase#setArgs(org.apache.commons.cli.CommandLine)
+     */
+    @Override
+    protected boolean setArgs(CommandLine cmd) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	/**
-	 * Return the path to the data file as a string
-	 * 
-	 * @return dataFilePath - the path to the data file
-	 */
-	public String getDataFilePath() {
-		return dataFilePath;
-	}
+    /**
+     * Return the path to the data file as a string
+     * 
+     * @return dataFilePath - the path to the data file
+     */
+    public String getDataFilePath() {
+        return dataFilePath;
+    }
 
-	/**
-	 * Set the full path to the data file that is receiving incoming data
-	 * 
-	 * @param dataFilePath  the path to the data file
-	 */
-	public void setDataFilePath(String dataFilePath) {
-		this.dataFilePath = dataFilePath;
-		
-	}
+    /**
+     * Set the full path to the data file that is receiving incoming data
+     * 
+     * @param dataFilePath  the path to the data file
+     */
+    public void setDataFilePath(String dataFilePath) {
+        this.dataFilePath = dataFilePath;
+        
+    }
 
 }

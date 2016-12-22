@@ -89,14 +89,14 @@ public abstract class SimpleTextSource extends RBNBSource {
     private String server = serverName + ":" + serverPort;
 
     /* The driver connection type (file, socket, or serial) */
-	private String connectionType;
+    private String connectionType;
 
     /* The delimiter separating variables in the sample line */
     private String delimiter;
 
-	/* The record delimiter between separate ASCII sample lines (like \r\n) */
-	private String recordDelimiter;
-	
+    /* The record delimiter between separate ASCII sample lines (like \r\n) */
+    private String recordDelimiter;
+    
     /* The default date format for the timestamp in the data sample string */
     private SimpleDateFormat defaultDateFormat;
     
@@ -136,159 +136,159 @@ public abstract class SimpleTextSource extends RBNBSource {
     private int retryInterval = 5000;
 
     /* The identifier of the instrument (e.g. NS01) */
-	private String identifier;
+    private String identifier;
 
-	/* The XML-based configuration instance used to configure the class */
-	private XMLConfiguration xmlConfig;
+    /* The XML-based configuration instance used to configure the class */
+    private XMLConfiguration xmlConfig;
 
-	/* The list of record delimiter characters provided by the config (usually 0x0D,0x0A) */
-	private String[] recordDelimiters;
+    /* The list of record delimiter characters provided by the config (usually 0x0D,0x0A) */
+    private String[] recordDelimiters;
 
-	/* The first record delimiter byte */
-	private byte firstDelimiterByte;
+    /* The first record delimiter byte */
+    private byte firstDelimiterByte;
 
-	/* The second record delimiter byte */
-	private byte secondDelimiterByte;
-	  
+    /* The second record delimiter byte */
+    private byte secondDelimiterByte;
+      
     /**
      * Constructor: create an instance of the simple SimpleTextSource
      * @param xmlConfig 
      */
     public SimpleTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-    	
-    	this.xmlConfig = xmlConfig;
-    	// Pull the general configuration from the properties file
-		Configuration config   = new PropertiesConfiguration("pacioos.properties");
-		this.archiveMode       = config.getString("pacioos.textsource.archive_mode");
-		this.rbnbChannelName   = config.getString("pacioos.textsource.rbnb_channel");
-		this.serverName        = config.getString("pacioos.textsource.server_name ");
-		this.delimiter         = config.getString("pacioos.textsource.delimiter");
-		this.pollInterval      = config.getInt("pacioos.textsource.poll_interval");
-		this.retryInterval     = config.getInt("pacioos.textsource.retry_interval");
-		this.defaultDateFormat = new SimpleDateFormat(
-		    config.getString("pacioos.textsource.default_date_format"));
+        
+        this.xmlConfig = xmlConfig;
+        // Pull the general configuration from the properties file
+        Configuration config   = new PropertiesConfiguration("pacioos.properties");
+        this.archiveMode       = config.getString("pacioos.textsource.archive_mode");
+        this.rbnbChannelName   = config.getString("pacioos.textsource.rbnb_channel");
+        this.serverName        = config.getString("pacioos.textsource.server_name ");
+        this.delimiter         = config.getString("pacioos.textsource.delimiter");
+        this.pollInterval      = config.getInt("pacioos.textsource.poll_interval");
+        this.retryInterval     = config.getInt("pacioos.textsource.retry_interval");
+        this.defaultDateFormat = new SimpleDateFormat(
+            config.getString("pacioos.textsource.default_date_format"));
 
-    	
-		// parse the record delimiter from the config file
-		// set the XML configuration in the simple text source for later use
-		this.setConfiguration(xmlConfig);
-		
-		// set the common configuration fields
-		String connectionType = this.xmlConfig.getString("connectionType");
-		this.setConnectionType(connectionType);
-		String channelName = xmlConfig.getString("channelName");
-		this.setChannelName(channelName);
-		String identifier = xmlConfig.getString("identifier");
-		this.setIdentifier(identifier);
-		String rbnbName = xmlConfig.getString("rbnbName");
-		this.setRBNBClientName(rbnbName);
-		String rbnbServer = xmlConfig.getString("rbnbServer");
-		this.setServerName(rbnbServer);
-		int rbnbPort = xmlConfig.getInt("rbnbPort");
-		this.setServerPort(rbnbPort);
-		int archiveMemory = xmlConfig.getInt("archiveMemory");
-		this.setCacheSize(archiveMemory);
-		int archiveSize = xmlConfig.getInt("archiveSize");
-		this.setArchiveSize(archiveSize);
-		
-		// set the default channel information 
-		Object channels = xmlConfig.getList("channels.channel.name");
-		int totalChannels = 1;
-		if ( channels instanceof Collection) {
-			totalChannels = ((Collection<?>) channels).size();
-			
-		}		
-		// find the default channel with the ASCII data string
-		for (int i = 0; i < totalChannels; i++) {
-			boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
-			if ( isDefaultChannel ) {
-				String name = xmlConfig.getString("channels.channel(" + i + ").name");
-				this.setChannelName(name);
-				String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
-				this.setPattern(dataPattern);
-				String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
-				// handle hex-encoded field delimiters
-				if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
-					
-					Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
-					byte[] delimAsByteArray = new byte[]{delimBytes.byteValue()};
-					String delim = null;
-					try {
-						delim = new String(delimAsByteArray, 0, delimAsByteArray.length, "ASCII");
-						
-					} catch (UnsupportedEncodingException e) {
-						throw new ConfigurationException("There was an error parsing the field delimiter." +
-					        " The message was: " + e.getMessage());
-					}
-					this.setDelimiter(delim);
-					
-				} else {
-					this.setDelimiter(fieldDelimiter);
+        
+        // parse the record delimiter from the config file
+        // set the XML configuration in the simple text source for later use
+        this.setConfiguration(xmlConfig);
+        
+        // set the common configuration fields
+        String connectionType = this.xmlConfig.getString("connectionType");
+        this.setConnectionType(connectionType);
+        String channelName = xmlConfig.getString("channelName");
+        this.setChannelName(channelName);
+        String identifier = xmlConfig.getString("identifier");
+        this.setIdentifier(identifier);
+        String rbnbName = xmlConfig.getString("rbnbName");
+        this.setRBNBClientName(rbnbName);
+        String rbnbServer = xmlConfig.getString("rbnbServer");
+        this.setServerName(rbnbServer);
+        int rbnbPort = xmlConfig.getInt("rbnbPort");
+        this.setServerPort(rbnbPort);
+        int archiveMemory = xmlConfig.getInt("archiveMemory");
+        this.setCacheSize(archiveMemory);
+        int archiveSize = xmlConfig.getInt("archiveSize");
+        this.setArchiveSize(archiveSize);
+        
+        // set the default channel information 
+        Object channels = xmlConfig.getList("channels.channel.name");
+        int totalChannels = 1;
+        if ( channels instanceof Collection) {
+            totalChannels = ((Collection<?>) channels).size();
+            
+        }        
+        // find the default channel with the ASCII data string
+        for (int i = 0; i < totalChannels; i++) {
+            boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
+            if ( isDefaultChannel ) {
+                String name = xmlConfig.getString("channels.channel(" + i + ").name");
+                this.setChannelName(name);
+                String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
+                this.setPattern(dataPattern);
+                String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
+                // handle hex-encoded field delimiters
+                if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
+                    
+                    Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+                    byte[] delimAsByteArray = new byte[]{delimBytes.byteValue()};
+                    String delim = null;
+                    try {
+                        delim = new String(delimAsByteArray, 0, delimAsByteArray.length, "ASCII");
+                        
+                    } catch (UnsupportedEncodingException e) {
+                        throw new ConfigurationException("There was an error parsing the field delimiter." +
+                            " The message was: " + e.getMessage());
+                    }
+                    this.setDelimiter(delim);
+                    
+                } else {
+                    this.setDelimiter(fieldDelimiter);
 
-				}
-				String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
-				this.setRecordDelimiters(recordDelimiters);
-				// set the date formats list
-				List<String> dateFormats = (List<String>) xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
-				if ( dateFormats.size() != 0 ) {
-					for (String dateFormat : dateFormats) {
-						
-						// validate the date format string
-						try {
-							SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-							
-						} catch (IllegalFormatException ife) {
-							String msg = "There was an error parsing the date format " +
-						        dateFormat + ". The message was: " + ife.getMessage();
-							if ( log.isDebugEnabled() ) {
-								ife.printStackTrace();
-							}
-							throw new ConfigurationException(msg);
-						}
-					}
-					setDateFormats(dateFormats);
-				} else {
-					log.warn("No date formats have been configured for this instrument.");
-				}
-				
-				// set the date fields list
-				List<String> dateFieldList = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
-				List<Integer> dateFields = new ArrayList<Integer>();
-				if ( dateFieldList.size() != 0 ) {
-					for ( String dateField : dateFieldList ) {
-						try {
-							Integer newDateField = new Integer(dateField);
-							dateFields.add(newDateField);
-						} catch (NumberFormatException e) {
-							String msg = "There was an error parsing the dateFields. The message was: " +
-									e.getMessage();
-							throw new ConfigurationException(msg);
-						}
-					}
-					setDateFields(dateFields);
-					
-				} else {
-					log.warn("No date fields have been configured for this instrument.");
-				}
-				String timeZone = xmlConfig.getString("channels.channel(" + i + ").timeZone");
-				this.setTimezone(timeZone);
-				break;
-			}
-			
-		}
+                }
+                String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
+                this.setRecordDelimiters(recordDelimiters);
+                // set the date formats list
+                List<String> dateFormats = (List<String>) xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
+                if ( dateFormats.size() != 0 ) {
+                    for (String dateFormat : dateFormats) {
+                        
+                        // validate the date format string
+                        try {
+                            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+                            
+                        } catch (IllegalFormatException ife) {
+                            String msg = "There was an error parsing the date format " +
+                                dateFormat + ". The message was: " + ife.getMessage();
+                            if ( log.isDebugEnabled() ) {
+                                ife.printStackTrace();
+                            }
+                            throw new ConfigurationException(msg);
+                        }
+                    }
+                    setDateFormats(dateFormats);
+                } else {
+                    log.warn("No date formats have been configured for this instrument.");
+                }
+                
+                // set the date fields list
+                List<String> dateFieldList = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
+                List<Integer> dateFields = new ArrayList<Integer>();
+                if ( dateFieldList.size() != 0 ) {
+                    for ( String dateField : dateFieldList ) {
+                        try {
+                            Integer newDateField = new Integer(dateField);
+                            dateFields.add(newDateField);
+                        } catch (NumberFormatException e) {
+                            String msg = "There was an error parsing the dateFields. The message was: " +
+                                    e.getMessage();
+                            throw new ConfigurationException(msg);
+                        }
+                    }
+                    setDateFields(dateFields);
+                    
+                } else {
+                    log.warn("No date fields have been configured for this instrument.");
+                }
+                String timeZone = xmlConfig.getString("channels.channel(" + i + ").timeZone");
+                this.setTimezone(timeZone);
+                break;
+            }
+            
+        }
 
-		// Check the record delimiters length and set the first and optionally second delim characters
-		if ( this.recordDelimiters.length == 1 ) {
-			this.firstDelimiterByte = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
-		} else if ( this.recordDelimiters.length == 2 ) {
-			this.firstDelimiterByte  = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
-			this.secondDelimiterByte = (byte) Integer.decode(this.recordDelimiters[1]).byteValue();
+        // Check the record delimiters length and set the first and optionally second delim characters
+        if ( this.recordDelimiters.length == 1 ) {
+            this.firstDelimiterByte = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
+        } else if ( this.recordDelimiters.length == 2 ) {
+            this.firstDelimiterByte  = (byte) Integer.decode(this.recordDelimiters[0]).byteValue();
+            this.secondDelimiterByte = (byte) Integer.decode(this.recordDelimiters[1]).byteValue();
 
-		} else {
-			throw new ConfigurationException("The recordDelimiter must be one or two characters, " +
-		        "separated by a pipe symbol (|) if there is more than one delimiter character.");
-		}
-		byte[] delimiters = new byte[]{};
+        } else {
+            throw new ConfigurationException("The recordDelimiter must be one or two characters, " +
+                "separated by a pipe symbol (|) if there is more than one delimiter character.");
+        }
+        byte[] delimiters = new byte[]{};
 
     }
     
@@ -298,7 +298,7 @@ public abstract class SimpleTextSource extends RBNBSource {
      * @param channelName  the name of the channel
      */
     public void setChannelName(String channelName) {
-    	
+        
     }
     
     /**
@@ -316,7 +316,7 @@ public abstract class SimpleTextSource extends RBNBSource {
      * @param connectionType  the connection type ('file', 'socket', or 'serial')
      */
     public void setConnectionType(String connectionType) {
-    	this.connectionType = connectionType;
+        this.connectionType = connectionType;
     }
     
     /**
@@ -378,7 +378,7 @@ public abstract class SimpleTextSource extends RBNBSource {
           } catch ( Exception e ){
             log.info("There was an execution problem. Retrying. Message is: " + e.getMessage());
             if ( log.isDebugEnabled() ) {
-            	e.printStackTrace();
+                e.printStackTrace();
             }
             
           }
@@ -492,276 +492,276 @@ public abstract class SimpleTextSource extends RBNBSource {
      * 
      * @param identifier  the identifier of the instrument
      */
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
      
     /**
      * Set the identifier of the instrument, usually a string like "NS01".
      * 
      * @param identifier  the identifier of the instrument
      */
-	public String getIdentifier() {
-		return this.identifier;
-	}
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
-	  /**
-	   * A method that gets the timezone string
-	   *
-	   * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
-	   */
-	  public String getTimezone() {
-	    return this.timezone;
-	    
-	  }
-	  
-	  /**
-	   * A method that sets the timezone string
-	   *
-	   * @param timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
-	   */
-	  public void setTimezone(String timezone) {
-	    this.timezone = timezone;
-	    
-	  }
-
-	/**
-	 * a method that gets the field delimiter set for the data sample
-	 * @return the delimiter
-	 */
-	public String getDelimiter() {
-		return delimiter;
-	}
-
-	/**
-	 * Sets the delimiter used in the data sample (e.g. ',')
-	 * 
-	 * @param delimiter the delimiter to set
-	 */
-	public void setDelimiter(String delimiter) {
-		this.delimiter = delimiter;
-	}
-
-	/**
-	 * a method that gets data pattern for the data sample
-	 * 
-	 * @return dataPattern  the pattern as a string
-	 */
-	public String getPattern() {
-		return this.dataPattern.toString();
-	}
-
-	/**
-	 * A method that sets the regular expression pattern for matching data lines
-	 *
-	 * @param pattern - the pattern string used to match data lines
-	 */
-	public void setPattern(String pattern) {
-	  this.dataPattern = Pattern.compile(pattern);
-	  
-	}
-
-	/**
-	 * Get the list of date formats that correspond to date and/or time fields in
-	 * the sample data.  For instance, column one of the sample may be a timestamp
-	 * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
-	 * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
-	 * @return the dateFormats
-	 */
-	public List<String> getDateFormats() {
-		return dateFormats;
-		
-	}
-
-	/**
-	 * Set the list of date formats that correspond to date and/or time fields in
-	 * the sample data.  For instance, column one of the sample may be a timestamp
-	 * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
-	 * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
-
-	 * @param dateFormats the dateFormats to set
-	 */
-	public void setDateFormats(List<String> dateFormats) {
-		this.dateFormats = dateFormats;
-		
-	}
-
-	/**
-	 * Get the list of Integers that correspond with field indices of the 
-	 * sample observation's date, time, or datetime columns.
-	 *
-	 * @return the dateFields
-	 */
-	public List<Integer> getDateFields() {
-		return dateFields;
-		
-	}
-
-	/**
-	 * Set the list of Integers that correspond with field indices of the 
-	 * sample observation's date, time, or datetime columns. The list must be
-	 * one-based, such as '1,2'.
-	 * @param dateFields the dateFields to set
-	 */
-	public void setDateFields(List<Integer> dateFields) {
-		this.dateFields = dateFields;
-		
-	}
-
-	/**
-	 *  return the sample observation date given minimal sample metadata
-	 */
-	public Date getSampleDate(String line) throws ParseException {
-		
-		/*
-		 * Date time formats and field locations are highly dependent on instrument
-		 * output settings.  The -d and -f options are used to set dateFormats and dateFields,
-		 * or in the XML-based configuration file
-		 * 
-		 * this.dateFormats will look something like {"yyyy-MM-dd", "HH:mm:ss"} or 
-		 * {"yyyy-MM-dd HH:mm:ss"} or {"yyyy", "MM", "dd", "HH", "mm", "ss"}
-		 * 
-		 * this.dateFields will also look something like {1,2} or {1} or {1, 2, 3, 4, 5, 6}
-		 * 
-		 * NS01 sample:
-		 * # 26.1675,  4.93111,    0.695, 0.1918, 0.1163,  31.4138, 09 Dec 2012 15:46:55
-		 * NS03 sample:
-		 * #  25.4746,  5.39169,    0.401,  35.2570, 09 Dec 2012, 15:44:36
-		 */
-	    // extract the date from the data line
-		SimpleDateFormat dateFormat;
-	    String dateFormatStr = "";
-	    String dateString    = "";
-	    String[] columns     = line.trim().split(this.delimiter);
-	    log.debug("Delimiter is: " + this.delimiter);
-	    log.debug(Arrays.toString(columns));
-	    Date sampleDate = new Date();
-	    // build the total date format from the individual fields listed in dateFields
-	    int index = 0;
-	    if ( this.dateFields != null && this.dateFormats != null ) {
-			for (Integer dateField : this.dateFields) {
-				try {
-					dateFormatStr += this.dateFormats.get(index); //zero-based list
-					dateString += columns[dateField.intValue() - 1].trim(); //zero-based list
-				} catch (IndexOutOfBoundsException e) {
-					String msg = "There was an error parsing the date from the sample using the date format '"
-							+ dateFormatStr
-							+ "' and the date field index of "
-							+ dateField.intValue();
-					if (log.isDebugEnabled()) {
-						e.printStackTrace();
-					}
-					throw new ParseException(msg, 0);
-				}
-				index++;
-			}
-		    log.debug("Using date format string: " + dateFormatStr);
-		    log.debug("Using date string       : " + dateString);
-		    log.debug("Using time zone         : " + this.timezone);
-            
-	        this.tz = TimeZone.getTimeZone(this.timezone);
-	        if ( this.dateFormats == null || this.dateFields == null ) {
-	        	log.warn("Using the default datetime field for sample data.");
-	        	dateFormat = this.defaultDateFormat;
-	        }
-	        // init the date formatter
-	        dateFormat = new SimpleDateFormat(dateFormatStr);
-		    dateFormat.setTimeZone(this.tz);
-            
-		    // parse the date string
-	        sampleDate = dateFormat.parse(dateString.trim());
-		} else {
-			log.info("No date formats or date fields were configured. Using the current date for this sample.");
-		}
-
-	    return sampleDate;
-	}
-
-	/**
-	 * Return the record delimiters string array that separates sample lines of data
-	 * 
-	 * @return recordDelimiters - the record delimiters array between samples
-	 */
-	public String[] getRecordDelimiters() {
-		return this.recordDelimiters;
-		
-	}
-
-	/**
-	 * Set the record delimiters string array that separates sample lines of data
-	 * 
-	 * @param recordDelimiters  the record delimiters array between samples
-	 */
-	public void setRecordDelimiters(String[] recordDelimiters) {
-		this.recordDelimiters = recordDelimiters;
-		
-	}
-
-	/**
-	 * Set the XML configuration object for this simple text source
-	 * 
-	 * @param xmlConfig  the XML configuration instance
-	 */
-	public void setConfiguration(XMLConfiguration xmlConfig) {
-		this.xmlConfig = xmlConfig;
-		
-	}
-
-	/**
-	 * Return the XML configuration for this simple text source
-	 * 
-	 * @return xmlConfig  the XML configuration instance
-	 */
-	public XMLConfiguration getConfiguration(){
-		return this.xmlConfig;
-		
-	}
-	
-	/**
-	 * A method that sets the command line options for this class.  This method 
-	 * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
-	 * properties such as the sourceHostName, sourceHostPort, serverName, and
-	 * serverPort.
-	 * 
-	 * Note: We no longer use command-line options for the drivers.  Instead, configuration
-	 * is set using an XML-based configuration file.
-	 */
-	@Override
-	protected Options setOptions() {
-	    
-		//Options options = setBaseOptions(new Options());
-		Options options = new Options();
-	  
-	    options.addOption("h", true,  
-	        "The SimpleTextSource driver is used to connect to file, serial, or socket" +
-	        "-based instruments.  To configure an instrument, provide the path to the XML" +
-	        "-based configuration file.  See the driver documentation for creating the " +
-	        "configuration file");
-	                    
-	    return options;
-	}
-
-	/**
-	 * Send the sample to the DataTurbine
-	 * 
-	 * @param sample the ASCII sample string to send
-	 * @throws IOException
-	 * @throws SAPIException
-	 */
-	public boolean sendSample(String sample) throws IOException, SAPIException {
-		boolean sent = false;
+      /**
+       * A method that gets the timezone string
+       *
+       * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+       */
+      public String getTimezone() {
+        return this.timezone;
         
-	    // add a channel of data that will be pushed to the server.  
-	    // Each sample will be sent to the Data Turbine as an rbnb frame.
-	    ChannelMap rbnbChannelMap = new ChannelMap();
-	    Date sampleDate = new Date();
+      }
+      
+      /**
+       * A method that sets the timezone string
+       *
+       * @param timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+       */
+      public void setTimezone(String timezone) {
+        this.timezone = timezone;
+        
+      }
+
+    /**
+     * a method that gets the field delimiter set for the data sample
+     * @return the delimiter
+     */
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * Sets the delimiter used in the data sample (e.g. ',')
+     * 
+     * @param delimiter the delimiter to set
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    /**
+     * a method that gets data pattern for the data sample
+     * 
+     * @return dataPattern  the pattern as a string
+     */
+    public String getPattern() {
+        return this.dataPattern.toString();
+    }
+
+    /**
+     * A method that sets the regular expression pattern for matching data lines
+     *
+     * @param pattern - the pattern string used to match data lines
+     */
+    public void setPattern(String pattern) {
+      this.dataPattern = Pattern.compile(pattern);
+      
+    }
+
+    /**
+     * Get the list of date formats that correspond to date and/or time fields in
+     * the sample data.  For instance, column one of the sample may be a timestamp
+     * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+     * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+     * @return the dateFormats
+     */
+    public List<String> getDateFormats() {
+        return dateFormats;
+        
+    }
+
+    /**
+     * Set the list of date formats that correspond to date and/or time fields in
+     * the sample data.  For instance, column one of the sample may be a timestamp
+     * formatted as "YYYY-MM-DD HH:MM:SS". Alternatively, columns one and two may
+     * be a date and a time, such as "YYYY-MM-DD,HH:MM:SS". 
+
+     * @param dateFormats the dateFormats to set
+     */
+    public void setDateFormats(List<String> dateFormats) {
+        this.dateFormats = dateFormats;
+        
+    }
+
+    /**
+     * Get the list of Integers that correspond with field indices of the 
+     * sample observation's date, time, or datetime columns.
+     *
+     * @return the dateFields
+     */
+    public List<Integer> getDateFields() {
+        return dateFields;
+        
+    }
+
+    /**
+     * Set the list of Integers that correspond with field indices of the 
+     * sample observation's date, time, or datetime columns. The list must be
+     * one-based, such as '1,2'.
+     * @param dateFields the dateFields to set
+     */
+    public void setDateFields(List<Integer> dateFields) {
+        this.dateFields = dateFields;
+        
+    }
+
+    /**
+     *  return the sample observation date given minimal sample metadata
+     */
+    public Date getSampleDate(String line) throws ParseException {
+        
+        /*
+         * Date time formats and field locations are highly dependent on instrument
+         * output settings.  The -d and -f options are used to set dateFormats and dateFields,
+         * or in the XML-based configuration file
+         * 
+         * this.dateFormats will look something like {"yyyy-MM-dd", "HH:mm:ss"} or 
+         * {"yyyy-MM-dd HH:mm:ss"} or {"yyyy", "MM", "dd", "HH", "mm", "ss"}
+         * 
+         * this.dateFields will also look something like {1,2} or {1} or {1, 2, 3, 4, 5, 6}
+         * 
+         * NS01 sample:
+         * # 26.1675,  4.93111,    0.695, 0.1918, 0.1163,  31.4138, 09 Dec 2012 15:46:55
+         * NS03 sample:
+         * #  25.4746,  5.39169,    0.401,  35.2570, 09 Dec 2012, 15:44:36
+         */
+        // extract the date from the data line
+        SimpleDateFormat dateFormat;
+        String dateFormatStr = "";
+        String dateString    = "";
+        String[] columns     = line.trim().split(this.delimiter);
+        log.debug("Delimiter is: " + this.delimiter);
+        log.debug(Arrays.toString(columns));
+        Date sampleDate = new Date();
+        // build the total date format from the individual fields listed in dateFields
+        int index = 0;
+        if ( this.dateFields != null && this.dateFormats != null ) {
+            for (Integer dateField : this.dateFields) {
+                try {
+                    dateFormatStr += this.dateFormats.get(index); //zero-based list
+                    dateString += columns[dateField.intValue() - 1].trim(); //zero-based list
+                } catch (IndexOutOfBoundsException e) {
+                    String msg = "There was an error parsing the date from the sample using the date format '"
+                            + dateFormatStr
+                            + "' and the date field index of "
+                            + dateField.intValue();
+                    if (log.isDebugEnabled()) {
+                        e.printStackTrace();
+                    }
+                    throw new ParseException(msg, 0);
+                }
+                index++;
+            }
+            log.debug("Using date format string: " + dateFormatStr);
+            log.debug("Using date string       : " + dateString);
+            log.debug("Using time zone         : " + this.timezone);
+            
+            this.tz = TimeZone.getTimeZone(this.timezone);
+            if ( this.dateFormats == null || this.dateFields == null ) {
+                log.warn("Using the default datetime field for sample data.");
+                dateFormat = this.defaultDateFormat;
+            }
+            // init the date formatter
+            dateFormat = new SimpleDateFormat(dateFormatStr);
+            dateFormat.setTimeZone(this.tz);
+            
+            // parse the date string
+            sampleDate = dateFormat.parse(dateString.trim());
+        } else {
+            log.info("No date formats or date fields were configured. Using the current date for this sample.");
+        }
+
+        return sampleDate;
+    }
+
+    /**
+     * Return the record delimiters string array that separates sample lines of data
+     * 
+     * @return recordDelimiters - the record delimiters array between samples
+     */
+    public String[] getRecordDelimiters() {
+        return this.recordDelimiters;
+        
+    }
+
+    /**
+     * Set the record delimiters string array that separates sample lines of data
+     * 
+     * @param recordDelimiters  the record delimiters array between samples
+     */
+    public void setRecordDelimiters(String[] recordDelimiters) {
+        this.recordDelimiters = recordDelimiters;
+        
+    }
+
+    /**
+     * Set the XML configuration object for this simple text source
+     * 
+     * @param xmlConfig  the XML configuration instance
+     */
+    public void setConfiguration(XMLConfiguration xmlConfig) {
+        this.xmlConfig = xmlConfig;
+        
+    }
+
+    /**
+     * Return the XML configuration for this simple text source
+     * 
+     * @return xmlConfig  the XML configuration instance
+     */
+    public XMLConfiguration getConfiguration(){
+        return this.xmlConfig;
+        
+    }
+    
+    /**
+     * A method that sets the command line options for this class.  This method 
+     * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
+     * properties such as the sourceHostName, sourceHostPort, serverName, and
+     * serverPort.
+     * 
+     * Note: We no longer use command-line options for the drivers.  Instead, configuration
+     * is set using an XML-based configuration file.
+     */
+    @Override
+    protected Options setOptions() {
+        
+        //Options options = setBaseOptions(new Options());
+        Options options = new Options();
+      
+        options.addOption("h", true,  
+            "The SimpleTextSource driver is used to connect to file, serial, or socket" +
+            "-based instruments.  To configure an instrument, provide the path to the XML" +
+            "-based configuration file.  See the driver documentation for creating the " +
+            "configuration file");
+                        
+        return options;
+    }
+
+    /**
+     * Send the sample to the DataTurbine
+     * 
+     * @param sample the ASCII sample string to send
+     * @throws IOException
+     * @throws SAPIException
+     */
+    public boolean sendSample(String sample) throws IOException, SAPIException {
+        boolean sent = false;
+        
+        // add a channel of data that will be pushed to the server.  
+        // Each sample will be sent to the Data Turbine as an rbnb frame.
+        ChannelMap rbnbChannelMap = new ChannelMap();
+        Date sampleDate = new Date();
         try {
-			sampleDate = getSampleDate(sample);
-			
-		} catch (ParseException e) {
-			log.warn("A sample date couldn't be parsed from the sample.  Using the current date." +
-		        " the error message was: " + e.getMessage());
-		}
+            sampleDate = getSampleDate(sample);
+            
+        } catch (ParseException e) {
+            log.warn("A sample date couldn't be parsed from the sample.  Using the current date." +
+                " the error message was: " + e.getMessage());
+        }
         long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
         
         // send the sample to the data turbine
@@ -771,60 +771,60 @@ public abstract class SimpleTextSource extends RBNBSource {
         rbnbChannelMap.PutDataAsString(channelIndex, sample);
         getSource().Flush(rbnbChannelMap);
         log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
-        		 " sent data to the DataTurbine.");
+                 " sent data to the DataTurbine.");
         
         sent = true;
         rbnbChannelMap.Clear();                      
 
-		return sent;
-	}
+        return sent;
+    }
 
-	/**
-	 * Validate the sample string against the sample pattern provided in the configuration
-	 * 
-	 * @param sample  the sample string to validate
-	 * @return isValid  true if the sample string match the sample pattern
-	 */
-	public boolean validateSample(String sample) {
-		boolean isValid = false;
+    /**
+     * Validate the sample string against the sample pattern provided in the configuration
+     * 
+     * @param sample  the sample string to validate
+     * @return isValid  true if the sample string match the sample pattern
+     */
+    public boolean validateSample(String sample) {
+        boolean isValid = false;
 
         // test the line for the expected data pattern
         Matcher matcher = this.dataPattern.matcher(sample);
 
-		if ( matcher.matches() ) {
-			isValid = true;
-		} else {
-        	String sampleAsReadableText = sample.replaceAll("\\x0D", "0D");
-        	sampleAsReadableText = sampleAsReadableText.replaceAll("\\x0A", "0A");
-        	
-          	log.warn("The sample did not validate, and was not sent. The text was: " +
+        if ( matcher.matches() ) {
+            isValid = true;
+        } else {
+            String sampleAsReadableText = sample.replaceAll("\\x0D", "0D");
+            sampleAsReadableText = sampleAsReadableText.replaceAll("\\x0A", "0A");
+            
+              log.warn("The sample did not validate, and was not sent. The text was: " +
             sampleAsReadableText);
-		}
-		
-    	try {
-			log.debug("Sample bytes: " + new String(Hex.encodeHex(sample.getBytes("US-ASCII"))));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		log.debug("Data pattern is: '" + this.dataPattern.toString() + "'");
-		log.debug("Sample is      :  " + sample);
-		
-		return isValid;
-		
-	}
-	
-	/**
-	 * Return the first delimiter character as a byte
-	 */
-	public byte getFirstDelimiterByte() {
-		return this.firstDelimiterByte;
-	}
+        }
+        
+        try {
+            log.debug("Sample bytes: " + new String(Hex.encodeHex(sample.getBytes("US-ASCII"))));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        log.debug("Data pattern is: '" + this.dataPattern.toString() + "'");
+        log.debug("Sample is      :  " + sample);
+        
+        return isValid;
+        
+    }
+    
+    /**
+     * Return the first delimiter character as a byte
+     */
+    public byte getFirstDelimiterByte() {
+        return this.firstDelimiterByte;
+    }
 
-	/**
-	 * Return the second delimiter character as a byte
-	 */
-	public byte getSecondDelimiterByte() {
-		return this.secondDelimiterByte;
-	}
+    /**
+     * Return the second delimiter character as a byte
+     */
+    public byte getSecondDelimiterByte() {
+        return this.secondDelimiterByte;
+    }
 
 }
