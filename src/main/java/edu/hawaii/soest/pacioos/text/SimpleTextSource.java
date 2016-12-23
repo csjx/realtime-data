@@ -93,28 +93,28 @@ public abstract class SimpleTextSource extends RBNBSource {
     private String connectionType;
 
     /* The delimiter separating variables in the sample line */
-    private String delimiter;
+    protected String delimiter;
 
     /* The record delimiter between separate ASCII sample lines (like \r\n) */
-    private String recordDelimiter;
+    protected String recordDelimiter;
     
     /* The default date format for the timestamp in the data sample string */
-    private SimpleDateFormat defaultDateFormat;
+    protected SimpleDateFormat defaultDateFormat;
     
     /* A list of date format patterns to be applied to designated date/time fields */
-    private List<String> dateFormats = null;
+    protected List<String> dateFormats = null;
 
     /* A one-based list of Integers corresponding to the observation date/time field indices */
-    private List<Integer> dateFields = null;
+    protected List<Integer> dateFields = null;
     
     /* The instance of TimeZone to use when parsing dates */
-    private TimeZone tz;
+    protected TimeZone tz;
 
     /* The pattern used to identify data lines */
-    private Pattern dataPattern;
+    protected Pattern dataPattern;
     
     /* The timezone that the data samples are taken in as a string (UTC, HST, etc.) */
-    private String timezone;
+    protected String timezone;
     
     /* The state used to track the data processing */
     private int state = 0;
@@ -123,10 +123,10 @@ public abstract class SimpleTextSource extends RBNBSource {
     private boolean readyToStream = false;
     
     /* The thread used for streaming data */
-    private Thread streamingThread;
+    protected Thread streamingThread;
     
     /* The polling interval (millis) used to check for new lines in the data file */
-    private int pollInterval;
+    protected int pollInterval;
     
     /*
      * An internal Thread setting used to specify how long, in milliseconds, the
@@ -143,13 +143,13 @@ public abstract class SimpleTextSource extends RBNBSource {
     private XMLConfiguration xmlConfig;
 
     /* The list of record delimiter characters provided by the config (usually 0x0D,0x0A) */
-    private String[] recordDelimiters;
+    protected String[] recordDelimiters;
 
     /* The first record delimiter byte */
-    private byte firstDelimiterByte;
+    protected byte firstDelimiterByte;
 
     /* The second record delimiter byte */
-    private byte secondDelimiterByte;
+    protected byte secondDelimiterByte;
       
     /**
      * Constructor: create an instance of the simple SimpleTextSource
