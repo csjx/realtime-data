@@ -154,7 +154,7 @@ public class SocketTextSource extends SimpleTextSource {
               
               // evaluate each byte to find the record delimiter(s), and when found, validate and
               // send the sample to the DataTurbine.
-              boolean sent = false;
+              int numberOfChannelsFlushed = 0;
               
               if ( getRecordDelimiters().length == 2 ) {
                     // have we hit the delimiters in the stream yet?
@@ -172,7 +172,8 @@ public class SocketTextSource extends SimpleTextSource {
                       String sampleString = new String(sampleArray, "US-ASCII");
 
                       if ( validateSample(sampleString) ) {
-                          sent = sendSample(sampleString);                                
+                    	  	  numberOfChannelsFlushed = sendSample(sampleString);
+                    	  	  
                       } 
 
                       sampleBuffer.clear();
@@ -213,7 +214,8 @@ public class SocketTextSource extends SimpleTextSource {
                       String sampleString = new String(sampleArray, "US-ASCII");
                       
                       if ( validateSample(sampleString) ) {
-                          sent = sendSample(sampleString);
+                    	  	  numberOfChannelsFlushed = sendSample(sampleString);
+                    	  	  
                       } 
                       
                       sampleBuffer.clear();

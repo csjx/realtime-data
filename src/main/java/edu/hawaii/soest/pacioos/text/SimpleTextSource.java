@@ -812,6 +812,7 @@ public abstract class SimpleTextSource extends RBNBSource {
         
         return lastSampleTimeAsSecondsSinceEpoch;
     }
+    
     /**
      * Send the sample to the DataTurbine
      * 
@@ -819,8 +820,8 @@ public abstract class SimpleTextSource extends RBNBSource {
      * @throws IOException
      * @throws SAPIException
      */
-     public boolean sendSample(String sample) throws IOException, SAPIException {
-        boolean sent = false;
+     public int sendSample(String sample) throws IOException, SAPIException {
+        int numberOfChannelsFlushed = 0;
         
         // add a channel of data that will be pushed to the server.  
         // Each sample will be sent to the Data Turbine as an rbnb frame.
@@ -840,14 +841,27 @@ public abstract class SimpleTextSource extends RBNBSource {
         int channelIndex = rbnbChannelMap.Add(getChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
         rbnbChannelMap.PutDataAsString(channelIndex, sample);
-        getSource().Flush(rbnbChannelMap);
-        log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
-                 " sent data to the DataTurbine.");
         
-        sent = true;
-        rbnbChannelMap.Clear();                      
+        try {
+			numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
+			log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
+					" sent data to the DataTurbine.");
+			rbnbChannelMap.Clear();                      
+			// in the event we just lost the network, sleep, try again
+			while (numberOfChannelsFlushed < 1 ) {
+			    log.debug("No channels flushed, trying again in 10 seconds.");
+			    Thread.sleep(10000L);
+			    numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
 
-        return sent;
+			}
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			
+		}
+            
+
+        return numberOfChannelsFlushed;
     }
 
     /**
