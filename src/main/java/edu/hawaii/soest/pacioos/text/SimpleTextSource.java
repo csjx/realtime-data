@@ -742,13 +742,35 @@ public abstract class SimpleTextSource extends RBNBSource {
     }
 
     /**
+     * Register the default channel name in the Data Turbine
+     * @return true if the channel is registered
+     * @throws SAPIException
+     */
+    public boolean registerChannel() throws SAPIException {
+        
+    		boolean registered = false;
+    		ChannelMap registerChannelMap = new ChannelMap(); // used only to register channels
+        
+        // add the DecimalASCIISampleData channel to the channelMap
+		int channelIndex = registerChannelMap.Add(getChannelName());
+		registerChannelMap.PutUserInfo(channelIndex, "units=none");                             
+		// and register the RBNB channels
+		getSource().Register(registerChannelMap);
+		registerChannelMap.Clear();
+		registered = true;
+		
+        return registered;
+
+    }
+    
+    /**
      * Send the sample to the DataTurbine
      * 
      * @param sample the ASCII sample string to send
      * @throws IOException
      * @throws SAPIException
      */
-    public boolean sendSample(String sample) throws IOException, SAPIException {
+     public boolean sendSample(String sample) throws IOException, SAPIException {
         boolean sent = false;
         
         // add a channel of data that will be pushed to the server.  
