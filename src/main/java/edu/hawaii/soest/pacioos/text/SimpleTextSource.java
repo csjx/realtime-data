@@ -55,6 +55,7 @@ import org.nees.rbnb.RBNBSource;
 
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
+import com.rbnb.sapi.Sink;
 
 /**
  * a class that represents a simple text-based instrument as a Source driver
@@ -763,6 +764,54 @@ public abstract class SimpleTextSource extends RBNBSource {
 
     }
     
+    /**
+     * For the given Data Turbine channel, request the last sample timestamp
+     * for comparison against samples about to be flushed
+     * @return lastSampleTimeAsSecondsSinceEpoch  the last sample time as seconds since the epoch
+     * @throws SAPIException
+     */
+    public long getLastSampleTime() throws SAPIException {
+        
+    		// query the DT to find the timestamp of the last sample inserted
+        Sink sink = new Sink();
+		Date initialDate = new Date();
+		long lastSampleTimeAsSecondsSinceEpoch = initialDate.getTime()/1000L;
+		
+		try {
+			ChannelMap requestMap = new ChannelMap();
+			int entryIndex = requestMap.Add(getRBNBClientName() + "/" + getChannelName());
+			log.debug("Request Map: " + requestMap.toString());
+			sink.OpenRBNBConnection(getServer(), "lastEntrySink");
+			
+			sink.Request(requestMap, 0., 1., "newest");
+			ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
+			// initialize the last sample date 
+			log.debug("Initialized the last sample date to: " + initialDate.toString());
+			log.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
+			
+			if ( responseMap.NumberOfChannels() == 0 )    {
+			    // set the last sample time to 0 since there are no channels yet
+			    lastSampleTimeAsSecondsSinceEpoch = 0L;
+			    log.debug("Resetting the last sample date to the epoch: " +
+			        (new Date(lastSampleTimeAsSecondsSinceEpoch * 1000L)).toString());
+			
+			} else if ( responseMap.NumberOfChannels() > 0 )    {
+			    lastSampleTimeAsSecondsSinceEpoch = 
+			        new Double(responseMap.GetTimeStart(entryIndex)).longValue();
+			    log.debug("There are existing channels. Last sample time: " +
+			    		(new Date(lastSampleTimeAsSecondsSinceEpoch * 1000L)).toString());
+			                             
+			}
+		} catch (SAPIException sapie) {
+			throw sapie;
+			
+		} finally {
+	        sink.CloseRBNBConnection();
+			
+		}
+        
+        return lastSampleTimeAsSecondsSinceEpoch;
+    }
     /**
      * Send the sample to the DataTurbine
      * 
