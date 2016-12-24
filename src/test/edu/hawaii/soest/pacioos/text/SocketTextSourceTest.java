@@ -75,16 +75,13 @@ public class SocketTextSourceTest extends SimpleTextSourceTest {
 		// test each mock instrument file, using file ending naming conventions
 		for (String instrument : testMockInstruments) {
 			// start up the mock data source
-			mockCTDData = testResourcesDirectory + 
-						  "edu/hawaii/soest/pacioos/text/" +
-						  instrument + 
-						  "-mock-data.txt";
+			mockCTDData = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" + instrument + "-mock-data.txt";
 			mockDataSource = new MockDataSource(mockCTDData);
 			mockDataSourceThread = new Thread(mockDataSource);
 			mockDataSourceThread.start();
 
 			String configLocation = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" +
-									instrument + "-instrument-config.xml";
+				instrument + "-instrument-config.xml";
 
 			SimpleTextSource socketTextSource = null;
 			try {
