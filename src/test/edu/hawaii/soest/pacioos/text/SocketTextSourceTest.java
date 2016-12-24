@@ -5,11 +5,6 @@
  *
  *   Authors: Christopher Jones
  *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -58,57 +53,9 @@ import com.rbnb.sapi.Sink;
  * @author cjones
  *
  */
-public class SocketTextSourceTest {
+public class SocketTextSourceTest extends SimpleTextSourceTest {
 
     private static final Log log = LogFactory.getLog(SocketTextSourceTest.class);
-
-    private Server mockDT;
-	
-    private String testResourcesDirectory;
-	
-    private String mockCTDData;
-	
-	private MockDataSource mockDataSource;
-		
-	private Thread mockDataSourceThread;
-	
-    private List<String> testMockInstruments;
-    
-	/**
-	 * Start a mock DataTurbine and a MockDataSource, both of which will be connected to 
-	 * by the SocketTextSource class being tested.
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		
-		// get the resources directory
-		InputStream propsStream = ClassLoader.getSystemResourceAsStream("test.properties");
-		Properties properties = new Properties();
-		try {
-			properties.load(propsStream);
-			testResourcesDirectory = properties.getProperty("test.resources.directory");
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		// start up a mock DataTurbine instance
-		FileUtils.deleteDirectory(new File("/tmp/dt"));
-		FileUtils.forceMkdir(new File("/tmp/dt"));
-		String[] options = new String[]{"-a", "127.0.0.1:33333", "-H", "/tmp/dt"};
-		mockDT = Server.launchNewServer(options);
-		log.info("Dataturbine is running on " + mockDT.getAddress());
-		Thread.sleep(2000);
-		
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
 
 	/**
 	 * Test multiple instrument file formats and instrument configurations:
@@ -136,10 +83,8 @@ public class SocketTextSourceTest {
 			mockDataSourceThread = new Thread(mockDataSource);
 			mockDataSourceThread.start();
 
-			String configLocation = testResourcesDirectory + 
-									"edu/hawaii/soest/pacioos/text/" +
-									instrument + 
-									"-instrument-config.xml";
+			String configLocation = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" +
+									instrument + "-instrument-config.xml";
 
 			SimpleTextSource socketTextSource = null;
 			try {
@@ -207,32 +152,6 @@ public class SocketTextSourceTest {
 			} catch (SAPIException e) {
 				e.printStackTrace();
 			}
-
 		}
-		
-		// shut down the DT
-		log.info("Stopping the mock DataTurbine");
-		if ( mockDT != null ) {
-			try {
-				mockDT.stop();
-			} catch (AddressException e) {
-				e.printStackTrace();
-				
-			} catch (SerializeException e) {
-				e.printStackTrace();
-				
-			} catch (EOFException e) {
-				e.printStackTrace();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-		}
-
 	}
-		
 }
