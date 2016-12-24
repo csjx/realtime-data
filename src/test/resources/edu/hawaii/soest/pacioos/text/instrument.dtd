@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  *  instrument.dtd
+  *
+  *  Copyright: 2016 Regents of the University of Hawaii and the
+  *         School of Ocean and Earth Science and Technology 
+  *
+-->
+<!-- 
+  The following DTD represents a driver configuration  
+  for a source instrument via serial, socket, or file connection.
+  The driver then pushes data samples to an RBNB Data Turbine server
+  based on the provided parameters.
+
+  To validate XML documents that adhere to this DTD, use a validator like
+  xmlstarlet:
+  $ cd conf
+  $ xmlstarlet val -d instrument.dtd NS15.xml
+-->
+<!-- Definitions for the instrument properties are as follows: -->
+
+<!-- 
+    instrument: Identifies the instrument and provides a sequence of 
+    properties needed to connect to the instrument, to connect to
+    the Data Turbine server, and to define the channels of data
+    being pushed into the server
+ -->
+<!ELEMENT instrument (identifier, connectionType, connectionParams, rbnbName, 
+                      rbnbServer, rbnbPort, archiveMemory, archiveSize, channels)>
+<!-- 
+    identifier: The string identifier of the instrument (e.g. NS15)
+-->
+<!ELEMENT identifier (#PCDATA)>
+
+<!-- 
+    connectionType: The type of connection to the instrument. 
+    Must be one of "socket", "file", or "serial" 
+-->
+<!ELEMENT connectionType (#PCDATA)>
+<!-- 
+    connectionParams: The connection parameters for the instrument. 
+    Must be one of:
+    - "hostName" and "hostPort" for socket connections
+    - "filePath" for file connections
+    - "serialPort" and "serialPortParams" for serial connections
+-->
+<!ELEMENT connectionParams ((hostName, hostPort) | filePath | (serialPort, serialPortParams))>
+
+<!--
+    hostName: The IP address or fully qualified domain name of the instrument host (e.g 192.168.100.5)
+-->
+<!ELEMENT hostName (#PCDATA)>
+
+<!--
+    hostPort: The TCP port number of the instrument host (e.g. 5111)
+-->
+<!ELEMENT hostPort (#PCDATA)>
+
+<!--
+    filePath: The absolute path to the file on disk with the instrument data (e.g. /path/to/file)
+-->
+<!ELEMENT filePath (#PCDATA)>
+
+<!--
+   serialPort: The computer serial port indicator connected to the instrument (e.g. /dev/tty01) 
+-->
+<!ELEMENT serialPort (#PCDATA)>
+
+<!--
+    serialPortParams: The parameters used in connecting to the instrument over the serial port
+-->
+<!ELEMENT serialPortParams (baudRate, dataBits, stopBits, parity)>
+
+<!--
+    baudRate: The baudRate of the serial connection (e.g. 9600)
+-->
+<!ELEMENT baudRate (#PCDATA)>
+
+<!--
+    dataBits: The data bits of the serial connection (e.g. 8)
+-->
+<!ELEMENT dataBits (#PCDATA)>
+
+<!--
+    stopBits: The stop bits of the serial connection (e.g. 1)
+-->
+<!ELEMENT stopBits (#PCDATA)>
+
+<!--
+    parity: The parity setting of the serial connection (e.g. NONE)
+-->
+<!ELEMENT parity (#PCDATA)>
+
+<!--
+    rbnbName: The name of the instrument source as it appears in the Data Turbine
+-->
+<!ELEMENT rbnbName (#PCDATA)>
+
+<!--
+    rbnbServer: The IP address or host name of the RBNB Data Turbine server (e.g. 127.0.0.1)
+-->
+<!ELEMENT rbnbServer (#PCDATA)>
+
+<!--
+    rbnbPort: The TCP port of the RBNB data Turbine server (e.g. 33333)
+-->
+<!ELEMENT rbnbPort (#PCDATA)>
+
+<!--
+    archiveMemory: The number of in-memory bytes to request for this 
+    instrument source in the RBNB Data Turbine server  (e.g. 126000)
+-->
+<!ELEMENT archiveMemory (#PCDATA)>
+
+
+<!--
+    archiveSize: The number of on-disk bytes to request for this 
+    instrument source in the RBNB Data Turbine server  (e.g. 31536000)
+-->
+<!ELEMENT archiveSize (#PCDATA)>
+
+<!--
+    channels: The list of data channels to be created in the DataTurbine for this instrument source
+-->
+<!ELEMENT channels (channel*)>
+
+<!--
+    channel: The details for this instrument's channel data being added to the RBNB server
+-->
+<!ELEMENT channel (name, dataType, dataPattern, fieldDelimiter, recordDelimiters, dateFormats, dateFields, timeZone)>
+
+<!--
+    default: An attribute for the channel indicating if this is the default channel.
+    Must be either "true" or "false", and is optional
+-->
+<!ATTLIST channel default (true|false) "true" >
+
+<!--
+    name: The name of the channel
+-->
+<!ELEMENT name (#PCDATA)>
+
+<!--
+    dataType: The type of the incoming data. For now, limited to a value of "String"
+-->
+<!ELEMENT dataType (#PCDATA)>
+
+<!--
+    dataPattern: The regular expression used to match a data sample. Assumes Java RegEx syntax.
+    It is best to keep data pattern on one line 
+-->
+<!ELEMENT dataPattern (#PCDATA)>
+
+<!--
+    fieldDelimiter: The character that delimits variables within the sample.
+    Use Hex notation for non-printing, whitespace characters (like space) (e.g 0x20)    
+-->
+<!ELEMENT fieldDelimiter (#PCDATA)>
+
+<!-- 
+  recordeDelimiters: The character(s) that delimit records (samples) in a stream or file
+  Use Hex notation for non-printing characters, and separate characters with a pipe 
+ (e.g. 0x0d|0x0A) (for a carriage return followed by a new line character)
+-->
+<!ELEMENT recordDelimiters (#PCDATA)>
+
+<!-- 
+  dateFormats: The list of date formats for each sample date component that is in a separate variable
+  One or more date formats are required, reflecting the date/time variables in the data
+  (e.g. mm/dd/YYYY , e.g. HH:MM:SS) (Assumes Java date parsing syntax)
+  Note: dateFormat and dateField are used together to locate, then parse the sample date
+  -->
+<!ELEMENT dateFormats (dateFormat*)>
+
+<!-- 
+    dateFields: The list of date fields for each sample date component in a separtate variable
+    One or more date fields are required, corresponding to the date/time variable positions in the data
+    (e.g 1 , e.g 2) (Correspond to the first and second variables in the data sample)
+-->        
+<!ELEMENT dateFields (dateField*)>
+
+<!-- 
+    timeZone: The time zone identifier that the data were collected in (e.g. UTC)
+-->
+<!ELEMENT timeZone (#PCDATA)>
+
+<!-- 
+  dateFormat: The individual date format for each sample date component that is in a separate variable
+  One or more date formats are required, reflecting the date/time variables in the data
+  (e.g. mm/dd/YYYY , e.g. HH:MM:SS) (Assumes Java date parsing syntax)
+  Note: dateFormat and dateField are used together to locate, then parse the sample date
+  -->
+<!ELEMENT dateFormat (#PCDATA)>
+
+<!-- 
+    dateField: The individual date field for each sample date component in a separtate variable
+    One or more date fields are required, corresponding to the date/time variable positions in the data
+    (e.g 1 , e.g 2) (Correspond to the first and second variables in the data sample)
+-->        
+<!ELEMENT dateField (#PCDATA)>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
