@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview &mdash; Realtime Data 1.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Realtime Data 1.1.0 documentation" href="../index.html"/>
+        <link rel="next" title="Overview" href="../dev/developer-guide.html"/>
+        <link rel="prev" title="Realtime Data Project" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Realtime Data
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-server-software">Managing the DataTurbine Server Software</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#starting-the-dataturbine">Starting the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stopping-the-dataturbine">Stopping the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-the-dataturbine">Troubleshooting the DataTurbine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-instrument-drivers">Managing the DataTurbine Instrument Drivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#starting-instrument-drivers">Starting Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-drivers-through-dispatchers">Starting Drivers through Dispatchers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adam-module-engineering-data">ADAM Module engineering data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stor-x-data-logger-data">STOR-X Data Logger data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#stopping-instrument-drivers">Stopping Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-instrument-drivers">Troubleshooting Instrument Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rebuilding-channel-data">Rebuilding Channel Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#replicating-instrument-data-streams">Replicating Instrument Data Streams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-file-archivers">Managing the DataTurbine File Archivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#starting-the-instrument-file-archivers">Starting the Instrument File Archivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stopping-the-instrument-file-archivers">Stopping the Instrument File Archivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#understanding-file-based-replication">Understanding File-based replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#managing-the-matlab-instrument-plotting-code">Managing the Matlab Instrument Plotting Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#connecting-to-the-server-via-vnc">Connecting to the Server via VNC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-the-instrument-plotting-code">Starting the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stopping-the-instrument-plotting-code">Stopping the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#viewing-instrument-plots">Viewing Instrument Plots</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#requirements">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#source-driver-architecture">Source Driver Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#instrument-specific-drivers">Instrument-specific Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#rdi-workhorse-acoustic-doppler-current-profiler">RDI Workhorse Acoustic Doppler Current Profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#seabird-ctd-sensors">Seabird CTD sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#davis-scientific-vantage-pro-2-weather-station">Davis Scientific Vantage Pro 2 weather station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#ecolabs-flntu-fluorometry-turbidity-sensor">EcoLabs FLNTU fluorometry/turbidity sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#satlantic-isus-v3-nitrate-sensor">Satlantic ISUS V3 nitrate sensor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#generic-text-drivers">Generic Text Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#dispatchers">Dispatchers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#adamdispatcher">AdamDispatcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#storxdispatcher">StorXDispatcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#sink-architecture">Sink Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#archiver-sink">Archiver Sink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#matlab-sink">Matlab Sink</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Realtime Data</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Overview</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/user/user-guide.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="managing-the-dataturbine-server-software">
+<h1>Managing the DataTurbine Server Software<a class="headerlink" href="#managing-the-dataturbine-server-software" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="starting-the-dataturbine">
+<h2>Starting the DataTurbine<a class="headerlink" href="#starting-the-dataturbine" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="stopping-the-dataturbine">
+<h2>Stopping the DataTurbine<a class="headerlink" href="#stopping-the-dataturbine" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="troubleshooting-the-dataturbine">
+<h2>Troubleshooting the DataTurbine<a class="headerlink" href="#troubleshooting-the-dataturbine" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="managing-the-dataturbine-instrument-drivers">
+<h1>Managing the DataTurbine Instrument Drivers<a class="headerlink" href="#managing-the-dataturbine-instrument-drivers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="starting-instrument-drivers">
+<h2>Starting Instrument Drivers<a class="headerlink" href="#starting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="starting-drivers-through-dispatchers">
+<h2>Starting Drivers through Dispatchers<a class="headerlink" href="#starting-drivers-through-dispatchers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adam-module-engineering-data">
+<h3>ADAM Module engineering data<a class="headerlink" href="#adam-module-engineering-data" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="stor-x-data-logger-data">
+<h3>STOR-X Data Logger data<a class="headerlink" href="#stor-x-data-logger-data" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="stopping-instrument-drivers">
+<h2>Stopping Instrument Drivers<a class="headerlink" href="#stopping-instrument-drivers" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="troubleshooting-instrument-drivers">
+<h2>Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rebuilding-channel-data">
+<h3>Rebuilding Channel Data<a class="headerlink" href="#rebuilding-channel-data" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+<div class="section" id="replicating-instrument-data-streams">
+<h1>Replicating Instrument Data Streams<a class="headerlink" href="#replicating-instrument-data-streams" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="managing-the-dataturbine-file-archivers">
+<h1>Managing the DataTurbine File Archivers<a class="headerlink" href="#managing-the-dataturbine-file-archivers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="starting-the-instrument-file-archivers">
+<h2>Starting the Instrument File Archivers<a class="headerlink" href="#starting-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="stopping-the-instrument-file-archivers">
+<h2>Stopping the Instrument File Archivers<a class="headerlink" href="#stopping-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="understanding-file-based-replication">
+<h1>Understanding File-based replication<a class="headerlink" href="#understanding-file-based-replication" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="managing-the-matlab-instrument-plotting-code">
+<h1>Managing the Matlab Instrument Plotting Code<a class="headerlink" href="#managing-the-matlab-instrument-plotting-code" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="connecting-to-the-server-via-vnc">
+<h2>Connecting to the Server via VNC<a class="headerlink" href="#connecting-to-the-server-via-vnc" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="starting-the-instrument-plotting-code">
+<h2>Starting the Instrument Plotting Code<a class="headerlink" href="#starting-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="stopping-the-instrument-plotting-code">
+<h2>Stopping the Instrument Plotting Code<a class="headerlink" href="#stopping-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="viewing-instrument-plots">
+<h2>Viewing Instrument Plots<a class="headerlink" href="#viewing-instrument-plots" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../dev/developer-guide.html" class="btn btn-neutral float-right" title="Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Realtime Data Project" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Regents of the University of Hawaii. All rights reserved.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
