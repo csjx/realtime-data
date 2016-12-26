@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to Realtime Data’s documentation! &mdash; Realtime Data 1.1.0 documentation</title>
+  <title>Realtime Data Project &mdash; Realtime Data 1.1.0 documentation</title>
   
 
   
@@ -30,7 +30,8 @@
   
 
   
-    <link rel="top" title="Realtime Data 1.1.0 documentation" href="#"/> 
+    <link rel="top" title="Realtime Data 1.1.0 documentation" href="#"/>
+        <link rel="next" title="Overview" href="user/user-guide.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -69,7 +70,71 @@
         
           
           
-              <ul class="simple">
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-server-software">Managing the DataTurbine Server Software</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-dataturbine">Starting the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-dataturbine">Stopping the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#troubleshooting-the-dataturbine">Troubleshooting the DataTurbine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-instrument-drivers">Managing the DataTurbine Instrument Drivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-instrument-drivers">Starting Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-drivers-through-dispatchers">Starting Drivers through Dispatchers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/user-guide.html#adam-module-engineering-data">ADAM Module engineering data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/user-guide.html#stor-x-data-logger-data">STOR-X Data Logger data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-instrument-drivers">Stopping Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#troubleshooting-instrument-drivers">Troubleshooting Instrument Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/user-guide.html#rebuilding-channel-data">Rebuilding Channel Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#replicating-instrument-data-streams">Replicating Instrument Data Streams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-file-archivers">Managing the DataTurbine File Archivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-instrument-file-archivers">Starting the Instrument File Archivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-instrument-file-archivers">Stopping the Instrument File Archivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#understanding-file-based-replication">Understanding File-based replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-matlab-instrument-plotting-code">Managing the Matlab Instrument Plotting Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#connecting-to-the-server-via-vnc">Connecting to the Server via VNC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-instrument-plotting-code">Starting the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-instrument-plotting-code">Stopping the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#viewing-instrument-plots">Viewing Instrument Plots</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#requirements">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#source-driver-architecture">Source Driver Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#instrument-specific-drivers">Instrument-specific Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#rdi-workhorse-acoustic-doppler-current-profiler">RDI Workhorse Acoustic Doppler Current Profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#seabird-ctd-sensors">Seabird CTD sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#davis-scientific-vantage-pro-2-weather-station">Davis Scientific Vantage Pro 2 weather station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#ecolabs-flntu-fluorometry-turbidity-sensor">EcoLabs FLNTU fluorometry/turbidity sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#satlantic-isus-v3-nitrate-sensor">Satlantic ISUS V3 nitrate sensor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#generic-text-drivers">Generic Text Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#dispatchers">Dispatchers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#adamdispatcher">AdamDispatcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev/developer-guide.html#storxdispatcher">StorXDispatcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#sink-architecture">Sink Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#archiver-sink">Archiver Sink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#matlab-sink">Matlab Sink</a></li>
+</ul>
+</li>
 </ul>
 
           
@@ -94,7 +159,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>Welcome to Realtime Data&#8217;s documentation!</li>
+    <li>Realtime Data Project</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -107,11 +172,72 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="welcome-to-realtime-data-s-documentation">
-<h1>Welcome to Realtime Data&#8217;s documentation!<a class="headerlink" href="#welcome-to-realtime-data-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
+  <div class="section" id="realtime-data-project">
+<h1>Realtime Data Project<a class="headerlink" href="#realtime-data-project" title="Permalink to this headline">¶</a></h1>
+<p>The Realtime Data Project provides streaming software for common scientific instruments used in oceanography, such as:</p>
 <ul class="simple">
+<li>RDI Workhorse ADCPs</li>
+<li>Seabird CTDs and SBEs</li>
+<li>PME T-Chains</li>
+<li>ECO FLNTU fluorometry/turbidity</li>
+<li>Brooke Ocean Seahorse profiler</li>
+<li>Satlantic ISUS V3 nitrate</li>
+<li>Satlantic StorX loggers</li>
+<li>Davis Scientific Vantage Pro 2 weather station</li>
+<li>Advantech ADAM 6XXX modules</li>
+</ul>
+<p>Data that are transmitted from instruments over serial, wifi, ethernet, cellular, or satellite connections are streamed into a Data Turbine server in close to real time (depending on network latency).  The software used to stream the data (referred to as drivers) may run on a remotely deployed computer, or on the server hosting the Data Turbine server, or any other network-connected device.  The drivers are written in Java, and there is some support for streaming data using Python.  This project also provides Matlab code for retrieving data from the Data Turbine server and plotting common variables.</p>
+<p>This guide provides documentation for the driver software, including installation, configuration, and overall use.  It also describes the operational deployment details at the University of Hawaii at Manoa.</p>
+<div class="toctree-wrapper compound" id="user-guide">
+<p class="caption"><span class="caption-text">User Guide</span><a class="headerlink" href="#user-guide" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-server-software">Managing the DataTurbine Server Software</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-dataturbine">Starting the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-dataturbine">Stopping the DataTurbine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#troubleshooting-the-dataturbine">Troubleshooting the DataTurbine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-instrument-drivers">Managing the DataTurbine Instrument Drivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-instrument-drivers">Starting Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-drivers-through-dispatchers">Starting Drivers through Dispatchers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-instrument-drivers">Stopping Instrument Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#troubleshooting-instrument-drivers">Troubleshooting Instrument Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#replicating-instrument-data-streams">Replicating Instrument Data Streams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-dataturbine-file-archivers">Managing the DataTurbine File Archivers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-instrument-file-archivers">Starting the Instrument File Archivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-instrument-file-archivers">Stopping the Instrument File Archivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#understanding-file-based-replication">Understanding File-based replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/user-guide.html#managing-the-matlab-instrument-plotting-code">Managing the Matlab Instrument Plotting Code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#connecting-to-the-server-via-vnc">Connecting to the Server via VNC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#starting-the-instrument-plotting-code">Starting the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#stopping-the-instrument-plotting-code">Stopping the Instrument Plotting Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/user-guide.html#viewing-instrument-plots">Viewing Instrument Plots</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound" id="developer-guide">
+<p class="caption"><span class="caption-text">Developer Guide</span><a class="headerlink" href="#developer-guide" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#requirements">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#directory-structure">Directory Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#source-driver-architecture">Source Driver Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#instrument-specific-drivers">Instrument-specific Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#generic-text-drivers">Generic Text Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#dispatchers">Dispatchers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev/developer-guide.html#sink-architecture">Sink Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#archiver-sink">Archiver Sink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev/developer-guide.html#matlab-sink">Matlab Sink</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -128,12 +254,19 @@
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="user/user-guide.html" class="btn btn-neutral float-right" title="Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Christopher Jones.
+        &copy; Copyright 2016, Regents of the University of Hawaii. All rights reserved.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
