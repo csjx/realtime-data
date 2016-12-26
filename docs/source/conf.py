@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Realtime Data'
-copyright = u'2016, Christopher Jones'
+copyright = u'2016, Regents of the University of Hawaii. All rights reserved'
 author = u'Christopher Jones'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -77,7 +77,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['**/.git']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
