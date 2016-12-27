@@ -290,16 +290,19 @@ Stopping Instrument Drivers
 As above, each instrument driver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern ‘`Stop-SOURCENAME.sh`’.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following command in the terminal 
 ::
 
-$ Stop-KN02XX_020ADCPXXXR00.sh
+  $ Stop-KN02XX_020ADCPXXXR00.sh
 
-This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting Instrument Drivers section. As with the start scripts, the dispatchers are stopped with: ADAMDispatcher
+This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting Instrument Drivers section. As with the start scripts, the dispatchers are stopped with: 
+
+ADAMDispatcher
 ::
 
-$ Stop-KNXXXX_XXXADAMXXXXXX.sh
+  $ Stop-KNXXXX_XXXADAMXXXXXX.sh
 
-StorXDispatcher:
+StorXDispatcher
+::
 
-$ Stop-HIXXXX_XXXCTDXXXXXXX.sh
+  $ Stop-HIXXXX_XXXCTDXXXXXXX.sh
 
 Troubleshooting Instrument Drivers
 ----------------------------------
