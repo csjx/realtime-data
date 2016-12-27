@@ -149,7 +149,7 @@ $ Start-KNXXXX_XXXADAMXXXXXX.sh
 
 The AdamDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/sensor.properties.xml`, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a `<sensor>` entry in the file
 
-.. code:: xml
+.. sourcecode:: xml
 
   <?xml version="1.0"?>
   <sensor>
@@ -222,7 +222,8 @@ For the HIOOS water quality buoys, data are telemetered via a cellular link to t
 $ Start-HIXXXX_XXXCTDXXXXXXX.sh
 
 The StorXDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/email.account.properties.xml`, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an `<account>` entry with a single `<logger>` entry in the file
-::
+
+.. sourcecode:: xml
 
   <?xml version="1.0"?>
   <accounts>

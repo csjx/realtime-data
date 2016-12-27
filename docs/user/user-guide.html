@@ -460,50 +460,50 @@ $ Start-KN02XX_020ADCPXXXR00.sh
 </pre></div>
 </div>
 <p>The AdamDispatcher reads an XML configuration file located in <cite>/usr/local/bbl/trunk/lib/sensor.properties.xml</cite>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <cite>&lt;sensor&gt;</cite> entry in the file</p>
-<div class="code xml highlight-python"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;sensor&gt;
-    &lt;address&gt;192.168.100.208&lt;/address&gt;
-    &lt;name&gt;KN00XX_012ADAM012R01&lt;/name&gt;
-    &lt;description&gt;12m Central Node ADAM monitor 1&lt;/description&gt;
-    &lt;cacheSize&gt;50000&lt;/cacheSize&gt;
-    &lt;archiveSize&gt;31536000&lt;/archiveSize&gt;
-    &lt;archiveChannel&gt;DecimalASCIISampleData&lt;/archiveChannel&gt;
-    &lt;type&gt;monitor&lt;/type&gt;
-    &lt;ports&gt;
-        &lt;port number=&quot;1&quot;&gt;
-            &lt;measurement label=&quot;currentImpedance&quot;&gt;
-                &lt;voltageChannel&gt;0&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-            &lt;measurement label=&quot;temperature&quot;&gt;
-                &lt;voltageChannel&gt;4&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-        &lt;/port&gt;
-        &lt;port number=&quot;2&quot;&gt;
-            &lt;measurement label=&quot;currentImpedance&quot;&gt;
-                &lt;voltageChannel&gt;1&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-            &lt;measurement label=&quot;temperature&quot;&gt;
-                &lt;voltageChannel&gt;5&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-        &lt;/port&gt;
-        &lt;port number=&quot;3&quot;&gt;
-            &lt;measurement label=&quot;currentImpedance&quot;&gt;
-                &lt;voltageChannel&gt;2&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-            &lt;measurement label=&quot;leak&quot;&gt;
-                &lt;voltageChannel&gt;6&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-        &lt;/port&gt;
-        &lt;port number=&quot;4&quot;&gt;
-            &lt;measurement label=&quot;currentImpedance&quot;&gt;
-                &lt;voltageChannel&gt;3&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-            &lt;measurement label=&quot;temperature&quot;&gt;
-                &lt;voltageChannel&gt;7&lt;/voltageChannel&gt;
-            &lt;/measurement&gt;
-        &lt;/port&gt;
-    &lt;/ports&gt;
-&lt;/sensor&gt;
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;sensor&gt;</span>
+    <span class="nt">&lt;address&gt;</span>192.168.100.208<span class="nt">&lt;/address&gt;</span>
+    <span class="nt">&lt;name&gt;</span>KN00XX_012ADAM012R01<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;description&gt;</span>12m Central Node ADAM monitor 1<span class="nt">&lt;/description&gt;</span>
+    <span class="nt">&lt;cacheSize&gt;</span>50000<span class="nt">&lt;/cacheSize&gt;</span>
+    <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
+    <span class="nt">&lt;archiveChannel&gt;</span>DecimalASCIISampleData<span class="nt">&lt;/archiveChannel&gt;</span>
+    <span class="nt">&lt;type&gt;</span>monitor<span class="nt">&lt;/type&gt;</span>
+    <span class="nt">&lt;ports&gt;</span>
+        <span class="nt">&lt;port</span> <span class="na">number=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;currentImpedance&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>0<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;temperature&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>4<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+        <span class="nt">&lt;/port&gt;</span>
+        <span class="nt">&lt;port</span> <span class="na">number=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;currentImpedance&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>1<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;temperature&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>5<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+        <span class="nt">&lt;/port&gt;</span>
+        <span class="nt">&lt;port</span> <span class="na">number=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;currentImpedance&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>2<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;leak&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>6<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+        <span class="nt">&lt;/port&gt;</span>
+        <span class="nt">&lt;port</span> <span class="na">number=</span><span class="s">&quot;4&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;currentImpedance&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>3<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+            <span class="nt">&lt;measurement</span> <span class="na">label=</span><span class="s">&quot;temperature&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;voltageChannel&gt;</span>7<span class="nt">&lt;/voltageChannel&gt;</span>
+            <span class="nt">&lt;/measurement&gt;</span>
+        <span class="nt">&lt;/port&gt;</span>
+    <span class="nt">&lt;/ports&gt;</span>
+<span class="nt">&lt;/sensor&gt;</span>
 </pre></div>
 </div>
 <p>This XML entry provides the pertinent DataTurbine details needed to start an ADAMSource driver, including:
@@ -530,62 +530,62 @@ IP Address of the incoming UDP datagrams</p>
 </pre></div>
 </div>
 <p>The StorXDispatcher reads an XML configuration file located in <cite>/usr/local/bbl/trunk/lib/email.account.properties.xml</cite>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <cite>&lt;account&gt;</cite> entry with a single <cite>&lt;logger&gt;</cite> entry in the file</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;accounts&gt;
-    &lt;account&gt;
-        &lt;accountName&gt;HIOOS Water Quality Buoy Data&lt;/accountName&gt;
-        &lt;server&gt;imap.gmail.com&lt;/server&gt;
-        &lt;username&gt;hiooswqb&lt;/username&gt;
-        &lt;password&gt;password-goes-here&lt;/password&gt;
-        &lt;protocol&gt;imaps&lt;/protocol&gt;
-        &lt;dataMailbox&gt;Inbox&lt;/dataMailbox&gt;
-        &lt;processedMailbox&gt;processed&lt;/processedMailbox&gt;
-        &lt;logger&gt;
-            &lt;loggerName&gt;WQAW01_XXXSTRX001R00&lt;/loggerName&gt;
-            &lt;loggerSerialNumber&gt;0062&lt;/loggerSerialNumber&gt;
-            &lt;sensor&gt;
-                &lt;name&gt;WQAW01_XXXSTRX001R00&lt;/name&gt;
-                &lt;type&gt;StorXSource&lt;/type&gt;
-                &lt;serialNumber&gt;0062&lt;/serialNumber&gt;
-                &lt;description&gt;WQB-AW&lt;/description&gt;
-                &lt;isImmersed&gt;True&lt;/isImmersed&gt;
-                &lt;calibrationURL&gt;
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;accounts&gt;</span>
+    <span class="nt">&lt;account&gt;</span>
+        <span class="nt">&lt;accountName&gt;</span>HIOOS Water Quality Buoy Data<span class="nt">&lt;/accountName&gt;</span>
+        <span class="nt">&lt;server&gt;</span>imap.gmail.com<span class="nt">&lt;/server&gt;</span>
+        <span class="nt">&lt;username&gt;</span>hiooswqb<span class="nt">&lt;/username&gt;</span>
+        <span class="nt">&lt;password&gt;</span>password-goes-here<span class="nt">&lt;/password&gt;</span>
+        <span class="nt">&lt;protocol&gt;</span>imaps<span class="nt">&lt;/protocol&gt;</span>
+        <span class="nt">&lt;dataMailbox&gt;</span>Inbox<span class="nt">&lt;/dataMailbox&gt;</span>
+        <span class="nt">&lt;processedMailbox&gt;</span>processed<span class="nt">&lt;/processedMailbox&gt;</span>
+        <span class="nt">&lt;logger&gt;</span>
+            <span class="nt">&lt;loggerName&gt;</span>WQAW01_XXXSTRX001R00<span class="nt">&lt;/loggerName&gt;</span>
+            <span class="nt">&lt;loggerSerialNumber&gt;</span>0062<span class="nt">&lt;/loggerSerialNumber&gt;</span>
+            <span class="nt">&lt;sensor&gt;</span>
+                <span class="nt">&lt;name&gt;</span>WQAW01_XXXSTRX001R00<span class="nt">&lt;/name&gt;</span>
+                <span class="nt">&lt;type&gt;</span>StorXSource<span class="nt">&lt;/type&gt;</span>
+                <span class="nt">&lt;serialNumber&gt;</span>0062<span class="nt">&lt;/serialNumber&gt;</span>
+                <span class="nt">&lt;description&gt;</span>WQB-AW<span class="nt">&lt;/description&gt;</span>
+                <span class="nt">&lt;isImmersed&gt;</span>True<span class="nt">&lt;/isImmersed&gt;</span>
+                <span class="nt">&lt;calibrationURL&gt;</span>
                     http://bbl.ancl.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal
-                &lt;/calibrationURL&gt;
-                &lt;cacheSize&gt;25000&lt;/cacheSize&gt;
-                &lt;archiveSize&gt;31536000&lt;/archiveSize&gt;
-                &lt;archiveChannel&gt;BinaryStorXFrameData&lt;/archiveChannel&gt;
-            &lt;/sensor&gt;
-            &lt;sensor&gt;
-                &lt;name&gt;WQAW01_XXXCTDX001R00&lt;/name&gt;
-                &lt;type&gt;CTDSource&lt;/type&gt;
-                &lt;serialNumber&gt;6058&lt;/serialNumber&gt;
-                &lt;description&gt;WQB-AW-CTD&lt;/description&gt;
-                &lt;isImmersed&gt;True&lt;/isImmersed&gt;
-                &lt;calibrationURL/&gt;
-                &lt;cacheSize&gt;25000&lt;/cacheSize&gt;
-                &lt;archiveSize&gt;31536000&lt;/archiveSize&gt;
-                &lt;archiveChannel&gt;DecimalASCIISampleData&lt;/archiveChannel&gt;
-            &lt;/sensor&gt;
-            &lt;sensor&gt;
-                &lt;name&gt;WQAW01_XXXISUS001R00&lt;/name&gt;
-                &lt;type&gt;ISUSSource&lt;/type&gt;
-                &lt;serialNumber&gt;0206&lt;/serialNumber&gt;
-                &lt;description&gt;WQB-AW-ISUS&lt;/description&gt;
-                &lt;isImmersed&gt;True&lt;/isImmersed&gt;
-                &lt;calibrationURL&gt;
+                <span class="nt">&lt;/calibrationURL&gt;</span>
+                <span class="nt">&lt;cacheSize&gt;</span>25000<span class="nt">&lt;/cacheSize&gt;</span>
+                <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
+                <span class="nt">&lt;archiveChannel&gt;</span>BinaryStorXFrameData<span class="nt">&lt;/archiveChannel&gt;</span>
+            <span class="nt">&lt;/sensor&gt;</span>
+            <span class="nt">&lt;sensor&gt;</span>
+                <span class="nt">&lt;name&gt;</span>WQAW01_XXXCTDX001R00<span class="nt">&lt;/name&gt;</span>
+                <span class="nt">&lt;type&gt;</span>CTDSource<span class="nt">&lt;/type&gt;</span>
+                <span class="nt">&lt;serialNumber&gt;</span>6058<span class="nt">&lt;/serialNumber&gt;</span>
+                <span class="nt">&lt;description&gt;</span>WQB-AW-CTD<span class="nt">&lt;/description&gt;</span>
+                <span class="nt">&lt;isImmersed&gt;</span>True<span class="nt">&lt;/isImmersed&gt;</span>
+                <span class="nt">&lt;calibrationURL/&gt;</span>
+                <span class="nt">&lt;cacheSize&gt;</span>25000<span class="nt">&lt;/cacheSize&gt;</span>
+                <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
+                <span class="nt">&lt;archiveChannel&gt;</span>DecimalASCIISampleData<span class="nt">&lt;/archiveChannel&gt;</span>
+            <span class="nt">&lt;/sensor&gt;</span>
+            <span class="nt">&lt;sensor&gt;</span>
+                <span class="nt">&lt;name&gt;</span>WQAW01_XXXISUS001R00<span class="nt">&lt;/name&gt;</span>
+                <span class="nt">&lt;type&gt;</span>ISUSSource<span class="nt">&lt;/type&gt;</span>
+                <span class="nt">&lt;serialNumber&gt;</span>0206<span class="nt">&lt;/serialNumber&gt;</span>
+                <span class="nt">&lt;description&gt;</span>WQB-AW-ISUS<span class="nt">&lt;/description&gt;</span>
+                <span class="nt">&lt;isImmersed&gt;</span>True<span class="nt">&lt;/isImmersed&gt;</span>
+                <span class="nt">&lt;calibrationURL&gt;</span>
                     http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF
-                &lt;/calibrationURL&gt;
-                &lt;calibrationURL&gt;
+                <span class="nt">&lt;/calibrationURL&gt;</span>
+                <span class="nt">&lt;calibrationURL&gt;</span>
                     http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF
-                &lt;/calibrationURL&gt;
-                &lt;cacheSize&gt;25000&lt;/cacheSize&gt;
-                &lt;archiveSize&gt;31536000&lt;/archiveSize&gt;
-                &lt;archiveChannel&gt;DecimalASCIISampleData&lt;/archiveChannel&gt;
-            &lt;/sensor&gt;
-        &lt;/logger&gt;
-    &lt;/account&gt;
-&lt;/accounts&gt;
+                <span class="nt">&lt;/calibrationURL&gt;</span>
+                <span class="nt">&lt;cacheSize&gt;</span>25000<span class="nt">&lt;/cacheSize&gt;</span>
+                <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
+                <span class="nt">&lt;archiveChannel&gt;</span>DecimalASCIISampleData<span class="nt">&lt;/archiveChannel&gt;</span>
+            <span class="nt">&lt;/sensor&gt;</span>
+        <span class="nt">&lt;/logger&gt;</span>
+    <span class="nt">&lt;/account&gt;</span>
+<span class="nt">&lt;/accounts&gt;</span>
 </pre></div>
 </div>
 <p>This XML entry provides the pertinent DataTurbine details needed to establish the IMAP connection, process the emails, extract the data file attachments, parse the binary data, and create Source connections for each instrument sample being added to the DataTurbine.</p>
