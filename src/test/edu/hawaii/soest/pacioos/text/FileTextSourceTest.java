@@ -6,6 +6,7 @@ package edu.hawaii.soest.pacioos.text;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
@@ -49,25 +50,30 @@ public class FileTextSourceTest extends SimpleTextSourceTest {
 				fileTextSource = TextSourceFactory.getSimpleTextSource(configLocation);
 				fileTextSource.start();
 				
-				int numberOfIntendedSamples = 10;
+				int numberOfIntendedSamples = 20;
+				// Slightly pause before the retrieval 
+				Thread.sleep(1000);
 				
-				// retreive the data from the DataTurbine
+				// Retrieve the data from the DataTurbine
 			    ChannelMap requestMap = new ChannelMap();
 			    int entryIndex = requestMap.Add(fileTextSource.getRBNBClientName() + "/" + fileTextSource.getChannelName());
 			    log.debug("Request Map: " + requestMap.toString());
 			    Sink sink = new Sink();
-			    sink.OpenRBNBConnection(fileTextSource.getServer(), "lastEntrySink");
-			    sink.Request(requestMap, 0., 240000., "newest");
-			    ChannelMap responseMap = sink.Fetch(60000); // get data within 60 seconds
-			    String[] dtLines = responseMap.GetDataAsString(entryIndex);
-			    int numberOfSuccessfulSamples = dtLines.length;
-			    
+			    sink.OpenRBNBConnection(fileTextSource.getServer(), "sink");
+			    sink.Request(requestMap, 0., 300000., "newest");
+			    ChannelMap responseMap = null;
+			    String[] dtLines;
+			    int numberOfSuccessfulSamples = 0;
+			    responseMap = sink.Fetch(60000); // get data within 60 seconds
+			    	
+			    dtLines = responseMap.GetDataAsString(entryIndex);
+			    numberOfSuccessfulSamples = dtLines.length;
+
 			    log.info("Intended samples  : " + numberOfIntendedSamples);
 			    log.info("Successful samples: " + numberOfSuccessfulSamples);
 			    
 			    assertEquals(numberOfIntendedSamples, numberOfSuccessfulSamples);
 				fileTextSource.stop();
-				Thread.sleep(2000);
 				
 			} catch (ConfigurationException e) {
 				log.error(e.getMessage());

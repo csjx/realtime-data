@@ -116,7 +116,7 @@ public class SocketTextSourceTest extends SimpleTextSourceTest {
 					
 				}
 
-				// retreive the data from the DataTurbine
+				// retrieve the data from the DataTurbine
 			    ChannelMap requestMap = new ChannelMap();
 			    int entryIndex = requestMap.Add(socketTextSource.getRBNBClientName() + "/" + socketTextSource.getChannelName());
 			    log.debug("Request Map: " + requestMap.toString());
