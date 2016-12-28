@@ -13,13 +13,11 @@
       <outputDirectory>scripts/shell</outputDirectory>
       <includes>
         <include>manage-instruments.sh</include>
+        <include>*Archive*</include>
+        <include>*Source*</include>
+        <include>*Start*</include>
+        <include>*Stop*</include>
       </includes>
-      <excludes>
-        <exclude>*Archive*</exclude>
-        <exclude>*Source*</exclude>
-        <exclude>*Start*</exclude>
-        <exclude>*Stop*</exclude>
-      </excludes>
     </fileSet>
     <fileSet>     
       <directory>src</directory>
