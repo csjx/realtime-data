@@ -3,8 +3,8 @@
   <groupId>edu.hawaii.soest</groupId>
   <artifactId>realtime-data</artifactId>
   <version>1.1.0</version>
-  <name>PacIOOS Streaming Software</name>
-  <description>Software for streaming and managing instrument data for the PacIOOS project. http://pacioos.org</description>
+  <name>Realtime Data Streaming Software</name>
+  <description>Software for streaming and managing scientific instrument data. See https://csjx.github.io/realtime-data.</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -149,4 +149,5 @@
       </plugin>
     </plugins>
   </build>
+  <url>https://github.com/csjx/realtime-data</url>
 </project>

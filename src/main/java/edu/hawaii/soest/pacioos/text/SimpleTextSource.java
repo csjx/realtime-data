@@ -159,15 +159,15 @@ public abstract class SimpleTextSource extends RBNBSource {
         
         this.xmlConfig = xmlConfig;
         // Pull the general configuration from the properties file
-        Configuration config   = new PropertiesConfiguration("pacioos.properties");
-        this.archiveMode       = config.getString("pacioos.textsource.archive_mode");
-        this.rbnbChannelName   = config.getString("pacioos.textsource.rbnb_channel");
-        this.serverName        = config.getString("pacioos.textsource.server_name ");
-        this.delimiter         = config.getString("pacioos.textsource.delimiter");
-        this.pollInterval      = config.getInt("pacioos.textsource.poll_interval");
-        this.retryInterval     = config.getInt("pacioos.textsource.retry_interval");
+        Configuration config   = new PropertiesConfiguration("textsource.properties");
+        this.archiveMode       = config.getString("textsource.archive_mode");
+        this.rbnbChannelName   = config.getString("textsource.rbnb_channel");
+        this.serverName        = config.getString("textsource.server_name ");
+        this.delimiter         = config.getString("textsource.delimiter");
+        this.pollInterval      = config.getInt("textsource.poll_interval");
+        this.retryInterval     = config.getInt("textsource.retry_interval");
         this.defaultDateFormat = new SimpleDateFormat(
-            config.getString("pacioos.textsource.default_date_format"));
+            config.getString("textsource.default_date_format"));
 
         
         // parse the record delimiter from the config file
