@@ -72,7 +72,7 @@ import edu.hawaii.soest.kilonalu.adcp.Ensemble;
  * @author Terry E. Weymouth
  * @author Moji Soltani
  * @author Jason P. Hanley
- * @author Christopher Jones (modifications for BBL data)
+ * @author Christopher Jones
  */
 public class TextOutputPlugin extends RBNBBase {
 

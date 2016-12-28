@@ -26,15 +26,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if [[ -z ${BBL_HOME} ]]; then
-BBL_HOME=".";                     # installed BBL software location
-LOG_DIR="/var/log/bbl";           # log files location
+if [[ -z ${REALTIME_DATA} ]]; then
+REALTIME_DATA=".";                     # installed realtime-data software location
+LOG_DIR="/var/log/realtime-data";      # log files location
 fi
-CLASSPATH="${BBL_HOME}/bbl-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
-if [[ -e /etc/bbl/log4j.properties ]]; then
-    CLASSPATH="/etc/bbl:${CLASSPATH}";
+CLASSPATH="${REALTIME_DATA}/realtime-data-1.1.0-jar-with-dependencies.jar";
+if [[ -e /etc/realtime-data/log4j.properties ]]; then
+    CLASSPATH="/etc/realtime-data:${CLASSPATH}";
 fi
-VERSION="1.0.0";                  # keep track of this script's version
+VERSION="1.1.0";                  # keep track of this script's version
 instruments="";                   # the instruments list to be processed
 operation="";                     # operation to perform, either start or stop
 unset option;                     # command line options variable
@@ -80,10 +80,10 @@ start() {
     # Run the instrument driver
     java -cp ${CLASSPATH} \
         edu.hawaii.soest.pacioos.text.TextSourceApp \
-        ${BBL_HOME}/conf/${instrumentName}.xml 2>&1 &
+        ${REALTIME_DATA}/conf/${instrumentName}.xml 2>&1 &
     pid=$!;
     sleep 2;        
-    echo ${pid} > ${BBL_HOME}/run/${instrumentName}.pid
+    echo ${pid} > ${REALTIME_DATA}/run/${instrumentName}.pid
 }
 
 # stop the source driver given a process id and instrument name
@@ -93,13 +93,13 @@ stop() {
     echo "Stopping the source driver for ${instrumentName}.";
     kill -15 ${pidToKill};
     sleep 1;
-    rm ${BBL_HOME}/run/${instrumentName}.pid
+    rm ${REALTIME_DATA}/run/${instrumentName}.pid
 }
 
 # figure out how we were called
 while getopts ":ahVi:o:" OPTION; do
     case ${OPTION} in
-      "a") instruments=$(ls ${BBL_HOME}/conf);;
+      "a") instruments=$(ls ${REALTIME_DATA}/conf);;
       "h") usage;;
       "i") instruments="${instruments} ${OPTARG}.xml";;
       "o") operation=${OPTARG};;
@@ -122,19 +122,19 @@ if [ "${operation}" != "start" -a "${operation}" != "stop" -a "${OPTION}" != "V"
 fi
 
 # if needed, make the directory to store running driver processes
-if [ ! -d ${BBL_HOME}/run ]; then
-    mkdir -p ${BBL_HOME}/run;
+if [ ! -d ${REALTIME_DATA}/run ]; then
+    mkdir -p ${REALTIME_DATA}/run;
 fi
 
 # iterate through the list and perform the start or stop operation
 for instrument in ${instruments}; do
     existingPid="";
     runningPid="";
-    if [ -e ${BBL_HOME}/conf/${instrument} ]; then
+    if [ -e ${REALTIME_DATA}/conf/${instrument} ]; then
         
         # Stop the running instrument driver (even on start if needed)
-        if [ -e ${BBL_HOME}/run/${instrument%.xml}.pid ]; then
-            existingPid=$(cat ${BBL_HOME}/run/${instrument%.xml}.pid);
+        if [ -e ${REALTIME_DATA}/run/${instrument%.xml}.pid ]; then
+            existingPid=$(cat ${REALTIME_DATA}/run/${instrument%.xml}.pid);
         fi
         
         runningPid=$(ps -o pid ${existingPid} | grep -v PID);
@@ -148,7 +148,7 @@ for instrument in ${instruments}; do
         fi
               
     else
-      echo "WARN: Couldn't find config file ${BBL_HOME}/conf/${instrument}. Skipping it.";
+      echo "WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.";
     fi
 done
 

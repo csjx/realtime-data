@@ -20,7 +20,7 @@ RBNB_PORT="3333";
 # Amount of memory in MegaBytes for the JVM running RBNB to use
 RBNB_MEM='2048'
 RBNB_NAME='KNShoreStaionDataTurbine';
-BBL_HOME='/usr/local/bbl/trunk';
+REALTIME_DATA='/usr/local/realtime-data';
 
 ######################################################################################
 start() {
@@ -40,7 +40,7 @@ start() {
 
    #if [ -f ${RBNB_PIDFILE} ]; then
    #   echo "Starting the KN0101_010ADCP010R00 ADCP Source Driver"
-   #  su - ${RBNB_USER} -c "${BBL_HOME}/bin/KN0101_010ADCP010R00-Source.sh > ${KN0101_010ADCP010R00_LOG} 2>&1 &"
+   #  su - ${RBNB_USER} -c "${REALTIME_DATA}/bin/KN0101_010ADCP010R00-Source.sh > ${KN0101_010ADCP010R00_LOG} 2>&1 &"
    #fi
 
 }

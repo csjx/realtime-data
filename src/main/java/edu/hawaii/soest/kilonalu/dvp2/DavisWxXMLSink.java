@@ -57,7 +57,7 @@ import org.nees.rbnb.RBNBUtilities;
  * data source and converts certain channels to an ad hoc XML syntax used to 
  * update an HTML weather page.
  * 
- * @author Christopher Jones (modifications for BBL data)
+ * @author Christopher Jones
  */
 public class DavisWxXMLSink extends RBNBBase {
   /**

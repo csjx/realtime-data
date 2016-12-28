@@ -36,13 +36,13 @@ classdef ConfigureKN0101_010SBEX010R00
     pathSeparator = '/';
     
     % The source code base directory
-    baseDirectory = '/usr/local/bbl/trunk/'; % note trailing slash
+    baseDirectory = '/usr/local/realtime-data/'; % note trailing slash
     
     % The output path directory
     outputDirectory = '/var/www/html/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/'; % note trailing slash
 
     % The remote web server 
-    remoteServer = 'bbl.ancl.hawaii.edu';
+    remoteServer = 'realtime.pacioos.hawaii.edu';
         
     % The path of the RBNB software
     rbnbPath = '/usr/local/RBNB/V3.1B4a/'; % note trailing slash
@@ -54,7 +54,7 @@ classdef ConfigureKN0101_010SBEX010R00
     rbnbMatlabPath = '/usr/local/RBNB/V3.1B4a/Matlab/'; % note trailing slash
     
     % The name of the RBNB Data Turbine server
-    rbnbServer = 'bbl.ancl.hawaii.edu';
+    rbnbServer = 'realtime.pacioos.hawaii.edu';
     
     % The port of the RBNB Data Turbine server
     rbnbPort = '3333';

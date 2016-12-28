@@ -45,7 +45,7 @@
             # 24.3394,  5.25347,    1.766, 0.1279, 0.4829,  35.1140, 22 Dec 2016 08:36:53
             -->
             <!-- example DT sample:
-            curl -s -o - http://bbl.ancl.hawaii.edu:8080/RBNB/MB01XX_001CTDXXXXR00/DecimalASCIISampleData | od -ax
+            curl -s -o - http://realtime.pacioos.hawaii.edu:8080/RBNB/MB01XX_001CTDXXXXR00/DecimalASCIISampleData | od -ax
             0000000   #  sp   2   4   .   3   3   9   3   ,  sp  sp   5   .   2   5
                     2023 3432 332e 3933 2c33 2020 2e35 3532
             0000020   3   7   0   ,  sp  sp  sp  sp   1   .   7   6   1   ,  sp   0

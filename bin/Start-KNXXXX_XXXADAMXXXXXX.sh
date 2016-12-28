@@ -3,10 +3,9 @@
 sourceName="KNXXXX_XXXADAMXXXXXX";
 sourceType="AdamDispatcher";
 sourceString="Advantech ADAM module Dispatcher";
-bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver
-cd $bblHome;
+cd ${REALTIME_DATA};
 ./bin/$sourceName-Source.sh >> /var/log/rbnb/$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running

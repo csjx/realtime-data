@@ -109,7 +109,7 @@ public class CalibrationTest extends TestCase {
    */
   public void testParse() {
     
-    String calibrationURL = "http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/SATSTX0063a.cal";
+    String calibrationURL = "http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/SATSTX0063a.cal";
     // test the parsing of the data buffer
     try {
       

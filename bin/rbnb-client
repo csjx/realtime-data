@@ -5,7 +5,7 @@
 # CTD over serial using the screen application, and start the DataTurbine
 # driver for a specific source name.
 
-if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/bbl/trunk; fi
+if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/realtime-data; fi
 
 RBNB_ARCHIVE_LOC='/var/lib/rbnb';
 RBNB_USER='pacioos';

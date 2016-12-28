@@ -38,13 +38,13 @@ classdef Configure < hgsetget & dynamicprops
     pathSeparator = '/';
     
     % The source code base directory
-    baseDirectory = '/usr/local/bbl/trunk/';
+    baseDirectory = '/usr/local/realtime-data/';
     
     % The output path directory
     outputDirectory = '/var/www/html/OE/KiloNalu/Data/CTD/';
     
     % The library directory for 3rd party Matlab functions or classes
-    libraryDirectory = '/usr/local/bbl/trunk/lib/matlab';
+    libraryDirectory = '/usr/local/realtime-data/lib/matlab';
 
     % The path to the convert program.  This may either be the 'convert' command
     % from the ImageMagick software, or the 'gs' command from Ghostscript.  This 
@@ -91,7 +91,7 @@ classdef Configure < hgsetget & dynamicprops
     rbnbMatlabPath;
     
     % The name of the RBNB Data Turbine server
-    rbnbServer = 'bbl.ancl.hawaii.edu';
+    rbnbServer = 'realtime.pacioos.hawaii.edu';
     
     % The port of the RBNB Data Turbine server
     rbnbPort = '3333';

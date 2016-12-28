@@ -3,10 +3,9 @@
 sourceName="PIAS01_001CTDXXXXR00";
 sourceType="CTDSource";
 sourceString="1 meter PIAS CTD";
-bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver
-cd $bblHome;
+cd ${REALTIME_DATA};
 ./bin/$sourceName-Source.sh >> /var/log/rbnb/$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running

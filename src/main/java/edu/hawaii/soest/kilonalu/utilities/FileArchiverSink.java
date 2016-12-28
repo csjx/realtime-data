@@ -70,7 +70,7 @@ import com.rbnb.sapi.ChannelTree.Node;
  * @author Terry E. Weymouth
  * @author Moji Soltani
  * @author Jason P. Hanley
- * @author Christopher Jones (modifications for BBL data)
+ * @author Christopher Jones
  */
 public class FileArchiverSink extends RBNBBase {
 

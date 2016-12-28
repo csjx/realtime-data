@@ -1,18 +1,10 @@
 #!/bin/bash
-BBL_HOME=/Ross/Projects/Kilo_Nalu/bbl/trunk/;
-export CLASSPATH=\
-$BBL_HOME/build/classes/:\
-$BBL_HOME/lib/rbnb.jar:\
-$BBL_HOME/lib/commons-codec-1.3.jar:\
-$BBL_HOME/lib/commons-cli-1.0.jar:\
-$BBL_HOME/lib/commons-logging-1.0.4.jar:\
-$BBL_HOME/lib/log4j-1.2.8.jar:\
-$BBL_HOME/lib/log4j.properties;
+export CLASSPATH=$REALTIME_DATA/realtime-data-1.1.0-jar-with-dependencies.jar;
 
 export SOURCE="PIGM01_002CTDX002R00";
 
 # Run the FileSource driver, opening the data file at /Ross/Projects/IOOS/PacIOOS/Data
-# and to the RBNB server @ bbl.ancl.hawaii.edu:3333, defining the source name as
+# and to the RBNB server @ realtime.pacioos.hawaii.edu:3333, defining the source name as
 # 'PIGM01_002CTDX002R00' and the data channel as 'DecimalASCIISampleData'.  The 
 # client is also requesting a cache size of 126000 frames, and an archive size
 # of 31536000 frames.  In this case, each frame is 1 sample transmitted by the
@@ -51,7 +43,7 @@ export SOURCE="PIGM01_002CTDX002R00";
 # ':\d{2}'           - match a colon followed by two digits
 # '\s*'              - match any number of whitespace characters (e.g. \r or \n)
 #
-# bbl.ancl.hawaii.edu\
+# realtime.pacioos.hawaii.edu\
 # localhost\
 
 java edu.hawaii.soest.kilonalu.utilities.FileSource\
@@ -59,7 +51,7 @@ java edu.hawaii.soest.kilonalu.utilities.FileSource\
  -e "# *.*, *.*, *.*, *.*, *.*, *.*, *\d{2} [A-Z][a-z][a-z] *\d{4} *\d{2}:\d{2}:\d{2}\s*"\
  -S $SOURCE\
  -C DecimalASCIISampleData\
- -s bbl.ancl.hawaii.edu\
+ -s realtime.pacioos.hawaii.edu\
  -p 3333\
  -z 126000\
  -Z 31536000

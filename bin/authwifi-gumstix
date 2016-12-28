@@ -1,10 +1,10 @@
 #!/bin/bash
 # Init script for wireless authentication on the PacIOOS gumstix deployments
 #
-# The BBL_HOME location needs to exist
+# The REALTIME_DATA location needs to exist
 #
 
-if [ ! "${BBL_HOME}" ]; then BBL_HOME=/usr/local/bbl/trunk; fi
+if [ ! "${REALTIME_DATA}" ]; then REALTIME_DATA=/usr/local/realtime-data; fi
 WIFI_PIDFILE='/var/run/wifi.pid';
 
 ################################################################################
@@ -18,8 +18,8 @@ start() {
      ln -s /usr/local/wifi/log /var/log/wifi;
    fi
    
-   # note rbnb.jar is found in the bbl lib directory
-   python $BBL_HOME/bin/auth.py &
+   # note rbnb.jar is found in the realtime-data lib directory
+   python $REALTIME_DATA/bin/auth.py &
    
    WIFI_PID=$(ps -ef | grep auth.py | tr -s " " " " | cut -d" " -f2);
    echo ${WIFI_PID} > ${WIFI_PIDFILE};

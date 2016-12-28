@@ -9,7 +9,7 @@
 # description: Start the RBNB server
 #
 
-if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/bbl/trunk; fi
+if [ ! "${RBNB_HOME}" ]; then RBNB_HOME=/usr/local/realtime-data; fi
 RBNB_LOG='/var/log/rbnb/rbnb.log' # /var/log is volatile on OE/Gumstix
 RBNB_PIDFILE='/var/run/rbnb.pid';
 RBNB_ARCHIVE_LOC='/var/lib/rbnb';
@@ -19,7 +19,7 @@ RBNB_PORT="3333";
 # Amount of memory in MegaBytes for the JVM running RBNB to use
 RBNB_MEM='64';
 RBNB_NAME='PacIOOSDataTurbine';
-BBL_HOME='/usr/local/bbl/trunk';
+REALTIME_DATA='/usr/local/realtime-data';
 
 ######################################################################################
 start() {
@@ -34,7 +34,7 @@ start() {
    fi
    
    cd ${RBNB_ARCHIVE_LOC}
-   # note rbnb.jar is found in the bbl lib directory
+   # note rbnb.jar is found in the realtime-data lib directory
    su - ${RBNB_USER}\
     -c "java -Xms${RBNB_MEM}M\
              -Xmx${RBNB_MEM}M\

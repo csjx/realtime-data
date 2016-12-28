@@ -47,8 +47,8 @@ public class FakeSerialADCP {
   
   private static String SERIAL_PORT = "/dev/ttyS0";
   private static String FAKE_DATA_FILE = 
-    "/home/cjones/development/bbl/test/ALE31X_015ADCP015R00_20060921.10.1.000";
-  //  "/home/cjones/development/bbl/test/KNRT_20061120162608_000r.007";
+    "${REALTIME_DATA}/src/test/resources/ALE31X_015ADCP015R00_20060921.10.1.000";
+  //  "${REALTIME_DATA}/src/test/resources/KNRT_20061120162608_000r.007";
   private static String FILE_ACCESS_MODE = "r";
   /**
    * Constructor - create an instance of the fake data source object

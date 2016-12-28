@@ -40,25 +40,26 @@ Quick Start
 Set up the software by unpacking the zip file and creating the log directory:
     
     $ cd /usr/local
-    $ sudo unzip bbl-1.0.0-SNAPSHOT-pacioos.zip
-    $ sudo chown -R ${USER} /usr/local/pacioos
-    $ export BBL_HOME=/usr/local/pacioos
-    $ sudo mkdir -p /var/log/bbl
-    $ sudo chown -R ${USER} /var/log/bbl
+    $ sudo unzip realtime-data-1.1.0-bin.zip
+    $ sudo chown -R ${USER} /usr/local/realtime-data
+    $ export REALTIME_DATA=/usr/local/realtime-data
+    $ export PATH=${PATH}:${REALTIME_DATA}/scripts/shell/manage-instruments.sh
+    $ sudo mkdir -p /var/log/realtime-data
+    $ sudo chown -R ${USER} /var/log/realtime-data
     
 Edit or add configuration files for each instrument in the `conf/` directory, setting the correct connection type, DataTurbine address, port, instrument host, port, etc.  Ensure the dataPattern matches a line of data from the instrument, and ensure the dateFormats and dateFields correctly describe the formats and locations of the date/time variables in the data sample text.
 
 Start one or more instrument drivers with the management script. Get the usage with:
 
-    $ $BBL_HOME/scripts/shell/manage-instruments.sh -h
+    $ manage-instruments.sh -h
 
 Development
 -----------
 For Java development, a few libraries need to be loaded that are not found via Maven Central.  Add the `utilities.jar`, `dhmp.jar`, and `rbnb.jar` files to your Maven repository using:
 
-    mvn install:install-file -DgroupId=org.dataturbine -DartifactId=rbnb -Dversion=3.2b6 -Dpackaging=jar -Dfile=$BBL_HOME/lib/rbnb.jar
-    mvn install:install-file -DgroupId=edu.ucsb.nceas -DartifactId=utilities -Dversion=1.1 -Dpackaging=jar -Dfile=$BBL_HOME/lib/utilities.jar
-    mvn install:install-file -DgroupId=org.dhmp -DartifactId=dhmp -Dversion=1.0 -Dpackaging=jar -Dfile=$BBL_HOME/lib/dhmp.jar
+    mvn install:install-file -DgroupId=org.dataturbine -DartifactId=rbnb -Dversion=3.2b6 -Dpackaging=jar -Dfile=${REALTIME_DATA}/lib/rbnb.jar
+    mvn install:install-file -DgroupId=edu.ucsb.nceas -DartifactId=utilities -Dversion=1.1 -Dpackaging=jar -Dfile=${REALTIME_DATA}/lib/utilities.jar
+    mvn install:install-file -DgroupId=org.dhmp -DartifactId=dhmp -Dversion=1.0 -Dpackaging=jar -Dfile=${REALTIME_DATA}/lib/dhmp.jar
 
 
 

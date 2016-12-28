@@ -496,7 +496,7 @@ public class FileSource extends RBNBSource {
 
 	/*
 	args = new String[]{
-			 "-F", "/Users/cjones/Documents/Development/bbl/trunk/test/resources/edu/hawaii/soest/kilonalu/utilities/NS01-example-data.txt",
+			 "-F", "${REALTIME_DATA}/test/resources/edu/hawaii/soest/kilonalu/utilities/NS01-example-data.txt",
 			 "-e", "# *.*, *.*, *.*, *.*, *.*, *.*, *\\\\d{2} [A-Z][a-z][a-z] *\\\\d{4} *\\\\d{2}:\\\\d{2}:\\\\d{2}\\\\s*",
 			 "-S", "TEST01_001CTDXXXXR00",
 			 "-C", "DecimalASCIISampleData",

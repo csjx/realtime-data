@@ -84,7 +84,7 @@
         <serialNumber>0062</serialNumber>
         <description>WQB-AW</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>BinaryStorXFrameData</archiveChannel>
@@ -106,8 +106,8 @@
         <serialNumber>0206</serialNumber>
         <description>WQB-AW-ISUS</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF</calibrationURL>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>DecimalASCIISampleData</archiveChannel>
@@ -122,7 +122,7 @@
         <serialNumber>0063</serialNumber>
         <description>WQB-KN-STRX</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/SATSTX0063a.cal</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/SATSTX0063a.cal</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>BinaryStorXFrameData</archiveChannel>
@@ -144,8 +144,8 @@
         <serialNumber>0207</serialNumber>
         <description>WQB-KN-ISUS</description>
         <isImmersed>True</isImmersed>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NLB.TDF</calibrationURL>
-        <calibrationURL>http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NDB.TDF</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NLB.TDF</calibrationURL>
+        <calibrationURL>http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NDB.TDF</calibrationURL>
         <cacheSize>25000</cacheSize>
         <archiveSize>31536000</archiveSize>
         <archiveChannel>DecimalASCIISampleData</archiveChannel>

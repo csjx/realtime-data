@@ -4,7 +4,7 @@
     <connectionType>file</connectionType>
     <connectionParams>        
         <filePath>
-            /Users/cjones/docs/dev/clean/bbl/trunk/src/test/resources/AW02XX001CTDXXXXR00.log
+            ${REALTIME_DATA}/src/test/resources/AW02XX001CTDXXXXR00.log
         </filePath>
         <!-- OR
         <hostName>127.0.0.1</hostName>

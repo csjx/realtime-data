@@ -1,13 +1,5 @@
 #!/bin/bash
-BBL_HOME=/usr/local/bbl/trunk
-export CLASSPATH=\
-$BBL_HOME/build/classes/:\
-$BBL_HOME/lib/rbnb.jar:\
-$BBL_HOME/lib/commons-codec-1.3.jar:\
-$BBL_HOME/lib/commons-cli-1.0.jar:\
-$BBL_HOME/lib/commons-logging-1.0.4.jar:\
-$BBL_HOME/lib/log4j-1.2.8.jar:\
-$BBL_HOME/lib/log4j.properties
+export CLASSPATH=$REALTIME_DATA/realtime-data-1.1.0-jar-with-dependencies.jar;
 
 # run the FLNTUSource driver, connecting to the FLNTU @ 92.168.100.136:2102
 # and to the RBNB server @ 192.168.100.60:3333, defining the source name as

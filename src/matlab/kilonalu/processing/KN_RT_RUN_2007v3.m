@@ -17,7 +17,7 @@ datmess = '';
 if ADCP
   % Create a new sink client to the DataTurbine
   % temporarily point to the shore station data turbine CSJ 09/19/2008
-  %matlabSink = rbnb_sink('bbl.ancl.hawaii.edu:3333', 'MatlabADCPProcessingSink');
+  %matlabSink = rbnb_sink('realtime.pacioos.hawaii.edu:3333', 'MatlabADCPProcessingSink');
   matlabSink = rbnb_sink('168.105.160.139:3333', 'MatlabADCPProcessingSink');
   %matlabSink = rbnb_sink('192.168.100.60:3333', 'MatlabADCPProcessingSink');
 

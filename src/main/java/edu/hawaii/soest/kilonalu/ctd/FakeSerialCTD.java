@@ -49,7 +49,7 @@ public class FakeSerialCTD {
   private static String SERIAL_PORT = "/dev/ttyS0";
   
   private static String FAKE_DATA_FILE = 
-    "/home/cjones/development/bbl/test/AW01XX_002CTDXXXXR00.10.1.txt";
+    "${REALTIME_DATA}/src/test/resources/AW01XX_002CTDXXXXR00.10.1.txt";
   
   private static String FILE_ACCESS_MODE = "r";
   

@@ -65,7 +65,7 @@ public class MockDataSource implements Runnable {
 	
 	public static void main(String[] args) {
 		String mockCTDData = 
-			"/Users/cjones/Documents/Development/clean/bbl/trunk/src/test/resources/edu/hawaii/soest/pacioos/text/AW02XX001CTDXXXXR00-mock-data.txt";
+			"${REALTIME_DATA}/src/test/resources/edu/hawaii/soest/pacioos/text/AW02XX001CTDXXXXR00-mock-data.txt";
 		MockDataSource mds = new MockDataSource(mockCTDData);
 		mds.run();
 		mds.stop();

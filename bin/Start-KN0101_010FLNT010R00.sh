@@ -3,10 +3,9 @@
 sourceName="KN0101_010FLNT010R00";
 sourceType="FLNTUSource";
 sourceString="10 meter WetLabs FLNTU";
-bblHome="/usr/local/bbl/trunk";
 
 # start the instrument driver
-cd $bblHome;
+cd ${REALTIME_DATA};
 ./bin/$sourceName-Source.sh >> /var/log/rbnb/$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running

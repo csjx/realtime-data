@@ -3,10 +3,9 @@
 sourceName="PINM01_001CTDXXXXR00";
 sourceType="FileSource";
 sourceString="1 meter PINM01 CTD";
-bblHome=".";
 logDir="./log/";
 # start the instrument driver
-cd $bblHome;
+cd ${REALTIME_DATA};
 ./bin/$sourceName-Source.sh >> $logDir$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running
@@ -23,4 +22,4 @@ done
 echo -e "\n";
 
 # start tailing the log file
-#tail -f $logDir$sourceName-Source.log; 
+tail -f $logDir$sourceName-Source.log; 
