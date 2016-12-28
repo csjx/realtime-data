@@ -38,7 +38,7 @@ configuration = Configure;
 % Set the pertinent directory and file locations (so they're not hard-coded),
 % where:
 %
-% baseDirectory     - is the location where the bbl software is installed    
+% baseDirectory     - is the location where the realtime-data software is installed    
 % outputDirectory   - is the location where figure image files will be written
 % libraryDirectory  - is where 3rd party matlab functions are located
 % convertPath       - is the location of the command used to convert figures
