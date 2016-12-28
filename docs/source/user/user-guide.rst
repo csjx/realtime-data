@@ -11,7 +11,7 @@ Each of these system components are described in more detail below, along with i
 Managing the DataTurbine Server Software
 ========================================
 
-The DataTurbine software is installed in `/usr/local/RBNB/current`.  It’s running on port `3333` both on the shore station Linux server (Internet IP: `168.105.160.139`, VPN IP `192.168.100.60`) and the UH campus server (Internet IP: `bbl.ancl.hawaii.edu`, VPN IP: `192.168.103.50`), and is set up as a standard Linux service installed in the `/etc/init.d` directory, with a run level script called `rbnb`.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server’s event log is located in `/var/log/rbnb/rbnb.log`.  The DataTurbine’s internal stream archive is located in `/var/lib/rbnb`.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.
+The DataTurbine software is installed in `/usr/local/RBNB/current`.  It’s running on port `3333` both on the shore station Linux server (Internet IP: `168.105.160.139`, VPN IP `192.168.100.60`) and the UH campus server (Internet IP: `realtime.pacioos.hawaii.edu`, VPN IP: `192.168.103.50`), and is set up as a standard Linux service installed in the `/etc/init.d` directory, with a run level script called `rbnb`.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server’s event log is located in `/var/log/rbnb/rbnb.log`.  The DataTurbine’s internal stream archive is located in `/var/lib/rbnb`.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.
 
 Starting the DataTurbine
 ------------------------
@@ -41,7 +41,7 @@ There may be times when the DataTurbine isn’t performing as expected.  For ins
 
 $ tail -f /var/log/rbnb/rbnb.log
 
-This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type `Control-c` to stop viewing the scrolling log file.  Errors such as ‘too many open files’, or java.lang.OutOfMemoryException indicate resource problems on the server.  The ‘too many open files’  error indicates that the DataTurbine service has exceeded it’s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at https://github.com/csjx/realtime-data/issues.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in /usr/local/bbl/trunk/bin called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.
+This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type `Control-c` to stop viewing the scrolling log file.  Errors such as ‘too many open files’, or java.lang.OutOfMemoryException indicate resource problems on the server.  The ‘too many open files’  error indicates that the DataTurbine service has exceeded it’s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at https://github.com/csjx/realtime-data/issues.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in ${REALTIME_DATA}/scripts/shell called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.
 ::
 
     java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
@@ -54,7 +54,7 @@ This will show the most recent log entries that pertain to the DataTurbine servi
       -z 50000\
       -Z 31536000
 
-The `-z` option requests that `50000` RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the `-Z` option requests that `31536000` RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one `955` byte ensemble per frame, resulting in a memory request of `(955b x 50000) =  47.75MB`.  The on-disk storage request equates to around six months of ensembles, or `(955b x 31536000) =  30.1GB`.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has `8GB` of physical memory, and `385GB` of disk space available to the DataTurbine.  The campus BBL server currently has `12GB` of physical memory, and `50GB` of disk space available to the DataTurbine.
+The `-z` option requests that `50000` RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the `-Z` option requests that `31536000` RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one `955` byte ensemble per frame, resulting in a memory request of `(955b x 50000) =  47.75MB`.  The on-disk storage request equates to around six months of ensembles, or `(955b x 31536000) =  30.1GB`.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has `8GB` of physical memory, and `385GB` of disk space available to the DataTurbine.  The campus server currently has `12GB` of physical memory, and `50GB` of disk space available to the DataTurbine.
 
 Managing the DataTurbine Instrument Drivers
 ===========================================
@@ -124,7 +124,7 @@ Each instrument type in the water has a corresponding instrument driver used to 
 Starting Instrument Drivers
 ---------------------------
 
-Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in `/usr/local/bbl/trunk/bin`, and they all follow the naming pattern of ‘`Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.**  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
+Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in `${REALTIME_DATA}/scripts/shell`, and they all follow the naming pattern of ‘`Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.**  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
 ::
 
 $ Stop-KN02XX_020ADCPXXXR00.sh
@@ -147,7 +147,7 @@ Since all of the data from all of the ADAM modules come into the server on a sin
 
 $ Start-KNXXXX_XXXADAMXXXXXX.sh
 
-The AdamDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/sensor.properties.xml`, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a `<sensor>` entry in the file
+The AdamDispatcher reads an XML configuration file located in `${REALTIME_DATA}/lib/sensor.properties.xml`, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a `<sensor>` entry in the file
 
 .. sourcecode:: xml
 
@@ -221,7 +221,7 @@ For the HIOOS water quality buoys, data are telemetered via a cellular link to t
 
 $ Start-HIXXXX_XXXCTDXXXXXXX.sh
 
-The StorXDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/email.account.properties.xml`, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an `<account>` entry with a single `<logger>` entry in the file
+The StorXDispatcher reads an XML configuration file located in `${REALTIME_DATA}/lib/email.account.properties.xml`, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an `<account>` entry with a single `<logger>` entry in the file
 
 .. sourcecode:: xml
 
@@ -245,7 +245,7 @@ The StorXDispatcher reads an XML configuration file located in `/usr/local/bbl/t
                   <description>WQB-AW</description>
                   <isImmersed>True</isImmersed>
                   <calibrationURL>
-                      http://bbl.ancl.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal
+                      http://realtime.pacioos.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal
                   </calibrationURL>
                   <cacheSize>25000</cacheSize>
                   <archiveSize>31536000</archiveSize>
@@ -269,10 +269,10 @@ The StorXDispatcher reads an XML configuration file located in `/usr/local/bbl/t
                   <description>WQB-AW-ISUS</description>
                   <isImmersed>True</isImmersed>
                   <calibrationURL>
-                      http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF
+                      http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF
                   </calibrationURL>
                   <calibrationURL>
-                      http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF
+                      http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF
                   </calibrationURL>
                   <cacheSize>25000</cacheSize>
                   <archiveSize>31536000</archiveSize>
@@ -307,7 +307,7 @@ StorXDispatcher
 Troubleshooting Instrument Drivers
 ----------------------------------
 
-There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the `kilonalu` user in a terminal on the server in question (either shore station or campus bbl server)
+There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the `kilonalu` user in a terminal on the server in question (either shore station or campus server)
 ::
 
 $ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
@@ -338,7 +338,7 @@ $ java -jar /usr/local/RBNB/current/bin/admin.jar &
 
 This will open up the admin utility within the VNC window.  Next, choose the `File --> Open ...` menu item.   Enter the following into the form:
 
-* Host: bbl.ancl.hawaii.edu
+* Host: realtime.pacioos.hawaii.edu
 * Port: 3333
 * Username: kilonalu
 * Password: [leave blank]
@@ -360,7 +360,7 @@ Once removed, the channel data can be rebuilt.  Use the FileSource driver with a
 Replicating Instrument Data Streams
 ===================================
 
-When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called `rbnbAdmin` to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the BBL campus server.
+When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called `rbnbAdmin` to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
 First, connect to the campus server as the `kilonalu` user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the `Open terminal` menu item.  In the terminal, issue the following command
 ::
 
@@ -383,7 +383,7 @@ Once you press ‘Ok’, the application should connect, and show you a list of 
     :align: right
     :scale: 50%
 
-* To: `tcp://bbl.ancl.hawaii.edu:3333`
+* To: `tcp://realtime.pacioos.hawaii.edu:3333`
 * Data Path: `KN02XX_020ADCP020R00`
 * From: `tcp://168.105.160.139:3333`
 * Data Path: `KN02XX_020ADCP020R00`
@@ -401,10 +401,10 @@ To see the status of the replicated streams, choose the Hidden menu item under t
 .. figure:: images/dataturbine-replication.png
     :scale: 100%
 
-If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to http://bbl.ancl.hawaii.edu:8080/RBNB.  You’ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax
+If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to http://realtime.pacioos.hawaii.edu:8080/RBNB.  You’ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax
 ::
 
-  http://bbl.ancl.hawaii.edu:8080/RBNB/SOURCENAME/CHANNELNAME?reference=newest&duration=DURATION
+  http://realtime.pacioos.hawaii.edu:8080/RBNB/SOURCENAME/CHANNELNAME?reference=newest&duration=DURATION
 
 where `SOURCENAME` is the name of the instrument source (e.g. `KN02XX_020ADCP020R00`), `CHANNELNAME` is the name of the raw data channel (e.g. `BinaryPD0EnsembleData`), `reference` is the starting point to read from the DataTurbine (`newest` or oldest), and `DURATION` is the number of frames to download (e.g. `1200` would download the most recent 20 minutes of ensembles if the sample rate is one ensemble per second).
 
@@ -416,7 +416,7 @@ After each instrument driver is started, a file archiver process should also be 
 Starting the Instrument File Archivers
 --------------------------------------
 
-Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in `/usr/local/bbl/trunk/bin`, and they all follow the naming pattern of ‘`Archiver-Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Archiver-Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.**  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
+Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in `${REALTIME_DATA}/scripts/shell`, and they all follow the naming pattern of ‘`Archiver-Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Archiver-Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.**  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
 ::
 
   $ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
@@ -440,7 +440,7 @@ Understanding File-based replication
 In addition to replicating data streams to the campus DataTurbine, we also mirror the archived data files in the shore station `/data` directory using a Linux mirroring tool called `rsync`.  This ensures that all archived data are synchronized with the campus directory, and the data directories on the campus server are backed up to disk on a nightly, weekly, and monthly schedule.  The `kilonalu` user has a scheduled cron job that mirrors the data files hourly.  The cron command that is called is
 ::
 
-  rsync -avt /data bbl.ancl.hawaii.edu:/data/raw 
+  rsync -avt /data realtime.pacioos.hawaii.edu:/data/raw 
 
 If data files that are present on the shore server are not present on the campus server within an hour, check to be sure that the cron service is running on the shore station server.  To do so, issue the following command as the kilonalu user
 ::
@@ -452,17 +452,17 @@ If the service is not running start the service using
 
   $ sudo service crond start 
   
-If file-based replication is working properly, you should be able to view the newest data files in the `/data/raw` directory by pointing your browser to https://bbl.ancl.hawaii.edu/kilonalu-data.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at http://bbl.ancl.hawaii.edu/share/WebDAV-medium-mac.html (Mac) and http://bbl.ancl.hawaii.edu/share/WebDAV-medium-windows.html (PC) to see how to mount the Kilo Nalu data archive directory.
+If file-based replication is working properly, you should be able to view the newest data files in the `/data/raw` directory by pointing your browser to https://realtime.pacioos.hawaii.edu/kilonalu-data.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html (Mac) and http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html (PC) to see how to mount the Kilo Nalu data archive directory.
 
 Managing the Matlab Instrument Plotting Code
 ============================================
 
-Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the BBL campus server (`bbl.ancl.hawaii.edu`).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server’s remote desktop as the `kilonalu` user.  At the moment, the 20m ADCP plotting code is run using Matlab’s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  **Note: Linux supports ‘virtual desktops’, and in the bottom right corner of each desktop is a ‘switcher’ application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.**
+Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the campus server (`realtime.pacioos.hawaii.edu`).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server’s remote desktop as the `kilonalu` user.  At the moment, the 20m ADCP plotting code is run using Matlab’s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  **Note: Linux supports ‘virtual desktops’, and in the bottom right corner of each desktop is a ‘switcher’ application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.**
 
 Connecting to the Server via VNC
 --------------------------------
 
-VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the BBL campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure ‘tunnel’ using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at http://bbl.ancl.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v.  Follow the instructions in this screen cast to: 
+VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure ‘tunnel’ using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v.  Follow the instructions in this screen cast to: 
 
 1) Download and install both Putty SSH and RealVNC, 
 2) create the tunnel using Putty SSH, and 
@@ -471,7 +471,7 @@ VNC is a remote desktop application that runs as a server on Linux, Windows, and
 Starting the Instrument Plotting Code
 -------------------------------------
 
-Once connected to the `kilonalu` user’s remote desktop on the BBL campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in `/usr/local/bbl/trunk/src/matlab`.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
+Once connected to the `kilonalu` user’s remote desktop on the campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in `${REALTIME_DATA}/scripts/matlab`.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
 First, each instruments plotting code will be started in a separate terminal window.  Look at the virtual desktops, and find the white terminal window that has multiple tabs open.  If there isn’t one (e.g. after a server reboot), right-click on the red desktop and choose the ‘Open terminal’ menu item.
 
 .. figure:: images/open-terminal.png
@@ -482,7 +482,7 @@ Once the terminal is open, right-click on the white terminal background and choo
 In each of the terminal tabs, change directories to the location of the Matlab plotting code scheduler scripts, and start Matlab without the graphical interface using the following two commands
 ::
   
-  $ cd /usr/local/bbl/trunk/src/matlab
+  $ cd ${REALTIME_DATA}/scripts/matlab
   $ matlab -nosplash -nodesktop
     
 The Matlab prompt will show up in the terminal, and then start the scheduler script for the desired plotter.  For instance, to start the 10m FLNTU plotting, enter
@@ -490,7 +490,7 @@ The Matlab prompt will show up in the terminal, and then start the scheduler scr
 
   >> schedule_KN0101_010FLNT010R00_processing
 
-This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of `schedule_SOURCENAME_processing.m`.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the `kilonalu` user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to `/home/kilonalu/projects/bbl/trunk/src/matalb/kilonalu/processing`.  This directory contains the Matlab m-files to start the ADCP proccessing.
+This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of `schedule_SOURCENAME_processing.m`.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the `kilonalu` user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to `${REALTIME_DATA}/scripts/matalb/kilonalu/processing`.  This directory contains the Matlab m-files to start the ADCP proccessing.
 
 .. figure:: images/start-adcp-processing.png
 
@@ -515,137 +515,137 @@ Likewise, do the same for the ADCP processing in the Matlab window.  The schedul
 Viewing Instrument Plots
 ------------------------
 
-Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the BBL server (`/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/`).  The 20m 1200kHz ADCP plots are written to `/var/www/html/OE/KiloNalu/Data/`.  The following table shows the web links to each of the plots.
+Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the server (`/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/`).  The 20m 1200kHz ADCP plots are written to `/var/www/html/OE/KiloNalu/Data/`.  The following table shows the web links to each of the plots.
 
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| Instrument                                      |    Online Web links                                                                       |
-+=================================================+===========================================================================================+
-| 10m WetLabs FLNTU (removed: KiloNalu shutdown)  |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg   |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg   |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg   |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg  |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 10m TChain (removed: KiloNalu shutdown)         |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 10m Seabird SBE37 (removed: KiloNalu shutdown)  |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg    |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg          |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 20m 1200kHz ADCP (removed: KiloNalu shutdown)   |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg                                  |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg                                 |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg                                  |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg                                 |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg                                 |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 20m TChain (removed: KiloNalu shutdown)         |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Alawai NS01 CTD                             |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Alawai NS02 CTD                             |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Atlantis Submarine Dock NS03 CTD            |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Aquarium NS04 CTD                           |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m American Samoa NS05 CTD                     |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Micronesia NS06 CTD                         |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Marshall Islands NS07 CTD                   |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Palau NS08 CTD                              |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Guam NS09 CTD (No reliable WiFi yet)        |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg    |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg    |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg    |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg   |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 01m Maunalua Bay NS10 CTD                       |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg     |
-|                                                 +-------------------------------------------------------------------------------------------+
-|                                                 |  http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg    |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 0m WQB-AW CTD, ISUS, STORX                      |  See PacIOOS website                                                                      |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
-| 0m WQB-KN CTD, ISUS, STORX                      |  See PacIOOS website                                                                      |
-+-------------------------------------------------+-------------------------------------------------------------------------------------------+
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| Instrument                                      |    Online Web links                                                                               |
++=================================================+===================================================================================================+
+| 10m WetLabs FLNTU (removed: KiloNalu shutdown)  |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg   |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg   |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg   |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg  |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 10m TChain (removed: KiloNalu shutdown)         |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 10m Seabird SBE37 (removed: KiloNalu shutdown)  |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg    |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg          |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 20m 1200kHz ADCP (removed: KiloNalu shutdown)   |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg                                  |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg                                 |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg                                  |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg                                 |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg                                 |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 20m TChain (removed: KiloNalu shutdown)         |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Alawai NS01 CTD                             |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Alawai NS02 CTD                             |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Atlantis Submarine Dock NS03 CTD            |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Aquarium NS04 CTD                           |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m American Samoa NS05 CTD                     |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Micronesia NS06 CTD                         |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Marshall Islands NS07 CTD                   |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Palau NS08 CTD                              |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Guam NS09 CTD (No reliable WiFi yet)        |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg    |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg    |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg    |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg   |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 01m Maunalua Bay NS10 CTD                       |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg     |
+|                                                 +---------------------------------------------------------------------------------------------------+
+|                                                 |  http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg    |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 0m WQB-AW CTD, ISUS, STORX                      |  See PacIOOS website                                                                              |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
+| 0m WQB-KN CTD, ISUS, STORX                      |  See PacIOOS website                                                                              |
++-------------------------------------------------+---------------------------------------------------------------------------------------------------+
 

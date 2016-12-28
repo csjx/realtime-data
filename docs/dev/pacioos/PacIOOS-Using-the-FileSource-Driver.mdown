@@ -55,7 +55,7 @@ Once the CLASSPATH environment variable is set, call the fully-qualified class n
 >  -d "dd MMM yyyy HH:mm:ss"\  
 >  -t "HST"\  
 >  -f "7"\  
->  -s bbl.ancl.hawaii.edu\  
+>  -s realtime.pacioos.hawaii.edu\  
 >  -p 3333\  
 >  -z 126000\  
 >  -Z 31536000  
@@ -74,8 +74,8 @@ This is a quick guide to the FileSource driver command line options.  Although t
 
 
 
-[1]: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/src/java/edu/hawaii/soest/kilonalu/utilities/FileSource.java
-[2]: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/docs/user/Realtime-Operations-Guide.pdf
-[3]: https://bbl.ancl.hawaii.edu/projects/bbl/trunk/bin/PIAS01_001CTDXXXXR00-Source.sh
+[1]: https://github.com/csjx/realtime-data/src/java/edu/hawaii/soest/kilonalu/utilities/FileSource.java
+[2]: https://github.com/csjx/realtime-data/docs/user/Realtime-Operations-Guide.pdf
+[3]: https://github.com/csjx/realtime-data/bin/PIAS01_001CTDXXXXR00-Source.sh
 
 <link rel="stylesheet" type="text/css" href="style.css" />

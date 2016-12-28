@@ -124,7 +124,7 @@ Each instrument type in the water has a corresponding instrument driver used to 
 Starting Instrument Drivers
 ---------------------------
 
-Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in `/usr/local/bbl/trunk/bin`, and they all follow the naming pattern of ‘`Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.**  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
+Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in `${REALTIME_DATA}/scripts/shell`, and they all follow the naming pattern of ‘`Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.**  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
 ::
 
 $ Stop-KN02XX_020ADCPXXXR00.sh
@@ -147,7 +147,7 @@ Since all of the data from all of the ADAM modules come into the server on a sin
 
 $ Start-KNXXXX_XXXADAMXXXXXX.sh
 
-The AdamDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/sensor.properties.xml`, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a `<sensor>` entry in the file
+The AdamDispatcher reads an XML configuration file located in `${REALTIME_DATA}/lib/sensor.properties.xml`, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a `<sensor>` entry in the file
 
 .. sourcecode:: xml
 
@@ -221,7 +221,7 @@ For the HIOOS water quality buoys, data are telemetered via a cellular link to t
 
 $ Start-HIXXXX_XXXCTDXXXXXXX.sh
 
-The StorXDispatcher reads an XML configuration file located in `/usr/local/bbl/trunk/lib/email.account.properties.xml`, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an `<account>` entry with a single `<logger>` entry in the file
+The StorXDispatcher reads an XML configuration file located in `${REALTIME_DATA}/lib/email.account.properties.xml`, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an `<account>` entry with a single `<logger>` entry in the file
 
 .. sourcecode:: xml
 
@@ -307,7 +307,7 @@ StorXDispatcher
 Troubleshooting Instrument Drivers
 ----------------------------------
 
-There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the `kilonalu` user in a terminal on the server in question (either shore station or campus bbl server)
+There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the `kilonalu` user in a terminal on the server in question (either shore station or campus server)
 ::
 
 $ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
@@ -416,7 +416,7 @@ After each instrument driver is started, a file archiver process should also be 
 Starting the Instrument File Archivers
 --------------------------------------
 
-Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in `/usr/local/bbl/trunk/bin`, and they all follow the naming pattern of ‘`Archiver-Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Archiver-Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.**  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
+Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in `${REALTIME_DATA}/scripts/shell`, and they all follow the naming pattern of ‘`Archiver-Start-SOURCENAME.sh`’. Likewise, the stop scripts follow the naming pattern ‘`Archiver-Stop-SOURCENAME.sh`’.  **Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.**  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the `kilonalu` user, and execute the following commands in the terminal
 ::
 
   $ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
@@ -471,7 +471,7 @@ VNC is a remote desktop application that runs as a server on Linux, Windows, and
 Starting the Instrument Plotting Code
 -------------------------------------
 
-Once connected to the `kilonalu` user’s remote desktop on the BBL campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in `/usr/local/bbl/trunk/src/matlab`.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
+Once connected to the `kilonalu` user’s remote desktop on the BBL campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in `${REALTIME_DATA}/scripts/matlab`.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
 First, each instruments plotting code will be started in a separate terminal window.  Look at the virtual desktops, and find the white terminal window that has multiple tabs open.  If there isn’t one (e.g. after a server reboot), right-click on the red desktop and choose the ‘Open terminal’ menu item.
 
 .. figure:: images/open-terminal.png
@@ -482,7 +482,7 @@ Once the terminal is open, right-click on the white terminal background and choo
 In each of the terminal tabs, change directories to the location of the Matlab plotting code scheduler scripts, and start Matlab without the graphical interface using the following two commands
 ::
   
-  $ cd /usr/local/bbl/trunk/src/matlab
+  $ cd ${REALTIME_DATA}/scripts/matlab
   $ matlab -nosplash -nodesktop
     
 The Matlab prompt will show up in the terminal, and then start the scheduler script for the desired plotter.  For instance, to start the 10m FLNTU plotting, enter
@@ -490,7 +490,7 @@ The Matlab prompt will show up in the terminal, and then start the scheduler scr
 
   >> schedule_KN0101_010FLNT010R00_processing
 
-This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of `schedule_SOURCENAME_processing.m`.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the `kilonalu` user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to `/home/kilonalu/projects/bbl/trunk/src/matalb/kilonalu/processing`.  This directory contains the Matlab m-files to start the ADCP proccessing.
+This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of `schedule_SOURCENAME_processing.m`.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the `kilonalu` user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to `${REALTIME_DATA}/scripts/matalb/kilonalu/processing`.  This directory contains the Matlab m-files to start the ADCP proccessing.
 
 .. figure:: images/start-adcp-processing.png
 
