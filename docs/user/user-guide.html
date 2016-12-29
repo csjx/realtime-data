@@ -187,7 +187,7 @@ Each of these system components are described in more detail below, along with i
 </div>
 <div class="section" id="managing-the-dataturbine-server-software">
 <h1>Managing the DataTurbine Server Software<a class="headerlink" href="#managing-the-dataturbine-server-software" title="Permalink to this headline">¶</a></h1>
-<p>The DataTurbine software is installed in <cite>/usr/local/RBNB/current</cite>.  It’s running on port <cite>3333</cite> both on the shore station Linux server (Internet IP: <cite>168.105.160.139</cite>, VPN IP <cite>192.168.100.60</cite>) and the UH campus server (Internet IP: <cite>bbl.ancl.hawaii.edu</cite>, VPN IP: <cite>192.168.103.50</cite>), and is set up as a standard Linux service installed in the <cite>/etc/init.d</cite> directory, with a run level script called <cite>rbnb</cite>.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server’s event log is located in <cite>/var/log/rbnb/rbnb.log</cite>.  The DataTurbine’s internal stream archive is located in <cite>/var/lib/rbnb</cite>.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.</p>
+<p>The DataTurbine software is installed in <cite>/usr/local/RBNB/current</cite>.  It’s running on port <cite>3333</cite> both on the shore station Linux server (Internet IP: <cite>168.105.160.139</cite>, VPN IP <cite>192.168.100.60</cite>) and the UH campus server (Internet IP: <cite>realtime.pacioos.hawaii.edu</cite>, VPN IP: <cite>192.168.103.50</cite>), and is set up as a standard Linux service installed in the <cite>/etc/init.d</cite> directory, with a run level script called <cite>rbnb</cite>.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server’s event log is located in <cite>/var/log/rbnb/rbnb.log</cite>.  The DataTurbine’s internal stream archive is located in <cite>/var/lib/rbnb</cite>.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.</p>
 <div class="section" id="starting-the-dataturbine">
 <h2>Starting the DataTurbine<a class="headerlink" href="#starting-the-dataturbine" title="Permalink to this headline">¶</a></h2>
 <p>The DataTurbine service is started like any other Linux service by calling the run-level script.  To do so, as the kilonalu user, ssh to the Linux server in question (shore lab or campus lab), and execute the following command in a terminal</p>
@@ -210,7 +210,7 @@ Each of these system components are described in more detail below, along with i
 <div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/rbnb/rbnb.log
 </pre></div>
 </div>
-<p>This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type <cite>Control-c</cite> to stop viewing the scrolling log file.  Errors such as ‘too many open files’, or java.lang.OutOfMemoryException indicate resource problems on the server.  The ‘too many open files’  error indicates that the DataTurbine service has exceeded it’s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in /usr/local/bbl/trunk/bin called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.</p>
+<p>This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type <cite>Control-c</cite> to stop viewing the scrolling log file.  Errors such as ‘too many open files’, or java.lang.OutOfMemoryException indicate resource problems on the server.  The ‘too many open files’  error indicates that the DataTurbine service has exceeded it’s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in ${REALTIME_DATA}/scripts/shell called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.</p>
 <div class="highlight-python"><div class="highlight"><pre>java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
   -H 192.168.100.139\
   -P 2102\
@@ -222,7 +222,7 @@ Each of these system components are described in more detail below, along with i
   -Z 31536000
 </pre></div>
 </div>
-<p>The <cite>-z</cite> option requests that <cite>50000</cite> RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the <cite>-Z</cite> option requests that <cite>31536000</cite> RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one <cite>955</cite> byte ensemble per frame, resulting in a memory request of <cite>(955b x 50000) =  47.75MB</cite>.  The on-disk storage request equates to around six months of ensembles, or <cite>(955b x 31536000) =  30.1GB</cite>.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has <cite>8GB</cite> of physical memory, and <cite>385GB</cite> of disk space available to the DataTurbine.  The campus BBL server currently has <cite>12GB</cite> of physical memory, and <cite>50GB</cite> of disk space available to the DataTurbine.</p>
+<p>The <cite>-z</cite> option requests that <cite>50000</cite> RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the <cite>-Z</cite> option requests that <cite>31536000</cite> RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one <cite>955</cite> byte ensemble per frame, resulting in a memory request of <cite>(955b x 50000) =  47.75MB</cite>.  The on-disk storage request equates to around six months of ensembles, or <cite>(955b x 31536000) =  30.1GB</cite>.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has <cite>8GB</cite> of physical memory, and <cite>385GB</cite> of disk space available to the DataTurbine.  The campus server currently has <cite>12GB</cite> of physical memory, and <cite>50GB</cite> of disk space available to the DataTurbine.</p>
 </div>
 </div>
 <div class="section" id="managing-the-dataturbine-instrument-drivers">
@@ -440,7 +440,7 @@ Each of these system components are described in more detail below, along with i
 </table>
 <div class="section" id="starting-instrument-drivers">
 <h2>Starting Instrument Drivers<a class="headerlink" href="#starting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
-<p>Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in <cite>/usr/local/bbl/trunk/bin</cite>, and they all follow the naming pattern of ‘<cite>Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
+<p>Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in <cite>${REALTIME_DATA}/scripts/shell</cite>, and they all follow the naming pattern of ‘<cite>Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Stop-KN02XX_020ADCPXXXR00.sh
 $ Start-KN02XX_020ADCPXXXR00.sh
 </pre></div>
@@ -459,7 +459,7 @@ $ Start-KN02XX_020ADCPXXXR00.sh
 <div class="highlight-python"><div class="highlight"><pre>$ Start-KNXXXX_XXXADAMXXXXXX.sh
 </pre></div>
 </div>
-<p>The AdamDispatcher reads an XML configuration file located in <cite>/usr/local/bbl/trunk/lib/sensor.properties.xml</cite>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <cite>&lt;sensor&gt;</cite> entry in the file</p>
+<p>The AdamDispatcher reads an XML configuration file located in <cite>${REALTIME_DATA}/lib/sensor.properties.xml</cite>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <cite>&lt;sensor&gt;</cite> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;sensor&gt;</span>
     <span class="nt">&lt;address&gt;</span>192.168.100.208<span class="nt">&lt;/address&gt;</span>
@@ -529,7 +529,7 @@ IP Address of the incoming UDP datagrams</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Start-HIXXXX_XXXCTDXXXXXXX.sh
 </pre></div>
 </div>
-<p>The StorXDispatcher reads an XML configuration file located in <cite>/usr/local/bbl/trunk/lib/email.account.properties.xml</cite>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <cite>&lt;account&gt;</cite> entry with a single <cite>&lt;logger&gt;</cite> entry in the file</p>
+<p>The StorXDispatcher reads an XML configuration file located in <cite>${REALTIME_DATA}/lib/email.account.properties.xml</cite>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <cite>&lt;account&gt;</cite> entry with a single <cite>&lt;logger&gt;</cite> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;accounts&gt;</span>
     <span class="nt">&lt;account&gt;</span>
@@ -550,7 +550,7 @@ IP Address of the incoming UDP datagrams</p>
                 <span class="nt">&lt;description&gt;</span>WQB-AW<span class="nt">&lt;/description&gt;</span>
                 <span class="nt">&lt;isImmersed&gt;</span>True<span class="nt">&lt;/isImmersed&gt;</span>
                 <span class="nt">&lt;calibrationURL&gt;</span>
-                    http://bbl.ancl.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal
+                    http://realtime.pacioos.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal
                 <span class="nt">&lt;/calibrationURL&gt;</span>
                 <span class="nt">&lt;cacheSize&gt;</span>25000<span class="nt">&lt;/cacheSize&gt;</span>
                 <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
@@ -574,10 +574,10 @@ IP Address of the incoming UDP datagrams</p>
                 <span class="nt">&lt;description&gt;</span>WQB-AW-ISUS<span class="nt">&lt;/description&gt;</span>
                 <span class="nt">&lt;isImmersed&gt;</span>True<span class="nt">&lt;/isImmersed&gt;</span>
                 <span class="nt">&lt;calibrationURL&gt;</span>
-                    http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF
+                    http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF
                 <span class="nt">&lt;/calibrationURL&gt;</span>
                 <span class="nt">&lt;calibrationURL&gt;</span>
-                    http://bbl.ancl.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF
+                    http://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF
                 <span class="nt">&lt;/calibrationURL&gt;</span>
                 <span class="nt">&lt;cacheSize&gt;</span>25000<span class="nt">&lt;/cacheSize&gt;</span>
                 <span class="nt">&lt;archiveSize&gt;</span>31536000<span class="nt">&lt;/archiveSize&gt;</span>
@@ -609,7 +609,7 @@ IP Address of the incoming UDP datagrams</p>
 </div>
 <div class="section" id="troubleshooting-instrument-drivers">
 <h2>Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
-<p>There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the <cite>kilonalu</cite> user in a terminal on the server in question (either shore station or campus bbl server)</p>
+<p>There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the <cite>kilonalu</cite> user in a terminal on the server in question (either shore station or campus server)</p>
 <div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
 </pre></div>
 </div>
@@ -634,7 +634,7 @@ Processed byte # 955 7f - log msg is: 467217590 [StreamingThread] INFO edu.hawai
 </div>
 <p>This will open up the admin utility within the VNC window.  Next, choose the <cite>File &#8211;&gt; Open ...</cite> menu item.   Enter the following into the form:</p>
 <ul class="simple">
-<li>Host: bbl.ancl.hawaii.edu</li>
+<li>Host: realtime.pacioos.hawaii.edu</li>
 <li>Port: 3333</li>
 <li>Username: kilonalu</li>
 <li>Password: [leave blank]</li>
@@ -655,7 +655,7 @@ $ rm -rf AW01XX_002CTDXXXXR00
 </div>
 <div class="section" id="replicating-instrument-data-streams">
 <h1>Replicating Instrument Data Streams<a class="headerlink" href="#replicating-instrument-data-streams" title="Permalink to this headline">¶</a></h1>
-<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <cite>rbnbAdmin</cite> to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the BBL campus server.
+<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <cite>rbnbAdmin</cite> to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
 First, connect to the campus server as the <cite>kilonalu</cite> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <cite>Open terminal</cite> menu item.  In the terminal, issue the following command</p>
 <div class="highlight-python"><div class="highlight"><pre>$ java -jar /usr/local/RBNB/current/bin/admin.jar &amp;
 </pre></div>
@@ -675,7 +675,7 @@ First, connect to the campus server as the <cite>kilonalu</cite> user using VNC 
 <a class="reference internal image-reference" href="../_images/dataturbine-mirror-to-dialog.png"><img alt="../_images/dataturbine-mirror-to-dialog.png" src="../_images/dataturbine-mirror-to-dialog.png" style="width: 310.5px; height: 227.5px;" /></a>
 </div>
 <ul class="simple">
-<li>To: <cite>tcp://bbl.ancl.hawaii.edu:3333</cite></li>
+<li>To: <cite>tcp://realtime.pacioos.hawaii.edu:3333</cite></li>
 <li>Data Path: <cite>KN02XX_020ADCP020R00</cite></li>
 <li>From: <cite>tcp://168.105.160.139:3333</cite></li>
 <li>Data Path: <cite>KN02XX_020ADCP020R00</cite></li>
@@ -691,8 +691,8 @@ To see the status of the replicated streams, choose the Hidden menu item under t
 <div class="figure">
 <a class="reference internal image-reference" href="../_images/dataturbine-replication.png"><img alt="../_images/dataturbine-replication.png" src="../_images/dataturbine-replication.png" style="width: 867.0px; height: 254.0px;" /></a>
 </div>
-<p>If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to <a class="reference external" href="http://bbl.ancl.hawaii.edu:8080/RBNB">http://bbl.ancl.hawaii.edu:8080/RBNB</a>.  You’ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax</p>
-<div class="highlight-python"><div class="highlight"><pre>http://bbl.ancl.hawaii.edu:8080/RBNB/SOURCENAME/CHANNELNAME?reference=newest&amp;duration=DURATION
+<p>If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to <a class="reference external" href="http://realtime.pacioos.hawaii.edu:8080/RBNB">http://realtime.pacioos.hawaii.edu:8080/RBNB</a>.  You’ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax</p>
+<div class="highlight-python"><div class="highlight"><pre>http://realtime.pacioos.hawaii.edu:8080/RBNB/SOURCENAME/CHANNELNAME?reference=newest&amp;duration=DURATION
 </pre></div>
 </div>
 <p>where <cite>SOURCENAME</cite> is the name of the instrument source (e.g. <cite>KN02XX_020ADCP020R00</cite>), <cite>CHANNELNAME</cite> is the name of the raw data channel (e.g. <cite>BinaryPD0EnsembleData</cite>), <cite>reference</cite> is the starting point to read from the DataTurbine (<cite>newest</cite> or oldest), and <cite>DURATION</cite> is the number of frames to download (e.g. <cite>1200</cite> would download the most recent 20 minutes of ensembles if the sample rate is one ensemble per second).</p>
@@ -702,7 +702,7 @@ To see the status of the replicated streams, choose the Hidden menu item under t
 <p>After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).  The FileArchiverSink is a Java program that can write any type of data stream to disk.  If an instrument driver is stopped, it doesn’t mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it’s scheduled time period.  The archive directory on the shore station and the campus server is <cite>/data</cite>.  For data originating from the Kilo Nalu array, the archivers are set to write files to <cite>/data/kilonalu/[SOURCENAME]</cite>.  For data originating wirelessly from the nearshore sensors, the archivers are set to write files to <cite>/data/raw/alawai/[SOURCENAME]</cite>. Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.</p>
 <div class="section" id="starting-the-instrument-file-archivers">
 <h2>Starting the Instrument File Archivers<a class="headerlink" href="#starting-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h2>
-<p>Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in <cite>/usr/local/bbl/trunk/bin</cite>, and they all follow the naming pattern of ‘<cite>Archiver-Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Archiver-Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
+<p>Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in <cite>${REALTIME_DATA}/scripts/shell</cite>, and they all follow the naming pattern of ‘<cite>Archiver-Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Archiver-Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
 $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 </pre></div>
@@ -721,7 +721,7 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 <div class="section" id="understanding-file-based-replication">
 <h1>Understanding File-based replication<a class="headerlink" href="#understanding-file-based-replication" title="Permalink to this headline">¶</a></h1>
 <p>In addition to replicating data streams to the campus DataTurbine, we also mirror the archived data files in the shore station <cite>/data</cite> directory using a Linux mirroring tool called <cite>rsync</cite>.  This ensures that all archived data are synchronized with the campus directory, and the data directories on the campus server are backed up to disk on a nightly, weekly, and monthly schedule.  The <cite>kilonalu</cite> user has a scheduled cron job that mirrors the data files hourly.  The cron command that is called is</p>
-<div class="highlight-python"><div class="highlight"><pre>rsync -avt /data bbl.ancl.hawaii.edu:/data/raw
+<div class="highlight-python"><div class="highlight"><pre>rsync -avt /data realtime.pacioos.hawaii.edu:/data/raw
 </pre></div>
 </div>
 <p>If data files that are present on the shore server are not present on the campus server within an hour, check to be sure that the cron service is running on the shore station server.  To do so, issue the following command as the kilonalu user</p>
@@ -732,14 +732,14 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 <div class="highlight-python"><div class="highlight"><pre>$ sudo service crond start
 </pre></div>
 </div>
-<p>If file-based replication is working properly, you should be able to view the newest data files in the <cite>/data/raw</cite> directory by pointing your browser to <a class="reference external" href="https://bbl.ancl.hawaii.edu/kilonalu-data">https://bbl.ancl.hawaii.edu/kilonalu-data</a>.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at <a class="reference external" href="http://bbl.ancl.hawaii.edu/share/WebDAV-medium-mac.html">http://bbl.ancl.hawaii.edu/share/WebDAV-medium-mac.html</a> (Mac) and <a class="reference external" href="http://bbl.ancl.hawaii.edu/share/WebDAV-medium-windows.html">http://bbl.ancl.hawaii.edu/share/WebDAV-medium-windows.html</a> (PC) to see how to mount the Kilo Nalu data archive directory.</p>
+<p>If file-based replication is working properly, you should be able to view the newest data files in the <cite>/data/raw</cite> directory by pointing your browser to <a class="reference external" href="https://realtime.pacioos.hawaii.edu/kilonalu-data">https://realtime.pacioos.hawaii.edu/kilonalu-data</a>.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html</a> (Mac) and <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html</a> (PC) to see how to mount the Kilo Nalu data archive directory.</p>
 </div>
 <div class="section" id="managing-the-matlab-instrument-plotting-code">
 <h1>Managing the Matlab Instrument Plotting Code<a class="headerlink" href="#managing-the-matlab-instrument-plotting-code" title="Permalink to this headline">¶</a></h1>
-<p>Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the BBL campus server (<cite>bbl.ancl.hawaii.edu</cite>).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server’s remote desktop as the <cite>kilonalu</cite> user.  At the moment, the 20m ADCP plotting code is run using Matlab’s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  <strong>Note: Linux supports ‘virtual desktops’, and in the bottom right corner of each desktop is a ‘switcher’ application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.</strong></p>
+<p>Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the campus server (<cite>realtime.pacioos.hawaii.edu</cite>).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server’s remote desktop as the <cite>kilonalu</cite> user.  At the moment, the 20m ADCP plotting code is run using Matlab’s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  <strong>Note: Linux supports ‘virtual desktops’, and in the bottom right corner of each desktop is a ‘switcher’ application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.</strong></p>
 <div class="section" id="connecting-to-the-server-via-vnc">
 <h2>Connecting to the Server via VNC<a class="headerlink" href="#connecting-to-the-server-via-vnc" title="Permalink to this headline">¶</a></h2>
-<p>VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the BBL campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure ‘tunnel’ using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at <a class="reference external" href="http://bbl.ancl.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v">http://bbl.ancl.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v</a>.  Follow the instructions in this screen cast to:</p>
+<p>VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure ‘tunnel’ using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v">http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v</a>.  Follow the instructions in this screen cast to:</p>
 <ol class="arabic simple">
 <li>Download and install both Putty SSH and RealVNC,</li>
 <li>create the tunnel using Putty SSH, and</li>
@@ -748,14 +748,14 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 </div>
 <div class="section" id="starting-the-instrument-plotting-code">
 <h2>Starting the Instrument Plotting Code<a class="headerlink" href="#starting-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
-<p>Once connected to the <cite>kilonalu</cite> user’s remote desktop on the BBL campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in <cite>/usr/local/bbl/trunk/src/matlab</cite>.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
+<p>Once connected to the <cite>kilonalu</cite> user’s remote desktop on the campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in <cite>${REALTIME_DATA}/scripts/matlab</cite>.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
 First, each instruments plotting code will be started in a separate terminal window.  Look at the virtual desktops, and find the white terminal window that has multiple tabs open.  If there isn’t one (e.g. after a server reboot), right-click on the red desktop and choose the ‘Open terminal’ menu item.</p>
 <div class="figure align-right">
 <a class="reference internal image-reference" href="../_images/open-terminal.png"><img alt="../_images/open-terminal.png" src="../_images/open-terminal.png" style="width: 512.0px; height: 275.0px;" /></a>
 </div>
 <p>Once the terminal is open, right-click on the white terminal background and choose the ‘Open Tab’ menu item.  Create a tab for each of the instruments that you’ll be starting the Matlab plotting code.
 In each of the terminal tabs, change directories to the location of the Matlab plotting code scheduler scripts, and start Matlab without the graphical interface using the following two commands</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cd /usr/local/bbl/trunk/src/matlab
+<div class="highlight-python"><div class="highlight"><pre>$ cd ${REALTIME_DATA}/scripts/matlab
 $ matlab -nosplash -nodesktop
 </pre></div>
 </div>
@@ -763,7 +763,7 @@ $ matlab -nosplash -nodesktop
 <div class="highlight-python"><div class="highlight"><pre>&gt;&gt; schedule_KN0101_010FLNT010R00_processing
 </pre></div>
 </div>
-<p>This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of <cite>schedule_SOURCENAME_processing.m</cite>.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the <cite>kilonalu</cite> user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to <cite>/home/kilonalu/projects/bbl/trunk/src/matalb/kilonalu/processing</cite>.  This directory contains the Matlab m-files to start the ADCP proccessing.</p>
+<p>This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of <cite>schedule_SOURCENAME_processing.m</cite>.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the <cite>kilonalu</cite> user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to <cite>${REALTIME_DATA}/scripts/matalb/kilonalu/processing</cite>.  This directory contains the Matlab m-files to start the ADCP proccessing.</p>
 <div class="figure">
 <img alt="../_images/start-adcp-processing.png" src="../_images/start-adcp-processing.png" />
 </div>
@@ -784,11 +784,11 @@ $ matlab -nosplash -nodesktop
 </div>
 <div class="section" id="viewing-instrument-plots">
 <h2>Viewing Instrument Plots<a class="headerlink" href="#viewing-instrument-plots" title="Permalink to this headline">¶</a></h2>
-<p>Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the BBL server (<cite>/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/</cite>).  The 20m 1200kHz ADCP plots are written to <cite>/var/www/html/OE/KiloNalu/Data/</cite>.  The following table shows the web links to each of the plots.</p>
+<p>Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the server (<cite>/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/</cite>).  The 20m 1200kHz ADCP plots are written to <cite>/var/www/html/OE/KiloNalu/Data/</cite>.  The following table shows the web links to each of the plots.</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="35%" />
-<col width="65%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Instrument</th>
@@ -797,143 +797,143 @@ $ matlab -nosplash -nodesktop
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td rowspan="4">10m WetLabs FLNTU (removed: KiloNalu shutdown)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/FLNTU/KN0101_010FLNT010R00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">10m TChain (removed: KiloNalu shutdown)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010TCHN010R00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="5">10m Seabird SBE37 (removed: KiloNalu shutdown)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest_21day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0101_010SBEX010R00/latest.jpg</a></td>
 </tr>
 <tr class="row-odd"><td rowspan="5">20m 1200kHz ADCP (removed: KiloNalu shutdown)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/VelProf2.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WtrQual.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveSpec.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/WaveChar.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">20m TChain (removed: KiloNalu shutdown)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/KN0201_020TCHNXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Alawai NS01 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW01XX_002CTDXXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Alawai NS02 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/AW02XX_001CTDXXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Atlantis Submarine Dock NS03 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK01XX_001CTDXXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Aquarium NS04 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/WK02XX_001CTDXXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m American Samoa NS05 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIAS01_001CTDXXXXR00/latest_30day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Micronesia NS06 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIFM02_001CTDXXXXR00/latest_30day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Marshall Islands NS07 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIMI01_001CTDXXXXR00/latest_30day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Palau NS08 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIPL01_001CTDXXXXR00/latest_30day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Guam NS09 CTD (No reliable WiFi yet)</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/PIGM001_001CTDXXXXR00/latest_30day.jpg</a></td>
 </tr>
 <tr class="row-even"><td rowspan="4">01m Maunalua Bay NS10 CTD</td>
-<td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg</a></td>
+<td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_1day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_3day.jpg</a></td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg</a></td>
+<tr class="row-even"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_7day.jpg</a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference external" href="http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg">http://bbl.ancl.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg</a></td>
+<tr class="row-odd"><td><a class="reference external" href="http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg">http://realtime.pacioos.hawaii.edu/OE/KiloNalu/Data/CTD/MB01XX_001CTDXXXXR00/latest_21day.jpg</a></td>
 </tr>
 <tr class="row-even"><td>0m WQB-AW CTD, ISUS, STORX</td>
 <td>See PacIOOS website</td>

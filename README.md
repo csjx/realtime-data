@@ -1,7 +1,19 @@
 Realtime Data
 =============
 
-The Realtime Data project provides software for streaming data from scientific instruments commonly used in oceanography and other environmental sciences, and uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server. 
+The Realtime Data Project provides streaming software for common scientific instruments used in oceanography and other environmental sciences, such as:
+
+* RDI Workhorse ADCPs
+* Seabird CTDs and SBEs
+* PME T-Chains
+* ECO FLNTU fluorometry/turbidity
+* Brooke Ocean Seahorse profiler
+* Satlantic ISUS V3 nitrate sensor
+* Satlantic StorX loggers
+* Davis Scientific Vantage Pro 2 weather station
+* Advantech ADAM 6XXX modules
+
+It uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server. 
 
 The software originated with the Benthic Boundary Layer (BBL) Project at the University of Hawaii, Manoa. The BBL Project was associated with the [Kilo Nalu Nearshore Observatory](http://www.soest.hawaii.edu/OE/KiloNalu/), the [Hawaii Ocean Observing System](http://soest.hawaii.edu/hioos), and the [Pacific Islands Ocean Observing System](http://pacioos.org). The project was supported by a National Science Foundation grant (NSF Award #OCE-0536607-000) to the University of Hawaii.
 
@@ -9,12 +21,12 @@ The software originated with the Benthic Boundary Layer (BBL) Project at the Uni
 * Contributors: Christopher Jones, Margaret McManus, Geno Pawlak, Judith Wells, KR MacDonald, Ross Timmerman, Conor Jerolmon, Joseph Gilmore, Gordon Walker
 * Developed at: [School of Ocean and Earth Science and Technology, University of Hawaii at Manoa](http://soest.hawaii.edu)
 
-The Realtime Data is an open source, community project.  We welcome contributions in many forms, including code, graphics, documentation, bug reports, testing, etc.
+The Realtime Data project is an open source, community project.  We welcome contributions in many forms, including code, graphics, documentation, bug reports, testing, etc.
 
 License
 -------
 ```
-Copyright [2013] [Regents of the University of Hawaii and the School of Ocean and Earth Science and Technology]
+Copyright [2016] [Regents of the University of Hawaii and the School of Ocean and Earth Science and Technology]
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
