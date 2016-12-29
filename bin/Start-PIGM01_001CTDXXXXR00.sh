@@ -5,8 +5,7 @@ sourceType="CTDSource";
 sourceString="1 meter PIGM CTD";
 
 # start the instrument driver
-cd ${REALTIME_DATA};
-./bin/$sourceName-Source.sh >> /var/log/rbnb/$sourceName-Source.log 2>&1 &
+${REALTIME_DATA}/$sourceName-Source.sh >> /var/log/realtime-data/$sourceName-Source.log 2>&1 &
 
 # tail the log file to confirm the driver is running
 echo -e "\nStarted $sourceString driver\n";
@@ -22,4 +21,4 @@ done
 echo -e "\n";
 
 # start tailing the log file
-tail -f /var/log/rbnb/$sourceName-Source.log; 
+tail -f /var/log/realtime-data/$sourceName-Source.log; 
