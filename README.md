@@ -1,12 +1,15 @@
 Realtime Data
 =============
 
-Realtime data provides software for streaming data from oceanographic instruments, and uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server. The software originated with the Benthic Boundary Layer (BBL) Project at the University of Hawaii, Manoa. The BBL Project was associated with the [Kilo Nalu Nearshore Observatory](http://www.soest.hawaii.edu/OE/KiloNalu/), the [Hawaii Ocean Observing System](http://soest.hawaii.edu/hioos), and the [Pacific Islands Ocean Observing System](http://pacioos.org). The project was supported by a National Science Foundation grant (NSF Award #OCE-0536607-000) to the University of Hawaii.
+The Realtime Data project provides software for streaming data from scientific instruments commonly used in oceanography and other environmental sciences, and uses the [DataTurbine](http://dataturbine.org) as the realtime streaming middleware server. 
 
+The software originated with the Benthic Boundary Layer (BBL) Project at the University of Hawaii, Manoa. The BBL Project was associated with the [Kilo Nalu Nearshore Observatory](http://www.soest.hawaii.edu/OE/KiloNalu/), the [Hawaii Ocean Observing System](http://soest.hawaii.edu/hioos), and the [Pacific Islands Ocean Observing System](http://pacioos.org). The project was supported by a National Science Foundation grant (NSF Award #OCE-0536607-000) to the University of Hawaii.
+
+* Documentation: https://csjx.github.io/realtime-data
 * Contributors: Christopher Jones, Margaret McManus, Geno Pawlak, Judith Wells, KR MacDonald, Ross Timmerman, Conor Jerolmon, Joseph Gilmore, Gordon Walker
 * Developed at: [School of Ocean and Earth Science and Technology, University of Hawaii at Manoa](http://soest.hawaii.edu)
 
-The BBL Project is an open source, community project.  We welcome contributions in many forms, including code, graphics, documentation, bug reports, testing, etc.
+The Realtime Data is an open source, community project.  We welcome contributions in many forms, including code, graphics, documentation, bug reports, testing, etc.
 
 License
 -------
@@ -37,13 +40,14 @@ This project is built using [Apache Maven](http://maven.apache.org). It also inc
 Quick Start
 -----------
 
-Set up the software by unpacking the zip file and creating the log directory:
+Set up the software by unpacking the zip file, setting environment variables, and creating the log directory:
     
     $ cd /usr/local
+    $ sudo curl -L -O https://github.com/csjx/realtime-data/raw/1.1.0/realtime-data-1.1.0-bin.zip
     $ sudo unzip realtime-data-1.1.0-bin.zip
     $ sudo chown -R ${USER} /usr/local/realtime-data
     $ export REALTIME_DATA=/usr/local/realtime-data
-    $ export PATH=${PATH}:${REALTIME_DATA}/scripts/shell/manage-instruments.sh
+    $ export PATH=${PATH}:${REALTIME_DATA}/scripts/shell
     $ sudo mkdir -p /var/log/realtime-data
     $ sudo chown -R ${USER} /var/log/realtime-data
     
@@ -52,6 +56,8 @@ Edit or add configuration files for each instrument in the `conf/` directory, se
 Start one or more instrument drivers with the management script. Get the usage with:
 
     $ manage-instruments.sh -h
+    
+For older drivers, use the `Start-<SOURCE>.sh`, `Stop-<SOURCE>.sh`,  `Archiver-Start-<SOURCE>.sh`, and  `Archiver-Stop-<SOURCE>.sh` scripts found in `${REALTIME_DATA}/scripts/shell`.  See the documentation at https://csjx.github.io/realtime-data for details.
 
 Development
 -----------
