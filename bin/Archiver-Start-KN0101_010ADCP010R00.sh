@@ -5,6 +5,7 @@ sourceType="ADCPSource";
 sourceString="10 meter 1200 kHz ADCP";
 
 # start the instrument driver
-${REALTIME_DATA}/$sourceName-Archive.sh >> /var/log/realtime-data/$sourceName-Archive.log 2>&1 &
+cd ;
+/scripts/shell/$sourceName-Archive.sh >> /var/log/realtime-data/$sourceName-Archive.log 2>&1 &
 
 echo -e "\nStarted $sourceName $sourceString file archiver\n";
