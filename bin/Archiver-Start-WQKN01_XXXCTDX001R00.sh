@@ -5,8 +5,8 @@ sourceType="StorXSource";
 sourceString="1 meter Kilo Nalu WQB CTD";
 
 # start the instrument driver
-cd ;
-/scripts/shell/$sourceName-Archive.sh >> /var/log/realtime-data/$sourceName-Archive.log 2>&1 &
+cd ${REALTIME_DATA};
+${REALTIME_DATA}/scripts/shell/$sourceName/scripts/shell/$sourceName-Archive.sh >> /var/log/realtime-data/$sourceName-Archive.log 2>&1 &
 
 # tail the log file to confirm the archiver is running
 echo -e "\nStarted $sourceName $sourceString file archiver\n";
