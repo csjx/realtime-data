@@ -73,10 +73,8 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 
 import org.apache.commons.lang.exception.NestableException;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dhmp.util.HierarchicalMap;
 import org.dhmp.util.BasicHierarchicalMap;
@@ -97,14 +95,8 @@ import org.nees.rbnb.RBNBSource;
  */
 public class ISUSSource extends RBNBSource {
 
-  /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /* The log configuration file location */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(ISUSSource.class);
+  private static Log logger = LogFactory.getLog(ISUSSource.class);
   
   /* The XML configuration file location for the list of sensor properties */
   private String xmlConfigurationFile = "lib/sensor.properties.xml";
@@ -179,9 +171,6 @@ public class ISUSSource extends RBNBSource {
   public ISUSSource(String serverName, String serverPort, 
                     String archiveMode, int archiveFrameSize, 
                     int cacheFrameSize, String rbnbClientName) {
-    
-    // Set up a simple logger that logs to the console                   
-    PropertyConfigurator.configure(getLogConfigurationFile());
     
     setServerName(serverName);
     setServerPort(Integer.parseInt(serverPort));
@@ -690,22 +679,4 @@ public class ISUSSource extends RBNBSource {
     this.rbnbChannelName = channelName;
   }
 
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-  
 }

@@ -31,33 +31,20 @@ import edu.hawaii.soest.hioos.storx.StorXParser;
 import edu.hawaii.soest.hioos.isus.ISUSFrame;
 import edu.hawaii.soest.kilonalu.ctd.CTDFrame;
 
-import java.io.File; 
-import java.io.FileInputStream; 
-import java.io.InputStream; 
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.BufferUnderflowException;
-import java.nio.BufferOverflowException;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Hex;
 
-import org.apache.commons.io.IOUtils;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dhmp.util.HierarchicalMap;
 import org.dhmp.util.BasicHierarchicalMap;
@@ -72,14 +59,8 @@ import org.dhmp.util.BasicHierarchicalMap;
  */
 public class StorXParser {
     
-  /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /* The log configuration file location */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(StorXParser.class);
+  static Log logger = LogFactory.getLog(StorXParser.class);
 
   /* A field that stores the binary UPD packet data input as a ByteBuffer */
   private ByteBuffer fileBuffer = ByteBuffer.allocate(8192);
@@ -161,24 +142,6 @@ public class StorXParser {
       
   }
 
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-  
   /**
    * A method that returns the frames map as a hierarchical map
    *

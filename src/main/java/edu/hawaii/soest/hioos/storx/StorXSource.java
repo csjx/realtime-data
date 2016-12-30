@@ -27,37 +27,18 @@
 package edu.hawaii.soest.hioos.storx;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
-import com.rbnb.sapi.SAPIException;
 
 import edu.hawaii.soest.hioos.satlantic.Calibration;
 
-import java.lang.StringBuffer;
-import java.lang.StringBuilder;
-import java.lang.InterruptedException;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 
 import java.text.SimpleDateFormat;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
@@ -65,20 +46,14 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 
-import org.apache.commons.lang.exception.NestableException;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dhmp.util.HierarchicalMap;
-import org.dhmp.util.BasicHierarchicalMap;
 
-import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -94,14 +69,8 @@ import org.nees.rbnb.RBNBSource;
  */
 public class StorXSource extends RBNBSource {
 
-  /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /* The log configuration file location */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(StorXSource.class);
+  static Log logger = LogFactory.getLog(StorXSource.class);
   
   /* The XML configuration file location for the list of sensor properties */
   private String xmlConfigurationFile = "lib/sensor.properties.xml";
@@ -181,9 +150,6 @@ public class StorXSource extends RBNBSource {
   public StorXSource(String serverName, String serverPort, 
                     String archiveMode, int archiveFrameSize, 
                     int cacheFrameSize, String rbnbClientName) {
-    
-    // Set up a simple logger that logs to the console                   
-    PropertyConfigurator.configure(getLogConfigurationFile());
     
     setServerName(serverName);
     setServerPort(Integer.parseInt(serverPort));
@@ -501,24 +467,6 @@ public class StorXSource extends RBNBSource {
    */
   public void setChannelName(String channelName) {
     this.rbnbChannelName = channelName;
-  }
-
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
   }
   
 }

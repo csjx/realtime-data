@@ -37,42 +37,27 @@ import java.io.StringReader;
 
 import java.math.BigInteger;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.text.DecimalFormat;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.codec.DecoderException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -96,7 +81,7 @@ public class CTDParser {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /**  The Logger instance used to log system messages  */
-  static Logger logger = Logger.getLogger(CTDParser.class);
+  static Log logger = LogFactory.getLog(CTDParser.class);
   
   /*  A field that stores the metadata and data file string input as a String */
   private String metadataAndDataString = "";
@@ -4224,7 +4209,6 @@ public class CTDParser {
       "039A7C1933400831D851167AF7059FE1F3\r\n";
     
     try {
-      BasicConfigurator.configure();
       CTDParser ctdParser = new CTDParser(file);
       
     } catch ( ParseException pe ) {

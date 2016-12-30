@@ -41,13 +41,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.RealMatrix;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  *  A class that represents converted CTD data values.  The class takes a 
@@ -57,20 +56,10 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class CTDConverter {
     
-  /*
-   * The default log configuration file location
-   */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /*
-   * The log configuration file location
-   */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /**
    * The Logger instance used to log system messages 
    */
-  static Logger logger = Logger.getLogger(CTDConverter.class);
+  static Log logger = LogFactory.getLog(CTDConverter.class);
         
   /**
    * The instance of the CTDParser object that holds the original data and
@@ -867,7 +856,6 @@ public class CTDConverter {
       "039A7C1933400831D851167AF7059FE1F3\r\n";
     
     try {
-      BasicConfigurator.configure();
       CTDParser ctdParser = new CTDParser(file);
       CTDConverter ctdConverter = new CTDConverter(ctdParser);
       ctdConverter.convert();
@@ -876,25 +864,5 @@ public class CTDConverter {
       System.out.println("There was a parse exception:" + pe.getMessage());
       System.exit(0);
     }
-  }
-  
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-
-  
+  }  
 }                                               

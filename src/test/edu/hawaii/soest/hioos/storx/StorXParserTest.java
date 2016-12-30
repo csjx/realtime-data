@@ -70,7 +70,7 @@ public class StorXParserTest {
       
       // create a byte buffer from the binary file data
       storXData = this.getClass().getResourceAsStream(
-        "/edu/hawaii/soest/kilonalu/ctd/2010263.raw");
+        "/edu/hawaii/soest/kilonalu/ctd/16364020.RAW");
       dataAsByteArray = IOUtils.toByteArray(storXData);
       buffer = ByteBuffer.wrap(dataAsByteArray);
       

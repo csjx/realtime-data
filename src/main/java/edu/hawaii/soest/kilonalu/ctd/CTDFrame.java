@@ -43,10 +43,8 @@ import java.util.TimeZone;
 import org.apache.commons.codec.binary.Hex;
 
 import org.apache.commons.io.IOUtils;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  A class that represents a single binary frame from a Satlantic 
@@ -54,14 +52,8 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class CTDFrame {
     
-  /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /* The log configuration file location */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(CTDFrame.class);
+  private static Log logger = LogFactory.getLog(CTDFrame.class);
 
   /* A Seabird SBE CTD sensor frame ID as a String */
   private final String SBE_CTD_FRAME_ID = "SATSBE";
@@ -126,24 +118,6 @@ public class CTDFrame {
     this.ctdFrame.get(sampleBytes);
     this.sample.put(sampleBytes);
     
-  }
-
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
   }
   
   /* 

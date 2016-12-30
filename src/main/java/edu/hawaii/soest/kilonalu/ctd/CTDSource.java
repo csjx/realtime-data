@@ -45,7 +45,6 @@ import java.lang.StringBuffer;
 import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-//import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -73,10 +72,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dhmp.util.HierarchicalMap;
 import org.dhmp.util.BasicHierarchicalMap;
@@ -160,14 +157,8 @@ public class CTDSource extends RBNBSource {
   /* The number of bytes in the ensemble as each byte is read from the stream */
   private int sampleByteCount = 0;
   
-  /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /* The log configuration file location */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(CTDSource.class);
+  static Log logger = LogFactory.getLog(CTDSource.class);
 
   protected int state = 0;
   
@@ -1967,9 +1958,6 @@ public class CTDSource extends RBNBSource {
       }
       );
       
-      // Set up a simple logger that logs to the console
-      PropertyConfigurator.configure(ctdSource.getLogConfigurationFile());
-      
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( ctdSource.parseArgs(args) ) {
@@ -2314,23 +2302,5 @@ public class CTDSource extends RBNBSource {
   public void stopConnection() {
     disconnect();
   }
-   
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-  
+     
 }
