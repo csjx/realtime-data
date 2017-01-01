@@ -54,8 +54,10 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import java.nio.ByteBuffer;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,6 +81,9 @@ import org.apache.commons.mail.util.MimeMessageParser;
 import org.dhmp.util.BasicHierarchicalMap;
 
 import org.nees.rbnb.RBNBSource;
+
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.SortTerm;
 
 /**
  * A class used to harvest a decimal ASCII data from a Seacat 16plus CTD) from
@@ -185,7 +190,7 @@ public class StorXDispatcher extends RBNBSource {
 	private double endTime = Double.MAX_VALUE;
 
 	/* The execute interval used to periodically fetch data (in milliseconds) */
-	private long executeInterval = 60000; // 1 minute
+	private long executeInterval = 240000; // 3 minutes
 
 	/* a flag to indicate if we are connected to the RBNB server or not */
 	private boolean connected = false;
@@ -364,17 +369,34 @@ public class StorXDispatcher extends RBNBSource {
 				Folder processed = this.mailStore.getFolder(processedMailbox);
 				processed.open(Folder.READ_WRITE);
 
-				Message messages[];
-
-				if (inbox.isOpen()) {
-					messages = (Message[]) inbox.getMessages();
-
-				} else {
+				Message[] msgs;
+				while ( ! inbox.isOpen() ) {
 					inbox.open(Folder.READ_WRITE);
-					messages = (Message[]) inbox.getMessages();
 
 				}
+				msgs = inbox.getMessages();
+				
+				List<Message> messages = new ArrayList<Message>();
+				Collections.addAll(messages, msgs);
+				
+				// sort the messages found in the inbox by date sent
+				Collections.sort(messages, new Comparator<Message>(){
 
+					public int compare(Message message1, Message message2) {
+						int value = 0;
+						try {
+							value = message1.getSentDate().compareTo(message2.getSentDate());
+						} catch (MessagingException e) {
+							e.printStackTrace();
+						}
+						return value;
+						
+					}
+
+					
+				});
+				
+				logger.debug("Number of messages: " + messages.size());
 				for (Message message : messages) {
 
 					// Copy the message to ensure we have the full attachment
@@ -383,7 +405,8 @@ public class StorXDispatcher extends RBNBSource {
 
 					// determine the sensor serial number for this message
 					String messageSubject = copiedMessage.getSubject();
-					logger.debug("Message date: " + copiedMessage.getSentDate());
+					logger.debug("Message date: " + copiedMessage.getSentDate() + 
+						"\tNumber: " + copiedMessage.getMessageNumber());
 					String[] subjectParts = messageSubject.split("\\s");
 					String loggerSerialNumber="SerialNumber";
 					if ( subjectParts.length > 1 ) {
