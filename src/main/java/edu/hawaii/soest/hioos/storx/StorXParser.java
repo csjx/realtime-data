@@ -1,15 +1,10 @@
 /**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+ *  Copyright: 2016 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A class that represents a Satlantic STOR-X data logger sample
  *             from a binary data file.
  *
  *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
