@@ -49,6 +49,7 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
