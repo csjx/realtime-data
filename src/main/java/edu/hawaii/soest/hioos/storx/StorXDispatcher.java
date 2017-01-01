@@ -400,7 +400,12 @@ public class StorXDispatcher extends RBNBSource {
 
                     // determine the sensor serial number for this message
                     String messageSubject = copiedMessage.getSubject();
-                    logger.debug("Message date: " + copiedMessage.getSentDate() + 
+                    Date sentDate = copiedMessage.getSentDate();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+                    
+                    // The subfolder of the processed mail folder (e.g. 2016-12);
+                    String destinationFolder = formatter.format(sentDate);
+                    logger.debug("Message date: " + sentDate + 
                         "\tNumber: " + copiedMessage.getMessageNumber());
                     String[] subjectParts = messageSubject.split("\\s");
                     String loggerSerialNumber="SerialNumber";
@@ -544,9 +549,11 @@ public class StorXDispatcher extends RBNBSource {
 
                             } else {
 
-                                // message processed successfully. copy it and
-                                // flag it deleted
-                                inbox.copyMessages(new Message[] {message}, processed);
+                                // message processed successfully. Create a by-month sub folder if it doesn't exist
+                                // Copy the message and flag it deleted
+                                Folder destination = processed.getFolder(destinationFolder);   
+                                boolean created = destination.create(Folder.HOLDS_MESSAGES);   
+                                inbox.copyMessages(new Message[] {message}, destination);
                                 message.setFlag(Flags.Flag.DELETED, true);
                                 logger.debug("Deleted message " + message.getMessageNumber());
                             } // end if()
