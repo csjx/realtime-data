@@ -1,16 +1,11 @@
 #!/bin/bash
 #
-#  Copyright: 2013 Regents of the University of Hawaii and the
+#  Copyright: 2020 Regents of the University of Hawaii and the
 #             School of Ocean and Earth Science and Technology
 #    Purpose: A convenience script to start instrument drivers using the
 #             SimpleTextSource class.
 #
 #   Authors: Christopher Jones
-#
-# $HeadURL$
-# $LastChangedDate$
-# $LastChangedBy$
-# $LastChangedRevision$
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,9 +21,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
 REALTIME_DATA=".";                     # installed realtime-data software location
-LOG_DIR="/var/log/realtime-data";      # log files location
 fi
 CLASSPATH="${REALTIME_DATA}/realtime-data-1.1.0-jar-with-dependencies.jar";
 if [[ -e /etc/realtime-data/log4j.properties ]]; then
@@ -51,13 +46,14 @@ fi
 usage() {
     cat << EOF
 
-Usage: $(basename ${0}) -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+Usage: $(basename ${0}) -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
 
-Start or stop one or more instrument drivers by optionally providing the instrument id.
+Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
 
 OPTIONS:
 
     -a  Start or stop all configured instruments
+    -c  The command to run, 'driver' or 'archiver', to stream or archive data respectively.
     -h  Show this message
     -i  The instrument id. Use -i multiple times for multiple instruments.
     -o  Indicate which operation to perform, start or stop.
@@ -75,48 +71,71 @@ show_version() {
 
 # start the source driver given the instrument name
 start() {
-    instrumentName=${1};
-    echo "Starting the source driver for ${instrumentName}.";
-    # Run the instrument driver
-    java -cp ${CLASSPATH} \
-        edu.hawaii.soest.pacioos.text.TextSourceApp \
-        ${REALTIME_DATA}/conf/${instrumentName}.xml 2>&1 &
-    pid=$!;
-    sleep 2;        
-    echo ${pid} > ${REALTIME_DATA}/run/${instrumentName}.pid
+    commandName=${1}
+    instrumentName=${2};
+
+    # Start the instrument driver
+    if [[ "${commandName}" == "driver" ]]; then
+        echo "Starting the instrument driver for ${instrumentName}.";
+        java -cp ${CLASSPATH} \
+            edu.hawaii.soest.pacioos.text.TextSourceApp \
+            ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
+        pid=$!;
+        sleep 2;
+        echo ${pid} > ${REALTIME_DATA}/run/"${instrumentName}-driver.pid";
+
+    # Or start the instrument archiver
+    elif [[ "${commandName}" == "archiver" ]]; then
+        echo "Starting the instrument archiver for ${instrumentName}.";
+        java -cp ${CLASSPATH} \
+            edu.hawaii.soest.pacioos.text.TextArchiverApp \
+            ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
+        pid=$!;
+        sleep 2;
+        echo ${pid} > ${REALTIME_DATA}/run/"${instrumentName}-archiver.pid";
+    fi
 }
 
 # stop the source driver given a process id and instrument name
 stop() {
     pidToKill=${1};
-    instrumentName=${2};
-    echo "Stopping the source driver for ${instrumentName}.";
-    kill -15 ${pidToKill};
+    commandName=${2}
+    instrumentName=${3};
+    echo "Stopping the instrument ${commandName} for ${instrumentName}.";
+    kill -15 "${pidToKill}";
     sleep 1;
-    rm ${REALTIME_DATA}/run/${instrumentName}.pid
+    rm ${REALTIME_DATA}/run/"${instrumentName}-${commandName}.pid";
+
 }
 
 # figure out how we were called
-while getopts ":ahVi:o:" OPTION; do
+while getopts ":achVi:o:" OPTION; do
     case ${OPTION} in
-      "a") instruments=$(ls ${REALTIME_DATA}/conf);;
-      "h") usage;;
-      "i") instruments="${instruments} ${OPTARG}.xml";;
-      "o") operation=${OPTARG};;
-      "V") show_version;;
-       \?) echo "ERROR:   Invalid option: -${OPTARG}";usage; exit 1;;
+        "a") instruments=$(ls ${REALTIME_DATA}/conf);;
+        "c") command=${OPTARG};;
+        "h") usage;;
+        "i") instruments="${instruments} ${OPTARG}.xml";;
+        "o") operation=${OPTARG};;
+        "V") show_version;;
+         \?) echo "ERROR:   Invalid option: -${OPTARG}";usage; exit 1;;
     esac
 done
 
 # ensure options are passed
-if [ -z ${instruments} ]; then
+if [ -z "${instruments}" ]; then
     echo -e "\nWARN: Use the -a option to start or stop all instrument drivers, ";
     echo "or optionally use the -i option one or more times."
     usage;
 fi
-    
+
+# validate the command
+if [ "${command}" != "driver" ] && [ "${command}" != "archiver" ] && [ "${OPTION}" != "V" ]; then
+    echo "ERROR: The -c option value must be either driver or archiver.";
+    usage;
+fi
+
 # validate the operation
-if [ "${operation}" != "start" -a "${operation}" != "stop" -a "${OPTION}" != "V" ]; then
+if [ "${operation}" != "start" ] && [ "${operation}" != "stop" ] && [ "${OPTION}" != "V" ]; then
     echo "ERROR: The -o option value must be either start or stop.";
     usage;
 fi
@@ -130,21 +149,21 @@ fi
 for instrument in ${instruments}; do
     existingPid="";
     runningPid="";
-    if [ -e ${REALTIME_DATA}/conf/${instrument} ]; then
+    if [ -e ${REALTIME_DATA}/conf/"${instrument}" ]; then
         
-        # Stop the running instrument driver (even on start if needed)
-        if [ -e ${REALTIME_DATA}/run/${instrument%.xml}.pid ]; then
-            existingPid=$(cat ${REALTIME_DATA}/run/${instrument%.xml}.pid);
+        # Stop the running instrument driver or archiver (even on start if needed)
+        if [ -e ${REALTIME_DATA}/run/"${instrument%.xml}.pid" ]; then
+            existingPid=$(cat ${REALTIME_DATA}/run/"${instrument%.xml}.pid");
         fi
         
-        runningPid=$(ps -o pid ${existingPid} | grep -v PID);
-        if [ ! -z "${existingPid}" -a ! -z "${runningPid}" ]; then
-            stop ${existingPid} ${instrument%.xml};            
+        runningPid=$(ps -o pid "${existingPid}" | grep -v PID);
+        if [ -n "${existingPid}" ] && [ -n "${runningPid}" ]; then
+            stop "${existingPid}" "${command}" "${instrument%.xml}";
         fi
         
-        # Conditionally start the instrument driver
+        # Conditionally start the instrument driver or archiver
         if [ "${operation}" == "start" ]; then
-            start ${instrument%.xml};
+            start "${command}" "${instrument%.xml}" ;
         fi
               
     else
