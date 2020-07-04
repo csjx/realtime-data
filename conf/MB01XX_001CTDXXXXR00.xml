@@ -91,5 +91,19 @@
             <!-- The time zone identifier that the data were collected in -->
             <timeZone>HST</timeZone>
         </channel>
-    </channels>   
+    </channels>
+    <!--
+    The interval used for archiving raw data files to disk from the DataTurbine
+    channel.  Must be either "hourly" or "daily".
+    -->
+    <rawArchiveInterval>hourly</rawArchiveInterval>
+    <!--
+    The base directory to archive raw data files created from the DataTurbine
+    channel.  Must be writable.
+    -->
+    <rawArchiveDirectory>/data/raw/alawai/MB01XX_001CTDXXXXR00/DecimalASCIISampleData</rawArchiveDirectory>
+    <!-- TODO:
+    <processedArchiveInterval></processedArchiveInterval>
+    <processedArchiveDirectory></processedArchiveDirectory>
+    -->
 </instrument>
