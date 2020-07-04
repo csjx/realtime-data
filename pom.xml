@@ -22,7 +22,7 @@
     <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
-        <version>3.2.1</version>
+        <version>[3.2.2,)</version>
     </dependency>
     <dependency>
         <groupId>commons-configuration</groupId>
@@ -91,9 +91,9 @@
         <version>1.1</version>
     </dependency>
     <dependency>
-        <groupId>org.dataturbine</groupId>
+        <groupId>com.rbnb</groupId>
         <artifactId>rbnb</artifactId>
-        <version>3.2b6</version>
+        <version>3.4b</version>
     </dependency>
     <dependency>
         <groupId>org.dhmp</groupId>
@@ -162,8 +162,63 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.10.4</version>
         <configuration>
-            <failOnError>true</failOnError>
+            <failOnError>false</failOnError>
         </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+          <executions>
+              <!-- Install the NCEAS utilities library -->
+              <execution>
+                  <id>install-utilities-jar</id>
+                  <goals>
+                      <goal>install-file</goal>
+                  </goals>
+                  <phase>validate</phase>
+                  <configuration>
+                      <groupId>edu.ucsb.nceas</groupId>
+                      <artifactId>utilities</artifactId>
+                      <version>1.1</version>
+                      <packaging>jar</packaging>
+                      <file>${basedir}/lib/utilities.jar</file>
+                      <generatePom>true</generatePom>
+                  </configuration>
+              </execution>
+              <!-- Install the RBNB library -->
+              <execution>
+                  <id>install-rbnb-jar</id>
+                  <goals>
+                      <goal>install-file</goal>
+                  </goals>
+                  <phase>validate</phase>
+                  <configuration>
+                      <groupId>com.rbnb</groupId>
+                      <artifactId>rbnb</artifactId>
+                      <version>3.4b</version>
+                      <packaging>jar</packaging>
+                      <file>${basedir}/lib/rbnb.jar</file>
+                      <generatePom>true</generatePom>
+                  </configuration>
+              </execution>
+              <!-- Install the DHMP library -->
+              <execution>
+                  <id>install-dhmp-jar</id>
+                  <goals>
+                      <goal>install-file</goal>
+                  </goals>
+                  <phase>validate</phase>
+                  <configuration>
+                      <groupId>org.dhmp</groupId>
+                      <artifactId>dhmp</artifactId>
+                      <version>1.0</version>
+                      <packaging>jar</packaging>
+                      <file>${basedir}/lib/dhmp.jar</file>
+                      <generatePom>true</generatePom>
+                  </configuration>
+              </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
