@@ -1,7 +1,7 @@
-/**
+/*
  *  Copyright: 2013 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that provides properties and methods 
+ *    Purpose: A class that provides properties and methods
  *             for a simple instrument driver streaming data from a
  *             text-based file.
  *
@@ -25,7 +25,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */ 
+ */
 package edu.hawaii.soest.pacioos.text;
 
 import java.io.BufferedReader;
@@ -38,8 +38,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
@@ -48,8 +46,8 @@ import org.apache.commons.logging.LogFactory;
 import com.rbnb.sapi.SAPIException;
 
 /**
+ * A file text source driver for streaming data from a file
  * @author cjones
- *
  */
 public class FileTextSource extends SimpleTextSource {
 
@@ -64,8 +62,8 @@ public class FileTextSource extends SimpleTextSource {
 
     /**
      * constructor: create an instance of the SerialTextSource 
-     * @param xmlConfig 
-     * @throws ConfigurationException 
+     * @param xmlConfig the XML configuration file
+     * @throws ConfigurationException  a configuration exception
      */
     public FileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
         super(xmlConfig);
@@ -99,7 +97,7 @@ public class FileTextSource extends SimpleTextSource {
                     String line = fileReader.readLine();
                     
                     if (line == null ) {
-                        Thread.currentThread().sleep(this.pollInterval);
+                        Thread.sleep(this.pollInterval);
                         
                     } else {
                         
@@ -170,22 +168,22 @@ public class FileTextSource extends SimpleTextSource {
 	        } catch ( ParseException pe ) {
 	            log.info("There was a problem parsing the sample date string. The message was: " + pe.getMessage());
 	            failed = true;
-	            return !failed;
+	            return false;
 	            
 	        } catch ( SAPIException sapie ) {
 	            log.info("There was a problem communicating with the DataTurbine. The message was: " + sapie.getMessage());
 	            failed = true;
-	            return !failed;
+	            return false;
 	            
 	        } catch ( InterruptedException ie ) {
 	            log.info("There was a problem while polling the data file. The message was: " + ie.getMessage());
 	            failed = true;
-	            return !failed;
+	            return false;
 	            
 	        } catch ( IOException ioe ) {
 	            log.info("There was a problem opening the data file. The message was: " + ioe.getMessage());
 	            failed = true;
-	            return !failed;
+	            return false;
 	            
 	        } finally {
 	            try {
