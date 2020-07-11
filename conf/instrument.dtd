@@ -26,8 +26,7 @@
     being pushed into the server
  -->
 <!ELEMENT instrument (identifier, connectionType, connectionParams, rbnbName, 
-                      rbnbServer, rbnbPort, archiveMemory, archiveSize, channels,
-                      rawArchiveInterval*, rawArchiveDirectory*)>
+                      rbnbServer, rbnbPort, archiveMemory, archiveSize, channels, archivers*)>
 <!-- 
     identifier: The string identifier of the instrument (e.g. NS15)
 -->
@@ -201,29 +200,25 @@
 <!ELEMENT dateField (#PCDATA)>
 
 <!--
-    rawArchiveInterval: The interval used for archiving raw data files to disk from the DataTurbine
-    channel.  Must be either "hourly" or "daily".
+    archivers: The list of file archivers used to write data to disk
 -->
-<!ELEMENT rawArchiveInterval (#PCDATA)>
+<!ELEMENT archivers (archiver+)>
+
+<!ELEMENT archiver (archiveType, archiveInterval, archiveDirectory)>
+
+<!ELEMENT archiveType (#PCDATA)>
 
 <!--
-    rawArchiveDirectory: The base directory to archive raw data files created from the DataTurbine
-    channel.  Must be writable.
--->
-<!ELEMENT rawArchiveDirectory (#PCDATA)>
-
-<!-- TODO:
-    processedArchiveInterval: The interval used for archiving processed data files to disk from the DataTurbine
+    archiveInterval: The interval used for archiving data files to disk from the DataTurbine
     channel.  Must be either "hourly" or "daily".
-<!ELEMENT processedArchiveInterval (#PCDATA)>
 -->
+<!ELEMENT archiveInterval (#PCDATA)>
 
-<!-- TODO:
-    processedArchiveDirectory: The base directory to archive processed data files created from the DataTurbine
+<!--
+    archiveDirectory: The base directory to archive raw data files created from the DataTurbine
     channel.  Must be writable.
-<!ELEMENT processedArchiveDirectory (#PCDATA)>
 -->
-
+<!ELEMENT archiveDirectory (#PCDATA)>
 
 
 
