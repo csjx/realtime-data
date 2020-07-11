@@ -92,17 +92,21 @@
             <timeZone>HST</timeZone>
         </channel>
     </channels>
-    <!--The interval used for archiving raw data files to disk from the DataTurbine
-    channel.  Must be either "hourly" or "daily".
-    -->
-    <rawArchiveInterval>hourly</rawArchiveInterval>
-    <!--
-    The base directory to archive raw data files created from the DataTurbine
-    channel.  Must be writable.
-    -->
-    <rawArchiveDirectory>/data/raw/alawai/AW02XX_001CTDXXXXR00/DecimalASCIISampleData</rawArchiveDirectory>
-    <!-- TODO:
-    <processedArchiveInterval></processedArchiveInterval>
-    <processedArchiveDirectory></processedArchiveDirectory>
-    -->
+    <!-- The list of data archivers used to write data to disk -->
+    <archivers>
+        <!-- Write the raw data to /data/raw -->
+        <archiver>
+            <archiveType>raw</archiveType>
+            <archiveInterval>hourly</archiveInterval>
+            <archiveDirectory>/data/raw/alawai/AW02XX_001CTDXXXXR00/DecimalASCIISampleData</archiveDirectory>
+        </archiver>
+        <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
+        <!--
+        <archiver>
+            <archiveType>pacioos-2020-format</archiveType>
+            <archiveInterval>daily</archiveInterval>
+            <archiveDirectory>/data/processed/pacioos/AW02XX_001CTDXXXXR00</archiveDirectory>
+        </archiver>
+        -->
+    </archivers>
 </instrument>

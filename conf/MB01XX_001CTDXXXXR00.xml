@@ -74,7 +74,7 @@
             -->
             <recordDelimiters>0x0d|0x0A</recordDelimiters>
             <!-- 
-              The list of date formats for each sample date component in a separtate variable
+              The list of date formats for each sample date component in a separate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
@@ -82,7 +82,7 @@
                 <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
-              The list of date fields for each sample date component in a separtate variable
+              The list of date fields for each sample date component in a separate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
@@ -92,18 +92,21 @@
             <timeZone>HST</timeZone>
         </channel>
     </channels>
-    <!--
-    The interval used for archiving raw data files to disk from the DataTurbine
-    channel.  Must be either "hourly" or "daily".
-    -->
-    <rawArchiveInterval>hourly</rawArchiveInterval>
-    <!--
-    The base directory to archive raw data files created from the DataTurbine
-    channel.  Must be writable.
-    -->
-    <rawArchiveDirectory>/data/raw/alawai/MB01XX_001CTDXXXXR00/DecimalASCIISampleData</rawArchiveDirectory>
-    <!-- TODO:
-    <processedArchiveInterval></processedArchiveInterval>
-    <processedArchiveDirectory></processedArchiveDirectory>
-    -->
+    <!-- The list of data archivers used to write data to disk -->
+    <archivers>
+        <!-- Write the raw data to /data/raw -->
+        <archiver>
+            <archiveType>raw</archiveType>
+            <archiveInterval>hourly</archiveInterval>
+            <archiveDirectory>/data/raw/alawai/MB01XX_001CTDXXXXR00/DecimalASCIISampleData</archiveDirectory>
+        </archiver>
+        <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
+        <!--
+        <archiver>
+            <archiveType>pacioos-2020-format</archiveType>
+            <archiveInterval>hourly</archiveInterval>
+            <archiveDirectory>/data/processed/pacioos/MB01XX_001CTDXXXXR00</archiveDirectory>
+        </archiver>
+        -->
+    </archivers>
 </instrument>
