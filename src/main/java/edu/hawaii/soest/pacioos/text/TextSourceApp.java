@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2013 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A class that is the main entry point for communicating
@@ -6,12 +6,7 @@
  *             samples.
  *
  *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,53 +32,48 @@ import org.apache.commons.logging.LogFactory;
  * the XML-based configuration file with the proper settings.
  * 
  * @author cjones
- *
  */
 public class TextSourceApp {
 
     private static final Log log = LogFactory.getLog(TextSourceApp.class);
 
-	public static SimpleTextSource textSource = null;
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		String xmlConfiguration = null;
-		if (args.length != 1) {
-			log.error("Please provide the path to the instrument's XML configuration file " +
-		              "as a single parameter.");
-			System.exit(1);
-		} else {
-			xmlConfiguration = args[0];
-		}
-		try {
-		    textSource = TextSourceFactory.getSimpleTextSource(xmlConfiguration);
-		    
-		    if ( textSource != null ) {
-		    	textSource.start();	
-		    	
-		    }
-		    
-		    // Handle ctrl-c's and other abrupt death signals to the process
-		    Runtime.getRuntime().addShutdownHook(new Thread() {
-		      // stop the streaming process
-		      public void run() {
-		    	  log.info("Stopping the SimpleTextSource driver due to user request");
-		          textSource.stop();		          
-		      }
-		    });
+    public static SimpleTextSource textSource = null;
+    
+    /**
+     * @param args  main arguments to the class
+     */
+    public static void main(String[] args) {
+        
+        String xmlConfiguration = null;
+        if (args.length != 1) {
+            log.error("Please provide the path to the instrument's XML configuration file " +
+                      "as a single parameter.");
+            System.exit(1);
+        } else {
+            xmlConfiguration = args[0];
+        }
+        
+        try {
+            textSource = TextSourceFactory.getSimpleTextSource(xmlConfiguration);
+            textSource.start();
 
-		} catch (ConfigurationException e) {
-			if (log.isDebugEnabled() ) {
-				e.printStackTrace();				
-			}
-			
-			log.error("There was a problem configuring the driver.  The error message was: " +
-			          e.getMessage());
-			System.exit(1);
+            // Handle ctrl-c's and other abrupt death signals to the process
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+              // stop the streaming process
+              public void run() {
+                  log.info("Stopping the SimpleTextSource driver due to user request");
+                  textSource.stop();                  
+              }
+            });
 
-		}
-	}
-
+        } catch (ConfigurationException e) {
+            if (log.isDebugEnabled() ) {
+                e.printStackTrace();                
+            }
+            
+            log.error("There was a problem configuring the driver.  The error message was: " +
+                      e.getMessage());
+            System.exit(1);
+        }
+    }
 }
