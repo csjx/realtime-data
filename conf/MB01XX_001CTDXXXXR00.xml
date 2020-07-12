@@ -90,23 +90,23 @@
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
             <timeZone>HST</timeZone>
+            <!-- The list of data archivers used to write data to disk -->
+            <archivers>
+                <!-- Write the raw data to /data/raw -->
+                <archiver>
+                    <archiveType>raw</archiveType>
+                    <archiveInterval>hourly</archiveInterval>
+                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
+                </archiver>
+                <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
+                <!--
+                <archiver>
+                    <archiveType>pacioos-2020-format</archiveType>
+                    <archiveInterval>hourly</archiveInterval>
+                    <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
+                </archiver>
+                -->
+            </archivers>
         </channel>
     </channels>
-    <!-- The list of data archivers used to write data to disk -->
-    <archivers>
-        <!-- Write the raw data to /data/raw -->
-        <archiver>
-            <archiveType>raw</archiveType>
-            <archiveInterval>hourly</archiveInterval>
-            <archiveDirectory>/data/raw/alawai/MB01XX_001CTDXXXXR00/DecimalASCIISampleData</archiveDirectory>
-        </archiver>
-        <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
-        <!--
-        <archiver>
-            <archiveType>pacioos-2020-format</archiveType>
-            <archiveInterval>hourly</archiveInterval>
-            <archiveDirectory>/data/processed/pacioos/MB01XX_001CTDXXXXR00</archiveDirectory>
-        </archiver>
-        -->
-    </archivers>
 </instrument>
