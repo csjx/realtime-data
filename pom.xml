@@ -6,6 +6,9 @@
   <name>Realtime Data Streaming Software</name>
   <description>Software for streaming and managing scientific instrument data. See https://csjx.github.io/realtime-data.</description>
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
     <dependencies>
