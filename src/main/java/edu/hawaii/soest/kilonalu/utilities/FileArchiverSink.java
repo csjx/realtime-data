@@ -223,7 +223,7 @@ public class FileArchiverSink extends RBNBBase {
 
     /**
      * A method that initializes time variables for the File Archiver class.  For
-     * now, it overides the start and end times provided on the command line
+     * now, it overrides the start and end times provided on the command line
      * and rolls the end time forward to be on the hour, and sets the
      * start time to be one hour prior.  This results in hourly data files written
      * on the hour.
@@ -301,7 +301,7 @@ public class FileArchiverSink extends RBNBBase {
             eTime = (endArchiveCal.getTime()).getTime();
             endTime = ((double) eTime) / 1000.0;
 
-            /** the Calendar representation of the FileArchiver begin time **/
+            /* the Calendar representation of the FileArchiver begin time **/
             beginArchiveCal = (Calendar) endArchiveCal.clone();
 
             // set the begin time of the duration 1 day prior to the execution time
@@ -327,7 +327,7 @@ public class FileArchiverSink extends RBNBBase {
                 eTime = (endArchiveCal.getTime()).getTime();
                 endTime = ((double) eTime) / 1000.0;
 
-                /** the Calendar representation of the FileArchiver begin time **/
+                /* the Calendar representation of the FileArchiver begin time **/
                 beginArchiveCal = (Calendar) endArchiveCal.clone();
 
                 // set the begin time of the duration 1 day prior to the execution time
