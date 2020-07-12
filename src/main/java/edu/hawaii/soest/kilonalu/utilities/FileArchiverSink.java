@@ -47,7 +47,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.nees.rbnb.MarkerUtilities;
 import org.nees.rbnb.RBNBBase;
@@ -195,7 +194,7 @@ public class FileArchiverSink extends RBNBBase {
             // archive data on a schedule
             if ( fileArchiverSink.getArchiveInterval() > 0 ) {
                 // override the command line start and end times
-                fileArchiverSink.setupArchiveTime(fileArchiverSink);
+                fileArchiverSink.setupArchiveTime();
 
                 TimerTask archiveData = new TimerTask() {
                     public void run() {
@@ -203,7 +202,7 @@ public class FileArchiverSink extends RBNBBase {
 
                         if ( fileArchiverSink.validateSetup() ) {
                             fileArchiverSink.export();
-                            fileArchiverSink.setupArchiveTime(fileArchiverSink);
+                            fileArchiverSink.setupArchiveTime();
                         }
                     }
                 };
@@ -228,7 +227,7 @@ public class FileArchiverSink extends RBNBBase {
      * start time to be one hour prior.  This results in hourly data files written
      * on the hour.
      */
-    private void setupArchiveTime(final FileArchiverSink fileArchiverSink) {
+    public void setupArchiveTime() {
         logger.debug("FileArchiverSink.setupArchiveTime() called.");
 
         // remove the time ranges assumed from the command line args
@@ -249,7 +248,7 @@ public class FileArchiverSink extends RBNBBase {
             eTime = (endArchiveCal.getTime()).getTime();
             endTime = ((double) eTime) / 1000.0;
 
-            /** the Calendar representation of the FileArchiver begin time **/
+            /* the Calendar representation of the FileArchiver begin time **/
             beginArchiveCal = (Calendar) endArchiveCal.clone();
 
             // set the begin time of the duration 2 minutes prior to the execution time
@@ -275,7 +274,7 @@ public class FileArchiverSink extends RBNBBase {
             eTime = (endArchiveCal.getTime()).getTime();
             endTime = ((double) eTime) / 1000.0;
 
-            /** the Calendar representation of the FileArchiver begin time **/
+            /* the Calendar representation of the FileArchiver begin time **/
             beginArchiveCal = (Calendar) endArchiveCal.clone();
 
             // set the begin time of the duration 1 hour prior to the execution time
@@ -547,6 +546,70 @@ public class FileArchiverSink extends RBNBBase {
         return validateSetup();
     }
 
+    public String getSinkName() {
+        return sinkName;
+    }
+
+    public void setSinkName(String sinkName) {
+        this.sinkName = sinkName;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
+
+    public void setChannelPath(String channelPath) {
+        this.channelPath = channelPath;
+    }
+
+    public void setStartTime(double startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(double endTime) {
+        this.endTime = endTime;
+    }
+
+    public File getArchiveDirectory() {
+        return archiveDirectory;
+    }
+
+    public void setArchiveDirectory(File archiveDirectory) {
+        this.archiveDirectory = archiveDirectory;
+    }
+
+    public Calendar getEndArchiveCal() {
+        return endArchiveCal;
+    }
+
+    public void setEndArchiveCal(Calendar endArchiveCal) {
+        FileArchiverSink.endArchiveCal = endArchiveCal;
+    }
+
+    public Calendar getBeginArchiveCal() {
+        return beginArchiveCal;
+    }
+
+    public void setBeginArchiveCal(Calendar beginArchiveCal) {
+        FileArchiverSink.beginArchiveCal = beginArchiveCal;
+    }
+
     /**
      * Setup the paramters for data export.
      *
@@ -589,7 +652,7 @@ public class FileArchiverSink extends RBNBBase {
      *
      * @return true if the setup is valid, false otherwise
      */
-    private boolean validateSetup() {
+    public boolean validateSetup() {
         logger.debug("FileArchiverSink.validateSetup() called.");
         printSetup();
 
