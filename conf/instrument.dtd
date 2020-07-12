@@ -210,7 +210,7 @@
 
 <!--
     archiveInterval: The interval used for archiving data files to disk from the DataTurbine
-    channel.  Must be either "hourly" or "daily".
+    channel.  Must be either "hourly", "daily", or "weekly".
 -->
 <!ELEMENT archiveInterval (#PCDATA)>
 
