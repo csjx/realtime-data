@@ -104,8 +104,8 @@ public class FileArchiverSink extends RBNBBase {
     private int archiveInterval;
 
     /**
-     * the default File path depth archived file directory paths.    The should
-     * be one a SimpleDateFormat object of yyyy, MM, dd, HH, or mm.    It determines
+     * the default File path depth archived file directory paths.  The should
+     * be one a SimpleDateFormat object of yyyy, MM, dd, HH, or mm.  It determines
      * if files are archived in directories down to Year, Month, Day, Hour,
      * or Minute.
      */
@@ -178,7 +178,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Runs FileArchiverSink.
      *
-     * @param args    the command line arguments
+     * @param args the command line arguments
      */
     public static void main(String[] args) {
 
@@ -222,10 +222,10 @@ public class FileArchiverSink extends RBNBBase {
     }
 
     /**
-     * A method that initializes time variables for the File Archiver class.    For
+     * A method that initializes time variables for the File Archiver class.  For
      * now, it overides the start and end times provided on the command line
      * and rolls the end time forward to be on the hour, and sets the
-     * start time to be one hour prior.    This results in hourly data files written
+     * start time to be one hour prior.  This results in hourly data files written
      * on the hour.
      */
     private void setupArchiveTime(final FileArchiverSink fileArchiverSink) {
@@ -263,7 +263,7 @@ public class FileArchiverSink extends RBNBBase {
 
         // schedule hourly on the hour
         } else if ( getArchiveInterval() == 3600 ) {
-            // set the execution time to be on the upcoming hour.    Add a minute to
+            // set the execution time to be on the upcoming hour.  Add a minute to
             // now() to be sure the next interval is in the next hour
             endArchiveCal = Calendar.getInstance();
             endArchiveCal.add(Calendar.MINUTE, 1);
@@ -345,7 +345,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Adds a shutdown hook to stop the export when called.
      *
-     * @param fileArchiverSink    the FileArchiverSink to stop
+     * @param fileArchiverSink the FileArchiverSink to stop
      */
     private static void setupShutdownHook(final FileArchiverSink fileArchiverSink) {
         logger.debug("FileArchiverSink.setupShutdownHook() called.");
@@ -362,7 +362,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Adds a progress listener to printout the status of the export
      *
-     * @param fileArchiverSink    the FileArchiverSink to monitor
+     * @param fileArchiverSink the FileArchiverSink to monitor
      */
     private static void setupProgressListener(FileArchiverSink fileArchiverSink) {
         logger.debug("FileArchiverSink.setupProgressListener() called.");
@@ -391,20 +391,20 @@ public class FileArchiverSink extends RBNBBase {
         opt.addOption("E", true, "End time (defaults to forever)");
         opt.addOption("I", true, "Interval (hourly, daily, or weekly) to periodically archive data\n Mututally exclusive with -E and -S");
         opt.addOption(OptionBuilder.withDescription("Event markers to filter start/stop times")
-                                                             .hasOptionalArg()
-                                                             .create("M"));
+            .hasOptionalArg()
+            .create("M"));
         opt.addOption("B", true, "Number of seconds to go back from now to set start time\n Mututally exclusive with -E and -S");
 
         setNotes("Writes data frames between start time and end time to the " +
-                         "directory structure starting at the base directory. The time " +
-                         "format is yyyy-mm-dd:hhTmm:ss.nnn.");
+                 "directory structure starting at the base directory. The time " +
+                 "format is yyyy-mm-dd:hhTmm:ss.nnn.");
         return opt;
     }
 
     /**
      * A method that sets the prefix string to be used in the archived file name
      *
-     * @param filePrefix    the prefix string to be used in the file name
+     * @param filePrefix the prefix string to be used in the file name
      */
     public void setFilePrefix(String filePrefix) {
         this.filePrefix = filePrefix;
@@ -413,7 +413,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * A method that sets the extension string to be used in the archived file name
      *
-     * @param fileExtension    the extension string to be used in the file name
+     * @param fileExtension the extension string to be used in the file name
      */
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
@@ -550,20 +550,20 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Setup the paramters for data export.
      *
-     * @param serverName                 the RBNB server name
-     * @param serverPort                 the RBNB server port
-     * @param sinkName                     the RBNB sink name
-     * @param channelPath                the full channel path
-     * @param archiveDirectory     the directory to archive to
-     * @param startTime                    the start time
-     * @param endTime                        the end time
-     * @param eventMarkerFilter    the event marker filter
-     * @return                                     true if the setup succeeded, false otherwise
+     * @param serverName the RBNB server name
+     * @param serverPort the RBNB server port
+     * @param sinkName the RBNB sink name
+     * @param channelPath the full channel path
+     * @param archiveDirectory the directory to archive to
+     * @param startTime the start time
+     * @param endTime the end time
+     * @param eventMarkerFilter the event marker filter
+     * @return true if the setup succeeded, false otherwise
      */
     public boolean setup(String serverName, int serverPort,
-                                             String sinkName, String channelPath,
-                                             File archiveDirectory, double startTime,
-                                             double endTime, String eventMarkerFilter) {
+        String sinkName, String channelPath,
+        File archiveDirectory, double startTime,
+        double endTime, String eventMarkerFilter) {
 
         if (startTime >= endTime) {
             logger.debug("The start time must come before the end time.");
@@ -584,10 +584,10 @@ public class FileArchiverSink extends RBNBBase {
     }
 
     /**
-     * Validates the setup.    This method prepares the RBNB connection, sets up the
+     * Validates the setup.  This method prepares the RBNB connection, sets up the
      * time ranges for data archival, and then chacks the time ranges for validity.
      *
-     * @return    true if the setup is valid, false otherwise
+     * @return true if the setup is valid, false otherwise
      */
     private boolean validateSetup() {
         logger.debug("FileArchiverSink.validateSetup() called.");
@@ -613,8 +613,7 @@ public class FileArchiverSink extends RBNBBase {
      */
     private void printSetup() {
         logger.debug("FileArchiverSink.printSetup() called.");
-        logger.debug("Starting FileArchiverSink on " + getServer() +
-                                 " as " + sinkName);
+        logger.debug("Starting FileArchiverSink on " + getServer() + " as " + sinkName);
         logger.debug("    Archiving channel " + channelPath);
         logger.debug("    to directory " + archiveDirectory);
 
@@ -634,7 +633,7 @@ public class FileArchiverSink extends RBNBBase {
      * Sets up the time ranges based on the start and stop times and the event
      * marker filter.
      *
-     * @return    true if the time ranges are setup
+     * @return true if the time ranges are setup
      */
     private boolean setupTimeRanges() {
         logger.debug("FileArchiverSink.setupTimeRanges() called.");
@@ -659,7 +658,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Checks the time ranges to see if they are valid and have data.
      *
-     * @return    true if the time ranges are valid
+     * @return true if the time ranges are valid
      */
     private boolean checkTimeRanges() {
         logger.debug("FileArchiverSink.checkTimeRanges() called.");
@@ -693,10 +692,10 @@ public class FileArchiverSink extends RBNBBase {
             // skip time ranges in the past where there is no data
             if (!timeRange.intersects(channelTimeRange)) {
                 logger.debug("Warning: Skipping the time range from " +
-                                         RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
-                                         " to " +
-                                         RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
-                                         " since there are no data for it.");
+                    RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
+                    " to " +
+                    RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
+                    " since there are no data for it.");
                 timeRanges.remove(i--);
             }
         }
@@ -704,10 +703,10 @@ public class FileArchiverSink extends RBNBBase {
         if (timeRanges.size() == 0) {
             logger.debug("Error: There are no data for the specified time ranges.");
             logger.debug("There is data from " +
-                                     RBNBUtilities.secondsToISO8601(channelStartTime) +
-                                     " to " +
-                                     RBNBUtilities.secondsToISO8601(channelEndTime) +
-                                     ".");
+                RBNBUtilities.secondsToISO8601(channelStartTime) +
+                " to " +
+                RBNBUtilities.secondsToISO8601(channelEndTime) +
+                ".");
 
             return false;
         }
@@ -716,8 +715,8 @@ public class FileArchiverSink extends RBNBBase {
         TimeRange firstTimeRange = timeRanges.get(0);
         if (firstTimeRange.getStartTime() < channelTimeRange.getStartTime()) {
             logger.debug("Warning: Setting start time to " +
-                                     RBNBUtilities.secondsToISO8601(channelTimeRange.getStartTime()) +
-                                     " since there is no data before it.");
+                RBNBUtilities.secondsToISO8601(channelTimeRange.getStartTime()) +
+                " since there is no data before it.");
             firstTimeRange.setStartTime(channelTimeRange.getStartTime());
         }
 
@@ -727,7 +726,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Gets the start time.
      *
-     * @return    the start time
+     * @return the start time
      */
     public double getStartTime() {
         return startTime;
@@ -736,7 +735,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Gets the end time.
      *
-     * @return    the end time
+     * @return the end time
      */
     public double getEndTime() {
         return endTime;
@@ -745,7 +744,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Gets the event marker filter.
      *
-     * @return    the event marker filter
+     * @return the event marker filter
      */
     public String getEventMarkerFilter() {
         return eventMarkerFilter;
@@ -763,7 +762,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * A method that sets archive interval (in seconds)
      *
-     * @param interval    the archive interval (in seconds)
+     * @param interval the archive interval (in seconds)
      */
     public void setArchiveInterval(int interval) {
         this.archiveInterval = interval;
@@ -796,7 +795,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Sees if data are being exported.
      *
-     * @return    true if exporting, false otherwise
+     * @return true if exporting, false otherwise
      */
     public boolean isExporting() {
         return isConnected();
@@ -828,14 +827,14 @@ public class FileArchiverSink extends RBNBBase {
             for (TimeRange timeRange : timeRanges) {
                 if (timeRange.getEndTime() != Double.MAX_VALUE) {
                     logger.debug("Exporting data from " +
-                                                RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
-                                                " to " +
-                                                RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
-                                                ".");
+                        RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
+                         " to " +
+                          RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
+                          ".");
                 } else {
                     logger.debug("Exporting data from " +
-                                             RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
-                                             ".");
+                        RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
+                        ".");
                 }
 
 
@@ -844,10 +843,10 @@ public class FileArchiverSink extends RBNBBase {
                 }
 
                 dataFramesExported += exportData(sMap,
-                                                                                 timeRange.getStartTime(),
-                                                                                 timeRange.getEndTime(),
-                                                                                 duration,
-                                                                                 elapsedTime);
+                    timeRange.getStartTime(),
+                    timeRange.getEndTime(),
+                    duration,
+                    elapsedTime);
                 disconnect();
 
                 elapsedTime += timeRange.getEndTime() - timeRange.getStartTime();
@@ -868,9 +867,9 @@ public class FileArchiverSink extends RBNBBase {
         }
 
         if (doExport) {
-            logger.debug("Export complete. Wrote " + dataFramesExported + " data frames.                            ");
+            logger.debug("Export complete. Wrote " + dataFramesExported + " data frames.");
         } else {
-            logger.debug("Export stopped. Wrote " + dataFramesExported + " data frames.                             ");
+            logger.debug("Export stopped. Wrote " + dataFramesExported + " data frames.");
         }
 
         return true;
@@ -879,14 +878,13 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Exports data for a time range.
      *
-     * @param map                         the channel map
-     * @param startTime             the start time for the data
-     * @param endTime                 the end time for the data
-     * @param baseTime                the base elasped time for the export
-     * @return                                the number of data frames written to disk
-     * @throws SAPIException    if there is an error getting the data from the
-     *                                                server
-     * @throws IOException        if there is an error writing the file
+     * @param map the channel map
+     * @param startTime the start time for the data
+     * @param endTime the end time for the data
+     * @param baseTime the base elasped time for the export
+     * @return the number of data frames written to disk
+     * @throws SAPIException if there is an error getting the data from the server
+     * @throws IOException if there is an error writing the file
      */
     private int exportData(ChannelMap map, double startTime, double endTime,
         double duration, double baseTime) throws SAPIException, IOException {
@@ -923,8 +921,7 @@ public class FileArchiverSink extends RBNBBase {
             long unixTime = (long) (timestamp * 1000.0);
             File output =
             FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
-                                                                            filePrefix, filePathDepth,
-                                                                            fileExtension);
+                filePrefix, filePathDepth, fileExtension);
 
             if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
 
@@ -952,8 +949,8 @@ public class FileArchiverSink extends RBNBBase {
 
                 } else {
                     logger.info("Unsuccessful export. File " +
-                                            latestDataFile.getPath() +
-                                            " was " + latestDataFile.length() + " bytes.");
+                        latestDataFile.getPath() +
+                        " was " + latestDataFile.length() + " bytes.");
 
                 }
 
@@ -967,7 +964,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Connect to the RBNB server.
      *
-     * @return    true if connected, false otherwise
+     * @return true if connected, false otherwise
      */
     private boolean connect() {
         logger.debug("FileArchiverSink.connect() called.");
@@ -1005,7 +1002,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Sees if we are connected to the RBNB server.
      *
-     * @return    true if connected, false otherwise
+     * @return true if connected, false otherwise
      */
     public boolean isConnected() {
         return connected;
@@ -1014,7 +1011,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Adds a listener for the export progress.
      *
-     * @param listener    the listener to add
+     * @param listener the listener to add
      */
     public void addTimeProgressListener(TimeProgressListener listener) {
         listeners.add(listener);
@@ -1023,7 +1020,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Removes a listener for the export progress.
      *
-     * @param listener    the listener to remove
+     * @param listener the listener to remove
      */
     public void removeTimeProgressListener(TimeProgressListener listener) {
         listeners.remove(listener);
@@ -1032,7 +1029,7 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * Notifies listener of progress.
      *
-     * @param time    the elapsed time to notify
+     * @param time the elapsed time to notify
      */
     private void fireProgressUpdate(double time) {
         for (TimeProgressListener listener : listeners) {
