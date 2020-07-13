@@ -69,13 +69,13 @@ show_version() {
     exit 1;
 }
 
-# start the source driver given the instrument name
+# start the source driver or archiver given the instrument name and command
 start() {
-    commandName=${1}
+    command=${1}
     instrumentName=${2};
 
     # Start the instrument driver
-    if [[ "${commandName}" == "driver" ]]; then
+    if [[ "${command}" == "driver" ]]; then
         echo "Starting the instrument driver for ${instrumentName}.";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSourceApp \
@@ -85,7 +85,7 @@ start() {
         echo ${pid} > ${REALTIME_DATA}/run/"${instrumentName}-driver.pid";
 
     # Or start the instrument archiver
-    elif [[ "${commandName}" == "archiver" ]]; then
+    elif [[ "${command}" == "archiver" ]]; then
         echo "Starting the instrument archiver for ${instrumentName}.";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
@@ -96,15 +96,15 @@ start() {
     fi
 }
 
-# stop the source driver given a process id and instrument name
+# stop the source driver or archiver given a process id, command, and instrument name
 stop() {
     pidToKill=${1};
-    commandName=${2}
+    command=${2}
     instrumentName=${3};
-    echo "Stopping the instrument ${commandName} for ${instrumentName}.";
+    echo "Stopping the instrument ${command} for ${instrumentName}.";
     kill -15 "${pidToKill}";
     sleep 1;
-    rm ${REALTIME_DATA}/run/"${instrumentName}-${commandName}.pid";
+    rm ${REALTIME_DATA}/run/"${instrumentName}-${command}.pid";
 
 }
 
@@ -152,8 +152,8 @@ for instrument in ${instruments}; do
     if [ -e ${REALTIME_DATA}/conf/"${instrument}" ]; then
         
         # Stop the running instrument driver or archiver (even on start if needed)
-        if [ -e ${REALTIME_DATA}/run/"${instrument%.xml}.pid" ]; then
-            existingPid=$(cat ${REALTIME_DATA}/run/"${instrument%.xml}.pid");
+        if [ -e ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid" ]; then
+            existingPid=$(cat ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid");
         fi
         
         runningPid=$(ps -o pid "${existingPid}" | grep -v PID);
