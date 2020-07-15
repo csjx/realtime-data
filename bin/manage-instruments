@@ -109,13 +109,13 @@ stop() {
 }
 
 # figure out how we were called
-while getopts ":achVi:o:" OPTION; do
+while getopts ":ac:hVi:o:" OPTION; do
     case ${OPTION} in
         "a") instruments=$(ls ${REALTIME_DATA}/conf);;
-        "c") command=${OPTARG};;
+        "c") command="${OPTARG}";;
         "h") usage;;
         "i") instruments="${instruments} ${OPTARG}.xml";;
-        "o") operation=${OPTARG};;
+        "o") operation="${OPTARG}";;
         "V") show_version;;
          \?) echo "ERROR:   Invalid option: -${OPTARG}";usage; exit 1;;
     esac
@@ -123,7 +123,7 @@ done
 
 # ensure options are passed
 if [ -z "${instruments}" ]; then
-    echo -e "\nWARN: Use the -a option to start or stop all instrument drivers, ";
+    echo -e "\nWARN: Use the -a option to start or stop all instrument drivers or archivers, ";
     echo "or optionally use the -i option one or more times."
     usage;
 fi
