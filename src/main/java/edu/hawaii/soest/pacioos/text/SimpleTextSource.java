@@ -1,16 +1,11 @@
-/**
- *  Copyright: 2013 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A class that provides properties and methods common 
  *             to all simple text-based source drivers within this
  *             package.
  *
  *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +25,6 @@ package edu.hawaii.soest.pacioos.text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,7 +56,6 @@ import com.rbnb.sapi.Sink;
  * for an RBNB DataTurbine streaming server.
  * 
  * @author cjones
- *
  */
 public abstract class SimpleTextSource extends RBNBSource {
 
@@ -299,7 +292,7 @@ public abstract class SimpleTextSource extends RBNBSource {
      * @param channelName  the name of the channel
      */
     public void setChannelName(String channelName) {
-        
+        this.rbnbChannelName = channelName;
     }
     
     /**
@@ -500,7 +493,7 @@ public abstract class SimpleTextSource extends RBNBSource {
     /**
      * Set the identifier of the instrument, usually a string like "NS01".
      * 
-     * @param identifier  the identifier of the instrument
+     * @return identifier  the identifier of the instrument
      */
     public String getIdentifier() {
         return this.identifier;
@@ -840,7 +833,16 @@ public abstract class SimpleTextSource extends RBNBSource {
         rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
-        rbnbChannelMap.PutDataAsString(channelIndex, sample);
+
+         // Add the delimiters back on to the sample after they were trimmed off
+         StringBuilder sampleBuilder = new StringBuilder(sample);
+         for (int i = 0; i < getRecordDelimiters().length; i++ ) {
+            sampleBuilder.append(
+                new String(new byte[] {Integer.decode(getRecordDelimiters()[i]).byteValue()})
+            );
+         }
+         sample = sampleBuilder.toString();
+         rbnbChannelMap.PutDataAsString(channelIndex, sample);
         
         try {
 			numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
