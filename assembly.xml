@@ -12,12 +12,15 @@
       <directory>bin</directory>
       <outputDirectory>scripts/shell</outputDirectory>
       <includes>
-        <include>manage-instruments.sh</include>
-        <include>*Archive*</include>
-        <include>*Source*</include>
-        <include>*Start*</include>
-        <include>*Stop*</include>
+        <include>manage-instruments</include>
       </includes>
+    </fileSet>
+    <fileSet>
+        <directory>target/site</directory>
+        <outputDirectory>docs/dev/apidocs</outputDirectory>
+        <includes>
+          <include>apidocs/**</include>
+        </includes>
     </fileSet>
     <fileSet>     
       <directory>src</directory>
