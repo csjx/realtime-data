@@ -23,11 +23,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * $URL$
- * $Revision$
- * $Date$
- * $Author$
  */
 package edu.hawaii.soest.kilonalu.utilities;
 
@@ -143,7 +138,7 @@ public class FileArchiverSink extends RBNBBase {
     private String eventMarkerFilter;
 
     /** the list of time ranges to export */
-    private List<TimeRange> timeRanges;
+    private List<TimeRange> timeRanges = new ArrayList<>();
 
     /** the default directory to archive to */
     public static final File DEFAULT_ARCHIVE_DIRECTORY = new File("/data/rbnb");
@@ -223,15 +218,15 @@ public class FileArchiverSink extends RBNBBase {
     /**
      * A method that initializes time variables for the File Archiver class.  For
      * now, it overrides the start and end times provided on the command line
-     * and rolls the end time forward to be on the hour, and sets the
-     * start time to be one hour prior.  This results in hourly data files written
-     * on the hour.
+     * and rolls the end time forward to be on the 2-minute (debug mode), hour, or day
+     * and sets the start time to be one hour prior.  This results in hourly data files written
+     * on the hour or daily files written on the day.
      */
     public void setupArchiveTime() {
         logger.debug("FileArchiverSink.setupArchiveTime() called.");
 
         // remove the time ranges assumed from the command line args
-        timeRanges.clear();
+        getTimeRanges().clear();
 
         long eTime; // intermediate end time variable
         Date sDate; // intermediate start date variable
@@ -716,6 +711,22 @@ public class FileArchiverSink extends RBNBBase {
         }
 
         return true;
+    }
+
+    /**
+     * Get the timeRanges
+     * @return timeRanges  the time ranges that have been set
+     */
+    public List<TimeRange> getTimeRanges() {
+        return timeRanges;
+    }
+
+    /**
+     * Set the timeRanges
+     * @param timeRanges the time ranges that have been set
+     */
+    public void setTimeRanges(List<TimeRange> timeRanges) {
+        this.timeRanges = timeRanges;
     }
 
     /**
