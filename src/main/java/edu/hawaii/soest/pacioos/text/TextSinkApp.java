@@ -72,7 +72,7 @@ public class TextSinkApp {
             }
 
             // Loop through each channel and find the archiving properties
-            for (int channelIndex = 0; channelIndex <= totalChannels; channelIndex++) {
+            for (int channelIndex = 0; channelIndex < totalChannels; channelIndex++) {
                 String channelName =
                     xmlConfig.getString("channels.channel(" + channelIndex + ").name");
 
@@ -90,7 +90,7 @@ public class TextSinkApp {
                 }
 
                 // Start an archiver sink for each listed in the instrument's XML configuration
-                for (int archiverIndex = 0; archiverIndex <= totalArchivers; archiverIndex++) {
+                for (int archiverIndex = 0; archiverIndex < totalArchivers; archiverIndex++) {
 
                     FileArchiverSink archiver = new FileArchiverSink();
                     String serverName = xmlConfig.getString("rbnbServer");
@@ -124,15 +124,18 @@ public class TextSinkApp {
                     archiver.setSourceName(identifier);
 
                     // For raw archivers, include the channelName in the directory path
-                    if (archiveType.equals("raw")) {
+                    if (archiveType != null && archiveType.equals("raw")) {
                         archiver.setChannelPath(identifier + "/" + channelName);
                         File file = new File(archiveBaseDirectory + "/" + identifier + "/" + channelName);
                         archiver.setArchiveDirectory(file);
                     // For pacioos archivers, exclude the channelName from the directory path
-                    } else if (archiveType.equals("pacioos-2020-format")) {
+                    } else if (archiveType != null  && archiveType.equals("pacioos-2020-format")) {
                         archiver.setChannelPath(identifier);
                         File file = new File(archiveBaseDirectory + "/" + identifier);
                         archiver.setArchiveDirectory(file);
+                    } else {
+                        log.error("Please use an archiveType of raw or pacioos-2020-format");
+                        System.exit(0);
                     }
 
                     // Set the archiveInterval in seconds based on the configuration
@@ -168,6 +171,7 @@ public class TextSinkApp {
                     // Archive the data on a schedule
                     if ( archiver.getArchiveInterval() > 0 ) {
                         // override the command line start and end times
+                        archiver.validateSetup();
                         archiver.setupArchiveTime();
 
                         TimerTask archiveDataTask = new TimerTask() {
