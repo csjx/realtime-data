@@ -76,7 +76,7 @@ start() {
 
     # Start the instrument driver
     if [[ "${command}" == "driver" ]]; then
-        echo "Starting the instrument driver for ${instrumentName}.";
+        echo "INFO: Starting the instrument driver for ${instrumentName}.";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSourceApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
@@ -86,7 +86,7 @@ start() {
 
     # Or start the instrument archiver
     elif [[ "${command}" == "archiver" ]]; then
-        echo "Starting the instrument archiver for ${instrumentName}.";
+        echo "INFO: Starting the instrument archiver for ${instrumentName}.";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
@@ -154,11 +154,15 @@ for instrument in ${instruments}; do
         # Stop the running instrument driver or archiver (even on start if needed)
         if [ -e ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid" ]; then
             existingPid=$(cat ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid");
+            if [ -n "${existingPid}" ]; then
+                runningPid=$(ps -o pid "${existingPid}" | grep -v PID);
+            fi
         fi
         
-        runningPid=$(ps -o pid "${existingPid}" | grep -v PID);
         if [ -n "${existingPid}" ] && [ -n "${runningPid}" ]; then
             stop "${existingPid}" "${command}" "${instrument%.xml}";
+        else
+            echo "INFO: Didn't stop ${instrument%.xml} - it's not running.";
         fi
         
         # Conditionally start the instrument driver or archiver
