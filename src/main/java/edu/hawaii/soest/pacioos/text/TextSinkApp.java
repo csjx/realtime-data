@@ -22,6 +22,7 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import edu.hawaii.soest.kilonalu.utilities.FileArchiveUtility;
 import edu.hawaii.soest.kilonalu.utilities.FileArchiverSink;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -29,7 +30,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -99,9 +102,31 @@ public class TextSinkApp {
                     String archiveType = xmlConfig.getString(
                         "channels.channel(" + channelIndex + ").archivers.archiver" +
                             "(" + archiverIndex + ")." + "archiveType");
-                    String archiveInterval = xmlConfig.getString(
+                    // Is this an interval-based or range-based archiver?
+                    String archiveInterval = null;
+                    String startDateTime = null;
+                    String endDateTime = null;
+                    String archiveIntervalPath =
                         "channels.channel(" + channelIndex + ").archivers.archiver" +
-                            "(" + archiverIndex + ")." + "archiveInterval");
+                        "(" + archiverIndex + ")." + "archiveInterval";
+                    boolean hasArchiveInterval = xmlConfig.configurationsAt(archiveIntervalPath).size() > 0;
+                    String archiveDateRangePath =
+                            "channels.channel(" + channelIndex + ").archivers.archiver" +
+                                    "(" + archiverIndex + ")." + "archiveDateRange";
+                    boolean hasArchiveDateRange = xmlConfig.configurationsAt(archiveDateRangePath).size() > 0;
+                    if ( hasArchiveInterval ) {
+                        // An interval-based archiver
+                        archiveInterval = xmlConfig.getString(archiveIntervalPath);
+                    } else if ( hasArchiveDateRange ) {
+                        // A range-based archiver
+                        startDateTime = xmlConfig.getString(archiveDateRangePath + ".startDateTime");
+                        endDateTime = xmlConfig.getString(archiveDateRangePath + ".endDateTime");
+                    } else {
+                        log.info("Archivers must have either an archiveInterval or " +
+                            "archiveDateRange configured. Skipping this archiver.");
+                        continue;
+                    }
+
                     String archiveBaseDirectory = xmlConfig.getString(
                         "channels.channel(" + channelIndex + ").archivers.archiver" +
                             "(" + archiverIndex + ")." + "archiveBaseDirectory");
@@ -122,6 +147,7 @@ public class TextSinkApp {
                     archiver.setRBNBClientName(identifier + "-" + archiveType + "-archiver");
                     archiver.setSinkName(identifier + "-" + archiveType + "-archiver");
                     archiver.setSourceName(identifier);
+                    archiver.setFilePrefix(identifier + "_");
 
                     // For raw archivers, include the channelName in the directory path
                     if (archiveType != null && archiveType.equals("raw")) {
@@ -139,7 +165,7 @@ public class TextSinkApp {
                     }
 
                     // Set the archiveInterval in seconds based on the configuration
-                    if ( archiveInterval != null ) {
+                    if ( hasArchiveInterval && archiveInterval != null ) {
                         switch (archiveInterval) {
                             case "hourly":
                                 archiver.setArchiveInterval(3600);
@@ -159,12 +185,24 @@ public class TextSinkApp {
                                 break;
                             default:
                                 log.error("Please use either hourly, daily, or weekly " +
-                                    "for the archiving interval.");
+                                        "for the archiving interval.");
                                 System.exit(0);
                         }
+                    } else if ( hasArchiveDateRange && startDateTime != null && endDateTime != null ) {
+                        // Set the archiver start time
+                        Date startDate = FileArchiveUtility.getCommandFormat().parse(startDateTime);
+                        long stime = startDate.getTime();
+                        double startTime = ((double) stime) / 1000.0;
+                        archiver.setStartTime(startTime);
+
+                        // Set the archiver end time
+                        Date endDate = FileArchiveUtility.getCommandFormat().parse(endDateTime);
+                        long etime = endDate.getTime();
+                        double endTime = ((double) etime) / 1000.0;
+                        archiver.setEndTime(endTime);
                     } else {
-                        log.error("Please use either hourly, daily, or weekly " +
-                            "for the archiving interval.");
+                        log.error("Please use either an hourly or daily archiving interval or " +
+                            "set a start and end archive date range.");
                         System.exit(0);
                     }
 
@@ -193,18 +231,14 @@ public class TextSinkApp {
 
                     } else {
                         // archive data once based on the start and end times
-                        log.error("Start and end time-based exporting is not supported yet");
-                        System.exit(0);
-                        //archiver.export();
-
+                        if ( archiver.validateSetup() ) {
+                            archiver.export();
+                        }
                     }
-
                 } // end for(archivers)
-
             } // end for(channels)
 
-
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationException | ParseException e) {
             if (log.isDebugEnabled() ) {
                 e.printStackTrace();                
             }
