@@ -207,7 +207,7 @@
 <!--
     archiver: Properties used to archive channel data with a sink
 -->
-<!ELEMENT archiver (archiveType, archiveInterval, archiveBaseDirectory)>
+<!ELEMENT archiver (archiveType, (archiveInterval | archiveDateRange), archiveBaseDirectory)>
 
 <!--
     archiverType: The type of the archiver. Must be "raw" or "pacioos-2020-format".
@@ -216,9 +216,24 @@
 
 <!--
     archiveInterval: The interval used for archiving data files to disk from the DataTurbine
-    channel.  Must be either "hourly", "daily", or "weekly".
+    channel.  Must be either "hourly" or "daily".
 -->
 <!ELEMENT archiveInterval (#PCDATA)>
+
+<!--
+    archiveDateRange: The archiveDateRange, with a start and end date time required.
+-->
+<!ELEMENT archiveDateRange (startDateTime, endDateTime)>
+
+<!--
+    startDateTime: The archiveDateRange start date time, formatted as yyyy-MM-ddThh:mm:ss.nnnZ (UTC)
+-->
+<!ELEMENT startDateTime (#PCDATA)>
+
+<!--
+    endDateTime: The archiveDateRange end date time, formatted as yyyy-MM-ddThh:mm:ss.nnnZ (UTC)
+-->
+<!ELEMENT endDateTime (#PCDATA)>
 
 <!--
     archiveBaseDirectory: The base directory to archive channel data files created from the
