@@ -391,7 +391,7 @@ public class FileArchiverSink extends RBNBBase {
 
         setNotes("Writes data frames between start time and end time to the " +
                  "directory structure starting at the base directory. The time " +
-                 "format is yyyy-mm-dd:hhTmm:ss.nnn.");
+                 "format is yyyy-MM-ddThh:mm:ss.nnn.");
         return opt;
     }
 
@@ -740,7 +740,7 @@ public class FileArchiverSink extends RBNBBase {
         try {
             channelMetadata = RBNBUtilities.getMetadata(getServer(), channelPath);
         } catch (SAPIException e) {
-            logger.debug("Error retreiving channel metadata from the server.");
+            logger.debug("Error retrieving channel metadata from the server.");
             return false;
         }
 
@@ -776,7 +776,7 @@ public class FileArchiverSink extends RBNBBase {
 
         if (timeRanges.size() == 0) {
             logger.debug("Error: There are no data for the specified time ranges.");
-            logger.debug("There is data from " +
+            logger.debug("There are data from " +
                 RBNBUtilities.secondsToISO8601(channelStartTime) +
                 " to " +
                 RBNBUtilities.secondsToISO8601(channelEndTime) +
@@ -970,7 +970,10 @@ public class FileArchiverSink extends RBNBBase {
         int frameCount = 0;
         int fetchRetryCount = 0;
 
+        logger.debug("doExport is: " + doExport);
+
         while (doExport) {
+            logger.debug("Get the channel map.");
             ChannelMap m = sink.Fetch(1800000); // fetch with 3 min sec timeout
 
             if (m.GetIfFetchTimedOut()) {
@@ -982,11 +985,17 @@ public class FileArchiverSink extends RBNBBase {
                     break;
                 }
             } else {
+                logger.debug("Fetch has not timed out.");
                 fetchRetryCount = 0;
             }
 
+            logger.debug("Error: Get the channel index.");
             int index = m.GetIndex(channelPath);
+
+            logger.debug("Channel index is: " + index);
+
             if (index < 0) {
+                logger.debug("Error: The channel index was < 0.");
                 break;
             }
 
@@ -996,6 +1005,8 @@ public class FileArchiverSink extends RBNBBase {
             File output =
             FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
                 filePrefix, filePathDepth, fileExtension);
+
+            logger.debug("Writing data to: " + output.getPath());
 
             if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
 
@@ -1028,10 +1039,13 @@ public class FileArchiverSink extends RBNBBase {
 
                 }
 
+            } else {
+                logger.error("Couldn't confirm path was created to :" + output.getParentFile().getPath());
+
             }
 
         }
-
+        logger.debug("Frame count is: " + frameCount);
         return frameCount;
     }
 
