@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -146,7 +147,7 @@ public abstract class SimpleTextSource extends RBNBSource {
       
     /**
      * Constructor: create an instance of the simple SimpleTextSource
-     * @param xmlConfig 
+     * @param xmlConfig the XML configuration file
      */
     public SimpleTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
         
@@ -624,8 +625,8 @@ public abstract class SimpleTextSource extends RBNBSource {
          */
         // extract the date from the data line
         SimpleDateFormat dateFormat;
-        String dateFormatStr = "";
-        String dateString    = "";
+        StringBuilder dateFormatStr = new StringBuilder();
+        StringBuilder dateString = new StringBuilder();
         String[] columns     = line.trim().split(this.delimiter);
         log.debug("Delimiter is: " + this.delimiter);
         log.debug(Arrays.toString(columns));
@@ -635,13 +636,13 @@ public abstract class SimpleTextSource extends RBNBSource {
         if ( this.dateFields != null && this.dateFormats != null ) {
             for (Integer dateField : this.dateFields) {
                 try {
-                    dateFormatStr += this.dateFormats.get(index); //zero-based list
-                    dateString += columns[dateField.intValue() - 1].trim(); //zero-based list
+                    dateFormatStr.append(this.dateFormats.get(index)); //zero-based list
+                    dateString.append(columns[dateField - 1].trim()); //zero-based list
                 } catch (IndexOutOfBoundsException e) {
                     String msg = "There was an error parsing the date from the sample using the date format '"
                             + dateFormatStr
                             + "' and the date field index of "
-                            + dateField.intValue();
+                            + dateField;
                     if (log.isDebugEnabled()) {
                         e.printStackTrace();
                     }
@@ -659,11 +660,11 @@ public abstract class SimpleTextSource extends RBNBSource {
                 dateFormat = this.defaultDateFormat;
             }
             // init the date formatter
-            dateFormat = new SimpleDateFormat(dateFormatStr);
+            dateFormat = new SimpleDateFormat(dateFormatStr.toString());
             dateFormat.setTimeZone(this.tz);
             
             // parse the date string
-            sampleDate = dateFormat.parse(dateString.trim());
+            sampleDate = dateFormat.parse(dateString.toString().trim());
         } else {
             log.info("No date formats or date fields were configured. Using the current date for this sample.");
         }
@@ -822,13 +823,16 @@ public abstract class SimpleTextSource extends RBNBSource {
         Date sampleDate = new Date();
         try {
             sampleDate = getSampleDate(sample);
-            
+
         } catch (ParseException e) {
             log.warn("A sample date couldn't be parsed from the sample.  Using the current date." +
                 " the error message was: " + e.getMessage());
         }
-        long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
-        
+
+        // Convert all sample data to UTC
+         long sampleTimeAsSecondsSinceEpoch =
+         (sampleDate.toInstant().atOffset(ZoneOffset.UTC).toInstant().toEpochMilli())/1000L;
+
         // send the sample to the data turbine
         rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
