@@ -27,11 +27,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.TimeZone;
@@ -92,8 +93,8 @@ public abstract class SimpleTextSource extends RBNBSource {
     /* The record delimiter between separate ASCII sample lines (like \r\n) */
     protected String recordDelimiter;
     
-    /* The default date format for the timestamp in the data sample string */
-    protected SimpleDateFormat defaultDateFormat;
+    /* The default date formatter for the timestamp in the data sample string */
+    protected DateTimeFormatter defaultDateFormatter;
     
     /* A list of date format patterns to be applied to designated date/time fields */
     protected List<String> dateFormats = null;
@@ -160,8 +161,8 @@ public abstract class SimpleTextSource extends RBNBSource {
         this.delimiter         = config.getString("textsource.delimiter");
         this.pollInterval      = config.getInt("textsource.poll_interval");
         this.retryInterval     = config.getInt("textsource.retry_interval");
-        this.defaultDateFormat = new SimpleDateFormat(
-            config.getString("textsource.default_date_format"));
+        this.defaultDateFormatter =
+            DateTimeFormatter.ofPattern(config.getString("textsource.default_date_format"));
 
         
         // parse the record delimiter from the config file
@@ -606,8 +607,10 @@ public abstract class SimpleTextSource extends RBNBSource {
     /**
      *  return the sample observation date given minimal sample metadata
      */
-    public Date getSampleDate(String line) throws ParseException {
-        
+    public Instant getSampleInstant(String line) throws ParseException {
+
+        /* The datetime to return */
+        ZonedDateTime sampleDateTime;
         /*
          * Date time formats and field locations are highly dependent on instrument
          * output settings.  The -d and -f options are used to set dateFormats and dateFields,
@@ -624,13 +627,12 @@ public abstract class SimpleTextSource extends RBNBSource {
          * #  25.4746,  5.39169,    0.401,  35.2570, 09 Dec 2012, 15:44:36
          */
         // extract the date from the data line
-        SimpleDateFormat dateFormat;
+        DateTimeFormatter dateTimeFormatter;
         StringBuilder dateFormatStr = new StringBuilder();
         StringBuilder dateString = new StringBuilder();
         String[] columns     = line.trim().split(this.delimiter);
         log.debug("Delimiter is: " + this.delimiter);
         log.debug(Arrays.toString(columns));
-        Date sampleDate = new Date();
         // build the total date format from the individual fields listed in dateFields
         int index = 0;
         if ( this.dateFields != null && this.dateFormats != null ) {
@@ -657,19 +659,24 @@ public abstract class SimpleTextSource extends RBNBSource {
             this.tz = TimeZone.getTimeZone(this.timezone);
             if ( this.dateFormats == null || this.dateFields == null ) {
                 log.warn("Using the default datetime field for sample data.");
-                dateFormat = this.defaultDateFormat;
+                dateTimeFormatter = this.defaultDateFormatter;
             }
             // init the date formatter
-            dateFormat = new SimpleDateFormat(dateFormatStr.toString());
-            dateFormat.setTimeZone(this.tz);
-            
+            dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormatStr.toString());
+            dateTimeFormatter = dateTimeFormatter.withZone(this.tz.toZoneId());
+
             // parse the date string
-            sampleDate = dateFormat.parse(dateString.toString().trim());
+            sampleDateTime = ZonedDateTime.parse(
+                dateString.toString().trim(), dateTimeFormatter);
+            log.debug("Using sample instant    : " + sampleDateTime.toInstant().toString());
+            return sampleDateTime.toInstant();
         } else {
-            log.info("No date formats or date fields were configured. Using the current date for this sample.");
+            log.warn("No date formats or date fields were configured. Using the current local " +
+                "date for this sample.");
         }
 
-        return sampleDate;
+        // Fallback to the current local instant if the ZonedDateTime parsing fails
+        return Instant.now();
     }
 
     /**
@@ -768,8 +775,7 @@ public abstract class SimpleTextSource extends RBNBSource {
         
     		// query the DT to find the timestamp of the last sample inserted
         Sink sink = new Sink();
-		Date initialDate = new Date();
-		long lastSampleTimeAsSecondsSinceEpoch = initialDate.getTime()/1000L;
+		long lastSampleTimeAsSecondsSinceEpoch = Instant.now().getEpochSecond();
 		
 		try {
 			ChannelMap requestMap = new ChannelMap();
@@ -780,25 +786,22 @@ public abstract class SimpleTextSource extends RBNBSource {
 			sink.Request(requestMap, 0., 1., "newest");
 			ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
 			// initialize the last sample date 
-			log.debug("Initialized the last sample date to: " + initialDate.toString());
+			log.debug("Initialized the last sample date to: " + Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
 			log.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
 			
 			if ( responseMap.NumberOfChannels() == 0 )    {
 			    // set the last sample time to 0 since there are no channels yet
 			    lastSampleTimeAsSecondsSinceEpoch = 0L;
-			    log.debug("Resetting the last sample date to the epoch: " +
-			        (new Date(lastSampleTimeAsSecondsSinceEpoch * 1000L)).toString());
+			    log.debug("Resetting the last sample date to the epoch: " + Instant.ofEpochSecond(0));
 			
 			} else if ( responseMap.NumberOfChannels() > 0 )    {
 			    lastSampleTimeAsSecondsSinceEpoch = 
 			        new Double(responseMap.GetTimeStart(entryIndex)).longValue();
 			    log.debug("There are existing channels. Last sample time: " +
-			    		(new Date(lastSampleTimeAsSecondsSinceEpoch * 1000L)).toString());
+			    		Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
 			                             
 			}
-		} catch (SAPIException sapie) {
-			throw sapie;
-			
+
 		} finally {
 	        sink.CloseRBNBConnection();
 			
@@ -816,24 +819,24 @@ public abstract class SimpleTextSource extends RBNBSource {
      */
      public int sendSample(String sample) throws IOException, SAPIException {
         int numberOfChannelsFlushed = 0;
-        
+        long sampleTimeAsSecondsSinceEpoch;
+
         // add a channel of data that will be pushed to the server.  
         // Each sample will be sent to the Data Turbine as an rbnb frame.
         ChannelMap rbnbChannelMap = new ChannelMap();
-        Date sampleDate = new Date();
         try {
-            sampleDate = getSampleDate(sample);
+            Instant sampleInstant = getSampleInstant(sample);
+            sampleTimeAsSecondsSinceEpoch = sampleInstant.getEpochSecond();
 
         } catch (ParseException e) {
-            log.warn("A sample date couldn't be parsed from the sample.  Using the current date." +
+            log.warn("A sample date couldn't be parsed from the sample.  Using the current local date." +
                 " the error message was: " + e.getMessage());
+            Instant sampleInstant = Instant.now();
+            sampleTimeAsSecondsSinceEpoch = sampleInstant.getEpochSecond();
         }
 
-        // Convert all sample data to UTC
-         long sampleTimeAsSecondsSinceEpoch =
-         (sampleDate.toInstant().atOffset(ZoneOffset.UTC).toInstant().toEpochMilli())/1000L;
 
-        // send the sample to the data turbine
+         // send the sample to the data turbine
         rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
