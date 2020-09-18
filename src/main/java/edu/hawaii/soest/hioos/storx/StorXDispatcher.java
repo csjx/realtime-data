@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2016 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: To convert a Seacat ASCII data source into RBNB Data Turbine
@@ -23,31 +23,31 @@ package edu.hawaii.soest.hioos.storx;
 
 
 import edu.hawaii.soest.hioos.isus.ISUSSource;
-import edu.hawaii.soest.hioos.storx.StorXParser;
-import edu.hawaii.soest.hioos.storx.StorXSource;
 import edu.hawaii.soest.kilonalu.ctd.CTDSource;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.mail.util.MimeMessageParser;
+import org.dhmp.util.BasicHierarchicalMap;
+import org.nees.rbnb.RBNBSource;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-
-import java.lang.InterruptedException;
-
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
-import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,25 +62,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.CommandLine;
-
-import org.apache.commons.codec.binary.Hex;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.mail.util.MimeMessageParser;
-import org.dhmp.util.BasicHierarchicalMap;
-
-import org.nees.rbnb.RBNBSource;
-
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.SortTerm;
-
 /**
  * A class used to harvest a decimal ASCII data from a Seacat 16plus CTD) from
  * an emails created by a Satlantic STOR-X logger. The data are converted into
@@ -88,14 +69,13 @@ import com.sun.mail.imap.SortTerm;
  * extends org.nees.rbnb.RBNBSource, which in turn extends
  * org.nees.rbnb.RBNBBase, and therefore follows the API conventions found in
  * the org.nees.rbnb code.
- *
+ * <p>
  * The parsing of the data stream relies on the premise that each email contains
  * the text/plain body and an application/octet-stream attachement with the
  * STOR-X binary data format with the embedded ASCII data strings. The strings
  * are parsed out of the binary file using 'SAT' as line beginnings and '\r\n'
  * as endings. Since we don't have a binary format specification for the
  * attachment, other structures in the file are ignored for the time being.
- *
  */
 public class StorXDispatcher extends RBNBSource {
 
@@ -112,7 +92,7 @@ public class StorXDispatcher extends RBNBSource {
      * exist.
      *
      * @see setArchiveMode()
-     * 
+     *
      * @see getArchiveMode()
      */
     private String archiveMode = DEFAULT_ARCHIVE_MODE;
@@ -179,7 +159,9 @@ public class StorXDispatcher extends RBNBSource {
     /* The instance of the StorX Parser class used to parse StorX output */
     private StorXParser storXParser;
 
-    /** the start time for data */
+    /**
+     * the start time for data
+     */
     private double startTime = 0.0;
 
     /* the end time for data export */
@@ -194,7 +176,7 @@ public class StorXDispatcher extends RBNBSource {
     /*
      * An internal Thread setting used to specify how long, in milliseconds, the
      * execution of the data streaming Thread should wait before re-executing
-     * 
+     *
      * @see execute()
      */
     private final int RETRY_INTERVAL = 5000;
@@ -213,14 +195,10 @@ public class StorXDispatcher extends RBNBSource {
      * server name and port. This constructor will use default values for the
      * archive mode, archive frame size, and cache frame size.
      *
-     * @param sourceHostName
-     *            the name or IP address of the source instrument
-     * @param sourceHostPort
-     *            the TCP port of the source host instrument
-     * @param serverName
-     *            the name or IP address of the RBNB server connection
-     * @param serverPort
-     *            the TCP port of the RBNB server
+     * @param sourceHostName the name or IP address of the source instrument
+     * @param sourceHostPort the TCP port of the source host instrument
+     * @param serverName     the name or IP address of the RBNB server connection
+     * @param serverPort     the TCP port of the RBNB server
      */
     public StorXDispatcher(String sourceHostName, String sourceHostPort, String serverName, String serverPort) {
 
@@ -237,25 +215,17 @@ public class StorXDispatcher extends RBNBSource {
      * and so the frame sizes below are relative to the number of bytes of data
      * loaded in the ChannelMap that is flushed to the RBNB server.
      *
-     * @param sourceHostName
-     *            the name or IP address of the source instrument
-     * @param sourceHostPort
-     *            the TCP port of the source host instrument
-     * @param serverName
-     *            the name or IP address of the RBNB server
-     * @param serverPort
-     *            the TCP port of the RBNB server
-     * @param archiveMode
-     *            the RBNB archive mode: append, load, create, none
-     * @param archiveFrameSize
-     *            the size, in frames, for the RBNB server to archive
-     * @param cacheFrameSize
-     *            the size, in frames, for the RBNB server to cache
-     * @param rbnbClientName
-     *            the unique name of the source RBNB client
+     * @param sourceHostName   the name or IP address of the source instrument
+     * @param sourceHostPort   the TCP port of the source host instrument
+     * @param serverName       the name or IP address of the RBNB server
+     * @param serverPort       the TCP port of the RBNB server
+     * @param archiveMode      the RBNB archive mode: append, load, create, none
+     * @param archiveFrameSize the size, in frames, for the RBNB server to archive
+     * @param cacheFrameSize   the size, in frames, for the RBNB server to cache
+     * @param rbnbClientName   the unique name of the source RBNB client
      */
     public StorXDispatcher(String sourceHostName, String sourceHostPort, String serverName, String serverPort,
-            String archiveMode, int archiveFrameSize, int cacheFrameSize, String rbnbClientName) {
+                           String archiveMode, int archiveFrameSize, int cacheFrameSize, String rbnbClientName) {
 
         setHostName(sourceHostName);
         setServerName(serverName);
@@ -271,6 +241,8 @@ public class StorXDispatcher extends RBNBSource {
      * RBNB server after all configuration of settings, connections to hosts,
      * and thread initiatizing occurs. This method contains the detailed code
      * for reading the data and interpreting the data files.
+     *
+     * @return failed True if the execution failed
      */
     protected boolean execute() {
         logger.debug("StorXDispatcher.execute() called.");
@@ -291,7 +263,7 @@ public class StorXDispatcher extends RBNBSource {
         // fetch data from each sensor in the account list
         List accountList = this.xmlConfiguration.getList("account.accountName");
 
-        for (Iterator aIterator = accountList.iterator(); aIterator.hasNext();) {
+        for (Iterator aIterator = accountList.iterator(); aIterator.hasNext(); ) {
 
             int aIndex = accountList.indexOf(aIterator.next());
 
@@ -306,14 +278,14 @@ public class StorXDispatcher extends RBNBSource {
             processedMailbox = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").processedMailbox");
             prefetch = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").prefetch");
 
-            logger.debug("\n\nACCOUNT DETAILS: \n" + 
-                "accountName     : " + accountName + "\n" + 
-                "server          : " + server + "\n" + 
-                "username        : " + username + "\n" + 
-                "password        : " + password + "\n" + 
-                "protocol        : " + protocol + "\n" + 
-                "dataMailbox     : " + dataMailbox + "\n" + 
-                "processedMailbox: " + processedMailbox + "\n" + 
+            logger.debug("\n\nACCOUNT DETAILS: \n" +
+                "accountName     : " + accountName + "\n" +
+                "server          : " + server + "\n" +
+                "username        : " + username + "\n" +
+                "password        : " + password + "\n" +
+                "protocol        : " + protocol + "\n" +
+                "dataMailbox     : " + dataMailbox + "\n" +
+                "processedMailbox: " + processedMailbox + "\n" +
                 "prefetch        : " + prefetch + "\n");
 
             // get a connection to the mail server
@@ -332,14 +304,14 @@ public class StorXDispatcher extends RBNBSource {
                 try {
                     // pause for 10 seconds
                     logger.debug(
-                            "There was a problem connecting to the IMAP server. " + "Waiting 10 seconds to retry.");
+                        "There was a problem connecting to the IMAP server. " + "Waiting 10 seconds to retry.");
                     Thread.sleep(10000L);
                     this.mailStore = mailSession.getStore(protocol);
 
                 } catch (NoSuchProviderException nspe2) {
 
                     logger.debug("There was an error connecting to the mail server. The " + "message was: "
-                            + nspe2.getMessage());
+                        + nspe2.getMessage());
                     nspe2.printStackTrace();
                     failed = true;
                     return !failed;
@@ -366,17 +338,17 @@ public class StorXDispatcher extends RBNBSource {
                 processed.open(Folder.READ_WRITE);
 
                 Message[] msgs;
-                while ( ! inbox.isOpen() ) {
+                while (!inbox.isOpen()) {
                     inbox.open(Folder.READ_WRITE);
 
                 }
                 msgs = inbox.getMessages();
-                
+
                 List<Message> messages = new ArrayList<Message>();
                 Collections.addAll(messages, msgs);
-                
+
                 // sort the messages found in the inbox by date sent
-                Collections.sort(messages, new Comparator<Message>(){
+                Collections.sort(messages, new Comparator<Message>() {
 
                     public int compare(Message message1, Message message2) {
                         int value = 0;
@@ -386,12 +358,12 @@ public class StorXDispatcher extends RBNBSource {
                             e.printStackTrace();
                         }
                         return value;
-                        
+
                     }
 
-                    
+
                 });
-                
+
                 logger.debug("Number of messages: " + messages.size());
                 for (Message message : messages) {
 
@@ -403,16 +375,16 @@ public class StorXDispatcher extends RBNBSource {
                     String messageSubject = copiedMessage.getSubject();
                     Date sentDate = copiedMessage.getSentDate();
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
-                    
+
                     // The subfolder of the processed mail folder (e.g. 2016-12);
                     String destinationFolder = formatter.format(sentDate);
-                    logger.debug("Message date: " + sentDate + 
+                    logger.debug("Message date: " + sentDate +
                         "\tNumber: " + copiedMessage.getMessageNumber());
                     String[] subjectParts = messageSubject.split("\\s");
-                    String loggerSerialNumber="SerialNumber";
-                    if ( subjectParts.length > 1 ) {
+                    String loggerSerialNumber = "SerialNumber";
+                    if (subjectParts.length > 1) {
                         loggerSerialNumber = subjectParts[2];
-                        
+
                     }
 
                     // Do we have a data attachment? If not, there's no data to
@@ -420,11 +392,11 @@ public class StorXDispatcher extends RBNBSource {
                     if (copiedMessage.isMimeType("multipart/mixed")) {
 
                         logger.debug("Message size: " + copiedMessage.getSize());
-                        
+
                         MimeMessageParser parser = new MimeMessageParser(copiedMessage);
                         try {
                             parser.parse();
-                            
+
                         } catch (Exception e) {
                             logger.error("Failed to parse the MIME message: " + e.getMessage());
                             continue;
@@ -432,19 +404,19 @@ public class StorXDispatcher extends RBNBSource {
                         ByteBuffer messageAttachment = ByteBuffer.allocate(256); // init only
 
                         logger.debug("Has attachments: " + parser.hasAttachments());
-                        for ( DataSource dataSource : parser.getAttachmentList() ) {
-                            if ( StringUtils.isNotBlank(dataSource.getName()) ) {
-                                logger.debug("Attachment: " + 
-                                        dataSource.getName() + ", " +
-                                        dataSource.getContentType());
-                                
+                        for (DataSource dataSource : parser.getAttachmentList()) {
+                            if (StringUtils.isNotBlank(dataSource.getName())) {
+                                logger.debug("Attachment: " +
+                                    dataSource.getName() + ", " +
+                                    dataSource.getContentType());
+
                                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                                 IOUtils.copy(dataSource.getInputStream(), outputStream);
                                 messageAttachment = ByteBuffer.wrap(outputStream.toByteArray());
-                                
+
                             }
                         }
-                        
+
                         // We now have the attachment and serial number. Parse the attachment 
                         // for the data components, look up the storXSource based on the serial 
                         // number, and push the data to the DataTurbine
@@ -540,10 +512,10 @@ public class StorXDispatcher extends RBNBSource {
                         if (this.sourceMap.get(loggerSerialNumber) != null) {
 
                             // Note: Use message (not copiedMessage) when setting flags 
-                            
+
                             if (!messageProcessed) {
                                 logger.info("Failed to process message: " + "Message Number: "
-                                        + message.getMessageNumber() + "  " + "Logger Serial:" + loggerSerialNumber);
+                                    + message.getMessageNumber() + "  " + "Logger Serial:" + loggerSerialNumber);
                                 // leave it in the inbox, flagged as seen (read)
                                 message.setFlag(Flags.Flag.SEEN, true);
                                 logger.debug("Saw message " + message.getMessageNumber());
@@ -552,23 +524,23 @@ public class StorXDispatcher extends RBNBSource {
 
                                 // message processed successfully. Create a by-month sub folder if it doesn't exist
                                 // Copy the message and flag it deleted
-                                Folder destination = processed.getFolder(destinationFolder);   
-                                boolean created = destination.create(Folder.HOLDS_MESSAGES);   
-                                inbox.copyMessages(new Message[] {message}, destination);
+                                Folder destination = processed.getFolder(destinationFolder);
+                                boolean created = destination.create(Folder.HOLDS_MESSAGES);
+                                inbox.copyMessages(new Message[]{message}, destination);
                                 message.setFlag(Flags.Flag.DELETED, true);
                                 logger.debug("Deleted message " + message.getMessageNumber());
                             } // end if()
 
                         } else {
                             logger.debug("There is no configuration information for " + "the logger serial number "
-                                    + loggerSerialNumber + ". Please add the configuration to the "
-                                    + "email.account.properties.xml configuration file.");
+                                + loggerSerialNumber + ". Please add the configuration to the "
+                                + "email.account.properties.xml configuration file.");
 
                         } // end if()
 
                     } else {
                         logger.debug("This is not a data email since there is no "
-                                + "attachment. Skipping it. Subject: " + messageSubject);
+                            + "attachment. Skipping it. Subject: " + messageSubject);
 
                     } // end if()
 
@@ -603,7 +575,7 @@ public class StorXDispatcher extends RBNBSource {
 
                 }
                 logger.info(
-                        "There was an I/O error reading the message part. The " + "message was: " + me.getMessage());
+                    "There was an I/O error reading the message part. The " + "message was: " + me.getMessage());
                 me.printStackTrace();
                 failed = true;
                 return !failed;
@@ -618,7 +590,7 @@ public class StorXDispatcher extends RBNBSource {
 
                 }
                 logger.info("There was an error reading messages from the folder. The " + "message was: "
-                        + ese.getMessage());
+                    + ese.getMessage());
                 failed = true;
                 return !failed;
 
@@ -678,7 +650,7 @@ public class StorXDispatcher extends RBNBSource {
             // iterate through each account
             List accountList = xmlConfiguration.getList("account.accountName");
 
-            for (Iterator aIterator = accountList.iterator(); aIterator.hasNext();) {
+            for (Iterator aIterator = accountList.iterator(); aIterator.hasNext(); ) {
 
                 int aIndex = accountList.indexOf(aIterator.next());
 
@@ -686,42 +658,42 @@ public class StorXDispatcher extends RBNBSource {
                 // email.account.properties.xml file
                 List loggerList = xmlConfiguration.getList("account.logger.loggerName");
 
-                for (Iterator gIterator = loggerList.iterator(); gIterator.hasNext();) {
+                for (Iterator gIterator = loggerList.iterator(); gIterator.hasNext(); ) {
 
                     int gIndex = loggerList.indexOf(gIterator.next());
 
                     loggerName = (String) this.xmlConfiguration
-                            .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerName");
+                        .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerName");
                     loggerSerialNumber = (String) this.xmlConfiguration
-                            .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerSerialNumber");
+                        .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerSerialNumber");
 
                     // evaluate each logger listed in the
                     // email.account.properties.xml file
                     List sensorList = xmlConfiguration.getList("account.logger.sensor.name");
 
-                    for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext();) {
+                    for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
 
                         // get each property value of the sensor
                         int sIndex = sensorList.indexOf(sIterator.next());
 
                         sourceName = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").name");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").name");
                         sourceType = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").type");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").type");
                         serialNumber = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").serialNumber");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").serialNumber");
                         description = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").description");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").description");
                         cacheSize = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").cacheSize");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").cacheSize");
                         archiveSize = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveSize");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveSize");
                         archiveChannel = (String) this.xmlConfiguration.getProperty(
-                                "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveChannel");
+                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveChannel");
 
                         // test for all of the critical source information
                         if (sourceName != null && sourceType != null && cacheSize != null && archiveSize != null
-                                && archiveChannel != null) {
+                            && archiveChannel != null) {
 
                             // test which type of source to create the RBNB
                             // Source
@@ -730,9 +702,9 @@ public class StorXDispatcher extends RBNBSource {
                                 // given the properties, create a StorXSource
                                 // object
                                 StorXSource storXSource = new StorXSource(this.serverName,
-                                        (new Integer(this.serverPort)).toString(), this.archiveMode,
-                                        (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
-                                        sourceName);
+                                    (new Integer(this.serverPort)).toString(), this.archiveMode,
+                                    (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
+                                    sourceName);
                                 storXSource.startConnection();
                                 sourceMap.put(serialNumber, storXSource);
 
@@ -741,9 +713,9 @@ public class StorXDispatcher extends RBNBSource {
                                 // given the properties, create a CTDSource
                                 // object
                                 CTDSource ctdSource = new CTDSource(this.serverName,
-                                        (new Integer(this.serverPort)).toString(), this.archiveMode,
-                                        (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
-                                        sourceName);
+                                    (new Integer(this.serverPort)).toString(), this.archiveMode,
+                                    (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
+                                    sourceName);
                                 ctdSource.startConnection();
                                 sourceMap.put(serialNumber, ctdSource);
 
@@ -752,9 +724,9 @@ public class StorXDispatcher extends RBNBSource {
                                 // given the properties, create an ISUSSource
                                 // object
                                 ISUSSource isusSource = new ISUSSource(this.serverName,
-                                        (new Integer(this.serverPort)).toString(), this.archiveMode,
-                                        (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
-                                        sourceName);
+                                    (new Integer(this.serverPort)).toString(), this.archiveMode,
+                                    (new Integer(archiveSize).intValue()), (new Integer(cacheSize).intValue()),
+                                    sourceName);
                                 isusSource.startConnection();
                                 sourceMap.put(serialNumber, isusSource);
 
@@ -783,6 +755,8 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that sets the size, in bytes, of the ByteBuffer used in
      * streaming data from a source instrument via a TCP connection
+     *
+     * @return bufferSize - the size of the buffer
      */
     public int getBufferSize() {
         return this.bufferSize;
@@ -791,6 +765,8 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that returns the domain name or IP address of the email source
      * (i.e. the IMAP mail server)
+     *
+     * @return sourceHostName - the name of the source host
      */
     public String getHostName() {
         return this.sourceHostName;
@@ -799,6 +775,8 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that returns the name of the RBNB channel that contains the
      * streaming data from this instrument
+     *
+     * @return rbnbChannelName - the name of the RBNB channel
      */
     public String getRBNBChannelName() {
         return this.rbnbChannelName;
@@ -808,6 +786,8 @@ public class StorXDispatcher extends RBNBSource {
      * A method that returns the versioning info for this file. In this case, it
      * returns a String that includes the Subversion LastChangedDate,
      * LastChangedBy, LastChangedRevision, and HeadURL fields.
+     *
+     * @return cvsVersion - the CVS version information
      */
     public String getCVSVersionString() {
         return ("$LastChangedDate$" + "$LastChangedBy$" + "$LastChangedRevision$" + "$HeadURL$");
@@ -816,6 +796,8 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * The main method for running the code @ param args[] the command line list
      * of string arguments, none are needed
+     *
+     * @param args - the arguments array
      */
     public static void main(String args[]) {
 
@@ -827,44 +809,44 @@ public class StorXDispatcher extends RBNBSource {
 
             // Handle ctrl-c's and other abrupt death signals to the process
             Runtime.getRuntime().addShutdownHook(new Thread() {
-                // stop the streaming process
-                public void run() {
-                    Collection sourceCollection = storXDispatcher.sourceMap.values();
-                    for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext();) {
+                                                     // stop the streaming process
+                                                     public void run() {
+                                                         Collection sourceCollection = storXDispatcher.sourceMap.values();
+                                                         for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext(); ) {
 
-                        Object sourceObject = iterator.next();
+                                                             Object sourceObject = iterator.next();
 
-                        try {
+                                                             try {
 
-                            // disconnect StorX sources
-                            StorXSource source = (StorXSource) sourceObject;
-                            logger.info("Disconnecting source: " + source.getRBNBClientName());
-                            source.stopConnection();
+                                                                 // disconnect StorX sources
+                                                                 StorXSource source = (StorXSource) sourceObject;
+                                                                 logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                 source.stopConnection();
 
-                        } catch (java.lang.ClassCastException cce) {
+                                                             } catch (java.lang.ClassCastException cce) {
 
-                            // disconnect ISUS sources
-                            try {
-                                ISUSSource source = (ISUSSource) sourceObject;
-                                logger.info("Disconnecting source: " + source.getRBNBClientName());
-                                source.stopConnection();
+                                                                 // disconnect ISUS sources
+                                                                 try {
+                                                                     ISUSSource source = (ISUSSource) sourceObject;
+                                                                     logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                     source.stopConnection();
 
-                            } catch (java.lang.ClassCastException cce2) {
+                                                                 } catch (java.lang.ClassCastException cce2) {
 
-                                // disconnect CTD sources
-                                CTDSource source = (CTDSource) sourceObject;
-                                logger.info("Disconnecting source: " + source.getRBNBClientName());
-                                source.stopConnection();
+                                                                     // disconnect CTD sources
+                                                                     CTDSource source = (CTDSource) sourceObject;
+                                                                     logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                     source.stopConnection();
 
-                            } // end try/catch
+                                                                 } // end try/catch
 
-                        } // end try/catch
+                                                             } // end try/catch
 
-                    } // end for()
+                                                         } // end for()
 
-                } // end run()
+                                                     } // end run()
 
-            } // end new Thread()
+                                                 } // end new Thread()
 
             ); // end addShutDownHook()
 
@@ -906,8 +888,7 @@ public class StorXDispatcher extends RBNBSource {
      * A method that sets the size, in bytes, of the ByteBuffer used in
      * streaming data from a source instrument via a TCP connection
      *
-     * @param bufferSize
-     *            the size, in bytes, of the ByteBuffer
+     * @param bufferSize the size, in bytes, of the ByteBuffer
      */
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
@@ -917,8 +898,7 @@ public class StorXDispatcher extends RBNBSource {
      * A method that sets the RBNB channel name of the source instrument's data
      * stream
      *
-     * @param channelName
-     *            the name of the RBNB channel being streamed
+     * @param channelName the name of the RBNB channel being streamed
      */
     public void setChannelName(String channelName) {
         this.rbnbChannelName = channelName;
@@ -928,8 +908,7 @@ public class StorXDispatcher extends RBNBSource {
      * A method that sets the domain name or IP address of the source instrument
      * (i.e. the serial-to-IP converter to which it is attached)
      *
-     * @param hostName
-     *            the domain name or IP address of the source instrument
+     * @param hostName the domain name or IP address of the source instrument
      */
     public void setHostName(String hostName) {
         this.sourceHostName = hostName;
@@ -938,8 +917,7 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that sets the domain name or IP address of the RBNB server
      *
-     * @param serverName
-     *            the domain name or IP address of the RBNB server
+     * @param serverName the domain name or IP address of the RBNB server
      */
     public void setServerName(String serverName) {
         this.serverName = serverName;
@@ -948,8 +926,7 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that sets the TCP port of the RBNB server
      *
-     * @param serverPort
-     *            the TCP port of the RBNB server
+     * @param serverPort the TCP port of the RBNB server
      */
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
@@ -960,7 +937,7 @@ public class StorXDispatcher extends RBNBSource {
      * A method used to get the sensor configuration properties for each of the
      * listed CTD sensors
      *
-     * @return true if the parsing doesn't succeed
+     * @return failed  true if the parsing doesn't succeed
      */
     private boolean parseConfiguration() {
 
@@ -974,11 +951,11 @@ public class StorXDispatcher extends RBNBSource {
 
         } catch (NullPointerException npe) {
             logger.info("There was an error reading the XML configuration file. " + "The error message was: "
-                    + npe.getMessage());
+                + npe.getMessage());
 
         } catch (ConfigurationException ce) {
             logger.info("There was an error creating the XML configuration. " + "The error message was: "
-                    + ce.getMessage());
+                + ce.getMessage());
 
         }
         return !failed;
@@ -988,9 +965,9 @@ public class StorXDispatcher extends RBNBSource {
     /**
      * A method that sets the command line arguments for this class. This method
      * calls the <code>RBNBSource.setBaseArgs()</code> method.
-     * 
-     * @param command
-     *            The CommandLine object being passed in from the command
+     *
+     * @param command The CommandLine object being passed in from the command
+     * @return argumentsSet  True if the arguments are set
      */
     protected boolean setArgs(CommandLine command) {
 
@@ -1033,7 +1010,7 @@ public class StorXDispatcher extends RBNBSource {
 
                 } catch (NumberFormatException nf) {
                     System.out.println(
-                            "Please enter a numeric value for -p (server port). " + serverPort + " is not valid.");
+                        "Please enter a numeric value for -p (server port). " + serverPort + " is not valid.");
                     return false;
                 }
             }
@@ -1047,6 +1024,8 @@ public class StorXDispatcher extends RBNBSource {
      * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
      * properties such as the sourceHostName, sourceHostPort, serverName, and
      * serverPort.
+     *
+     * @return options  The command line options being set
      */
     protected Options setOptions() {
         Options options = setBaseOptions(new Options());
