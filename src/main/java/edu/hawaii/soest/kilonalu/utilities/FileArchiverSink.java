@@ -702,10 +702,10 @@ public class FileArchiverSink extends RBNBBase {
             try {
                 timeRanges = MarkerUtilities.getTimeRanges(sink, eventMarkerFilter, startTime, endTime);
             } catch (SAPIException e) {
-                logger.debug("Error retreiving event markers from server.");
+                logger.error("Error retrieving event markers from server.");
                 return false;
             } catch (IllegalArgumentException e) {
-                logger.debug("Error: The event marker filter format is invalid.");
+                logger.error("Error: The event marker filter format is invalid.");
                 return false;
             }
         }
@@ -745,7 +745,7 @@ public class FileArchiverSink extends RBNBBase {
         }
 
         if (channelMetadata == null) {
-            logger.debug("Error: Channel " + channelPath + " not found.");
+            logger.error("Error: Channel " + channelPath + " not found.");
             return false;
         }
 
@@ -775,7 +775,7 @@ public class FileArchiverSink extends RBNBBase {
         }
 
         if (timeRanges.size() == 0) {
-            logger.debug("Error: There are no data for the specified time ranges.");
+            logger.error("Error: There are no data for the specified time ranges.");
             logger.debug("There are data from " +
                 RBNBUtilities.secondsToISO8601(channelStartTime) +
                 " to " +
@@ -964,9 +964,8 @@ public class FileArchiverSink extends RBNBBase {
         double duration, double baseTime) throws SAPIException, IOException {
         logger.debug("FileArchiverSink.exportData() called.");
 
-        //sink.Subscribe(map, startTime, 0.0, "absolute");
-        sink.Subscribe(map, startTime, duration, "absolute");
-
+        // sink.Subscribe(map, startTime, duration, "absolute");
+        sink.Request(map, startTime, duration, "absolute");
         int frameCount = 0;
         int fetchRetryCount = 0;
 
@@ -974,14 +973,15 @@ public class FileArchiverSink extends RBNBBase {
 
         while (doExport) {
             logger.debug("Get the channel map.");
-            ChannelMap m = sink.Fetch(1800000); // fetch with 3 min sec timeout
+            ChannelMap m = sink.Fetch(180000); // fetch with 3 min timeout
 
             if (m.GetIfFetchTimedOut()) {
                 if (++fetchRetryCount < 10) {
-                    logger.debug("Warning: Request for data timed out, retrying.");
+                    logger.warn("Warning: Request for data timed out, retrying.");
                     continue;
                 } else {
-                    logger.debug("Error: Unable to get data from server.");
+                    logger.error("Error: Unable to get data from server.");
+                    fetchRetryCount = 0;
                     break;
                 }
             } else {
@@ -989,13 +989,12 @@ public class FileArchiverSink extends RBNBBase {
                 fetchRetryCount = 0;
             }
 
-            logger.debug("Error: Get the channel index.");
             int index = m.GetIndex(channelPath);
 
             logger.debug("Channel index is: " + index);
 
             if (index < 0) {
-                logger.debug("Error: The channel index was < 0.");
+                logger.error("Error: The channel index was < 0.");
                 break;
             }
 
@@ -1063,7 +1062,7 @@ public class FileArchiverSink extends RBNBBase {
         try {
             sink.OpenRBNBConnection(getServer(), sinkName);
         } catch (SAPIException e) {
-            logger.debug("Error: Unable to connect to server.");
+            logger.error("Error: Unable to connect to server.");
             disconnect();
             return false;
         }
