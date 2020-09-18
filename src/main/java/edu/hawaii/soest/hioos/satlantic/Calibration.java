@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2010 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A class that represents a set of Satlantic instrument 
@@ -28,8 +28,6 @@
  */ 
 package edu.hawaii.soest.hioos.satlantic;
 
-import edu.hawaii.soest.hioos.satlantic.CalibrationType;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -44,11 +42,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
-
-import org.dhmp.util.HierarchicalMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dhmp.util.BasicHierarchicalMap;
 
 /*
@@ -68,7 +63,7 @@ public class Calibration {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(Calibration.class);
+  private static Log logger = LogFactory.getLog(Calibration.class);
   
   /* The URL of the calibration file */
   private String calibrationURL;
@@ -107,7 +102,9 @@ public class Calibration {
   /**
    * A method that applies a Satlantic calibration with no coefficients.
    *
+   * @param observedValue - the observed value being calibrated
    * @param fitType - the type of calibration to be applied as a String
+   * @return returnValue - The value of the calibration when applied
    */
   public String apply(String observedValue, String fitType) {
     
@@ -188,6 +185,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param variable - the name of the measurement variable as a String
+   * 
+   * @return returnValue - the value of the applied calibration
    */
   public double apply(double observedValue, boolean isImmersed, String variable)
                       throws IllegalArgumentException {
@@ -268,6 +267,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied optic calibration 
    */
   private double applyOptic1(double observedValue, boolean isImmersed,
                              double[] coefficients)
@@ -286,6 +287,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied optic calibration
    */
   private double applyOptic2(double observedValue, boolean isImmersed,
                              double[] coefficients)
@@ -323,6 +326,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an array of coefficient values
+   *    
+   * @return returnValue - the value of the applied optic calibration
    */
   private double applyOptic3(double observedValue, boolean isImmersed,
                              double[] coefficients)
@@ -340,6 +345,8 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied therm1 calibration
    */
   private double applyTherm1(double observedValue, double[] coefficients)
                              throws IllegalArgumentException {
@@ -357,6 +364,8 @@ public class Calibration {
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param isImmersed - A boolean stating if the sensor is immersed during sampling
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied Pow10 calibration
    */
   private double applyPow10(double observedValue, boolean isImmersed,
                             double[] coefficients)
@@ -374,6 +383,8 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied PolyU calibration
    */
   private double applyPolyU(double observedValue, double[] coefficients)
                             throws IllegalArgumentException {
@@ -405,6 +416,8 @@ public class Calibration {
    *
    * @param observedValue - the value from the sensor to be calibrated as a Double
    * @param coefficients - an array of coefficient values
+   * 
+   * @return returnValue - the value of the applied PolyF calibration
    */
   private double applyPolyF(double observedValue, double[] coefficients)
                             throws IllegalArgumentException {
@@ -436,9 +449,10 @@ public class Calibration {
   }
   
   /*
-   *  Returns the array of calibration coefficients for a given variable
+   * Returns the array of calibration coefficients for a given variable
    *
-   *  @param variable - the variable name
+   * @param variable - the variable name
+   * @return coefficients - the calibration coefficients
    */
   private double[] getCoefficients(String variable) {
     
@@ -462,6 +476,7 @@ public class Calibration {
    *  Returns the type of calibration fit for a given variable
    *
    *  @param variable - the variable name
+   *  @return fitType - the type of the calibration fit
    */
   private String getFitType(String variable) {
     
@@ -491,6 +506,10 @@ public class Calibration {
   
   /**
    * A method that parses a Satlantic calibration or telemetry definition file.
+   * 
+   * @param calibrationURL the URL of the calibration or telementry definition file
+   * @return parsed - True if the file is parsed
+   * @throws ParseException - parse exception
    */
   public boolean parse(String calibrationURL) throws ParseException {
     
