@@ -33,9 +33,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration.ConfigurationException;
@@ -100,55 +99,42 @@ public class FileTextSource extends SimpleTextSource {
                         Thread.sleep(this.pollInterval);
                         
                     } else {
-                        
-                        // test the line for the expected data pattern
-                        boolean valid = this.validateSample(line);
-                        
+
                         // if the line matches the data pattern, insert it into the DataTurbine
-                        if ( valid ) {
+                        if ( this.validateSample(line) ) {
                             log.debug("This line matches the data line pattern: " + line);
                             
-                            Date sampleDate = getSampleDate(line);
-                                                    
-                            if ( this.dateFormats == null || this.dateFields == null ) {
-                                log.warn("Using the default datetime format and field for sample data. " +
-                                            "Use the -f and -d options to explicitly set date time fields.");
-                            }
-                            log.debug("Sample date is: " + sampleDate.toString());
+                            Instant sampleInstant = getSampleInstant(line);
+
+                            log.debug("Sample instant is: " + sampleInstant.toString());
                             
-                            // convert the sample date to seconds since the epoch
-                            long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
+                            // convert the sample instant to seconds since the epoch
+                            long sampleTimeAsSecondsSinceEpoch = sampleInstant.getEpochSecond();
                             
                             // only insert samples newer than the last sample seen at startup 
                             // and that are not in the future (> 1 hour since the CTD clock
                             // may have drifted)
-                            Calendar currentCal = Calendar.getInstance();
-                            this.tz = TimeZone.getTimeZone(this.timezone);
-                            currentCal.setTimeZone(this.tz);
-                            currentCal.add(Calendar.HOUR, 1);
-                            Date currentDate = currentCal.getTime();
-                            
+                            ZonedDateTime now = ZonedDateTime.now(this.tz.toZoneId());
+
                             if ( lastSampleTimeAsSecondsSinceEpoch < sampleTimeAsSecondsSinceEpoch &&
-                                 sampleTimeAsSecondsSinceEpoch < currentDate.getTime()/1000L ) {
+                                 sampleTimeAsSecondsSinceEpoch < now.plusHours(1L).toEpochSecond() ) {
                                 
-                                int numberOfChannelsFlushed = 0;
                                 try {
-                                    //insert into the DataTurbine
-                                    numberOfChannelsFlushed = this.sendSample(line);
+                                    // insert into the DataTurbine
+                                    this.sendSample(line);
                                 
                                 } catch ( SAPIException sapie ) {
                                     // reconnect if an exception is thrown on Flush()
 	                                log.error("Error while flushing the source: " + sapie.getMessage());
-	                                failed = true;
-                
+	                                sapie.printStackTrace();
                                 }
                                 
                                 // reset the last sample time to the sample just inserted
                                 lastSampleTimeAsSecondsSinceEpoch = sampleTimeAsSecondsSinceEpoch;
-                                log.debug("Last sample time is now: " + 
-                                		(new Date(lastSampleTimeAsSecondsSinceEpoch * 1000L).toString())
-                                                        );
-                                log.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + line.trim());
+                                log.debug("Last sample time is now: " +
+                                    Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
+                                log.info(getRBNBClientName() + " Sample sent to the DataTurbine: " +
+                                    line.trim());
                                 
                             } else {
                                 log.info("The current line is earlier than the last entry " +
@@ -187,7 +173,9 @@ public class FileTextSource extends SimpleTextSource {
 	            
 	        } finally {
 	            try {
-	                this.fileReader.close();
+	                if ( this.fileReader != null ) {
+                        this.fileReader.close();
+                    }
 	                
 	            } catch (IOException ioe2) {
 	                log.error("There was a problem closing the data file. The message was: " + ioe2.getMessage());
