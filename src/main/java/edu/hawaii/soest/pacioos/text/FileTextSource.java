@@ -1,16 +1,9 @@
 /*
- *  Copyright: 2013 Regents of the University of Hawaii and the
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A class that provides properties and methods
  *             for a simple instrument driver streaming data from a
  *             text-based file.
- *
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,8 +118,8 @@ public class FileTextSource extends SimpleTextSource {
                                 
                                 } catch ( SAPIException sapie ) {
                                     // reconnect if an exception is thrown on Flush()
-	                                log.error("Error while flushing the source: " + sapie.getMessage());
-	                                sapie.printStackTrace();
+                                    log.error("Error while flushing the source: " + sapie.getMessage());
+                                    sapie.printStackTrace();
                                 }
                                 
                                 // reset the last sample time to the sample just inserted
@@ -138,8 +131,8 @@ public class FileTextSource extends SimpleTextSource {
                                 
                             } else {
                                 log.info("The current line is earlier than the last entry " +
-	                                "in the Data Turbine or is a date in the future. " +
-	                                "Skipping it. The line was: " + line);
+                                    "in the Data Turbine or is a date in the future. " +
+                                    "Skipping it. The line was: " + line);
                                 
                             }
                             
@@ -151,38 +144,38 @@ public class FileTextSource extends SimpleTextSource {
                     }    // end if()
                 } // end while
             
-	        } catch ( ParseException pe ) {
-	            log.info("There was a problem parsing the sample date string. The message was: " + pe.getMessage());
-	            failed = true;
-	            return false;
-	            
-	        } catch ( SAPIException sapie ) {
-	            log.info("There was a problem communicating with the DataTurbine. The message was: " + sapie.getMessage());
-	            failed = true;
-	            return false;
-	            
-	        } catch ( InterruptedException ie ) {
-	            log.info("There was a problem while polling the data file. The message was: " + ie.getMessage());
-	            failed = true;
-	            return false;
-	            
-	        } catch ( IOException ioe ) {
-	            log.info("There was a problem opening the data file. The message was: " + ioe.getMessage());
-	            failed = true;
-	            return false;
-	            
-	        } finally {
-	            try {
-	                if ( this.fileReader != null ) {
+            } catch ( ParseException pe ) {
+                log.info("There was a problem parsing the sample date string. The message was: " + pe.getMessage());
+                failed = true;
+                return false;
+                
+            } catch ( SAPIException sapie ) {
+                log.info("There was a problem communicating with the DataTurbine. The message was: " + sapie.getMessage());
+                failed = true;
+                return false;
+                
+            } catch ( InterruptedException ie ) {
+                log.info("There was a problem while polling the data file. The message was: " + ie.getMessage());
+                failed = true;
+                return false;
+                
+            } catch ( IOException ioe ) {
+                log.info("There was a problem opening the data file. The message was: " + ioe.getMessage());
+                failed = true;
+                return false;
+                
+            } finally {
+                try {
+                    if ( this.fileReader != null ) {
                         this.fileReader.close();
                     }
-	                
-	            } catch (IOException ioe2) {
-	                log.error("There was a problem closing the data file. The message was: " + ioe2.getMessage());
-	                
-	            }
+                    
+                } catch (IOException ioe2) {
+                    log.error("There was a problem closing the data file. The message was: " + ioe2.getMessage());
+                    
+                }
 
-	        }
+            }
         
     }
   
@@ -211,7 +204,5 @@ public class FileTextSource extends SimpleTextSource {
      */
     public void setDataFilePath(String dataFilePath) {
         this.dataFilePath = dataFilePath;
-        
     }
-
 }
