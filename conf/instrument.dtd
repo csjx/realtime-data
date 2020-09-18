@@ -173,14 +173,19 @@
 <!ELEMENT dateFormats (dateFormat*)>
 
 <!-- 
-    dateFields: The list of date fields for each sample date component in a separtate variable
+    dateFields: The list of date fields for each sample date component in a separate variable
     One or more date fields are required, corresponding to the date/time variable positions in the data
     (e.g 1 , e.g 2) (Correspond to the first and second variables in the data sample)
 -->        
 <!ELEMENT dateFields (dateField*)>
 
 <!-- 
-    timeZone: The time zone identifier that the data were collected in (e.g. UTC)
+    timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
+    The newest Java Time API parsers are strict about zone identifiers, and will fall back to
+    UTC when the now-deprecated zone names (in the format of HDT, HST, SST, etc.) are used. They are
+    considered ambiguous due to conflicting global use.  Only use identifiers that follow the
+    <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like GMT+13:00
+    will also work, it may change over time due to daylight savings, so the long identifier is best.
 -->
 <!ELEMENT timeZone (#PCDATA)>
 
@@ -193,7 +198,7 @@
 <!ELEMENT dateFormat (#PCDATA)>
 
 <!-- 
-    dateField: The individual date field for each sample date component in a separtate variable
+    dateField: The individual date field for each sample date component in a separate variable
     One or more date fields are required, corresponding to the date/time variable positions in the data
     (e.g 1 , e.g 2) (Correspond to the first and second variables in the data sample)
 -->        
