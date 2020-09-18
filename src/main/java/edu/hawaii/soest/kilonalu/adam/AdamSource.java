@@ -27,53 +27,27 @@
 package edu.hawaii.soest.kilonalu.adam;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
 import java.lang.StringBuilder;
-import java.lang.InterruptedException;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 
 import java.text.SimpleDateFormat;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
-import org.apache.commons.codec.binary.Hex;
-
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
-import org.apache.commons.lang.exception.NestableException;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
-
-import org.nees.rbnb.RBNBBase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -90,19 +64,9 @@ import org.nees.rbnb.RBNBSource;
 public class AdamSource extends RBNBSource {
 
   /**
-   * The default log configuration file location
+   * The Log instance used to log system messages 
    */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /**
-   * The log configuration file location
-   */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
-  /**
-   * The Logger instance used to log system messages 
-   */
-  private static Logger logger = Logger.getLogger(AdamSource.class);
+  private static Log logger = LogFactory.getLog(AdamSource.class);
   
   
 ///**
@@ -183,8 +147,6 @@ public class AdamSource extends RBNBSource {
    * and so the frame sizes below are relative to the number of bytes of data
    * loaded in the ChannelMap that is flushed to the RBNB server.
    *
-   * @param sourceHostName   the name or IP address of the source instrument
-   * @param sourceHostPort   the TCP port of the source host instrument
    * @param serverName       the name or IP address of the RBNB server 
    * @param serverPort       the TCP port of the RBNB server
    * @param archiveMode      the RBNB archive mode: append, load, create, none
@@ -195,9 +157,6 @@ public class AdamSource extends RBNBSource {
   public AdamSource(String serverName, String serverPort, 
                     String archiveMode, int archiveFrameSize, 
                     int cacheFrameSize, String rbnbClientName) {
-    
-    // Set up a simple logger that logs to the console                   
-    PropertyConfigurator.configure(getLogConfigurationFile());
     
     setServerName(serverName);
     setServerPort(Integer.parseInt(serverPort));
@@ -217,6 +176,8 @@ public class AdamSource extends RBNBSource {
    * @param xmlConfig       - the XMLConfiguration object containing the list of
    *                          sensor properties
    * @param sampleBuffer    - the binary data sample as a ByteBuffer
+   * 
+   * @return failed True if the processing fails
    */
   protected boolean process(String datagramAddress, XMLConfiguration xmlConfig,
                             ByteBuffer sampleBuffer) {
@@ -509,6 +470,8 @@ public class AdamSource extends RBNBSource {
   /**
    * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
    * data from a source instrument via a TCP connection
+   * 
+   * @return bufferSize The size of the buffer in bytes
    */
    public int getBufferSize() {
      return this.bufferSize;
@@ -517,6 +480,8 @@ public class AdamSource extends RBNBSource {
   /**
    * A method that returns the name of the RBNB channel that contains the 
    * streaming data from this instrument
+   * 
+   * @return rbnbChannelName The name of the RBNB channel
    */
   public String getRBNBChannelName(){
     return this.rbnbChannelName;
@@ -526,6 +491,8 @@ public class AdamSource extends RBNBSource {
    * A method that returns the versioning info for this file.  In this case, 
    * it returns a String that includes the Subversion LastChangedDate, 
    * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   * 
+   * @return CVSVersion The CVS version information
    */
 
   public String getCVSVersionString(){
@@ -540,6 +507,8 @@ public class AdamSource extends RBNBSource {
 
   /**
    * A method that starts the connection with the RBNB DataTurbine
+   * 
+   * @return started True if the connection is started
    */
   public boolean startConnection() {
     return connect();
@@ -557,6 +526,8 @@ public class AdamSource extends RBNBSource {
    * calls the <code>RBNBSource.setBaseArgs()</code> method.
    * 
    * @param command  The CommandLine object being passed in from the command
+   * 
+   * @return argumentsSet True if the arguments have been set
    */
   protected boolean setArgs(CommandLine command) {
     
@@ -588,29 +559,13 @@ public class AdamSource extends RBNBSource {
    * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
    * properties such as the sourceHostName, sourceHostPort, serverName, and
    * serverPort.
+   * 
+   * @return option The command line options being set
    */
   protected Options setOptions() {
     Options options = setBaseOptions(new Options());
                       
     return options;
-  }
-
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
   }
   
 }
