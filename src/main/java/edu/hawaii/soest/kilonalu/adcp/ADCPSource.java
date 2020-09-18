@@ -27,15 +27,8 @@
 package edu.hawaii.soest.kilonalu.adcp;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
-
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -51,9 +44,7 @@ import org.apache.commons.codec.binary.Hex;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
-import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -120,7 +111,7 @@ public class ADCPSource extends RBNBSource {
   private final String DEFAULT_SOURCE_HOST_NAME = "192.168.1.200";  
 
   /**
-   * The domain name or IP address of the host machine that this Source 
+   * The domain name or IP address of the host machine that this Source
    * represents and from which the data will stream. 
    */
   private String sourceHostName = DEFAULT_SOURCE_HOST_NAME;
@@ -260,6 +251,8 @@ public class ADCPSource extends RBNBSource {
    * server after all configuration of settings, connections to hosts, and
    * thread initiatizing occurs.  This method contains the detailed code for 
    * streaming the data and interpreting the stream.
+   * 
+   * @return failed True if the execution fails
    */
   protected boolean execute() {
     
@@ -673,11 +666,11 @@ public class ADCPSource extends RBNBSource {
     
     return !failed;
   }
-   /**
+ 
+  /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
+   * 
+   * @return dataSocket The socket channel for the data
    */
   protected SocketChannel getSocketConnection() {
     
@@ -720,6 +713,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
    * data from a source instrument via a TCP connection
+   * 
+   * @return bufferSize The size of the buffer
    */
    public int getBufferSize() {
      return this.bufferSize;
@@ -728,6 +723,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that returns the domain name or IP address of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
+   * 
+   * @return sourceHostName the name of the source host
    */
   public String getHostName(){
     return this.sourceHostName;
@@ -736,6 +733,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that returns the name of the RBNB channel that contains the 
    * streaming data from this instrument
+   * 
+   * @return rbnbChannelName The name of the RBNB channel
    */
   public String getRBNBChannelName(){
     return this.rbnbChannelName;
@@ -744,6 +743,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that returns the TCP port of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
+   * 
+   * @return sourceHostPort The port of the source host
    */
   public int getHostPort(){
     return this.sourceHostPort;
@@ -753,6 +754,8 @@ public class ADCPSource extends RBNBSource {
    * A method that returns the versioning info for this file.  In this case, 
    * it returns a String that includes the Subversion LastChangedDate, 
    * LastChangedBy, LastChangedRevision, and HeadURL fields.
+   * 
+   * @return CVSVersion The CVS version information
    */
 
   public String getCVSVersionString(){
@@ -767,6 +770,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that returns true if the RBNB connection is established
    * and if the data streaming Thread has been started
+   * 
+   * @return isRunning True if the source is running
    */
   public boolean isRunning() {
     // return the connection status and the thread status
@@ -775,10 +780,10 @@ public class ADCPSource extends RBNBSource {
   
   /**
    * The main method for running the code
-   * @ param args[] the command line list of string arguments, none are needed
+   * @param args the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     // Set up a simple logger that logs to the console
     BasicConfigurator.configure();
@@ -849,6 +854,8 @@ public class ADCPSource extends RBNBSource {
    * calls the <code>RBNBSource.setBaseArgs()</code> method.
    * 
    * @param command  The CommandLine object being passed in from the command
+   * 
+   * @return argumentsSet True if the arguments are set
    */
   protected boolean setArgs(CommandLine command) {
     
@@ -907,7 +914,7 @@ public class ADCPSource extends RBNBSource {
    * A method that sets the RBNB channel name of the source instrument's data
    * stream
    *
-   * @param channelName  the name of the RBNB channel being streamed
+   * @param channelName  the name of the RBNB channel being streamed 
    */
   public void setChannelName(String channelName) {
     this.rbnbChannelName = channelName;
@@ -938,6 +945,8 @@ public class ADCPSource extends RBNBSource {
    * calls the <code>RBNBSource.setBaseOptions()</code> method in order to set
    * properties such as the sourceHostName, sourceHostPort, serverName, and
    * serverPort.
+   * 
+   * @return option The command line options being set
    */
   protected Options setOptions() {
     Options options = setBaseOptions(new Options());
@@ -965,7 +974,9 @@ public class ADCPSource extends RBNBSource {
 
   /**
    * A method that starts the streaming of data from the source instrument to
-   * the RBNB server via an established TCP connection.  
+   * the RBNB server via an established TCP connection. 
+   * 
+   *  @return started True if the source is started
    */
   public boolean start() {
     
@@ -1013,6 +1024,8 @@ public class ADCPSource extends RBNBSource {
   /**
    * A method that stops the streaming of data between the source instrument and
    * the RBNB server.  
+   * 
+   * @return stopped True if the source is stopped
    */ 
   public boolean stop() {
     
