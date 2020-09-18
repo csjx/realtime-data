@@ -27,34 +27,19 @@
  */ 
 package edu.hawaii.soest.kilonalu.adam;
 
-import com.rbnb.sapi.Source;
-import com.rbnb.sapi.SAPIException;
-
-import java.lang.StringBuffer;
-import java.lang.StringBuilder;
-import java.lang.InterruptedException;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -67,10 +52,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
-import org.apache.commons.lang.exception.NestableException;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple class used to harvest a decimal ASCII data stream from an Advantech
@@ -82,19 +65,9 @@ import org.apache.log4j.PropertyConfigurator;
 public class AdamDispatcher {
 
   /**
-   * The default log configuration file location
-   */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
-
-  /**
-   * The log configuration file location
-   */
-  private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
-  
-  /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(AdamDispatcher.class);
+  private static Log logger = LogFactory.getLog(AdamDispatcher.class);
   
   
   /**
@@ -225,6 +198,8 @@ public class AdamDispatcher {
    * server after all configuration of settings, connections to hosts, and
    * thread initiatizing occurs.  This method contains the detailed code for 
    * streaming the data and interpreting the stream.
+   * 
+   * @return failed True if the execution fails
    */
   protected boolean execute() {
     logger.info("AdamDispatcher.execute() called.");
@@ -297,6 +272,8 @@ public class AdamDispatcher {
    * A method used to connect to the UDP port of the host that will have the 
    * UDP stream of data packets, and that will also connect each of the AdamSource
    * drivers to the DataTurbine.
+   * 
+   * @return isConnected True if the source is connected to the Data Turbine
    */
   protected boolean connect() {
     if ( isConnected() ) {
@@ -338,8 +315,8 @@ public class AdamDispatcher {
           new AdamSource(this.serverName, 
                          (new Integer(this.serverPort)).toString(),
                          this.archiveMode, 
-                         (new Integer(archiveSize).intValue()),
-                         (new Integer(cacheSize).intValue()), 
+                         (new Integer(archiveSize)),
+                         (new Integer(cacheSize)),
                          sourceName);
         adamSource.startConnection();
         sourceMap.put(address, adamSource);
@@ -358,6 +335,8 @@ public class AdamDispatcher {
 
   /*
    * A method that returns the connection status
+   * 
+   * @return connected True if the source is connected to the Data Turbine
    */
   public boolean isConnected() {
     return connected;
@@ -391,6 +370,8 @@ public class AdamDispatcher {
   /**
    * A method that sets the size, in bytes, of the ByteBuffer used in streaming 
    * data from a source instrument via a TCP connection
+   * 
+   * @return bufferSize The size of the buffer
    */
    public int getBufferSize() {
      return this.bufferSize;
@@ -399,6 +380,8 @@ public class AdamDispatcher {
   /**
    * A method that returns the domain name or IP address of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
+   * 
+   * @return sourceHostName  The name of the source host
    */
   public String getHostName(){
     return this.sourceHostName;
@@ -407,6 +390,8 @@ public class AdamDispatcher {
   /**
    * A method that returns the TCP port of the source 
    * instrument (i.e. the serial-to-IP converter to which it is attached)
+   * 
+   * @return sourceHost Port the port of the source host
    */
   public int getHostPort(){
     return this.sourceHostPort;
@@ -415,6 +400,8 @@ public class AdamDispatcher {
   /**
    * A method that returns true if the UDP DatagramSocket connection is 
    * established and if the data streaming Thread has been started
+   * 
+   * @return isRunning True if the source is running
    */
   public boolean isRunning() {
     // return the connection status and the thread status
@@ -423,17 +410,14 @@ public class AdamDispatcher {
   
   /**
    * The main method for running the code
-   * @ param args[] the command line list of string arguments
+   * @param args the command line list of string arguments
    */
-  public static void main (String args[]) {
+  public static void main (String[] args) {
    
     try {
       // create a new instance of the AdamDispatcher object, and parse the command 
       // line arguments and xml configuration as settings for this instance
       final AdamDispatcher adamDispatcher = new AdamDispatcher();
-      
-      // Set up a simple logger that logs to the console
-      PropertyConfigurator.configure(adamDispatcher.getLogConfigurationFile());
       
       logger.info("AdamDispatcher.main() called.");
       
@@ -497,6 +481,8 @@ public class AdamDispatcher {
   /*
    * A method used to parse the command line arguments and configure the UDP
    * and RBNB connections
+   * 
+   * @return argumentsParsed True if the arguments were parsed
    */
   private boolean parseArgs( String[] args) {
     
@@ -519,6 +505,7 @@ public class AdamDispatcher {
    * the listed ADAM sensors
    *
    * @param configurationFile - the name of the XML configuration file
+   * @return failed True if the configuration parsing fails
    */
    private boolean parseConfiguration() {
      
@@ -547,6 +534,7 @@ public class AdamDispatcher {
    * A method that sets the command line arguments for this class.
    * 
    * @param command  The CommandLine object being passed in from the command
+   * @return argumentsSet True if the arguments are set
    */
   protected boolean setArgs(CommandLine command) {
     
@@ -644,6 +632,8 @@ public class AdamDispatcher {
 
   /**
    * A method that sets the command line options for this class.
+   * 
+   * @return options The command line options being set
    */
   protected Options setOptions() {
     Options options = new Options();
@@ -660,6 +650,8 @@ public class AdamDispatcher {
   /**
    * A method that starts the streaming of data from the source instruments to
    * the RBNB server via an established TCP connection.  
+   * 
+   * @return started True if the source is started
    */
   public boolean start() {
     
@@ -707,6 +699,8 @@ public class AdamDispatcher {
   /**
    * A method that stops the streaming of data between the source instruments and
    * the RBNB server.  
+   * 
+   * @return stopped True if the source is stopped
    */ 
   public boolean stop() {
     
@@ -738,23 +732,5 @@ public class AdamDispatcher {
     helpFormatter.printHelp(this.getClass().getName(),setOptions());
     
   }
-  
-  /**
-   * A method that gets the log configuration file location
-   *
-   * @return logConfigurationFile  the log configuration file location
-   */
-  public String getLogConfigurationFile() {
-    return this.logConfigurationFile;
-  }
-  
-  /**
-   * A method that sets the log configuration file name
-   *
-   * @param logConfigurationFile  the log configuration file name
-   */
-  public void setLogConfigurationFile(String logConfigurationFile) {
-    this.logConfigurationFile = logConfigurationFile;
-  }
-  
+    
 }
