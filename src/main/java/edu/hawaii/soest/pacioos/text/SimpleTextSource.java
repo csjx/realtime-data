@@ -750,17 +750,17 @@ public abstract class SimpleTextSource extends RBNBSource {
      */
     public boolean registerChannel() throws SAPIException {
         
-    		boolean registered = false;
-    		ChannelMap registerChannelMap = new ChannelMap(); // used only to register channels
+            boolean registered = false;
+            ChannelMap registerChannelMap = new ChannelMap(); // used only to register channels
         
         // add the DecimalASCIISampleData channel to the channelMap
-		int channelIndex = registerChannelMap.Add(getChannelName());
-		registerChannelMap.PutUserInfo(channelIndex, "units=none");                             
-		// and register the RBNB channels
-		getSource().Register(registerChannelMap);
-		registerChannelMap.Clear();
-		registered = true;
-		
+        int channelIndex = registerChannelMap.Add(getChannelName());
+        registerChannelMap.PutUserInfo(channelIndex, "units=none");                             
+        // and register the RBNB channels
+        getSource().Register(registerChannelMap);
+        registerChannelMap.Clear();
+        registered = true;
+        
         return registered;
 
     }
@@ -773,39 +773,39 @@ public abstract class SimpleTextSource extends RBNBSource {
      */
     public long getLastSampleTime() throws SAPIException {
         
-    		// query the DT to find the timestamp of the last sample inserted
+            // query the DT to find the timestamp of the last sample inserted
         Sink sink = new Sink();
-		long lastSampleTimeAsSecondsSinceEpoch = Instant.now().getEpochSecond();
-		
-		try {
-			ChannelMap requestMap = new ChannelMap();
-			int entryIndex = requestMap.Add(getRBNBClientName() + "/" + getChannelName());
-			log.debug("Request Map: " + requestMap.toString());
-			sink.OpenRBNBConnection(getServer(), "lastEntrySink");
-			
-			sink.Request(requestMap, 0., 1., "newest");
-			ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
-			// initialize the last sample date 
-			log.debug("Initialized the last sample date to: " + Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
-			log.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
-			
-			if ( responseMap.NumberOfChannels() == 0 )    {
-			    // set the last sample time to 0 since there are no channels yet
-			    lastSampleTimeAsSecondsSinceEpoch = 0L;
-			    log.debug("Resetting the last sample date to the epoch: " + Instant.ofEpochSecond(0));
-			
-			} else if ( responseMap.NumberOfChannels() > 0 )    {
-			    lastSampleTimeAsSecondsSinceEpoch = 
-			        new Double(responseMap.GetTimeStart(entryIndex)).longValue();
-			    log.debug("There are existing channels. Last sample time: " +
-			    		Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
-			                             
-			}
+        long lastSampleTimeAsSecondsSinceEpoch = Instant.now().getEpochSecond();
+        
+        try {
+            ChannelMap requestMap = new ChannelMap();
+            int entryIndex = requestMap.Add(getRBNBClientName() + "/" + getChannelName());
+            log.debug("Request Map: " + requestMap.toString());
+            sink.OpenRBNBConnection(getServer(), "lastEntrySink");
+            
+            sink.Request(requestMap, 0., 1., "newest");
+            ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
+            // initialize the last sample date 
+            log.debug("Initialized the last sample date to: " + Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
+            log.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
+            
+            if ( responseMap.NumberOfChannels() == 0 )    {
+                // set the last sample time to 0 since there are no channels yet
+                lastSampleTimeAsSecondsSinceEpoch = 0L;
+                log.debug("Resetting the last sample date to the epoch: " + Instant.ofEpochSecond(0));
+            
+            } else if ( responseMap.NumberOfChannels() > 0 )    {
+                lastSampleTimeAsSecondsSinceEpoch = 
+                    new Double(responseMap.GetTimeStart(entryIndex)).longValue();
+                log.debug("There are existing channels. Last sample time: " +
+                        Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
+                                         
+            }
 
-		} finally {
-	        sink.CloseRBNBConnection();
-			
-		}
+        } finally {
+            sink.CloseRBNBConnection();
+            
+        }
         
         return lastSampleTimeAsSecondsSinceEpoch;
     }
@@ -852,22 +852,22 @@ public abstract class SimpleTextSource extends RBNBSource {
          rbnbChannelMap.PutDataAsString(channelIndex, sample);
         
         try {
-			numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
-			log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
-					" sent data to the DataTurbine.");
-			rbnbChannelMap.Clear();                      
-			// in the event we just lost the network, sleep, try again
-			while (numberOfChannelsFlushed < 1 ) {
-			    log.debug("No channels flushed, trying again in 10 seconds.");
-			    Thread.sleep(10000L);
-			    numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
+            numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
+            log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
+                    " sent data to the DataTurbine.");
+            rbnbChannelMap.Clear();                      
+            // in the event we just lost the network, sleep, try again
+            while (numberOfChannelsFlushed < 1 ) {
+                log.debug("No channels flushed, trying again in 10 seconds.");
+                Thread.sleep(10000L);
+                numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
 
-			}
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			
-		}
+            }
+            
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            
+        }
             
 
         return numberOfChannelsFlushed;
