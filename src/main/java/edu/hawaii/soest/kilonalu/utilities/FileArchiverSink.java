@@ -87,7 +87,7 @@ public class FileArchiverSink extends RBNBBase {
     private String filePrefix = DEFAULT_FILE_PREFIX;
 
     /** the default File extension for archived filenames */
-    private static final String DEFAULT_FILE_EXTENSION = ".10.1.dat";
+    private static final String DEFAULT_FILE_EXTENSION = ".dat";
 
     /** the File extension for archived filenames */
     private String fileExtension = DEFAULT_FILE_EXTENSION;
