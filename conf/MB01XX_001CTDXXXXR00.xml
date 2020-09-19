@@ -62,7 +62,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># [\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*\d{2} [\S]{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!-- 
               The character that delimits variables within the sample
               Use Hex notation for non-printing, whitespace characters (like space)
@@ -72,7 +72,7 @@
               The character(s) that delimit records (samples) in a stream or file
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
-            <recordDelimiters>0x0d|0x0A</recordDelimiters>
+            <recordDelimiters>0x0D|0x0A</recordDelimiters>
             <!-- 
               The list of date formats for each sample date component in a separate variable
               One or more date formats are required, reflecting the date/time variables in the data
@@ -89,7 +89,7 @@
               <dateField>7</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
-            <timeZone>HST</timeZone>
+            <timeZone>Pacific/Honolulu</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
@@ -102,7 +102,7 @@
                 <!--
                 <archiver>
                     <archiveType>pacioos-2020-format</archiveType>
-                    <archiveInterval>hourly</archiveInterval>
+                    <archiveInterval>daily</archiveInterval>
                     <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
                 </archiver>
                 -->
