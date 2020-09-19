@@ -106,7 +106,7 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <!--
