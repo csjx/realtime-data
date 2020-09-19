@@ -62,7 +62,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># [\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*[\S]*,[ ]*\d{2} [\S]{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!-- 
               The character that delimits variables within the sample
               Use Hex notation for non-printing, whitespace characters (like space)
@@ -89,7 +89,7 @@
               <dateField>6</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
-            <timeZone>HST</timeZone>
+            <timeZone>Pacific/Honolulu</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
