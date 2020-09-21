@@ -127,7 +127,8 @@
 <!--
     channel: The details for this instrument's channel data being added to the RBNB server
 -->
-<!ELEMENT channel (name, dataType, dataPattern, fieldDelimiter, recordDelimiters, dateFormats, dateFields, timeZone, archivers*)>
+<!ELEMENT channel (name, dataType, dataPattern, fieldDelimiter, recordDelimiters,
+        missingValueCode*, dateFormats, dateFields, timeZone, archivers*)>
 
 <!--
     default: An attribute for the channel indicating if this is the default channel.
@@ -163,6 +164,11 @@
  (e.g. 0x0d|0x0A) (for a carriage return followed by a new line character)
 -->
 <!ELEMENT recordDelimiters (#PCDATA)>
+
+<!--
+  missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
+-->
+<!ELEMENT missingValueCode (#PCDATA)>
 
 <!-- 
   dateFormats: The list of date formats for each sample date component that is in a separate variable
