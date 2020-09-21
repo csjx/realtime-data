@@ -22,17 +22,16 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
-import edu.hawaii.soest.kilonalu.utilities.FileArchiveUtility;
 import edu.hawaii.soest.kilonalu.utilities.FileArchiverSink;
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
+import edu.hawaii.soest.pacioos.text.convert.RawToPacIOOS2020Converter;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,6 +51,7 @@ public class TextSinkApp {
     public static void main(String[] args) {
         
         String xmlConfiguration = null;
+        Configuration config = null;
         if (args.length != 1) {
             log.error("Please provide the path to the instrument's XML configuration file " +
                       "as a single parameter.");
@@ -60,154 +60,38 @@ public class TextSinkApp {
             xmlConfiguration = args[0];
         }
 
+        // Get a configuration based on the XML configuration
         try {
+            config = new Configuration(xmlConfiguration);
 
-            // Figure out how many archiver sinks we need
-            XMLConfiguration xmlConfig = new XMLConfiguration();
-            xmlConfig.setListDelimiter(new String("|").charAt(0));
-            xmlConfig.load(xmlConfiguration);
-
-            // Get the channels to archive
-            Collection<?> channels = xmlConfig.getList("channels.channel.name");
-            int totalChannels = 0;
-            if ( channels != null ) {
-                totalChannels = channels.size();
+        } catch (ConfigurationException e) {
+            String msg = "The was a problem configuring the archiver. The message was: " +
+                e.getMessage();
+            log.error(msg);
+            if (log.isDebugEnabled() ) {
+                e.printStackTrace();
             }
+        }
 
-            // Loop through each channel and find the archiving properties
-            for (int channelIndex = 0; channelIndex < totalChannels; channelIndex++) {
-                String channelName =
-                    xmlConfig.getString("channels.channel(" + channelIndex + ").name");
+        int totalChannels = Objects.requireNonNull(config).getTotalChannels();
+        int totalArchivers = Objects.requireNonNull(config).getTotalArchivers();
 
-                // Get the list of archiver names
-                Collection<?> archivers =
-                    xmlConfig.getList("channels.channel.archivers.archiver.archiveType");
-                int totalArchivers = 0;
-                if (archivers != null) {
-                    totalArchivers = archivers.size();
-                }
+        if (totalArchivers == 0) {
+            log.info("No archivers are configured for this instrument. Exiting.");
+            System.exit(0);
+        }
 
-                if ( totalArchivers == 0 ) {
-                    log.info("No archivers are configured for this instrument. Exiting.");
-                    System.exit(0);
-                }
+        // Use the configuration
+        for (int channelIndex = 0; channelIndex < totalChannels; channelIndex++) {
 
-                // Start an archiver sink for each listed in the instrument's XML configuration
-                for (int archiverIndex = 0; archiverIndex < totalArchivers; archiverIndex++) {
-
-                    FileArchiverSink archiver = new FileArchiverSink();
-                    String serverName = xmlConfig.getString("rbnbServer");
-                    int serverPort = xmlConfig.getInt("rbnbPort");
-                    String identifier = xmlConfig.getString("identifier");
-                    String archiveType = xmlConfig.getString(
-                        "channels.channel(" + channelIndex + ").archivers.archiver" +
-                            "(" + archiverIndex + ")." + "archiveType");
-                    // Is this an interval-based or range-based archiver?
-                    String archiveInterval = null;
-                    String startDateTime = null;
-                    String endDateTime = null;
-                    String archiveIntervalPath =
-                        "channels.channel(" + channelIndex + ").archivers.archiver" +
-                        "(" + archiverIndex + ")." + "archiveInterval";
-                    boolean hasArchiveInterval = xmlConfig.configurationsAt(archiveIntervalPath).size() > 0;
-                    String archiveDateRangePath =
-                            "channels.channel(" + channelIndex + ").archivers.archiver" +
-                                    "(" + archiverIndex + ")." + "archiveDateRange";
-                    boolean hasArchiveDateRange = xmlConfig.configurationsAt(archiveDateRangePath).size() > 0;
-                    if ( hasArchiveInterval ) {
-                        // An interval-based archiver
-                        archiveInterval = xmlConfig.getString(archiveIntervalPath);
-                    } else if ( hasArchiveDateRange ) {
-                        // A range-based archiver
-                        startDateTime = xmlConfig.getString(archiveDateRangePath + ".startDateTime");
-                        endDateTime = xmlConfig.getString(archiveDateRangePath + ".endDateTime");
-                    } else {
-                        log.info("Archivers must have either an archiveInterval or " +
-                            "archiveDateRange configured. Skipping this archiver.");
-                        continue;
-                    }
-
-                    String archiveBaseDirectory = xmlConfig.getString(
-                        "channels.channel(" + channelIndex + ").archivers.archiver" +
-                            "(" + archiverIndex + ")." + "archiveBaseDirectory");
-
-                    /*
-                     -I    Interval (hourly, daily, or weekly) to periodically archive data
-                           Mutually exclusive with -E and -S
-                     -c    Source Channel Name (defaults to BinaryPD0EnsembleData)
-                     -d    Base directory path (defaults to /data/rbnb)
-                     -k    Sink Name (defaults to FileArchiver)
-                     -n    Source Name (defaults to KN0101_010ADCP010R00)
-                     -p    RBNB Server Port Number *3333
-                     -s    RBNB Server Hostname *localhost
-                    */
-
-                    archiver.setServerName(serverName);
-                    archiver.setServerPort(serverPort);
-                    archiver.setRBNBClientName(identifier + "-" + archiveType + "-archiver");
-                    archiver.setSinkName(identifier + "-" + archiveType + "-archiver");
-                    archiver.setSourceName(identifier);
-                    archiver.setFilePrefix(identifier + "_");
-
-                    // For raw archivers, include the channelName in the directory path
-                    if (archiveType != null && archiveType.equals("raw")) {
-                        archiver.setChannelPath(identifier + "/" + channelName);
-                        File file = new File(archiveBaseDirectory + "/" + identifier + "/" + channelName);
-                        archiver.setArchiveDirectory(file);
-                    // For pacioos archivers, exclude the channelName from the directory path
-                    } else if (archiveType != null  && archiveType.equals("pacioos-2020-format")) {
-                        archiver.setChannelPath(identifier);
-                        File file = new File(archiveBaseDirectory + "/" + identifier);
-                        archiver.setArchiveDirectory(file);
-                    } else {
-                        log.error("Please use an archiveType of raw or pacioos-2020-format");
-                        System.exit(0);
-                    }
-
-                    // Set the archiveInterval in seconds based on the configuration
-                    if ( hasArchiveInterval && archiveInterval != null ) {
-                        switch (archiveInterval) {
-                            case "hourly":
-                                archiver.setArchiveInterval(3600);
-
-                                break;
-                            case "daily":
-                                archiver.setArchiveInterval(86400);
-
-                                break;
-                            case "weekly":
-                                archiver.setArchiveInterval(604800);
-
-                                break;
-                            case "debug":
-                                archiver.setArchiveInterval(120);
-
-                                break;
-                            default:
-                                log.error("Please use either hourly, daily, or weekly " +
-                                        "for the archiving interval.");
-                                System.exit(0);
-                        }
-                    } else if ( hasArchiveDateRange && startDateTime != null && endDateTime != null ) {
-                        // Set the archiver start time
-                        Date startDate = FileArchiveUtility.getCommandFormat().parse(startDateTime);
-                        long stime = startDate.getTime();
-                        double startTime = ((double) stime) / 1000.0;
-                        archiver.setStartTime(startTime);
-
-                        // Set the archiver end time
-                        Date endDate = FileArchiveUtility.getCommandFormat().parse(endDateTime);
-                        long etime = endDate.getTime();
-                        double endTime = ((double) etime) / 1000.0;
-                        archiver.setEndTime(endTime);
-                    } else {
-                        log.error("Please use either an hourly or daily archiving interval or " +
-                            "set a start and end archive date range.");
-                        System.exit(0);
-                    }
+            for (int archiverIndex = 0; archiverIndex < totalArchivers; archiverIndex++) {
+                // Get an archiver for the channel if the interval or range is configured
+                if (config.hasArchiveInterval(channelIndex, archiverIndex) ||
+                    config.hasArchiveDateRange(channelIndex, archiverIndex)) {
+                    FileArchiverSink archiver = getArchiver(config, channelIndex, archiverIndex);
 
                     // Archive the data on a schedule
-                    if ( archiver.getArchiveInterval() > 0 ) {
+                    if (archiver.getArchiveInterval() > 0) {
                         // override the command line start and end times
                         archiver.validateSetup();
                         archiver.setupArchiveTime();
@@ -216,7 +100,7 @@ public class TextSinkApp {
                             public void run() {
                                 log.debug("TimerTask.run() called.");
 
-                                if ( archiver.validateSetup() ) {
+                                if (archiver.validateSetup()) {
                                     archiver.export();
                                     archiver.setupArchiveTime();
                                 }
@@ -231,21 +115,98 @@ public class TextSinkApp {
 
                     } else {
                         // archive data once based on the start and end times
-                        if ( archiver.validateSetup() ) {
+                        if (archiver.validateSetup()) {
                             archiver.export();
                         }
                     }
-                } // end for(archivers)
-            } // end for(channels)
 
-        } catch (ConfigurationException | ParseException e) {
-            if (log.isDebugEnabled() ) {
-                e.printStackTrace();                
+                } else {
+                    log.info("Archivers must have either an archiveInterval or " +
+                        "archiveDateRange configured. Skipping this archiver.");
+                }
             }
-            
-            log.error("There was a problem configuring the archiver.  The error message was: " +
-                      e.getMessage());
-            System.exit(1);
+
         }
+    }
+
+    private static FileArchiverSink getArchiver(Configuration config, int channelIndex, int archiverIndex) {
+
+        // The archiver instance to configure and return
+        FileArchiverSink archiver = new FileArchiverSink();
+        // Get the channel name
+        String channelName = config.getChannelName(channelIndex);
+        // Get the channel time zone
+        String timeZoneId = config.getTimeZoneID(channelIndex);
+        // Get the archive type
+        String archiveType = config.getArchiveType(channelIndex, archiverIndex);
+
+        archiver.setServerName(config.getServerName());
+        archiver.setServerPort(config.getServerPort());
+        archiver.setRBNBClientName(config.getIdentifier() + "-" + archiveType + "-archiver");
+        archiver.setSinkName(config.getIdentifier() + "-" + archiveType + "-archiver");
+        archiver.setSourceName(config.getIdentifier());
+        archiver.setFilePrefix(config.getIdentifier() + "_");
+
+        // Get the archive interval
+        int archiveInterval = config.getArchiveInterval(channelIndex, archiverIndex);
+        if (archiveInterval > 0) {
+            archiver.setArchiveInterval(archiveInterval);
+        } else {
+            // Otherwise archive by start and end dates
+            try {
+                Instant startDateTime = config.getStartDateTime(channelIndex, archiverIndex);
+                Instant endDateTime = config.getEndDateTime(channelIndex, archiverIndex);
+                if ( startDateTime != null && endDateTime !=null ) {
+                    archiver.setStartTime(startDateTime.getEpochSecond());
+                    archiver.setEndTime(endDateTime.getEpochSecond());
+                } else {
+                    String msg = "Couldn't configure an archiver date range, " +
+                        "start or end date time is null.  Check the configuration.";
+                    throw new ConfigurationException(msg);
+                }
+            } catch (ConfigurationException e) {
+                log.error("Could not get an archiver: " + e.getMessage());
+                if (log.isDebugEnabled()) {
+                    e.printStackTrace();
+                    System.exit(0);
+                }
+            }
+        }
+
+        // For raw archivers, include the channelName in the directory path
+        if (archiveType != null && archiveType.equals("raw")) {
+
+            archiver.setChannelPath(config.getIdentifier() + "/" + channelName);
+            File file = new File(config.getArchiveBaseDirectory(channelIndex, archiverIndex) +
+                "/" + config.getIdentifier() + "/" + channelName);
+            archiver.setArchiveDirectory(file);
+
+        // For pacioos archivers, exclude the channelName from the directory path
+        } else if (archiveType != null && archiveType.equals("pacioos-2020-format")) {
+            archiver.setChannelPath(config.getIdentifier());
+            File file = new File(
+                config.getArchiveBaseDirectory(channelIndex, archiverIndex) +
+                "/" +
+                config.getIdentifier());
+            archiver.setArchiveDirectory(file);
+            // Flag samples to be converted before export
+            archiver.setConvertSamples(true);
+            RawToPacIOOS2020Converter converter = new RawToPacIOOS2020Converter();
+            converter.setFieldDelimiter(config.getFieldDelimiter(channelIndex));
+            converter.setMissingValueCode(config.getMissingValueCode(channelIndex));
+            converter.setNumberHeaderLines(0);
+            converter.setTimeZoneId(timeZoneId);
+
+            // TODO: set the dateFormats and dateFields in the converter, and use them
+            //       to set the dateFormat, or timeFormat, or dateTimeFormat.
+
+            // Set the converter for the archiver
+            archiver.setConverter(converter);
+        } else {
+            log.error("Please use an archiveType of raw or pacioos-2020-format");
+            System.exit(0);
+        }
+
+        return archiver;
     }
 }
