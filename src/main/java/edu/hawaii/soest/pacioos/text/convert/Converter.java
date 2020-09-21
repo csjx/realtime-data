@@ -22,6 +22,7 @@
  */
 package edu.hawaii.soest.pacioos.text.convert;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -35,7 +36,7 @@ public interface Converter {
      * Parse the given samples into an internal table
      * @param samples the samples to parse
      */
-    void parse(InputStream samples);
+    void parse(InputStream samples) throws IOException;
 
     /**
      * Convert the parsed samples to a new table
