@@ -26,9 +26,11 @@
  */
 package edu.hawaii.soest.kilonalu.utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.hawaii.soest.pacioos.text.convert.Converter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -160,6 +163,12 @@ public class FileArchiverSink extends RBNBBase {
 
     /** number of seconds to go back from now to set a start time */
     private int secondsResetStart;
+
+    /* A sample converter used to transform samples to a new format */
+    private Converter converter;
+
+    /* True if samples should be converted before exporting */
+    private boolean convertSamples;
 
     /**
      * Constructor: creates FileArchiverSink.
@@ -834,6 +843,38 @@ public class FileArchiverSink extends RBNBBase {
     }
 
     /**
+     * Get the configured ample converter
+     * @return converter the sample converter
+     */
+    public Converter getConverter() {
+        return converter;
+    }
+
+    /**
+     * Set the sample converter
+     * @param converter the sample converter to set
+     */
+    public void setConverter(Converter converter) {
+        this.converter = converter;
+    }
+
+    /**
+     * Decide if samples should be converted before export
+     * @return true if the samples should be converted
+     */
+    public boolean convertSamples() {
+        return convertSamples;
+    }
+
+    /**
+     * Set the convert samples flag
+     * @param convertSamples true if the samples should be converted
+     */
+    public void setConvertSamples(boolean convertSamples) {
+        this.convertSamples = convertSamples;
+    }
+
+    /**
      * A method that sets archive interval (in seconds)
      *
      * @param interval the archive interval (in seconds)
@@ -1013,14 +1054,24 @@ public class FileArchiverSink extends RBNBBase {
                 int numberOfFrames = (m.GetTimes(index)).length;
 
                 FileOutputStream out = new FileOutputStream(output);
-                for ( int i = 0; i < data.length; i++ ) {
 
-                    out.write(data[i]);
-                    if ( i % data.length/numberOfFrames == 0 ) {
-                        frameCount++;
+                // Convert the data to a new format or write the raw data to file
+                if ( convertSamples ) {
+                    InputStream samples = new ByteArrayInputStream(data);
+                    converter.parse(samples);
+                    converter.convert();
+                    frameCount = converter.write(out);
+
+                } else {
+                    // Just write the raw bytes directly
+                    for ( int i = 0; i < data.length; i++ ) {
+
+                        out.write(data[i]);
+                        if ( i % data.length/numberOfFrames == 0 ) {
+                            frameCount++;
+                        }
                     }
                 }
-
                 out.close();
                 doExport = false;
 
