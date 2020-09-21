@@ -113,6 +113,11 @@
     	<artifactId>commons-email</artifactId>
     	<version>1.4</version>
     </dependency>
+        <dependency>
+            <groupId>tech.tablesaw</groupId>
+            <artifactId>tablesaw-core</artifactId>
+            <version>0.38.1</version>
+        </dependency>
     </dependencies>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
