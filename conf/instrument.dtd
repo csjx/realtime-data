@@ -127,7 +127,7 @@
 <!--
     channel: The details for this instrument's channel data being added to the RBNB server
 -->
-<!ELEMENT channel (name, dataType, dataPattern, fieldDelimiter, recordDelimiters,
+<!ELEMENT channel (name, dataType, dataPattern, dataPrefix*, fieldDelimiter, recordDelimiters,
         missingValueCode*, dateFormats, dateFields, timeZone, archivers*)>
 
 <!--
@@ -145,6 +145,11 @@
     dataType: The type of the incoming data. For now, limited to a value of "String"
 -->
 <!ELEMENT dataType (#PCDATA)>
+
+<!--
+  dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
+-->
+<!ELEMENT dataPrefix (#PCDATA)>
 
 <!--
     dataPattern: The regular expression used to match a data sample. Assumes Java RegEx syntax.
