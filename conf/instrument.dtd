@@ -127,7 +127,7 @@
 <!--
     channel: The details for this instrument's channel data being added to the RBNB server
 -->
-<!ELEMENT channel (name, dataType, dataPattern, dataPrefix*, fieldDelimiter, recordDelimiters,
+<!ELEMENT channel (name, dataType, dataPattern, dataPrefix*, columnTypes, fieldDelimiter, recordDelimiters,
         missingValueCode*, dateFormats, dateFields, timeZone, archivers*)>
 
 <!--
@@ -151,6 +151,15 @@
 -->
 <!ELEMENT dataPrefix (#PCDATA)>
 
+<!--
+    columnTypes: A list of column types for each variable in the sample.
+    The value must start and end in curly brackets. Each column type must separated with a comma,
+    and must be uppercase characters.
+    Allowed column types are: BOOLEAN, DOUBLE, FLOAT, INTEGER, LOCAL_DATE, LOCAL_DATE_TIME,
+    LOCAL_TIME, LONG, SHORT, SKIP, STRING, TEXT
+    Example: {FLOAT, FLOAT, FLOAT, LOCAL_DATE, LOCAL_TIME}
+-->
+<!ELEMENT columnTypes (#PCDATA)>
 <!--
     dataPattern: The regular expression used to match a data sample. Assumes Java RegEx syntax.
     It is best to keep data pattern on one line 
