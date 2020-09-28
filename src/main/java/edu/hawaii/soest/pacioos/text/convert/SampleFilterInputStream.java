@@ -22,13 +22,19 @@
  */
 package edu.hawaii.soest.pacioos.text.convert;
 
+import com.sun.istack.internal.NotNull;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Filter that filters out sample characters in the underlying InputStream
+ * when they match the dataPrefix from an instrument channel configuration
+ */
 public class SampleFilterInputStream extends FilterInputStream {
 
     private final Log log = LogFactory.getLog(SampleFilterInputStream.class);
