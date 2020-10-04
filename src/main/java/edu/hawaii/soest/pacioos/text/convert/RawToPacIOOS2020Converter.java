@@ -24,14 +24,25 @@ package edu.hawaii.soest.pacioos.text.convert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.ColumnType;
+import tech.tablesaw.api.DateColumn;
+import tech.tablesaw.api.DateTimeColumn;
+import tech.tablesaw.api.InstantColumn;
+import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.api.TimeColumn;
 import tech.tablesaw.io.csv.CsvReadOptions;
+import tech.tablesaw.io.csv.CsvWriteOptions;
+import tech.tablesaw.io.csv.CsvWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RawToPacIOOS2020Converter implements Converter {
 
@@ -42,7 +53,7 @@ public class RawToPacIOOS2020Converter implements Converter {
     private Table table;
 
     /* The converted data table */
-    private Table convertedTable;
+    private Table convertedTable = Table.create("convertedTable");
 
     /* The data table name */
     private String tableName;
@@ -69,7 +80,13 @@ public class RawToPacIOOS2020Converter implements Converter {
     private String dateTimeFormat;
 
     /* The sample time zone identifier */
-    private String timeZoneId;
+    private ZoneId timeZoneId;
+
+    /* The data prefix of each sample line (e.g. #) */
+    private String dataPrefix;
+
+    /* The record delimiter (line ending) of the samples */
+    private String recordDelimiter;
 
     /**
      * Construct a RawToPacIOOS2020Converter
@@ -77,6 +94,33 @@ public class RawToPacIOOS2020Converter implements Converter {
     public RawToPacIOOS2020Converter() {
     }
 
+    @Override
+    public void parse(InputStream samples) throws IOException {
+
+        String dateFormat = getDateFormat() != null ? getDateFormat() : "";
+        String timeFormat = getTimeFormat() != null ? getTimeFormat() : "";
+        String dateTimeFormat = getDateTimeFormat() != null ? getDateTimeFormat() : "";
+        boolean includeHeaderLines = getNumberHeaderLines() > 0;
+        String missingValueCode = getMissingValueCode() != null ? getMissingValueCode() : "";
+        char fieldDelimiter = getFieldDelimiter() != null ? getFieldDelimiter().charAt(0) : ",".charAt(0);
+        // TODO: Ensure non-null values here.
+        CsvReadOptions.Builder builder =
+            CsvReadOptions.builder(samples)
+                .commentPrefix("|".charAt(0))
+                .dateFormat(DateTimeFormatter.ofPattern(dateFormat))
+                .timeFormat(DateTimeFormatter.ofPattern(timeFormat))
+                .dateTimeFormat(DateTimeFormatter.ofPattern(dateTimeFormat))
+                .header(includeHeaderLines)
+                .missingValueIndicator(missingValueCode)
+                .sample(false)
+                .separator(fieldDelimiter)
+                .tableName("Samples")
+                .columnTypes(getColumnTypes());
+
+        CsvReadOptions options = builder.build();
+
+        setTable(Table.read().usingOptions(options));
+    }
 
     /**
      * Convert the parsed samples to the PacIOOS 2020 format:
@@ -92,37 +136,106 @@ public class RawToPacIOOS2020Converter implements Converter {
     @Override
     public void convert() {
 
-        // TODO: Convert the samples
-        // convertedTable = ...
+        // Find the date, time, or datetime columns, and create an instant column
+        DateTimeColumn[] dateTimeColumns = table.dateTimeColumns();
+        TimeColumn[] timeColumns = table.timeColumns();
+        DateColumn[] dateColumns = table.dateColumns();
+        InstantColumn instantColumn = InstantColumn.create("instantColumn", table.rowCount());
+        BooleanColumn uniqueValues = BooleanColumn.create("isUnique", table.rowCount());
 
+        // Create an instant column from the datetime
+        if ( dateTimeColumns.length > 0 ) {
+            instantColumn = dateTimeColumns[0].asInstantColumn(getTimeZoneId());
+            getConvertedTable().addColumns(instantColumn);
+        // Or create it from the date and time columns
+        } else if ( dateColumns.length > 0 && timeColumns.length > 0 ) {
+            instantColumn = dateColumns[0].atTime(timeColumns[0]).asInstantColumn(getTimeZoneId());
+            getConvertedTable().addColumns(instantColumn);
+
+        } else {
+            log.error("Couldn't convert table: no date, time, or datetime columns.");
+            log.error(table.print());
+            setConvertedTable(table);
+        }
+
+        // Strip the data prefix from the first column if it exists
+        StringColumn firstColumn = (StringColumn) table.column(0);
+        StringColumn firstColumnTrimmed;
+        if (table.column(0).anyMatch(
+            value -> value.toString().startsWith(getDataPrefix()))) {
+            firstColumnTrimmed = firstColumn
+                .trim()
+                .replaceAll(getDataPrefix(), "")
+                .trim();
+            getConvertedTable().addColumns(firstColumnTrimmed);
+        } else {
+            getConvertedTable().addColumns(firstColumn);
+        }
+
+        // Add the rest of the string columns
+        AtomicInteger count = new AtomicInteger();
+        table.columns().forEach(column -> {
+            count.getAndIncrement();
+            if (column.type() == ColumnType.STRING) {
+                if ( count.get() == 1 ) {
+                    log.debug("Skipping the first column.");
+                } else {
+                    // Add string columns other than the first
+                    getConvertedTable().addColumns(column);
+                }
+            }
+        });
+
+        // Sort and dedupe the table and reset the converted table
+        setConvertedTable(getConvertedTable().sortOn(0));
+        uniqueValues.set(0, true); // The first row is always unique
+
+        // Flag duplicate rows with false
+        for (int row = 0; row < table.rowCount(); row++) {
+            int nextRow = row + 1;
+            if (nextRow < table.rowCount()) {
+                Instant nextDateTime = instantColumn.get(nextRow);
+                if (nextDateTime.equals(instantColumn.get(row))) {
+                    uniqueValues.set(nextRow, false);
+                } else {
+                    uniqueValues.set(nextRow, true);
+                }
+            }
+        }
+        // Filter duplicates out of the table
+        setConvertedTable(getConvertedTable().addColumns(uniqueValues));
+        Table deduped = getConvertedTable().where(uniqueValues.asSelection());
+        deduped.removeColumns("isUnique");
+        setConvertedTable(deduped);
+        log.debug(getConvertedTable().print());
     }
-
+    
     @Override
-    public void parse(InputStream samples) throws IOException {
-
-        CsvReadOptions.Builder builder =
-            CsvReadOptions.builder(samples)
-                .dateFormat(DateTimeFormatter.ofPattern(getDateFormat()))
-                .timeFormat(DateTimeFormatter.ofPattern(getTimeFormat()))
-                .dateTimeFormat(DateTimeFormatter.ofPattern(getDateTimeFormat()))
-                .header(getNumberHeaderLines() > 0)
-                .missingValueIndicator(getMissingValueCode())
-                .sample(false)
-                .separator(getFieldDelimiter().charAt(0))
-                .tableName("Samples")
-                .columnTypes(getColumnTypes());
-
-        CsvReadOptions options = builder.build();
-
-        Table samplesTable = Table.read().usingOptions(options);
-
-
-    }
-
-    @Override
-    public int write(OutputStream outputStream) {
+    public int write(OutputStream outputStream) throws IOException {
 
         // TODO: Write the table to the output stream
+        CsvWriteOptions options = CsvWriteOptions.builder(outputStream)
+            .ignoreLeadingWhitespaces(true)
+            .ignoreTrailingWhitespaces(true)
+            .header(false)
+            .lineEnd(getRecordDelimiter())
+            .quoteAllFields(false)
+            .separator(",".charAt(0))
+            .build();
+
+        try {
+            CsvWriter csvWriter = new CsvWriter();
+            csvWriter.write(getConvertedTable(), options);
+            // Reset the converted table for the next converter task run
+            setConvertedTable(Table.create("convertedTable"));
+        } catch (Exception e) {
+            log.error("Couldn't write the converted table: " + e.getMessage());
+            log.error(convertedTable.print());
+            throw(e);
+        }
+
+        log.debug("write()");
+
         return getConvertedTable().rowCount();
     }
 
@@ -290,7 +403,7 @@ public class RawToPacIOOS2020Converter implements Converter {
      * Get the sample time zone identifier
      * @return timeZoneId the time zone identifier
      */
-    public String getTimeZoneId() {
+    public ZoneId getTimeZoneId() {
         return timeZoneId;
     }
 
@@ -298,7 +411,24 @@ public class RawToPacIOOS2020Converter implements Converter {
      * Set the sample time zone identifier
      * @param timeZoneId the time zone identifier
      */
-    public void setTimeZoneId(String timeZoneId) {
+    public void setTimeZoneId(ZoneId timeZoneId) {
         this.timeZoneId = timeZoneId;
+    }
+
+
+    public String getDataPrefix() {
+        return dataPrefix;
+    }
+
+    public void setDataPrefix(String dataPrefix) {
+        this.dataPrefix = dataPrefix;
+    }
+
+    public String getRecordDelimiter() {
+        return recordDelimiter;
+    }
+
+    public void setRecordDelimiter(String recordDelimiter) {
+        this.recordDelimiter = recordDelimiter;
     }
 }
