@@ -26,6 +26,7 @@
  */
 package edu.hawaii.soest.kilonalu.utilities;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -169,6 +170,9 @@ public class FileArchiverSink extends RBNBBase {
 
     /* True if samples should be converted before exporting */
     private boolean convertSamples;
+
+    /* The data prefix character from the configuration */
+    private Character dataPrefix = null;
 
     /**
      * Constructor: creates FileArchiverSink.
@@ -866,6 +870,14 @@ public class FileArchiverSink extends RBNBBase {
         return convertSamples;
     }
 
+    public Character getDataPrefix() {
+        return dataPrefix;
+    }
+
+    public void setDataPrefix(Character dataPrefix) {
+        this.dataPrefix = dataPrefix;
+    }
+
     /**
      * Set the convert samples flag
      * @param convertSamples true if the samples should be converted
@@ -1056,8 +1068,9 @@ public class FileArchiverSink extends RBNBBase {
                 FileOutputStream out = new FileOutputStream(output);
 
                 // Convert the data to a new format or write the raw data to file
+                InputStream samples;
                 if ( convertSamples ) {
-                    InputStream samples = new ByteArrayInputStream(data);
+                    samples = new BufferedInputStream(new ByteArrayInputStream(data));
                     converter.parse(samples);
                     converter.convert();
                     frameCount = converter.write(out);
