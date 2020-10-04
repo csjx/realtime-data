@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -136,9 +137,11 @@ public class TextSinkApp {
         // Get the channel name
         String channelName = config.getChannelName(channelIndex);
         // Get the channel time zone
-        String timeZoneId = config.getTimeZoneID(channelIndex);
+        ZoneId timeZoneId = ZoneId.of(config.getTimeZoneID(channelIndex));
         // Get the archive type
         String archiveType = config.getArchiveType(channelIndex, archiverIndex);
+        // Get the channel data prefix if any
+        String dataPrefix = config.getDataPrefix(channelIndex);
 
         archiver.setServerName(config.getServerName());
         archiver.setServerPort(config.getServerPort());
@@ -146,6 +149,7 @@ public class TextSinkApp {
         archiver.setSinkName(config.getIdentifier() + "-" + archiveType + "-archiver");
         archiver.setSourceName(config.getIdentifier());
         archiver.setFilePrefix(config.getIdentifier() + "_");
+        archiver.setDataPrefix(dataPrefix.charAt(0));
 
         // Get the archive interval
         int archiveInterval = config.getArchiveInterval(channelIndex, archiverIndex);
@@ -183,20 +187,37 @@ public class TextSinkApp {
 
         // For pacioos archivers, exclude the channelName from the directory path
         } else if (archiveType != null && archiveType.equals("pacioos-2020-format")) {
-            archiver.setChannelPath(config.getIdentifier());
+            archiver.setChannelPath(config.getIdentifier() + "/" + channelName);
             File file = new File(
                 config.getArchiveBaseDirectory(channelIndex, archiverIndex) +
-                "/" +
-                config.getIdentifier());
+                "/" + config.getIdentifier());
             archiver.setArchiveDirectory(file);
             // Flag samples to be converted before export
             archiver.setConvertSamples(true);
             RawToPacIOOS2020Converter converter = new RawToPacIOOS2020Converter();
             converter.setFieldDelimiter(config.getFieldDelimiter(channelIndex));
+            converter.setRecordDelimiter("\n");
             converter.setMissingValueCode(config.getMissingValueCode(channelIndex));
             converter.setNumberHeaderLines(0);
             converter.setTimeZoneId(timeZoneId);
+            converter.setDataPrefix(dataPrefix);
 
+            // Set the date and time format strings in the converter depending on the config count
+            if ( config.getTotalDateFields(channelIndex) > 1 ) {
+                converter.setDateFormat(config.getDateFormat(channelIndex));
+                converter.setTimeFormat(config.getTimeFormat(channelIndex));
+            } else {
+                converter.setDateTimeFormat(config.getDateTimeFormat(channelIndex));
+            }
+
+            try {
+                converter.setColumnTypes(config.getColumnTypes(channelIndex));
+            } catch (ConfigurationException e) {
+                log.error("Couldn't configure the archiver for channel " +
+                    channelIndex +
+                    ". The message was: " + e.getMessage());
+                System.exit(1);
+            }
             // TODO: set the dateFormats and dateFields in the converter, and use them
             //       to set the dateFormat, or timeFormat, or dateTimeFormat.
 
