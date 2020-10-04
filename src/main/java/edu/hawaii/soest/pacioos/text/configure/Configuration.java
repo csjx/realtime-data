@@ -26,15 +26,20 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import tech.tablesaw.api.ColumnType;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A Configuration represents a single instrument deployment's XML-based configuration
+ */
 public class Configuration {
 
     private final Log log = LogFactory.getLog(Configuration.class);
@@ -118,6 +123,12 @@ public class Configuration {
                 "(" + archiverIndex + ")." + "archiveType");
     }
 
+    /**
+     * Return true if the archive interval is set
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return true if an archive interval has been set
+     */
     public boolean hasArchiveInterval(int channelIndex, int archiverIndex) {
         String archiveIntervalPath =
             "channels.channel(" + channelIndex + ").archivers.archiver" +
@@ -125,6 +136,12 @@ public class Configuration {
         return xmlConfig.configurationsAt(archiveIntervalPath).size() > 0;
     }
 
+    /**
+     * Return true if the archive date range is set
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return true if an archive date range has been configured
+     */
     public boolean hasArchiveDateRange(int channelIndex, int archiverIndex) {
         String archiveDateRangePath =
             "channels.channel(" + channelIndex + ").archivers.archiver" +
@@ -132,6 +149,12 @@ public class Configuration {
         return xmlConfig.configurationsAt(archiveDateRangePath).size() > 0;
     }
 
+    /**
+     * Get the archive interval
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return archiveInterval the archive interval
+     */
     public int getArchiveInterval(int channelIndex, int archiverIndex) {
         int archiveInterval = 0;
 
@@ -153,6 +176,7 @@ public class Configuration {
                     break;
                 case "debug":
                     archiveInterval = 120;
+                    break;
                 default:
                     log.error("Please use either hourly or daily " +
                         "for the archiving interval.");
@@ -162,6 +186,12 @@ public class Configuration {
         return archiveInterval;
     }
 
+    /**
+     * List the date formats
+     * @param channelIndex the desired channel index
+     * @return dateFormats the date formats in the configuration
+     * @throws ConfigurationException a configuration exception
+     */
     public List<String> listDateFormats(int channelIndex) throws ConfigurationException {
 
         List<String> dateFormats =
@@ -191,6 +221,12 @@ public class Configuration {
         }        return dateFormats;
     }
 
+    /**
+     * List the date field positions
+     * @param channelIndex the desired channel index
+     * @return dateFields the field positions in the configuration
+     * @throws ConfigurationException a configuration exception
+     */
     public List<Integer> listDateFieldPositions(int channelIndex) throws ConfigurationException {
 
         // Get the date fields
@@ -214,6 +250,13 @@ public class Configuration {
         return dateFields;
     }
 
+    /**
+     * Get the start datetime
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return startDateTime the start datetime of the archive date range
+     * @throws ConfigurationException a configuration exception
+     */
     public Instant getStartDateTime(int channelIndex, int archiverIndex)
         throws ConfigurationException {
 
@@ -237,6 +280,13 @@ public class Configuration {
         return startDateTime;
     }
 
+    /**
+     * Get the end datetime
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return the end date of an archive date range
+     * @throws ConfigurationException a configuration exception
+     */
     public Instant getEndDateTime(int channelIndex, int archiverIndex)
         throws ConfigurationException {
 
@@ -269,22 +319,245 @@ public class Configuration {
         return xmlConfig.getString("channels.channel(" + channelIndex + ").name");
     }
 
+    /**
+     * Get the time zone id
+     * @param channelIndex the desired channel index
+     * @return the sample time zone id
+     */
     public String getTimeZoneID(int channelIndex) {
         return xmlConfig.getString("channels.channel(" + channelIndex + ").timeZone");
 
     }
 
+    /**
+     * Get the archive base directory
+     * @param channelIndex the desired channel index
+     * @param archiverIndex the desired archiver index
+     * @return archiveBaseDirectory the archive base directory
+     */
     public String getArchiveBaseDirectory(int channelIndex, int archiverIndex) {
         return xmlConfig.getString(
             "channels.channel(" + channelIndex + ").archivers.archiver" +
                 "(" + archiverIndex + ")." + "archiveBaseDirectory");
     }
 
+    /**
+     * Get the field delimiter
+     * @param channelIndex the desired channel index
+     * @return fieldDelimiter the field (column) delimiter of the sample
+     */
     public String getFieldDelimiter(int channelIndex) {
         return xmlConfig.getString("channels.channel(" + channelIndex + ").fieldDelimiter");
     }
 
+    /**
+     * Get the missing value code
+     * @param channelIndex the desired channel index
+     * @return missingValueCode the missingValueCode present in the sample data
+     */
     public String getMissingValueCode(int channelIndex) {
         return xmlConfig.getString("channels.channel(" + channelIndex + ").missingValueCode");
+    }
+
+    /**
+     * Get the data prefix (e.g. #)
+     * @param channelIndex the desired channel index
+     * @return dataPrefix the data prefix character
+     */
+    public String getDataPrefix(Integer channelIndex) {
+        String prefix;
+
+        prefix = xmlConfig.getString("channels.channel(" +
+            channelIndex +
+            ").dataPrefix");
+        return prefix;
+    }
+
+    /**
+     * Return true if the data prefix is set
+     * @param channelIndex the desired channel index
+     * @return true if the dataPrefix configuration is set
+     */
+    public boolean getHasDataPrefix(int channelIndex) {
+        return getDataPrefix(channelIndex).length() > 0;
+    }
+
+    /**
+     * Get the column types
+     * @param channelIndex the desired channel index
+     * @return columnTypes the column types of the sample table
+     * @throws ConfigurationException a configuration exception
+     */
+    public ColumnType[] getColumnTypes(int channelIndex) throws ConfigurationException {
+        List<ColumnType> columnTypes = new ArrayList<>();
+        List<String> desiredTypes;
+        String type;
+
+        // Create a list of allowed types
+        String[] allowedTypes = new String[]{
+            "BOOLEAN", "DOUBLE", "FLOAT", "INSTANT", "INTEGER", "LOCAL_DATE", "LOCAL_DATE_TIME",
+            "LOCAL_TIME", "LONG", "SHORT", "SKIP", "STRING", "TEXT"};
+        List<String> allowed = Arrays.asList(allowedTypes);
+
+        // Get a list of desired types
+        desiredTypes =
+            xmlConfig.getList("channels.channel(" + channelIndex + ").columnTypes.columnType");
+
+        // Validate the desired types so we don't run into errors downstream
+        for ( String desiredType : desiredTypes ) {
+            type = desiredType.trim();
+            if ( ! allowed.contains(type) ) {
+                throw new ConfigurationException("The column type: " +
+                    desiredType +
+                    " is not allowed in the configuration. Allowed types are: " +
+                    Arrays.toString(allowedTypes));
+            } else {
+                switch (type) {
+                    case "BOOLEAN":
+                        columnTypes.add(ColumnType.BOOLEAN);
+                        break;
+                    case "DOUBLE":
+                        columnTypes.add(ColumnType.DOUBLE);
+                        break;
+                    case "FLOAT":
+                        columnTypes.add(ColumnType.FLOAT);
+                        break;
+                    case "INSTANT":
+                        columnTypes.add(ColumnType.INSTANT);
+                        break;
+                    case "INTEGER":
+                        columnTypes.add(ColumnType.INTEGER);
+                        break;
+                    case "LOCAL_DATE":
+                        columnTypes.add(ColumnType.LOCAL_DATE);
+                        break;
+                    case "LOCAL_DATE_TIME":
+                        columnTypes.add(ColumnType.LOCAL_DATE_TIME);
+                        break;
+                    case "LOCAL_TIME":
+                        columnTypes.add(ColumnType.LOCAL_TIME);
+                        break;
+                    case "LONG":
+                        columnTypes.add(ColumnType.LONG);
+                        break;
+                    case "SHORT":
+                        columnTypes.add(ColumnType.SHORT);
+                        break;
+                    case "STRING":
+                        columnTypes.add(ColumnType.STRING);
+                        break;
+                    case "TEXT":
+                        columnTypes.add(ColumnType.TEXT);
+                        break;
+                    default:
+                        columnTypes.add(ColumnType.SKIP);
+                }
+            }
+        }
+        return columnTypes.toArray(new ColumnType[0]);
+    }
+
+    /**
+     * Get the DateFormat from the configuration
+     * @param channelIndex the index of the channel in the configuration
+     * @return format the date format string
+     * TODO: Note that we have hardcoded the time as the first format in the list. Change this.
+     */
+    public String getDateFormat(int channelIndex) {
+        String format = null;
+
+        // return
+        if (getDateFormats(channelIndex).size() > 1) {
+            format = getDateFormats(channelIndex).get(0);
+        }
+        return format;
+    }
+
+    /**
+     * Get the TimeFormat from the configuration
+     * @param channelIndex the index of the channel in the configuration
+     * @return format the time format string
+     * TODO: Note that we have hardcoded the time as the second format in the list. Change this.
+     */
+    public String getTimeFormat(int channelIndex) {
+        String format = null;
+        if (getDateFormats(channelIndex).size() > 1) {
+            format = getDateFormats(channelIndex).get(1);
+        }
+        return format;
+    }
+
+    /**
+     * Get the DateTimeFormat from the configuration
+     * @param channelIndex the index of the channel in the configuration
+     * @return format the date and time format string
+     */
+    public String getDateTimeFormat(int channelIndex) {
+        String format = null;
+        if (getDateFormats(channelIndex).size() == 1) {
+            format = getDateFormats(channelIndex).get(0);
+        }
+        return format;
+    }
+
+    /**
+     * Get the date fields
+     * @param channelIndex the desired channel index
+     * @return dateFields the date fields in the configuration
+     */
+    public List<String> getDateFields(int channelIndex) {
+        List<String> dateFields =
+            xmlConfig.getList("channels.channel(" + channelIndex + ").dateFields.dateField");
+        return dateFields;
+    }
+
+    /**
+     * Get the total date field count
+     * @param channelIndex the desired channel index
+     * @return totalDateFields the count of the total date fields
+     */
+    public int getTotalDateFields(int channelIndex) {
+        List<String> dateFields = getDateFields(channelIndex);
+        return dateFields.size();
+    }
+
+    /**
+     * Get the date formats
+     * @param channelIndex the desired channel index
+     * @return dateFormats
+     */
+    public List<String> getDateFormats(int channelIndex) {
+        List<String> dateFormats =
+            xmlConfig.getList("channels.channel(" + channelIndex + ").dateFormats.dateFormat");
+        return dateFormats;
+    }
+
+    /**
+     * Get the total date formats count
+     * @param channelIndex the desired channel index
+     * @return totalDateFormats the total count of date formats
+     */
+    public int getTotalDateFormats(int channelIndex) {
+        List<String> dateFormats = getDateFormats(channelIndex);
+        return dateFormats.size();
+    }
+
+    /**
+     * Get the record delimiter (line ending)
+     * @param channelIndex the desired channel index
+     * @return recordDelimiter the line ending string of characters
+     */
+    public String getRecordDelimiter(int channelIndex) {
+        List<String> recordDelims = xmlConfig.getList(
+            "channels.channel(" + channelIndex + ").recordDelimiters");
+        // List<String> recordDelimList = new ArrayList<>(Arrays.asList(recordDelims.split("\\|")));
+
+        StringBuilder recordDelimiters = new StringBuilder();
+        for (String delim : recordDelims) {
+            recordDelimiters.append(
+                new String(new byte[] {Integer.decode(delim).byteValue()})
+            );
+        }
+        return recordDelimiters.toString();
     }
 }
