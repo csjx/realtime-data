@@ -48,7 +48,7 @@ public interface Converter {
      * @param outputStream the location to write to
      * @return count the number of samples written
      */
-    int write(OutputStream outputStream);
+    int write(OutputStream outputStream) throws IOException;
 
 
 }
