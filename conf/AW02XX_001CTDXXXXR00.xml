@@ -63,7 +63,27 @@
               Best to keep the data pattern on one line below 
             -->
             <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
-            <!-- 
+            <!--
+                dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
+            -->
+            <dataPrefix>#</dataPrefix>
+
+            <!--
+                columnTypes: A list of column types for each variable in the sample. Use STRING
+                for all column types except:
+                - date-only columns: use LOCAL_DATE
+                - time-only columns: use LOCAL_TIME
+                - date-time columns: use LOCAL_DATE_TIME
+            -->
+            <columnTypes>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>LOCAL_DATE_TIME</columnType>
+            </columnTypes>
+            <!--
               The character that delimits variables within the sample
               Use Hex notation for non-printing, whitespace characters (like space)
             -->
@@ -73,7 +93,11 @@
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
             <recordDelimiters>0x0D|0x0A</recordDelimiters>
-            <!-- 
+            <!--
+              missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
+            -->
+            <missingValueCode>-999</missingValueCode>
+            <!--
               The list of date formats for each sample date component in a separtate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
@@ -99,13 +123,11 @@
                     <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
-                <!--
                 <archiver>
                     <archiveType>pacioos-2020-format</archiveType>
                     <archiveInterval>daily</archiveInterval>
                     <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
                 </archiver>
-                -->
             </archivers>
         </channel>
     </channels>

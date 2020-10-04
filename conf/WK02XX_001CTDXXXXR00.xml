@@ -62,7 +62,26 @@
               Best to keep the data pattern on one line below 
             -->
             <dataPattern># *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4}, *\d{2}:\d{2}:\d{2}\s*</dataPattern>
-            <!-- 
+            <!--
+                dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
+            -->
+            <dataPrefix>#</dataPrefix>
+            <!--
+                columnTypes: A list of column types for each variable in the sample. Use STRING
+                for all column types except:
+                - date-only columns: use LOCAL_DATE
+                - time-only columns: use LOCAL_TIME
+                - date-time columns: use LOCAL_DATE_TIME
+            -->
+            <columnTypes>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>LOCAL_DATE</columnType>
+                <columnType>LOCAL_TIME</columnType>
+            </columnTypes>
+            <!--
               The character that delimits variables within the sample
               Use Hex notation for non-printing, whitespace characters (like space)
             -->
@@ -108,13 +127,11 @@
                     <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
-                <!--
                 <archiver>
                     <archiveType>pacioos-2020-format</archiveType>
                     <archiveInterval>daily</archiveInterval>
                     <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
                 </archiver>
-                -->
             </archivers>
         </channel>
     </channels>
