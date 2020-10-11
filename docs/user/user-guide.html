@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; Realtime Data 1.1.0 documentation</title>
+  <title>1. User Guide &mdash; Realtime Data 1.1.0 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="Realtime Data 1.1.0 documentation" href="../index.html"/>
-        <link rel="next" title="Overview" href="../dev/developer-guide.html"/>
+        <link rel="next" title="2. Development Guide" href="../dev/developer-guide.html"/>
         <link rel="prev" title="Realtime Data Project" href="../index.html"/> 
 
   
@@ -71,72 +71,66 @@
         
           
           
-              <p class="caption"><span class="caption-text">User Guide</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-server-software">Managing the DataTurbine Server Software</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#starting-the-dataturbine">Starting the DataTurbine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#stopping-the-dataturbine">Stopping the DataTurbine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-the-dataturbine">Troubleshooting the DataTurbine</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">1. User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#managing-the-dataturbine-server-software">1.1. Managing the DataTurbine Server Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-the-dataturbine">1.1.1. Starting the DataTurbine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-the-dataturbine">1.1.2. Stopping the DataTurbine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-the-dataturbine">1.1.3. Troubleshooting the DataTurbine</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-instrument-drivers">Managing the DataTurbine Instrument Drivers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#starting-instrument-drivers">Starting Instrument Drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#using-the-xml-based-configuration">Using the XML-based configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-the-dataturbine-instrument-drivers">1.2. Managing the DataTurbine Instrument Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-instrument-drivers">1.2.1. Configuring Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-instrument-drivers">1.2.2. Starting Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-drivers-through-dispatchers">1.2.3. Starting Drivers through Dispatchers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adam-module-engineering-data">1.2.3.1. ADAM Module engineering data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stor-x-data-logger-data">1.2.3.2. STOR-X Data Logger data</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#starting-drivers-through-dispatchers">Starting Drivers through Dispatchers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#adam-module-engineering-data">ADAM Module engineering data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#stor-x-data-logger-data">STOR-X Data Logger data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-instrument-drivers">1.2.4. Stopping Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-instrument-drivers">1.2.5. Troubleshooting Instrument Drivers</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#stopping-instrument-drivers">Stopping Instrument Drivers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-instrument-drivers">Troubleshooting Instrument Drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#rebuilding-channel-data">Rebuilding Channel Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rebuilding-channel-data">1.3. Rebuilding Channel Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#replicating-instrument-data-streams">1.4. Replicating Instrument Data Streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-the-dataturbine-file-archivers">1.5. Managing the DataTurbine File Archivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-the-instrument-file-archivers">1.5.1. Starting the Instrument File Archivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-the-instrument-file-archivers">1.5.2. Stopping the Instrument File Archivers</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#replicating-instrument-data-streams">Replicating Instrument Data Streams</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#managing-the-dataturbine-file-archivers">Managing the DataTurbine File Archivers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#starting-the-instrument-file-archivers">Starting the Instrument File Archivers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#stopping-the-instrument-file-archivers">Stopping the Instrument File Archivers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#understanding-file-based-replication">Understanding File-based replication</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#managing-the-matlab-instrument-plotting-code">Managing the Matlab Instrument Plotting Code</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#connecting-to-the-server-via-vnc">Connecting to the Server via VNC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#starting-the-instrument-plotting-code">Starting the Instrument Plotting Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#stopping-the-instrument-plotting-code">Stopping the Instrument Plotting Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#viewing-instrument-plots">Viewing Instrument Plots</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Developer Guide</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#requirements">Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#directory-structure">Directory Structure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#source-driver-architecture">Source Driver Architecture</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#instrument-specific-drivers">Instrument-specific Drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#rdi-workhorse-acoustic-doppler-current-profiler">RDI Workhorse Acoustic Doppler Current Profiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#seabird-ctd-sensors">Seabird CTD sensors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#davis-scientific-vantage-pro-2-weather-station">Davis Scientific Vantage Pro 2 weather station</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#ecolabs-flntu-fluorometry-turbidity-sensor">EcoLabs FLNTU fluorometry/turbidity sensor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#satlantic-isus-v3-nitrate-sensor">Satlantic ISUS V3 nitrate sensor</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#generic-text-drivers">Generic Text Drivers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#dispatchers">Dispatchers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#adamdispatcher">AdamDispatcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#storxdispatcher">StorXDispatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-file-based-replication">1.6. Understanding File-based replication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-the-matlab-instrument-plotting-code">1.7. Managing the Matlab Instrument Plotting Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-to-the-server-via-vnc">1.7.1. Connecting to the Server via VNC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-the-instrument-plotting-code">1.7.2. Starting the Instrument Plotting Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-the-instrument-plotting-code">1.7.3. Stopping the Instrument Plotting Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-instrument-plots">1.7.4. Viewing Instrument Plots</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html#sink-architecture">Sink Architecture</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#archiver-sink">Archiver Sink</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#matlab-sink">Matlab Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/developer-guide.html">2. Development Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#requirements">2.1. Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#directory-structure">2.2. Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#source-driver-architecture">2.3. Source Driver Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#instrument-specific-drivers">2.4. Instrument-specific Drivers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#rdi-workhorse-acoustic-doppler-current-profiler">2.4.1. RDI Workhorse Acoustic Doppler Current Profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#seabird-ctd-sensors">2.4.2. Seabird CTD sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#davis-scientific-vantage-pro-2-weather-station">2.4.3. Davis Scientific Vantage Pro 2 weather station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#ecolabs-flntu-fluorometry-turbidity-sensor">2.4.4. EcoLabs FLNTU fluorometry/turbidity sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#satlantic-isus-v3-nitrate-sensor">2.4.5. Satlantic ISUS V3 nitrate sensor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#generic-text-drivers">2.5. Generic Text Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#dispatchers">2.6. Dispatchers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#adamdispatcher">2.6.1. AdamDispatcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#storxdispatcher">2.6.2. StorXDispatcher</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../dev/developer-guide.html#sink-architecture">2.7. Sink Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#archiver-sink">2.7.1. Archiver Sink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dev/developer-guide.html#matlab-sink">2.7.2. Matlab Sink</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -163,7 +157,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Overview</li>
+    <li>1. User Guide</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -176,290 +170,244 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<p>The Kilo Nalu streaming system is a centralized means of collecting data in near real-time that uses the Open Source DataTurbine software (see <a class="reference external" href="http://www.dataturbine.org">http://www.dataturbine.org</a>).  The system consists of instruments deployed on the Kilo Nalu cable array (and others via wireless connections) that communicate with the DataTurbine streaming service via customized drivers (written in Java) that understand the stream formats of each instrument.  These drivers are known as ‘Sources’, and the names of the drivers reflect this (e.g. ADCPSource).  Software client programs that connect to the DataTurbine to fetch data are known as ‘Sinks’, and their names reflect this as well (e.g. FileArchiverSink).  The primary DataTurbine installation is on the shore station linux server, and mirrors the data streams to the secondary DataTurbine installation at the UH Manoa campus via the wireless VPN connection.  At the shore station, data streams are fetched from the DataTurbine on an hourly or daily basis (depending on the specific instrument), and are archived to disk by the FileArchiverSink client for each instrument.   These files are also mirrored to the campus Linux server via an hourly process (using the <cite>rsync</cite> command).   Web-based graphics are produced using Matlab code that queries the campus DataTurbine on a scheduled basis.
+  <div class="section" id="user-guide">
+<h1>1. User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<p>The Kilo Nalu streaming system is a centralized means of collecting data in near real-time that uses the Open Source DataTurbine software (see <a class="reference external" href="http://www.dataturbine.org">http://www.dataturbine.org</a>).  The system consists of instruments deployed on the Kilo Nalu cable array (and others via wireless connections) that communicate with the DataTurbine streaming service via customized drivers (written in Java) that understand the stream formats of each instrument.  These drivers are known as &#8216;Sources&#8217;, and the names of the drivers reflect this (e.g. <code class="docutils literal"><span class="pre">ADCPSource</span></code>).  Software client programs that connect to the DataTurbine to fetch data are known as &#8216;Sinks&#8217;, and their names reflect this as well (e.g. <code class="docutils literal"><span class="pre">FileArchiverSink</span></code>).  The primary DataTurbine installation is on the shore station linux server, and mirrors the data streams to the secondary DataTurbine installation at the UH Manoa campus via the wireless VPN connection.  At the shore station, data streams are fetched from the DataTurbine on an hourly or daily basis (depending on the specific instrument), and are archived to disk by the FileArchiverSink client for each instrument.   These files are also mirrored to the campus Linux server via an hourly process (using the <code class="docutils literal"><span class="pre">rsync</span></code> command).   Web-based graphics are produced using Matlab code that queries the campus DataTurbine on a scheduled basis.
 Each of these system components are described in more detail below, along with instructions on how to manage each of them.  <strong>Note: This guide assumes familiarity with the Linux operating system and commands.</strong></p>
 <div class="figure">
 <img alt="../_images/kilonalu-overview-diagram-simple.png" src="../_images/kilonalu-overview-diagram-simple.png" />
 </div>
 <p><em>Figure 1. Overview of the Kilo Nalu real-time data software and backup architecture.  Data are mirrored to the campus system using the DataTurbine software and via rsync, and are accessed by desktop and web-based applications. Note: The KiloNalu cable array is currently shut down and offline.</em></p>
-</div>
 <div class="section" id="managing-the-dataturbine-server-software">
-<h1>Managing the DataTurbine Server Software<a class="headerlink" href="#managing-the-dataturbine-server-software" title="Permalink to this headline">¶</a></h1>
-<p>The DataTurbine software is installed in <cite>/usr/local/RBNB/current</cite>.  It’s running on port <cite>3333</cite> both on the shore station Linux server (Internet IP: <cite>168.105.160.139</cite>, VPN IP <cite>192.168.100.60</cite>) and the UH campus server (Internet IP: <cite>realtime.pacioos.hawaii.edu</cite>, VPN IP: <cite>192.168.103.50</cite>), and is set up as a standard Linux service installed in the <cite>/etc/init.d</cite> directory, with a run level script called <cite>rbnb</cite>.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server’s event log is located in <cite>/var/log/rbnb/rbnb.log</cite>.  The DataTurbine’s internal stream archive is located in <cite>/var/lib/rbnb</cite>.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.</p>
+<h2>1.1. Managing the DataTurbine Server Software<a class="headerlink" href="#managing-the-dataturbine-server-software" title="Permalink to this headline">¶</a></h2>
+<p>The DataTurbine software is installed in <code class="docutils literal"><span class="pre">/usr/local/RBNB/current</span></code>.  It&#8217;s running on port <code class="docutils literal"><span class="pre">3333</span></code> on the UH campus server (DNS: <code class="docutils literal"><span class="pre">realtime.pacioos.hawaii.edu</span></code>, VPN IP: <code class="docutils literal"><span class="pre">192.168.103.50</span></code>), and is set up as a standard Linux service installed in the <code class="docutils literal"><span class="pre">/etc/init.d</span></code> directory, with a run level script called <code class="docutils literal"><span class="pre">rbnb</span></code>.   The DataTurbine is set to start whenever each of the systems is rebooted.  The server&#8217;s event log is located in <code class="docutils literal"><span class="pre">/var/log/rbnb/rbnb.log</span></code>.  The DataTurbine&#8217;s internal stream archive is located in <code class="docutils literal"><span class="pre">/var/lib/rbnb</span></code>.  In the event that instrument source drivers cannot connect to the DataTurbine, look at the event log to see if there are connection, memory, or file system errors.  If so, the DataTurbine service may need to be restarted, the stream archives reloaded (automatic), and the instrument drivers reconnected.</p>
 <div class="section" id="starting-the-dataturbine">
-<h2>Starting the DataTurbine<a class="headerlink" href="#starting-the-dataturbine" title="Permalink to this headline">¶</a></h2>
-<p>The DataTurbine service is started like any other Linux service by calling the run-level script.  To do so, as the kilonalu user, ssh to the Linux server in question (shore lab or campus lab), and execute the following command in a terminal</p>
+<h3>1.1.1. Starting the DataTurbine<a class="headerlink" href="#starting-the-dataturbine" title="Permalink to this headline">¶</a></h3>
+<p>The DataTurbine service is started like any other Linux service by calling the run-level script.  To do so, as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, ssh to the campus lab Linux server, and execute the following command in a terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ sudo service rbnb start
 </pre></div>
 </div>
-<p>If prompted, enter the <cite>kilonalu</cite> user’s password.  This will start the RBNB DataTurbine service and load any existing data stream archives found in the <cite>/var/lib/rbnb</cite> directory.</p>
+<p>If prompted, enter the <code class="docutils literal"><span class="pre">kilonalu</span></code> user&#8217;s password.  This will start the RBNB DataTurbine service and load any existing data stream archives found in the <code class="docutils literal"><span class="pre">/var/lib/rbnb</span></code> directory.</p>
 </div>
 <div class="section" id="stopping-the-dataturbine">
-<h2>Stopping the DataTurbine<a class="headerlink" href="#stopping-the-dataturbine" title="Permalink to this headline">¶</a></h2>
-<p>The DataTurbine service is stopped like any other Linux service by calling the run-level script.  To do so, as the <cite>kilonalu</cite> user, ssh to the Linux server in question (shore lab or campus lab), and execute the following command in a terminal</p>
+<h3>1.1.2. Stopping the DataTurbine<a class="headerlink" href="#stopping-the-dataturbine" title="Permalink to this headline">¶</a></h3>
+<p>The DataTurbine service is stopped like any other Linux service by calling the run-level script.  To do so, as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, ssh to the Linux server in question (shore lab or campus lab), and execute the following command in a terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ sudo service rbnb stop
 </pre></div>
 </div>
-<p>If prompted, enter the <cite>kilonalu</cite> user’s password.  This will cleanly unload any existing data stream archives and stop the RBNB DataTurbine service.</p>
+<p>If prompted, enter the <code class="docutils literal"><span class="pre">kilonalu</span></code> user&#8217;s password.  This will cleanly unload any existing data stream archives and stop the RBNB DataTurbine service.</p>
 </div>
 <div class="section" id="troubleshooting-the-dataturbine">
-<h2>Troubleshooting the DataTurbine<a class="headerlink" href="#troubleshooting-the-dataturbine" title="Permalink to this headline">¶</a></h2>
-<p>There may be times when the DataTurbine isn’t performing as expected.  For instance, client source drivers may not be able to connect, or stream replication from one DataTurbine to another may not continue.  There are a few common causes to these sorts of symptoms, including server memory problems, open file problems, or disk space problems.  As the <cite>kilonalu</cite> user, use the following command to inspect the DataTurbine’s event log to see if any critical errors are being logged</p>
+<h3>1.1.3. Troubleshooting the DataTurbine<a class="headerlink" href="#troubleshooting-the-dataturbine" title="Permalink to this headline">¶</a></h3>
+<p>There may be times when the DataTurbine isn&#8217;t performing as expected.  For instance, client source drivers may not be able to connect, or stream replication from one DataTurbine to another may not continue.  There are a few common causes to these sorts of symptoms, including server memory problems, open file problems, or disk space problems.  As the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, use the following command to inspect the DataTurbine&#8217;s event log to see if any critical errors are being logged</p>
 <div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/rbnb/rbnb.log
 </pre></div>
 </div>
-<p>This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type <cite>Control-c</cite> to stop viewing the scrolling log file.  Errors such as ‘too many open files’, or java.lang.OutOfMemoryException indicate resource problems on the server.  The ‘too many open files’  error indicates that the DataTurbine service has exceeded it’s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in ${REALTIME_DATA}/scripts/shell called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.</p>
-<div class="highlight-python"><div class="highlight"><pre>java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
-  -H 192.168.100.139\
-  -P 2102\
-  -S KN02XX_020ADCP020R00\
-  -C BinaryPD0EnsembleData\
-  -s 192.168.100.60\
-  -p 3333\
-  -z 50000\
-  -Z 31536000
+<p>This will show the most recent log entries that pertain to the DataTurbine service, such as connections, disconnections, or errors.  Type <code class="docutils literal"><span class="pre">Control-c</span></code> to stop viewing the scrolling log file.  Errors such as &#8216;too many open files&#8217;, or java.lang.OutOfMemoryException indicate resource problems on the server.  The &#8216;too many open files&#8217;  error indicates that the DataTurbine service has exceeded it&#8217;s operating system-level limits for open files.  The best solution to this is to stop and start the DataTurbine, and reconnect the instrument streams.  Also, add an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.  Out of memory errors may be caused by the aggregate memory requests by instrument drivers exceeding the available memory on the server.  To mitigate this, the drivers can be tuned to request less memory.   As an example, the 20m 1200 kHz ADCP is started by calling the startup script found in ${REALTIME_DATA}/scripts/shell called KN02XX_020ADCP020R00-Source.sh.  The pertinent line of this script calls the Java source driver with a number of command line parameters.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ java edu.hawaii.soest.kilonalu.adcp.ADCPSource\
+    -H 192.168.100.139\
+    -P 2102\
+    -S KN02XX_020ADCP020R00\
+    -C BinaryPD0EnsembleData\
+    -s 192.168.100.60\
+    -p 3333\
+    -z 50000\
+    -Z 31536000
 </pre></div>
 </div>
-<p>The <cite>-z</cite> option requests that <cite>50000</cite> RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the <cite>-Z</cite> option requests that <cite>31536000</cite> RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one <cite>955</cite> byte ensemble per frame, resulting in a memory request of <cite>(955b x 50000) =  47.75MB</cite>.  The on-disk storage request equates to around six months of ensembles, or <cite>(955b x 31536000) =  30.1GB</cite>.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has <cite>8GB</cite> of physical memory, and <cite>385GB</cite> of disk space available to the DataTurbine.  The campus server currently has <cite>12GB</cite> of physical memory, and <cite>50GB</cite> of disk space available to the DataTurbine.</p>
+<p>The <code class="docutils literal"><span class="pre">-z</span></code> option requests that <code class="docutils literal"><span class="pre">50000</span></code> RBNB data frames (in this case ADCP ensembles) be stored in physical memory, whereas the <code class="docutils literal"><span class="pre">-Z</span></code> option requests that <code class="docutils literal"><span class="pre">31536000</span></code> RBNB data frames be stored on disk before they are overwritten.  For the 20m 1200 kHz ADCP, this equates to one <code class="docutils literal"><span class="pre">955</span></code> byte ensemble per frame, resulting in a memory request of <code class="docutils literal"><span class="pre">(955b</span> <span class="pre">x</span> <span class="pre">50000)</span> <span class="pre">=</span>&nbsp; <span class="pre">47.75MB</span></code>.  The on-disk storage request equates to around six months of ensembles, or <code class="docutils literal"><span class="pre">(955b</span> <span class="pre">x</span> <span class="pre">31536000)</span> <span class="pre">=</span>&nbsp; <span class="pre">30.1GB</span></code>.  These resource request values can be adjusted if the aggregate requests of all of the instrument drivers exceed the limits of the server in terms of memory and disk space.  The shore station server currently has <code class="docutils literal"><span class="pre">8GB</span></code> of physical memory, and <code class="docutils literal"><span class="pre">385GB</span></code> of disk space available to the DataTurbine.  The campus server currently has <code class="docutils literal"><span class="pre">12GB</span></code> of physical memory, and <code class="docutils literal"><span class="pre">50GB</span></code> of disk space available to the DataTurbine.</p>
 </div>
 </div>
 <div class="section" id="managing-the-dataturbine-instrument-drivers">
-<h1>Managing the DataTurbine Instrument Drivers<a class="headerlink" href="#managing-the-dataturbine-instrument-drivers" title="Permalink to this headline">¶</a></h1>
-<p>Each instrument type in the water has a corresponding instrument driver used to connect it to the DataTurbine.  For instance, for ADCPs, there’s a Java-based driver called ADCPSource, and for the CTDs, there’s a driver called CTDSource.  The following table lists the instruments and their associated drivers, along with which DataTurbine they connect to by default.  Driver Source naming conventions can be found in the <a class="reference external" href="https://github.com/csjx/realtime-data/raw/master/docs/dev/BBL-requirements-document-and-management-plan.pdf">data management plan</a>.</p>
+<h2>1.2. Managing the DataTurbine Instrument Drivers<a class="headerlink" href="#managing-the-dataturbine-instrument-drivers" title="Permalink to this headline">¶</a></h2>
+<p>Each instrument type in the water has a corresponding instrument driver used to connect it to the DataTurbine.  For instance, for ADCPs, there&#8217;s a Java-based driver called <code class="docutils literal"><span class="pre">ADCPSource</span></code>, and for the CTDs, there&#8217;s a driver called <code class="docutils literal"><span class="pre">CTDSource</span></code>.  PacIOOS nearshore instruments use a generic text-based driver called a <code class="docutils literal"><span class="pre">SimpleTextSource</span></code> which handles all delimited text-based data samples.  Driver Source naming conventions can be found in the <a class="reference external" href="https://github.com/csjx/realtime-data/raw/master/docs/dev/BBL-requirements-document-and-management-plan.pdf">data management plan</a>.  The drivers are managed through a single shell script called <code class="docutils literal"><span class="pre">manage-instruments</span></code>.  This script starts and stops drivers and archivers (see below).</p>
+<div class="section" id="configuring-instrument-drivers">
+<h3>1.2.1. Configuring Instrument Drivers<a class="headerlink" href="#configuring-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>Each instrument deployment gets documented in an XML configuration file in the <code class="docutils literal"><span class="pre">${REALTIME_DATA}/conf</span></code> directory with the same name as the instrument name.  For instance, the Waikiki Beach CTD is named <code class="docutils literal"><span class="pre">WK01XX_001CTDXXXXR00</span></code>, and the corresponding XML file is <code class="docutils literal"><span class="pre">WK01XX_001CTDXXXXR00.xml</span></code>.</p>
+<p>This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root <cite>instrument</cite> element:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="7%" />
-<col width="25%" />
-<col width="20%" />
-<col width="16%" />
+<col width="46%" />
+<col width="40%" />
 <col width="14%" />
-<col width="17%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">Status</th>
-<th class="head">Instrument Description</th>
-<th class="head">DataTurbine Name</th>
-<th class="head">Instrument IP</th>
-<th class="head">Driver Name</th>
-<th class="head">Host DataTurbine</th>
+<tr class="row-odd"><th class="head">Element path</th>
+<th class="head">Definition</th>
+<th class="head">Repeatable</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>Offline</td>
-<td>~10m CN ADAM monitor 1~</td>
-<td>KN00XX_010ADAM010R01</td>
-<td>192.168.100.201</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td><strong>identifier</strong></td>
+<td>The instrument identifier</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>10m CN ADAM monitor 2</td>
-<td>KN00XX_010ADAM010R02</td>
-<td>192.168.100.202</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>connectionType</td>
+<td>The connection type: socket, file, or serial</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>10m SN ADAM monitor 1</td>
-<td>KN01XX_010ADAM010R01</td>
-<td>192.168.100.205</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td>connectionParams/hostName</td>
+<td>For socket connections, the instrument host or IP</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>10m SN ADAM monitor 2</td>
-<td>KN01XX_010ADAM010R02</td>
-<td>192.168.100.206</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>connectionParams/hostPort</td>
+<td>For socket connections, the instrument TCP port</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>10m 1200kHz ADCP</td>
-<td>KN0101_010ADCP010R00</td>
-<td>192.168.100.136</td>
-<td>ADCPSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td>filePath</td>
+<td>For file connections, the data file full path</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>10m WetLabs FLNTU</td>
-<td>KN0101_010FLNT010R00</td>
-<td>192.168.100.136</td>
-<td>FLNTUSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>rbnbName</td>
+<td>The name of the instrument source as it appears
+in the DataTurbine (e.g. WK01XX_001CTDXXXXR00)</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>10m TChain</td>
-<td>KN0101_010TCHN010R00</td>
-<td>192.168.100.136</td>
-<td>TChainSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td>rbnbServer</td>
+<td>The DataTurbine server hostname or IP</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>10m Seabird SBE37</td>
-<td>KN0101_010SBEX010R00</td>
-<td>192.168.100.136</td>
-<td>SBE37Source</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>rbnbPort</td>
+<td>The DataTurbine server host TCP port</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>20m Sub ADAM monitor 1</td>
-<td>KN0201_010ADAM010R01</td>
-<td>192.168.100.221</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td>archiveMemory</td>
+<td>The number of in-memory bytes to request for
+this instrument source.</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>20m Sub ADAM monitor 2</td>
-<td>KN0201_010ADAM010R02</td>
-<td>192.168.100.222</td>
-<td>ADAMSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>archiveSize</td>
+<td>The number of on-disk bytes to request for
+this instrument source.</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>20m 1200kHz ADCP</td>
-<td>KN02XX_020ADCP020R00</td>
-<td>192.168.100.139</td>
-<td>ADCPSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-even"><td>channels/channel</td>
+<td>A repeatable element for each channel&#8217;s details.</td>
+<td>yes</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>20m TChain</td>
-<td>KN0201_020TCHN020R00</td>
-<td>192.168.100.139</td>
-<td>TChainSource</td>
-<td>Shore Station Lab</td>
+<tr class="row-odd"><td>channels/channel/name</td>
+<td>The name of the channel for this instrument.</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>20m Seahorse CTD</td>
-<td>KN0201_020CTDX020R00</td>
-<td>192.168.100.139</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/dataType</td>
+<td>The type of the incoming data. For now, limited
+to a value of &#8220;String&#8221;.</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>JABSOM Wx Station</td>
-<td>KNWXXX_XXXDVP2XXXR00</td>
-<td>168.105.160.135</td>
-<td>DavisWxSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/dataPattern</td>
+<td>The regular expression used to match a data
+sample. Assumes Java RegEx syntax. It is best
+to keep data pattern on one line.</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Online</td>
-<td>01m Alawai NS01 CTD</td>
-<td>AW01XX_002CTDXXXXR00</td>
-<td>68.25.35.242</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/dataPrefix</td>
+<td>A string of characters that prefix the data in
+a sample (e.g. &#8216;#&#8217;).</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>01m Alawai NS02 CTD</td>
-<td>AW02XX_001CTDXXXXR00</td>
-<td>68.25.32.149</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/columnTypes/columnType</td>
+<td>A physical storage type for a sample column.
+Allowed column types are currently:
+LOCAL_DATE, LOCAL_DATE_TIME, LOCAL_TIME, STRING.</td>
+<td>yes</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>01m Atlantis NS03 CTD</td>
-<td>WK01XX_001CTDXXXXR00</td>
-<td>68.25.168.134</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/fieldDelimiter</td>
+<td>The character that delimits variables within
+the sample. Use Hex notation for non-printing,
+whitespace characters (like space) (e.g 0x20).</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>01m Aquarium NS04 CTD</td>
-<td>WK02XX_001CTDXXXXR00</td>
-<td>68.25.74.204</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/recordDelimiters</td>
+<td>The character(s) that delimit records (samples)
+in a stream or file. Use Hex notation for
+non-printing characters, and separate characters
+with a pipe (e.g. 0x0d|0x0A).</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>01m American Samoa NS05 CTD</td>
-<td>PIAS01_001CTDXXXXR00</td>
-<td>10.8.0.3</td>
-<td>FileSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/missingValueCode</td>
+<td>A code indicating that a value is missing in the
+sample (NaN, -999, etc.).</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>01m Micronesia NS06 CTD</td>
-<td>PIFM01_001CTDXXXXR00</td>
-<td>10.8.0.4</td>
-<td>FileSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/dateFormats/dateFormat</td>
+<td>The list of date formats for each sample date
+component that is in a separate variable. One or
+more date formats are required, reflecting the
+date/time variables in the data (e.g. mm/dd/YYYY,
+e.g. HH:MM:SS) (Assumes Java date parsing syntax)
+Note: dateFormat and dateField are used together
+to locate, then parse the sample date.</td>
+<td>yes</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>01m Marshall Islands NS07 CTD</td>
-<td>PIMI01_001CTDXXXXR00</td>
-<td>10.8.0.5</td>
-<td>FileSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/dateFields/dateField</td>
+<td>The list of date fields for each sample date
+component in a separate variable. One or more
+date fields are required, corresponding to the
+date/time variable positions in the data
+(e.g 1 , e.g 2) (Correspond to the first and
+second variables in the data sample).</td>
+<td>yes</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>01m Palau NS08 CTD</td>
-<td>PIPL01_001CTDXXXXR00</td>
-<td>10.8.0.2</td>
-<td>FileSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/timeZone</td>
+<td>The time zone identifier that the data were
+collected in (e.g. Pacific/Honolulu). The newest
+Java Time API parsers are strict about zone
+identifiers, and will fall back to UTC when the
+now-deprecated zone names (in the format of
+HDT, HST, SST, etc.) are used. They are
+considered ambiguous due to conflicting global
+use.  Only use identifiers that follow the
+&lt;region&gt;/&lt;locality&gt; pattern (like Pacific/Samoa).
+While an exact offset like GMT+13:00 will also
+work, it may change over time due to daylight
+savings, so the long identifier is best.</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Offline</td>
-<td>01m Guam NS09 CTD</td>
-<td>PIGM01_001CTDXXXXR00</td>
-<td>TBD</td>
-<td>TBD</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/archivers/archiver</td>
+<td>A repeatable element for each archiver&#8217;s details.</td>
+<td>yes</td>
 </tr>
-<tr class="row-odd"><td>Offline</td>
-<td>01m Maunalua Bay NS10 CTD</td>
-<td>MB01XX_001CTDXXXXR00</td>
-<td>24.221.193.197</td>
-<td>CTDSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/archivers/archiver/archiveType</td>
+<td>The type of the archiver. Must be &#8220;raw&#8221; or
+&#8220;pacioos-2020-format&#8221;.</td>
+<td>no</td>
 </tr>
-<tr class="row-even"><td>Online</td>
-<td>0m WQB-AW CTD, ISUS, STORX</td>
-<td>HIWQXX_XXXCTDXXXXXXX</td>
-<td>N/A</td>
-<td>StorXSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-even"><td>channels/channel/archivers/archiver/archiveInterval</td>
+<td>The interval used for archiving data files to
+disk from the DataTurbine channel. Must be either
+&#8220;hourly&#8221; or &#8220;daily&#8221;.</td>
+<td>no</td>
 </tr>
-<tr class="row-odd"><td>Online</td>
-<td>0m WQB-KN CTD, ISUS, STORX</td>
-<td>HIWQXX_XXXCTDXXXXXXX</td>
-<td>N/A</td>
-<td>StorXSource</td>
-<td>Campus HIG Lab</td>
-</tr>
-<tr class="row-even"><td>Offline</td>
-<td>01m Mariana Islands CTD</td>
-<td>PINM01_001CTDXXXXR00</td>
-<td>N/A</td>
-<td>FileSource</td>
-<td>Campus HIG Lab</td>
+<tr class="row-odd"><td>channels/channel/archivers/archiver/archiveBaseDirectory</td>
+<td>The base directory to archive channel data
+files created from the channel. Must be writable.
+The sourceName will be appended, and optionally
+the channelName (for raw data archiving).</td>
+<td>no</td>
 </tr>
 </tbody>
 </table>
+<p>It&#8217;s easiest to just copy an existing XML configuration document and add/replace values as need.  Here&#8217;s an <a class="reference external" href="https://github.com/csjx/realtime-data/blob/master/conf/WK01XX_001CTDXXXXR00.xml">example document</a>.</p>
+</div>
 <div class="section" id="starting-instrument-drivers">
-<h2>Starting Instrument Drivers<a class="headerlink" href="#starting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
-<p>Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in <cite>${REALTIME_DATA}/scripts/shell</cite>, and they all follow the naming pattern of ‘<cite>Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop a driver before starting one, to ensure that two drivers aren’t running for the same instrument.  See Stopping Instrument Drivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
+<h3>1.2.2. Starting Instrument Drivers<a class="headerlink" href="#starting-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>, and they all follow the naming pattern of <code class="docutils literal"><span class="pre">Start-SOURCENAME.sh</span></code>. Likewise, the stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Stop-SOURCENAME.sh</span></code>.  <strong>Note: It&#8217;s a good idea to always stop a driver before starting one, to ensure that two drivers aren&#8217;t running for the same instrument.  See Stopping Instrument Drivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following commands in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Stop-KN02XX_020ADCPXXXR00.sh
 $ Start-KN02XX_020ADCPXXXR00.sh
 </pre></div>
 </div>
-<p>This will cleanly shut down any existing 20m 1200kHz ADCP drivers, start a new driver, and will also start tailing the log file for the specific driver so you can verify that the samples are being sent to the DataTurbine.  To stop viewing the log file, type Control-c in the terminal.</p>
-<div class="section" id="using-the-xml-based-configuration">
-<h3>Using the XML-based configuration<a class="headerlink" href="#using-the-xml-based-configuration" title="Permalink to this headline">¶</a></h3>
-</div>
+<p>This will cleanly shut down any existing 20m 1200kHz ADCP drivers, start a new driver, and will also start tailing the log file for the specific driver so you can verify that the samples are being sent to the DataTurbine.  To stop viewing the log file, type <code class="docutils literal"><span class="pre">Control-c</span></code> in the terminal.</p>
 </div>
 <div class="section" id="starting-drivers-through-dispatchers">
-<h2>Starting Drivers through Dispatchers<a class="headerlink" href="#starting-drivers-through-dispatchers" title="Permalink to this headline">¶</a></h2>
+<h3>1.2.3. Starting Drivers through Dispatchers<a class="headerlink" href="#starting-drivers-through-dispatchers" title="Permalink to this headline">¶</a></h3>
 <p>There are certain instruments that multiplex data to a single location or over a single port.  In order to create data streams for each of the independent instruments in the multiplexed stream, a dispatcher is needed to de-multiplex the bytes and call the pertinent drivers to add the data to the DataTurbine.</p>
 <div class="section" id="adam-module-engineering-data">
-<h3>ADAM Module engineering data<a class="headerlink" href="#adam-module-engineering-data" title="Permalink to this headline">¶</a></h3>
+<h4>1.2.3.1. ADAM Module engineering data<a class="headerlink" href="#adam-module-engineering-data" title="Permalink to this headline">¶</a></h4>
 <p>Since all of the data from all of the ADAM modules come into the server on a single UDP port, a dispatcher program is used to harvest the data packets and push them into the DataTurbine as the appropriate individual data Sources.  This is the ADAMDispatcher, which is started with</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Start-KNXXXX_XXXADAMXXXXXX.sh
 </pre></div>
 </div>
-<p>The AdamDispatcher reads an XML configuration file located in <cite>${REALTIME_DATA}/lib/sensor.properties.xml</cite>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <cite>&lt;sensor&gt;</cite> entry in the file</p>
+<p>The AdamDispatcher reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/sensor.properties.xml</span></code>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <code class="docutils literal"><span class="pre">&lt;sensor&gt;</span></code> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;sensor&gt;</span>
     <span class="nt">&lt;address&gt;</span>192.168.100.208<span class="nt">&lt;/address&gt;</span>
@@ -515,7 +463,7 @@ IP Address of the incoming UDP datagrams</p>
 <li>Archive size requested for the Source</li>
 <li>Name of the data channel</li>
 </ul>
-<p>It then also provides ADAM port number to ADAM voltage channel mappings with the name (label) of the two measurements being taken on the ADAM port’s voltage channels.  Each port is listed with:</p>
+<p>It then also provides ADAM port number to ADAM voltage channel mappings with the name (label) of the two measurements being taken on the ADAM port&#8217;s voltage channels.  Each port is listed with:</p>
 <ul class="simple">
 <li>Port number</li>
 <li>Measurement label</li>
@@ -524,12 +472,12 @@ IP Address of the incoming UDP datagrams</p>
 <p>These mappings are critical to creating the correct DataTurbine channels for each measurement voltage.</p>
 </div>
 <div class="section" id="stor-x-data-logger-data">
-<h3>STOR-X Data Logger data<a class="headerlink" href="#stor-x-data-logger-data" title="Permalink to this headline">¶</a></h3>
-<p>For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the <cite>wqb</cite> user’s inbox, but are also immediately forwarded to <cite>hiooswqb&#64;gmail.com</cite>.  This is email account is monitored every minute over IMAP by the StorXDispatcher, which is started with</p>
+<h4>1.2.3.2. STOR-X Data Logger data<a class="headerlink" href="#stor-x-data-logger-data" title="Permalink to this headline">¶</a></h4>
+<p>For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the <code class="docutils literal"><span class="pre">wqb</span></code> user&#8217;s inbox, but are also immediately forwarded to <code class="docutils literal"><span class="pre">hiooswqb&#64;gmail.com</span></code>.  This is email account is monitored every minute over IMAP by the StorXDispatcher, which is started with</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Start-HIXXXX_XXXCTDXXXXXXX.sh
 </pre></div>
 </div>
-<p>The StorXDispatcher reads an XML configuration file located in <cite>${REALTIME_DATA}/lib/email.account.properties.xml</cite>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <cite>&lt;account&gt;</cite> entry with a single <cite>&lt;logger&gt;</cite> entry in the file</p>
+<p>The StorXDispatcher reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/email.account.properties.xml</span></code>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <code class="docutils literal"><span class="pre">&lt;account&gt;</span></code> entry with a single <code class="docutils literal"><span class="pre">&lt;logger&gt;</span></code> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;accounts&gt;</span>
     <span class="nt">&lt;account&gt;</span>
@@ -592,8 +540,8 @@ IP Address of the incoming UDP datagrams</p>
 </div>
 </div>
 <div class="section" id="stopping-instrument-drivers">
-<h2>Stopping Instrument Drivers<a class="headerlink" href="#stopping-instrument-drivers" title="Permalink to this headline">¶</a></h2>
-<p>As above, each instrument driver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern ‘<cite>Stop-SOURCENAME.sh</cite>’.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following command in the terminal</p>
+<h3>1.2.4. Stopping Instrument Drivers<a class="headerlink" href="#stopping-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>As above, each instrument driver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Stop-SOURCENAME.sh</span></code>.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following command in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Stop-KN02XX_020ADCPXXXR00.sh
 </pre></div>
 </div>
@@ -608,12 +556,12 @@ IP Address of the incoming UDP datagrams</p>
 </div>
 </div>
 <div class="section" id="troubleshooting-instrument-drivers">
-<h2>Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h2>
-<p>There may be many reasons why an instrument driver isn’t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the <cite>kilonalu</cite> user in a terminal on the server in question (either shore station or campus server)</p>
+<h3>1.2.5. Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>There may be many reasons why an instrument driver isn&#8217;t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user in a terminal on the server in question (either shore station or campus server)</p>
 <div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
 </pre></div>
 </div>
-<p>Each of the log files follow the naming convention of <cite>SOURCENAME-Source.log</cite>, so just substitute the source name string to view the log of that particular instrument driver.  To stop viewing the log, type Control-c in the terminal.
+<p>Each of the log files follow the naming convention of <code class="docutils literal"><span class="pre">SOURCENAME-Source.log</span></code>, so just substitute the source name string to view the log of that particular instrument driver.  To stop viewing the log, type <code class="docutils literal"><span class="pre">Control-c</span></code> in the terminal.
 As each instrument sample is read over the wire by the instrument driver, the sample will be parsed and inserted into the DataTurbine, and a line will be added to the log file stating so.  For instance, for the 20m 1200kHz ADCP, the log file entries are one line per 955 byte ensemble, and should look like</p>
 <div class="highlight-python"><div class="highlight"><pre>Processed byte # 955 7f - log msg is: 467204614 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
 Processed byte # 955 7f - log msg is: 467206774 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
@@ -624,26 +572,28 @@ Processed byte # 955 7f - log msg is: 467215425 [StreamingThread] INFO edu.hawai
 Processed byte # 955 7f - log msg is: 467217590 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
 </pre></div>
 </div>
-<p>The instrument log entries vary per instrument, but they each say something to the effect of ‘Sent sample to the DataTurbine’.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.</p>
+<p>The instrument log entries vary per instrument, but they each say something to the effect of &#8216;Sent sample to the DataTurbine&#8217;.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.</p>
+</div>
+</div>
 <div class="section" id="rebuilding-channel-data">
-<h3>Rebuilding Channel Data<a class="headerlink" href="#rebuilding-channel-data" title="Permalink to this headline">¶</a></h3>
-<p>Since the Data Turbine is optimized for real-time, chronologically increasing data points, back filling gaps in the individual data channels requires that the entire channel is cleared of data, and then the backfilled data are re-loaded into the channel.  Each of the channels of data are configured to store approximately <em>one year’s worth</em> of data, and so in order to rebuild the channel, assemble an ASCII data file with the most recent year of data.  The file should be formatted exactly as the data stream off of the instrument, with the same leading characters, delimiters, spaces between variables, and line endings.  This ensures that the data can be consistently parsed using existing plotting code.  Rebuilding binary data channels requires other approaches, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data">https://github.com/csjx/realtime-data</a> for help with rebuilding binary streams.</p>
-<p>Once the data file is assembled, prepare the DataTurbine to accept the new data.  This is done by first stopping the driver, and then terminating the appropriate data source using the RBNB admin utility.  Connect to the campus server as the <cite>kilonalu</cite> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <cite>Open terminal</cite> menu item.  In the terminal, issue the following command</p>
+<h2>1.3. Rebuilding Channel Data<a class="headerlink" href="#rebuilding-channel-data" title="Permalink to this headline">¶</a></h2>
+<p>Since the Data Turbine is optimized for real-time, chronologically increasing data points, back filling gaps in the individual data channels requires that the entire channel is cleared of data, and then the backfilled data are re-loaded into the channel.  Each of the channels of data are configured to store approximately <em>one year&#8217;s worth</em> of data, and so in order to rebuild the channel, assemble an ASCII data file with the most recent year of data.  The file should be formatted exactly as the data stream off of the instrument, with the same leading characters, delimiters, spaces between variables, and line endings.  This ensures that the data can be consistently parsed using existing plotting code.  Rebuilding binary data channels requires other approaches, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data">https://github.com/csjx/realtime-data</a> for help with rebuilding binary streams.</p>
+<p>Once the data file is assembled, prepare the DataTurbine to accept the new data.  This is done by first stopping the driver, and then terminating the appropriate data source using the RBNB admin utility.  Connect to the campus server as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <code class="docutils literal"><span class="pre">Open</span> <span class="pre">terminal</span></code> menu item.  In the terminal, issue the following command</p>
 <div class="highlight-python"><div class="highlight"><pre>$ java -jar /usr/local/RBNB/current/bin/admin.jar &amp;
 </pre></div>
 </div>
-<p>This will open up the admin utility within the VNC window.  Next, choose the <cite>File &#8211;&gt; Open ...</cite> menu item.   Enter the following into the form:</p>
+<p>This will open up the admin utility within the VNC window.  Next, choose the <code class="docutils literal"><span class="pre">File</span> <span class="pre">--&gt;</span> <span class="pre">Open</span> <span class="pre">...</span></code> menu item.   Enter the following into the form:</p>
 <ul class="simple">
 <li>Host: realtime.pacioos.hawaii.edu</li>
 <li>Port: 3333</li>
 <li>Username: kilonalu</li>
 <li>Password: [leave blank]</li>
 </ul>
-<p>Once you press ‘Ok’, the application should connect, and show you a list of the data sources on the DataTurbine labeled ‘KNHIGCampusDataTurbine’.  To terminate the instrument source, right-click on the instrument source name, and choose the <cite>Terminate</cite> menu item.</p>
+<p>Once you press &#8216;Ok&#8217;, the application should connect, and show you a list of the data sources on the DataTurbine labeled &#8216;KNHIGCampusDataTurbine&#8217;.  To terminate the instrument source, right-click on the instrument source name, and choose the <code class="docutils literal"><span class="pre">Terminate</span></code> menu item.</p>
 <div class="figure align-right">
 <img alt="../_images/dataturbine-terminate-source.png" src="../_images/dataturbine-terminate-source.png" />
 </div>
-<p>The admin utility showing the terminate source menu item.  In example to the side, the <cite>AW01XX_002CTDXXXXR00</cite>  instrument source is being terminated.  Once terminated, the underlying directory that stores the DataTurbine data for the source needs to be removed.  This allows the DataTurbine to start a new instrument source ring buffer, rather than appending to the existing ring buffer.  <strong>Note: These are production data sources, so be sure to remove the correct directory</strong>.  To do so, open a terminal window and issue the following commands</p>
+<p>The admin utility showing the terminate source menu item.  In example to the side, the <code class="docutils literal"><span class="pre">AW01XX_002CTDXXXXR00</span></code> instrument source is being terminated.  Once terminated, the underlying directory that stores the DataTurbine data for the source needs to be removed.  This allows the DataTurbine to start a new instrument source ring buffer, rather than appending to the existing ring buffer.  <strong>Note: These are production data sources, so be sure to remove the correct directory</strong>.  To do so, open a terminal window and issue the following commands</p>
 <div class="highlight-python"><div class="highlight"><pre>$ cd /var/lib/rbnb
 # replace the appropriate source name below
 $ rm -rf AW01XX_002CTDXXXXR00
@@ -651,16 +601,14 @@ $ rm -rf AW01XX_002CTDXXXXR00
 </div>
 <p>Once removed, the channel data can be rebuilt.  Use the FileSource driver with a run script that points to you one-year data file to load the gap-filled data into the DataTurbine.</p>
 </div>
-</div>
-</div>
 <div class="section" id="replicating-instrument-data-streams">
-<h1>Replicating Instrument Data Streams<a class="headerlink" href="#replicating-instrument-data-streams" title="Permalink to this headline">¶</a></h1>
-<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <cite>rbnbAdmin</cite> to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
-First, connect to the campus server as the <cite>kilonalu</cite> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <cite>Open terminal</cite> menu item.  In the terminal, issue the following command</p>
+<h2>1.4. Replicating Instrument Data Streams<a class="headerlink" href="#replicating-instrument-data-streams" title="Permalink to this headline">¶</a></h2>
+<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <code class="docutils literal"><span class="pre">rbnbAdmin``to</span> <span class="pre">manage</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">streams.</span>&nbsp; <span class="pre">This</span> <span class="pre">program</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">run</span> <span class="pre">from</span> <span class="pre">your</span> <span class="pre">workstation</span> <span class="pre">if</span> <span class="pre">you</span> <span class="pre">have</span> <span class="pre">downloaded</span> <span class="pre">it</span> <span class="pre">and</span> <span class="pre">have</span> <span class="pre">installed</span> <span class="pre">Java,</span> <span class="pre">but</span> <span class="pre">these</span> <span class="pre">instructions</span> <span class="pre">will</span> <span class="pre">describe</span> <span class="pre">how</span> <span class="pre">to</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">administrative</span> <span class="pre">program</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">campus</span> <span class="pre">server.</span>
+<span class="pre">First,</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">campus</span> <span class="pre">server</span> <span class="pre">as</span> <span class="pre">the</span> <span class="pre">``kilonalu</span></code> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <code class="docutils literal"><span class="pre">Open</span> <span class="pre">terminal</span></code> menu item.  In the terminal, issue the following command</p>
 <div class="highlight-python"><div class="highlight"><pre>$ java -jar /usr/local/RBNB/current/bin/admin.jar &amp;
 </pre></div>
 </div>
-<p>This will open up the admin utility within the VNC window.  Next, choose the <cite>File &#8211;&gt; Open ...</cite> menu item.  You will be connecting to the shore station Linux server, and so enter the following into the form:</p>
+<p>This will open up the admin utility within the VNC window.  Next, choose the <code class="docutils literal"><span class="pre">File</span> <span class="pre">--&gt;</span> <span class="pre">Open</span> <span class="pre">...</span></code> menu item.  You will be connecting to the shore station Linux server, and so enter the following into the form:</p>
 <div class="figure align-right">
 <a class="reference internal image-reference" href="../_images/dataturbine-connection.png"><img alt="../_images/dataturbine-connection.png" src="../_images/dataturbine-connection.png" style="width: 307.5px; height: 226.5px;" /></a>
 </div>
@@ -670,39 +618,39 @@ First, connect to the campus server as the <cite>kilonalu</cite> user using VNC 
 <li>Username: kilonalu</li>
 <li>Password: [leave blank]</li>
 </ul>
-<p>Once you press ‘Ok’, the application should connect, and show you a list of the data sources on the DataTurbine labeled ‘<cite>KNShoreStationDataTurbine</cite>’.  To replicate a data source, first click on a data source name - in this example <cite>KN02XX_020ADCP020R00</cite>, and copy the name using the Control-c keys.  Then, right-click on the same name, and choose <cite>Mirror to ...</cite> in the menu list.  Fill in the replication form with the following information.  In the Data Path field, you can paste the source name in using the Control-v keys.</p>
+<p>Once you press &#8216;Ok&#8217;, the application should connect, and show you a list of the data sources on the DataTurbine labeled <code class="docutils literal"><span class="pre">KNShoreStationDataTurbine</span></code>.  To replicate a data source, first click on a data source name - in this example <code class="docutils literal"><span class="pre">KN02XX_020ADCP020R00</span></code>, and copy the name using the <code class="docutils literal"><span class="pre">Control-c</span></code> keys.  Then, right-click on the same name, and choose <code class="docutils literal"><span class="pre">Mirror</span> <span class="pre">to</span> <span class="pre">...</span></code> in the menu list.  Fill in the replication form with the following information.  In the Data Path field, you can paste the source name in using the <code class="docutils literal"><span class="pre">Control-v</span></code> keys.</p>
 <div class="figure align-right">
 <a class="reference internal image-reference" href="../_images/dataturbine-mirror-to-dialog.png"><img alt="../_images/dataturbine-mirror-to-dialog.png" src="../_images/dataturbine-mirror-to-dialog.png" style="width: 310.5px; height: 227.5px;" /></a>
 </div>
 <ul class="simple">
-<li>To: <cite>tcp://realtime.pacioos.hawaii.edu:3333</cite></li>
-<li>Data Path: <cite>KN02XX_020ADCP020R00</cite></li>
-<li>From: <cite>tcp://168.105.160.139:3333</cite></li>
-<li>Data Path: <cite>KN02XX_020ADCP020R00</cite></li>
-<li>Start: <cite>Oldest</cite> (Radio button)</li>
-<li>Stop: <cite>Continuous</cite> (Radio Button)</li>
-<li>Buffer Size: <cite>Match Source</cite> (Check box)</li>
+<li>To: <code class="docutils literal"><span class="pre">tcp://realtime.pacioos.hawaii.edu:3333</span></code></li>
+<li>Data Path: <code class="docutils literal"><span class="pre">KN02XX_020ADCP020R00</span></code></li>
+<li>From: <code class="docutils literal"><span class="pre">tcp://168.105.160.139:3333</span></code></li>
+<li>Data Path: <code class="docutils literal"><span class="pre">KN02XX_020ADCP020R00</span></code></li>
+<li>Start: <code class="docutils literal"><span class="pre">Oldest</span></code> (Radio button)</li>
+<li>Stop: <code class="docutils literal"><span class="pre">Continuous</span></code> (Radio Button)</li>
+<li>Buffer Size: <code class="docutils literal"><span class="pre">Match</span> <span class="pre">Source</span></code> (Check box)</li>
 </ul>
 <div class="figure align-right">
 <a class="reference internal image-reference" href="../_images/dataturbine-mirror-data-dialog.png"><img alt="../_images/dataturbine-mirror-data-dialog.png" src="../_images/dataturbine-mirror-data-dialog.png" style="width: 341.0px; height: 384.0px;" /></a>
 </div>
-<p>Once you press ‘Ok’, the two DataTurbines will connect and establish the replication for the data source.  <strong>Note: In the ‘Start’ field above, you can choose ‘Now’ or ‘Oldest’.  The latter will attempt to replicate all samples in the data source from the oldest point in time stored in the DataTurbine, but due to network performance across the wireless link, this can take days to establish.  If you choose ‘Now’, the most recent samples will begin replicating, and the campus DataTurbine will have a gap in the data time series.</strong>
-To see the status of the replicated streams, choose the Hidden menu item under the ‘View’ menu.  The following screenshot shows two rbnbAdmin clients open, one connected to each DataTurbine (shore station and campus), and shows all of the data sources, along with their replication links:</p>
+<p>Once you press &#8216;Ok&#8217;, the two DataTurbines will connect and establish the replication for the data source.  <strong>Note: In the &#8216;Start&#8217; field above, you can choose &#8216;Now&#8217; or &#8216;Oldest&#8217;.  The latter will attempt to replicate all samples in the data source from the oldest point in time stored in the DataTurbine, but due to network performance across the wireless link, this can take days to establish.  If you choose &#8216;Now&#8217;, the most recent samples will begin replicating, and the campus DataTurbine will have a gap in the data time series.</strong>
+To see the status of the replicated streams, choose the Hidden menu item under the &#8216;View&#8217; menu.  The following screenshot shows two rbnbAdmin clients open, one connected to each DataTurbine (shore station and campus), and shows all of the data sources, along with their replication links:</p>
 <div class="figure">
 <a class="reference internal image-reference" href="../_images/dataturbine-replication.png"><img alt="../_images/dataturbine-replication.png" src="../_images/dataturbine-replication.png" style="width: 867.0px; height: 254.0px;" /></a>
 </div>
-<p>If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to <a class="reference external" href="http://realtime.pacioos.hawaii.edu:8080/RBNB">http://realtime.pacioos.hawaii.edu:8080/RBNB</a>.  You’ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax</p>
+<p>If there is a network outage, the replication links should re-establish when the network is restored, and the samples will synchronize across the DataTurbines.  You can check the status of the replication by pointing your browser to <a class="reference external" href="http://realtime.pacioos.hawaii.edu:8080/RBNB">http://realtime.pacioos.hawaii.edu:8080/RBNB</a>.  You&#8217;ll see the list of replicated data source, and by refreshing the browser window, the time stamps for each source should increment based on the sampling rate of the instrument.  To view the raw data from each instrument, use the following URL syntax</p>
 <div class="highlight-python"><div class="highlight"><pre>http://realtime.pacioos.hawaii.edu:8080/RBNB/SOURCENAME/CHANNELNAME?reference=newest&amp;duration=DURATION
 </pre></div>
 </div>
-<p>where <cite>SOURCENAME</cite> is the name of the instrument source (e.g. <cite>KN02XX_020ADCP020R00</cite>), <cite>CHANNELNAME</cite> is the name of the raw data channel (e.g. <cite>BinaryPD0EnsembleData</cite>), <cite>reference</cite> is the starting point to read from the DataTurbine (<cite>newest</cite> or oldest), and <cite>DURATION</cite> is the number of frames to download (e.g. <cite>1200</cite> would download the most recent 20 minutes of ensembles if the sample rate is one ensemble per second).</p>
+<p>where <code class="docutils literal"><span class="pre">SOURCENAME</span></code> is the name of the instrument source (e.g. <code class="docutils literal"><span class="pre">KN02XX_020ADCP020R00</span></code>), <code class="docutils literal"><span class="pre">CHANNELNAME</span></code> is the name of the raw data channel (e.g. <code class="docutils literal"><span class="pre">BinaryPD0EnsembleData</span></code>), <code class="docutils literal"><span class="pre">reference</span></code> is the starting point to read from the DataTurbine (<code class="docutils literal"><span class="pre">newest``or</span> <span class="pre">oldest),</span> <span class="pre">and</span> <span class="pre">``DURATION</span></code> is the number of frames to download (e.g. <code class="docutils literal"><span class="pre">1200</span></code> would download the most recent 20 minutes of ensembles if the sample rate is one ensemble per second).</p>
 </div>
 <div class="section" id="managing-the-dataturbine-file-archivers">
-<h1>Managing the DataTurbine File Archivers<a class="headerlink" href="#managing-the-dataturbine-file-archivers" title="Permalink to this headline">¶</a></h1>
-<p>After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).  The FileArchiverSink is a Java program that can write any type of data stream to disk.  If an instrument driver is stopped, it doesn’t mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it’s scheduled time period.  The archive directory on the shore station and the campus server is <cite>/data</cite>.  For data originating from the Kilo Nalu array, the archivers are set to write files to <cite>/data/kilonalu/[SOURCENAME]</cite>.  For data originating wirelessly from the nearshore sensors, the archivers are set to write files to <cite>/data/raw/alawai/[SOURCENAME]</cite>. Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.</p>
+<h2>1.5. Managing the DataTurbine File Archivers<a class="headerlink" href="#managing-the-dataturbine-file-archivers" title="Permalink to this headline">¶</a></h2>
+<p>After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).  The FileArchiverSink is a Java program that can write any type of data stream to disk.  If an instrument driver is stopped, it doesn&#8217;t mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it&#8217;s scheduled time period.  The archive directory on the shore station and the campus server is <code class="docutils literal"><span class="pre">/data</span></code>.  For data originating from the Kilo Nalu array, the archivers are set to write files to <code class="docutils literal"><span class="pre">/data/kilonalu/[SOURCENAME]</span></code>.  For data originating wirelessly from the nearshore sensors, the archivers are set to write files to <code class="docutils literal"><span class="pre">/data/raw/alawai/[SOURCENAME]</span></code>. Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.</p>
 <div class="section" id="starting-the-instrument-file-archivers">
-<h2>Starting the Instrument File Archivers<a class="headerlink" href="#starting-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h2>
-<p>Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in <cite>${REALTIME_DATA}/scripts/shell</cite>, and they all follow the naming pattern of ‘<cite>Archiver-Start-SOURCENAME.sh</cite>’. Likewise, the stop scripts follow the naming pattern ‘<cite>Archiver-Stop-SOURCENAME.sh</cite>’.  <strong>Note: It’s a good idea to always stop an archiver before starting one, to ensure that two archivers aren’t running for the same instrument.  See Stopping Instrument Archivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following commands in the terminal</p>
+<h3>1.5.1. Starting the Instrument File Archivers<a class="headerlink" href="#starting-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h3>
+<p>Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>, and they all follow the naming pattern of <code class="docutils literal"><span class="pre">Archiver-Start-SOURCENAME.sh</span></code>. Likewise, the stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Archiver-Stop-SOURCENAME.sh</span></code>.  <strong>Note: It&#8217;s a good idea to always stop an archiver before starting one, to ensure that two archivers aren&#8217;t running for the same instrument.  See Stopping Instrument Archivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following commands in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
 $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 </pre></div>
@@ -710,8 +658,8 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 <p>This will cleanly shut down any existing 20m ADCP file archiver and start a new archiver. The file archiver start and stop scripts are listed below.  Driver development is continuing, and instruments in light gray are pending.</p>
 </div>
 <div class="section" id="stopping-the-instrument-file-archivers">
-<h2>Stopping the Instrument File Archivers<a class="headerlink" href="#stopping-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h2>
-<p>As above, each instrument file archiver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern ‘<cite>Archiver-Stop-SOURCENAME.sh</cite>’.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <cite>kilonalu</cite> user, and execute the following command in the terminal</p>
+<h3>1.5.2. Stopping the Instrument File Archivers<a class="headerlink" href="#stopping-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h3>
+<p>As above, each instrument file archiver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Archiver-Stop-SOURCENAME.sh</span></code>.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following command in the terminal</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
 </pre></div>
 </div>
@@ -719,12 +667,12 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 </div>
 </div>
 <div class="section" id="understanding-file-based-replication">
-<h1>Understanding File-based replication<a class="headerlink" href="#understanding-file-based-replication" title="Permalink to this headline">¶</a></h1>
-<p>In addition to replicating data streams to the campus DataTurbine, we also mirror the archived data files in the shore station <cite>/data</cite> directory using a Linux mirroring tool called <cite>rsync</cite>.  This ensures that all archived data are synchronized with the campus directory, and the data directories on the campus server are backed up to disk on a nightly, weekly, and monthly schedule.  The <cite>kilonalu</cite> user has a scheduled cron job that mirrors the data files hourly.  The cron command that is called is</p>
-<div class="highlight-python"><div class="highlight"><pre>rsync -avt /data realtime.pacioos.hawaii.edu:/data/raw
+<h2>1.6. Understanding File-based replication<a class="headerlink" href="#understanding-file-based-replication" title="Permalink to this headline">¶</a></h2>
+<p>In addition to replicating data streams to the campus DataTurbine, we also mirror the archived data files in the shore station <code class="docutils literal"><span class="pre">/data</span></code> directory using a Linux mirroring tool called <code class="docutils literal"><span class="pre">rsync</span></code>.  This ensures that all archived data are synchronized with the campus directory, and the data directories on the campus server are backed up to disk on a nightly, weekly, and monthly schedule.  The <code class="docutils literal"><span class="pre">kilonalu</span></code> user has a scheduled cron job that mirrors the data files hourly.  The cron command that is called is</p>
+<div class="highlight-python"><div class="highlight"><pre>$ rsync -avt /data realtime.pacioos.hawaii.edu:/data/raw
 </pre></div>
 </div>
-<p>If data files that are present on the shore server are not present on the campus server within an hour, check to be sure that the cron service is running on the shore station server.  To do so, issue the following command as the kilonalu user</p>
+<p>If data files that are present on the shore server are not present on the campus server within an hour, check to be sure that the cron service is running on the shore station server.  To do so, issue the following command as the kilonalu user:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ sudo service crond status
 </pre></div>
 </div>
@@ -732,14 +680,14 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 <div class="highlight-python"><div class="highlight"><pre>$ sudo service crond start
 </pre></div>
 </div>
-<p>If file-based replication is working properly, you should be able to view the newest data files in the <cite>/data/raw</cite> directory by pointing your browser to <a class="reference external" href="https://realtime.pacioos.hawaii.edu/kilonalu-data">https://realtime.pacioos.hawaii.edu/kilonalu-data</a>.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html</a> (Mac) and <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html</a> (PC) to see how to mount the Kilo Nalu data archive directory.</p>
+<p>If file-based replication is working properly, you should be able to view the newest data files in the <cite>/data/raw`</cite> directory by pointing your browser to <a class="reference external" href="https://realtime.pacioos.hawaii.edu/kilonalu-data">https://realtime.pacioos.hawaii.edu/kilonalu-data</a>.  Likewise, the web directory can be mounted on your Mac or PC if you want to drag-and-drop files to your workstation.  See the screencasts at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-mac.html</a> (Mac) and <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html">http://realtime.pacioos.hawaii.edu/share/WebDAV-medium-windows.html</a> (PC) to see how to mount the Kilo Nalu data archive directory.</p>
 </div>
 <div class="section" id="managing-the-matlab-instrument-plotting-code">
-<h1>Managing the Matlab Instrument Plotting Code<a class="headerlink" href="#managing-the-matlab-instrument-plotting-code" title="Permalink to this headline">¶</a></h1>
-<p>Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the campus server (<cite>realtime.pacioos.hawaii.edu</cite>).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server’s remote desktop as the <cite>kilonalu</cite> user.  At the moment, the 20m ADCP plotting code is run using Matlab’s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  <strong>Note: Linux supports ‘virtual desktops’, and in the bottom right corner of each desktop is a ‘switcher’ application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.</strong></p>
+<h2>1.7. Managing the Matlab Instrument Plotting Code<a class="headerlink" href="#managing-the-matlab-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
+<p>Data streaming into the DataTurbines are queried every twenty minutes using Matlab, and the plotting code is run on the campus server (<code class="docutils literal"><span class="pre">realtime.pacioos.hawaii.edu</span></code>).  The code can be run from just a terminal, or from the graphical version of Matlab.  Either way, it is convenient to be able to view the plots within Matlab for troubleshooting, and so we run a service on the campus server called VNC (Virtual Network Computing) which allows us to connect to the server&#8217;s remote desktop as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user.  At the moment, the 20m ADCP plotting code is run using Matlab&#8217;s full desktop window, whereas the 10m SBE37, 10m FLNTU, and NS01, NS02, and NS03 CTDs call Matlab from within a terminal in order to reduce the memory load on the server.  Once connected to the server via VNC, you should see the Matlab window for the ADCP processing, and a terminal window with multiple tabs that are running the the plotting code for the other instruments.  <strong>Note: Linux supports &#8216;virtual desktops&#8217;, and in the bottom right corner of each desktop is a &#8216;switcher&#8217; application.  Clicking on each of the four square boxes will move you to each of the four virtual desktops.</strong></p>
 <div class="section" id="connecting-to-the-server-via-vnc">
-<h2>Connecting to the Server via VNC<a class="headerlink" href="#connecting-to-the-server-via-vnc" title="Permalink to this headline">¶</a></h2>
-<p>VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure ‘tunnel’ using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v">http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v</a>.  Follow the instructions in this screen cast to:</p>
+<h3>1.7.1. Connecting to the Server via VNC<a class="headerlink" href="#connecting-to-the-server-via-vnc" title="Permalink to this headline">¶</a></h3>
+<p>VNC is a remote desktop application that runs as a server on Linux, Windows, and Mac OS (GoToMyPC uses it as its foundation).  You can connect to the campus server using a VNC client application that runs on your workstation.  Due to the way the Kilo Nalu network is configured for security, you must first create a secure &#8216;tunnel&#8217; using an SSH client program, and then connect to the VNC server via the tunnel.  Instructions for doing so using Windows XP are shown in the Quicktime screencast at <a class="reference external" href="http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v">http://realtime.pacioos.hawaii.edu/share/Media/VNC-SSH-tunnel-BBL.m4v</a>.  Follow the instructions in this screen cast to:</p>
 <ol class="arabic simple">
 <li>Download and install both Putty SSH and RealVNC,</li>
 <li>create the tunnel using Putty SSH, and</li>
@@ -747,13 +695,13 @@ $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
 </ol>
 </div>
 <div class="section" id="starting-the-instrument-plotting-code">
-<h2>Starting the Instrument Plotting Code<a class="headerlink" href="#starting-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
-<p>Once connected to the <cite>kilonalu</cite> user’s remote desktop on the campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in <cite>${REALTIME_DATA}/scripts/matlab</cite>.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
-First, each instruments plotting code will be started in a separate terminal window.  Look at the virtual desktops, and find the white terminal window that has multiple tabs open.  If there isn’t one (e.g. after a server reboot), right-click on the red desktop and choose the ‘Open terminal’ menu item.</p>
+<h3>1.7.2. Starting the Instrument Plotting Code<a class="headerlink" href="#starting-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h3>
+<p>Once connected to the <code class="docutils literal"><span class="pre">kilonalu</span></code> user&#8217;s remote desktop on the campus server, the Matlab plotting code can be started for each instrument stream from the Matlab source code installed in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/matlab</span></code>.  The following instructions apply to the 10m SBE37, 10m FLNTU, and Ala Wai/Waikiki CTDs.  The 20m 1200kHz ADCP plotting will be handled differently in the instructions below.
+First, each instruments plotting code will be started in a separate terminal window.  Look at the virtual desktops, and find the white terminal window that has multiple tabs open.  If there isn&#8217;t one (e.g. after a server reboot), right-click on the red desktop and choose the &#8216;Open terminal&#8217; menu item.</p>
 <div class="figure align-right">
 <a class="reference internal image-reference" href="../_images/open-terminal.png"><img alt="../_images/open-terminal.png" src="../_images/open-terminal.png" style="width: 512.0px; height: 275.0px;" /></a>
 </div>
-<p>Once the terminal is open, right-click on the white terminal background and choose the ‘Open Tab’ menu item.  Create a tab for each of the instruments that you’ll be starting the Matlab plotting code.
+<p>Once the terminal is open, right-click on the white terminal background and choose the &#8216;Open Tab&#8217; menu item.  Create a tab for each of the instruments that you&#8217;ll be starting the Matlab plotting code.
 In each of the terminal tabs, change directories to the location of the Matlab plotting code scheduler scripts, and start Matlab without the graphical interface using the following two commands</p>
 <div class="highlight-python"><div class="highlight"><pre>$ cd ${REALTIME_DATA}/scripts/matlab
 $ matlab -nosplash -nodesktop
@@ -763,7 +711,7 @@ $ matlab -nosplash -nodesktop
 <div class="highlight-python"><div class="highlight"><pre>&gt;&gt; schedule_KN0101_010FLNT010R00_processing
 </pre></div>
 </div>
-<p>This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of <cite>schedule_SOURCENAME_processing.m</cite>.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the <cite>kilonalu</cite> user’s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to <cite>${REALTIME_DATA}/scripts/matalb/kilonalu/processing</cite>.  This directory contains the Matlab m-files to start the ADCP proccessing.</p>
+<p>This will call two Matlab classes (Configuration.m and DataProcessor.m), and will use a Matlab timer to run the DataProcessor.process() function based on the values set in the Configuration class.  Do this for each of the plotters separately in terminal tab windows.  Each scheduler Matlab script follows the naming convention of <code class="docutils literal"><span class="pre">schedule_SOURCENAME_processing.m</span></code>.  The 20m 1200 kHz ADCP plotting code is handled slightly differently. To start this instrument plotter, double-click on the Matlab icon on the <code class="docutils literal"><span class="pre">kilonalu</span></code> user&#8217;s remote desktop.  This will open up Matlab in its graphical mode.  In the Current Directory dropdown at the top of the window, change directories to <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/matalb/kilonalu/processing</span></code>.  This directory contains the Matlab m-files to start the ADCP proccessing.</p>
 <div class="figure">
 <img alt="../_images/start-adcp-processing.png" src="../_images/start-adcp-processing.png" />
 </div>
@@ -775,7 +723,7 @@ $ matlab -nosplash -nodesktop
 <p>This will resume the processing on the next twenty-minute interval using the summary data that are cached.</p>
 </div>
 <div class="section" id="stopping-the-instrument-plotting-code">
-<h2>Stopping the Instrument Plotting Code<a class="headerlink" href="#stopping-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h2>
+<h3>1.7.3. Stopping the Instrument Plotting Code<a class="headerlink" href="#stopping-the-instrument-plotting-code" title="Permalink to this headline">¶</a></h3>
 <p>For each of the open terminal tabs with a running version of Matlab, stop the processing by exiting Matlab</p>
 <div class="highlight-python"><div class="highlight"><pre>&gt;&gt; exit
 </pre></div>
@@ -783,8 +731,8 @@ $ matlab -nosplash -nodesktop
 <p>Likewise, do the same for the ADCP processing in the Matlab window.  The scheduler will be stopped for the instrument plotter running in each particular instance of Matlab.</p>
 </div>
 <div class="section" id="viewing-instrument-plots">
-<h2>Viewing Instrument Plots<a class="headerlink" href="#viewing-instrument-plots" title="Permalink to this headline">¶</a></h2>
-<p>Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the server (<cite>/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/</cite>).  The 20m 1200kHz ADCP plots are written to <cite>/var/www/html/OE/KiloNalu/Data/</cite>.  The following table shows the web links to each of the plots.</p>
+<h3>1.7.4. Viewing Instrument Plots<a class="headerlink" href="#viewing-instrument-plots" title="Permalink to this headline">¶</a></h3>
+<p>Each of the Matlab processes produce a various number of plots that are placed in the web server directory on the server (<code class="docutils literal"><span class="pre">/var/www/html/OE/KiloNalu/Data/[CTD|FLNTU]/[SOURCENAME]/</span></code>).  The 20m 1200kHz ADCP plots are written to <code class="docutils literal"><span class="pre">/var/www/html/OE/KiloNalu/Data/</span></code>.  The following table shows the web links to each of the plots.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="33%" />
@@ -945,6 +893,7 @@ $ matlab -nosplash -nodesktop
 </table>
 </div>
 </div>
+</div>
 
 
           </div>
@@ -952,7 +901,7 @@ $ matlab -nosplash -nodesktop
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../dev/developer-guide.html" class="btn btn-neutral float-right" title="Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../dev/developer-guide.html" class="btn btn-neutral float-right" title="2. Development Guide" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../index.html" class="btn btn-neutral" title="Realtime Data Project" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

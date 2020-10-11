@@ -18,17 +18,11 @@ Data that are transmitted from instruments over serial, wifi, ethernet, cellular
 This guide provides documentation for the driver software, including installation, configuration, and overall use.  It also describes the operational deployment details at the University of Hawaii at Manoa.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: User Guide
+    :numbered:
 
-   user/user-guide
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Developer Guide
-   
-   dev/developer-guide
-   
+    user/user-guide
+    dev/developer-guide
+
 Indices and tables
 ==================
 
