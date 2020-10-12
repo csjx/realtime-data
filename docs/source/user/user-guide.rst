@@ -70,7 +70,7 @@ Configuring Instrument Drivers
 
 Each instrument deployment gets documented in an XML configuration file in the ``${REALTIME_DATA}/conf`` directory with the same name as the instrument name.  For instance, the Waikiki Beach CTD is named ``WK01XX_001CTDXXXXR00``, and the corresponding XML file is ``WK01XX_001CTDXXXXR00.xml``.
 
-This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root `instrument` element:
+This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root ``instrument`` element:
 
 
 +----------------------------------------------------------+---------------------------------------------------+------------------+
@@ -180,15 +180,52 @@ It's easiest to just copy an existing XML configuration document and add/replace
 Starting Instrument Drivers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in ``${REALTIME_DATA}/scripts/shell``, and they all follow the naming pattern of ``Start-SOURCENAME.sh``. Likewise, the stop scripts follow the naming pattern ``Stop-SOURCENAME.sh``.  **Note: It's a good idea to always stop a driver before starting one, to ensure that two drivers aren't running for the same instrument.  See Stopping Instrument Drivers below.**  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the ``kilonalu`` user, and execute the following commands in the terminal
+Instrument drivers are managed with a ``manage-instruments`` script in ``${REALTIME_DATA}/scripts/shell``.  It also manages instrument archivers.  The usage is available on the command line with:
 
 ::
 
-    $ Stop-KN02XX_020ADCPXXXR00.sh
-    $ Start-KN02XX_020ADCPXXXR00.sh
+    $ manage-instruments -h
 
-This will cleanly shut down any existing 20m 1200kHz ADCP drivers, start a new driver, and will also start tailing the log file for the specific driver so you can verify that the samples are being sent to the DataTurbine.  To stop viewing the log file, type ``Control-c`` in the terminal.
+    Usage: manage-instruments -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
 
+    Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+
+    OPTIONS:
+
+        -a  Start or stop all configured instruments
+        -c  The command to run, 'driver' or 'archiver', to stream or archive data respectively.
+        -h  Show this message
+        -i  The instrument id. Use -i multiple times for multiple instruments.
+        -o  Indicate which operation to perform, start or stop.
+        -V  Show the version (1.1.0)
+
+
+The ``manage-instruments`` script is used to start one or many instrument drivers by setting the ``-c`` command option to ``driver``, the ``-o`` operation option to ``start``, and by using one or more ``-i`` options followed by the instrument identifier.  In lieu of the individual ``-i`` option, you can use the ``-a`` option to start all instruments configured in the ``${REALTIME_DATA}/conf`` directory.  For example, to start a single instrument driver:
+
+::
+
+    $ manage-instruments -c driver -o start -i WK01XX_001CTDXXXXR00
+
+To start all drivers, use:
+
+::
+
+    $ manage-instruments -c driver -o start -a
+
+Stopping Instrument Drivers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As with starting instrument drivers, they can be stopped using the ``manage-instruments`` script.  To stop instrument drivers, use the ``-c`` command option with a value of ``driver``, a ``-o`` operation option of ``stop`` and either ``-a`` for all drivers or one or more ``-i`` instrument option follwed by the instrument identifier.  For example, to stop a single driver use:
+
+::
+
+    $ manage-instruments -c driver -o stop -i WK01XX_001CTDXXXXR00
+
+To stop all drivers, use:
+
+::
+
+    $ manage-instruments -c driver -o stop -a
 
 Starting Drivers through Dispatchers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -197,13 +234,13 @@ There are certain instruments that multiplex data to a single location or over a
 
 ADAM Module engineering data
 ****************************
-Since all of the data from all of the ADAM modules come into the server on a single UDP port, a dispatcher program is used to harvest the data packets and push them into the DataTurbine as the appropriate individual data Sources.  This is the ADAMDispatcher, which is started with
+Since all of the data from all of the ADAM modules come into the server on a single UDP port, a dispatcher program is used to harvest the data packets and push them into the DataTurbine as the appropriate individual data Sources.  This is the ``ADAMDispatcher``, which is started with
 
 ::
 
     $ Start-KNXXXX_XXXADAMXXXXXX.sh
 
-The AdamDispatcher reads an XML configuration file located in ``${REALTIME_DATA}/lib/sensor.properties.xml``, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a `<sensor>` with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a ``<sensor>`` entry in the file
+The ``AdamDispatcher`` reads an XML configuration file located in ``${REALTIME_DATA}/lib/sensor.properties.xml``, and will create an ``ADAMSource`` for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a ``<sensor>`` with the pertinent details, and the ``ADAMDispatcher`` must be restarted.  The following example shows a ``<sensor>`` entry in the file
 
 .. sourcecode:: xml
 
@@ -252,7 +289,7 @@ The AdamDispatcher reads an XML configuration file located in ``${REALTIME_DATA}
       </ports>
   </sensor>
 
-This XML entry provides the pertinent DataTurbine details needed to start an ADAMSource driver, including:
+This XML entry provides the pertinent DataTurbine details needed to start an ``ADAMSource`` driver, including:
 IP Address of the incoming UDP datagrams
 
 * Name of the Source
@@ -272,13 +309,13 @@ These mappings are critical to creating the correct DataTurbine channels for eac
 STOR-X Data Logger data
 ***********************
 
-For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the ``wqb`` user's inbox, but are also immediately forwarded to ``hiooswqb@gmail.com``.  This is email account is monitored every minute over IMAP by the StorXDispatcher, which is started with
+For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the ``wqb`` user's inbox, but are also immediately forwarded to ``hiooswqb@gmail.com``.  This is email account is monitored every minute over IMAP by the ``StorXDispatcher``, which is started with
 
 ::
 
 $ Start-HIXXXX_XXXCTDXXXXXXX.sh
 
-The StorXDispatcher reads an XML configuration file located in ``${REALTIME_DATA}/lib/email.account.properties.xml``, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an ``<account>`` entry with a single ``<logger>`` entry in the file
+The ``StorXDispatcher`` reads an XML configuration file located in ``${REALTIME_DATA}/lib/email.account.properties.xml``, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: ``StorXSource``, ``ISUSSource``, and ``CTDSource``, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an ``<account>`` entry with a single ``<logger>`` entry in the file
 
 .. sourcecode:: xml
 
@@ -344,49 +381,36 @@ This XML entry provides the pertinent DataTurbine details needed to establish th
 Stopping Instrument Drivers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As above, each instrument driver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern ``Stop-SOURCENAME.sh``.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the ``kilonalu`` user, and execute the following command in the terminal
+As with starting instrument drivers, they can be stopped using the ``manage-instruments`` script.  To stop instrument drivers, use the ``-c`` command option with a value of ``driver``, a ``-o`` operation option of ``stop`` and either ``-a`` for all drivers or one or more ``-i`` instrument option follwed by the instrument identifier.  For example, to stop a single driver use:
 
 ::
 
-    $ Stop-KN02XX_020ADCPXXXR00.sh
+    $ manage-instruments -c driver -o stop -i WK01XX_001CTDXXXXR00
 
-This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting Instrument Drivers section. As with the start scripts, the dispatchers are stopped with: 
-
-ADAMDispatcher
+To stop all drivers, use:
 
 ::
 
-  $ Stop-KNXXXX_XXXADAMXXXXXX.sh
-
-StorXDispatcher
-
-::
-
-  $ Stop-HIXXXX_XXXCTDXXXXXXX.sh
+    $ manage-instruments -c driver -o stop -a
 
 Troubleshooting Instrument Drivers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There may be many reasons why an instrument driver isn't streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the ``kilonalu`` user in a terminal on the server in question (either shore station or campus server)
+There may be many reasons why an instrument driver isn't streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The log file for all of the nearshore instruments is ``/var/log/realtime-data/realtime-data.log``. The first step in troubleshooting is to view the log file and find the instrument-specific log entries.  As an example, issue the following command as the ``kilonalu`` user in a terminal on the server:
 
 ::
 
-$ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
+$ tail -f /var/log/realtime-data/realtime-data.log
 
-Each of the log files follow the naming convention of ``SOURCENAME-Source.log``, so just substitute the source name string to view the log of that particular instrument driver.  To stop viewing the log, type ``Control-c`` in the terminal.
-As each instrument sample is read over the wire by the instrument driver, the sample will be parsed and inserted into the DataTurbine, and a line will be added to the log file stating so.  For instance, for the 20m 1200kHz ADCP, the log file entries are one line per 955 byte ensemble, and should look like
+To stop viewing the log, type ``Control-c`` in the terminal.
+
+As each instrument sample is read over the wire by the instrument driver, the sample will be parsed and inserted into the DataTurbine, and a line will be added to the log file stating so.  For instance, for the Waikiki Beach CTD, we see:
 
 ::
 
-  Processed byte # 955 7f - log msg is: 467204614 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467206774 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467208935 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467211100 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467213265 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467215425 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-  Processed byte # 955 7f - log msg is: 467217590 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
+    [ INFO] 2020-10-04 16:52:54,366 (SocketTextSource:execute:129) WK01XX_001CTDXXXXR00 Sample sent to the DataTurbine: # 24.4011, 5.15887, 0.785, 34.3569, 04 Oct 2020, 16:52:54
 
-The instrument log entries vary per instrument, but they each say something to the effect of 'Sent sample to the DataTurbine'.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at https://github.com/csjx/realtime-data/issues.
+The instrument log entries vary per instrument, but they each say something to the effect of 'Sample sent to the DataTurbine'.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate cellular modem, WIFI connection, or Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at https://github.com/csjx/realtime-data/issues.
 
 Rebuilding Channel Data
 -----------------------
@@ -424,7 +448,7 @@ Once removed, the channel data can be rebuilt.  Use the FileSource driver with a
 Replicating Instrument Data Streams
 -----------------------------------
 
-When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called ``rbnbAdmin``to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
+When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called ``rbnbAdmin`` to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
 First, connect to the campus server as the ``kilonalu`` user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the ``Open terminal`` menu item.  In the terminal, issue the following command
 
 ::
@@ -477,30 +501,66 @@ where ``SOURCENAME`` is the name of the instrument source (e.g. ``KN02XX_020ADCP
 Managing the DataTurbine File Archivers
 ---------------------------------------
 
-After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).  The FileArchiverSink is a Java program that can write any type of data stream to disk.  If an instrument driver is stopped, it doesn't mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it's scheduled time period.  The archive directory on the shore station and the campus server is ``/data``.  For data originating from the Kilo Nalu array, the archivers are set to write files to ``/data/kilonalu/[SOURCENAME]``.  For data originating wirelessly from the nearshore sensors, the archivers are set to write files to ``/data/raw/alawai/[SOURCENAME]``. Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.
+After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).   If an instrument driver is stopped, it doesn't mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it's scheduled time period.  Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.
 
-Starting the Instrument File Archivers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in ``${REALTIME_DATA}/scripts/shell``, and they all follow the naming pattern of ``Archiver-Start-SOURCENAME.sh``. Likewise, the stop scripts follow the naming pattern ``Archiver-Stop-SOURCENAME.sh``.  **Note: It's a good idea to always stop an archiver before starting one, to ensure that two archivers aren't running for the same instrument.  See Stopping Instrument Archivers below.**  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the ``kilonalu`` user, and execute the following commands in the terminal
+The archive directory on the server is ``/data``.  For data originating wirelessly from the nearshore sensors, two archivers should be configured in the XML configuration file - one ``raw`` and one ``pacioos-2020-format``. The former will archive data to the archivers are set to write files to ``/data/raw/[SITE]/[INSTRUMENT]``, while the latter will write to the ``/data/processed/pacioos/[INSTRUMENT]`` directory.  The ``pacioos-2020-format`` is a common CSV data format across instruments where we convert the raw data from the instrument to a CSV file with a UTC datetime as the first column, followed by one or more measured variable data columns, and termonated with a Unix linefeed character ``\n``. An example of the converted ``pacioos-2020-format`` data is:
 
 ::
 
-  $ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
-  $ Archiver-Start-KN02XX_020ADCPXXXR00.sh
+    2020-10-04T20:16:02.000Z,24.6739,5.22284,1.137,34.6249
+    2020-10-04T20:16:07.000Z,24.6727,5.22283,1.011,34.6259
+    2020-10-04T20:16:12.000Z,24.6657,5.22218,1.085,34.6263
+    2020-10-04T20:16:17.000Z,24.6549,5.22133,1.094,34.6283
 
-This will cleanly shut down any existing 20m ADCP file archiver and start a new archiver. The file archiver start and stop scripts are listed below.  Driver development is continuing, and instruments in light gray are pending.
-  
-Stopping the Instrument File Archivers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Starting Instrument File Archivers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As above, each instrument file archiver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern ``Archiver-Stop-SOURCENAME.sh``.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the ``kilonalu`` user, and execute the following command in the terminal
+Instrument archivers are managed with a ``manage-instruments`` script in ``${REALTIME_DATA}/scripts/shell``.  It also manages instrument drivers.  The usage is available on the command line with:
 
 ::
 
-  $ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
-  
-This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting the Instrument File Archivers section.
+    $ manage-instruments -h
+
+    Usage: manage-instruments -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+
+    Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+
+    OPTIONS:
+
+        -a  Start or stop all configured instruments
+        -c  The command to run, 'driver' or 'archiver', to stream or archive data respectively.
+        -h  Show this message
+        -i  The instrument id. Use -i multiple times for multiple instruments.
+        -o  Indicate which operation to perform, start or stop.
+        -V  Show the version (1.1.0)
+
+
+The ``manage-instruments`` script is used to start one or many instrument archivers by setting the ``-c`` command option to ``archiver``, the ``-o`` operation option to ``start``, and by using one or more ``-i`` options followed by the instrument identifier.  In lieu of the individual ``-i`` option, you can use the ``-a`` option to start all instrument archivers configured in the ``${REALTIME_DATA}/conf`` directory.  For example, to start a single instrument archiver:
+
+::
+
+    $ manage-instruments -c archiver -o start -i WK01XX_001CTDXXXXR00
+
+To start all archivers, use:
+
+::
+
+    $ manage-instruments -c archiver -o start -a
+
+Stopping Instrument Archivers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As with starting instrument archivers, they can be stopped using the ``manage-instruments`` script.  To stop instrument archivers, use the ``-c`` command option with a value of ``archiver``, a ``-o`` operation option of ``stop`` and either ``-a`` for all archivers or one or more ``-i`` instrument option followed by the instrument identifier.  For example, to stop a single archiver use:
+
+::
+
+    $ manage-instruments -c archiver -o stop -i WK01XX_001CTDXXXXR00
+
+To stop all archivers, use:
+
+::
+
+    $ manage-instruments -c archiver -o stop -a
 
 Understanding File-based replication
 ------------------------------------

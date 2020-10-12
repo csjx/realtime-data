@@ -82,20 +82,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#managing-the-dataturbine-instrument-drivers">1.2. Managing the DataTurbine Instrument Drivers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-instrument-drivers">1.2.1. Configuring Instrument Drivers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#starting-instrument-drivers">1.2.2. Starting Instrument Drivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#starting-drivers-through-dispatchers">1.2.3. Starting Drivers through Dispatchers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#adam-module-engineering-data">1.2.3.1. ADAM Module engineering data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#stor-x-data-logger-data">1.2.3.2. STOR-X Data Logger data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-instrument-drivers">1.2.3. Stopping Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-drivers-through-dispatchers">1.2.4. Starting Drivers through Dispatchers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adam-module-engineering-data">1.2.4.1. ADAM Module engineering data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stor-x-data-logger-data">1.2.4.2. STOR-X Data Logger data</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#stopping-instrument-drivers">1.2.4. Stopping Instrument Drivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-instrument-drivers">1.2.5. Troubleshooting Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">1.2.5. Stopping Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-instrument-drivers">1.2.6. Troubleshooting Instrument Drivers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#rebuilding-channel-data">1.3. Rebuilding Channel Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#replicating-instrument-data-streams">1.4. Replicating Instrument Data Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#managing-the-dataturbine-file-archivers">1.5. Managing the DataTurbine File Archivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#starting-the-instrument-file-archivers">1.5.1. Starting the Instrument File Archivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#stopping-the-instrument-file-archivers">1.5.2. Stopping the Instrument File Archivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-instrument-file-archivers">1.5.1. Starting Instrument File Archivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stopping-instrument-archivers">1.5.2. Stopping Instrument Archivers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#understanding-file-based-replication">1.6. Understanding File-based replication</a></li>
@@ -224,7 +225,7 @@ Each of these system components are described in more detail below, along with i
 <div class="section" id="configuring-instrument-drivers">
 <h3>1.2.1. Configuring Instrument Drivers<a class="headerlink" href="#configuring-instrument-drivers" title="Permalink to this headline">¶</a></h3>
 <p>Each instrument deployment gets documented in an XML configuration file in the <code class="docutils literal"><span class="pre">${REALTIME_DATA}/conf</span></code> directory with the same name as the instrument name.  For instance, the Waikiki Beach CTD is named <code class="docutils literal"><span class="pre">WK01XX_001CTDXXXXR00</span></code>, and the corresponding XML file is <code class="docutils literal"><span class="pre">WK01XX_001CTDXXXXR00.xml</span></code>.</p>
-<p>This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root <cite>instrument</cite> element:</p>
+<p>This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root <code class="docutils literal"><span class="pre">instrument</span></code> element:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="46%" />
@@ -391,23 +392,53 @@ the channelName (for raw data archiving).</td>
 </div>
 <div class="section" id="starting-instrument-drivers">
 <h3>1.2.2. Starting Instrument Drivers<a class="headerlink" href="#starting-instrument-drivers" title="Permalink to this headline">¶</a></h3>
-<p>Each instrument driver can be started by calling a convenience script that has preconfigured startup values for each of the drivers.  These convenience scripts are located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>, and they all follow the naming pattern of <code class="docutils literal"><span class="pre">Start-SOURCENAME.sh</span></code>. Likewise, the stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Stop-SOURCENAME.sh</span></code>.  <strong>Note: It&#8217;s a good idea to always stop a driver before starting one, to ensure that two drivers aren&#8217;t running for the same instrument.  See Stopping Instrument Drivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following commands in the terminal</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Stop-KN02XX_020ADCPXXXR00.sh
-$ Start-KN02XX_020ADCPXXXR00.sh
+<p>Instrument drivers are managed with a <code class="docutils literal"><span class="pre">manage-instruments</span></code> script in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>.  It also manages instrument archivers.  The usage is available on the command line with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -h
+
+Usage: manage-instruments -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+
+Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+
+OPTIONS:
+
+    -a  Start or stop all configured instruments
+    -c  The command to run, &#39;driver&#39; or &#39;archiver&#39;, to stream or archive data respectively.
+    -h  Show this message
+    -i  The instrument id. Use -i multiple times for multiple instruments.
+    -o  Indicate which operation to perform, start or stop.
+    -V  Show the version (1.1.0)
 </pre></div>
 </div>
-<p>This will cleanly shut down any existing 20m 1200kHz ADCP drivers, start a new driver, and will also start tailing the log file for the specific driver so you can verify that the samples are being sent to the DataTurbine.  To stop viewing the log file, type <code class="docutils literal"><span class="pre">Control-c</span></code> in the terminal.</p>
+<p>The <code class="docutils literal"><span class="pre">manage-instruments</span></code> script is used to start one or many instrument drivers by setting the <code class="docutils literal"><span class="pre">-c</span></code> command option to <code class="docutils literal"><span class="pre">driver</span></code>, the <code class="docutils literal"><span class="pre">-o</span></code> operation option to <code class="docutils literal"><span class="pre">start</span></code>, and by using one or more <code class="docutils literal"><span class="pre">-i</span></code> options followed by the instrument identifier.  In lieu of the individual <code class="docutils literal"><span class="pre">-i</span></code> option, you can use the <code class="docutils literal"><span class="pre">-a</span></code> option to start all instruments configured in the <code class="docutils literal"><span class="pre">${REALTIME_DATA}/conf</span></code> directory.  For example, to start a single instrument driver:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o start -i WK01XX_001CTDXXXXR00
+</pre></div>
+</div>
+<p>To start all drivers, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o start -a
+</pre></div>
+</div>
+</div>
+<div class="section" id="stopping-instrument-drivers">
+<h3>1.2.3. Stopping Instrument Drivers<a class="headerlink" href="#stopping-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>As with starting instrument drivers, they can be stopped using the <code class="docutils literal"><span class="pre">manage-instruments</span></code> script.  To stop instrument drivers, use the <code class="docutils literal"><span class="pre">-c</span></code> command option with a value of <code class="docutils literal"><span class="pre">driver</span></code>, a <code class="docutils literal"><span class="pre">-o</span></code> operation option of <code class="docutils literal"><span class="pre">stop</span></code> and either <code class="docutils literal"><span class="pre">-a</span></code> for all drivers or one or more <code class="docutils literal"><span class="pre">-i</span></code> instrument option follwed by the instrument identifier.  For example, to stop a single driver use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o stop -i WK01XX_001CTDXXXXR00
+</pre></div>
+</div>
+<p>To stop all drivers, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o stop -a
+</pre></div>
+</div>
 </div>
 <div class="section" id="starting-drivers-through-dispatchers">
-<h3>1.2.3. Starting Drivers through Dispatchers<a class="headerlink" href="#starting-drivers-through-dispatchers" title="Permalink to this headline">¶</a></h3>
+<h3>1.2.4. Starting Drivers through Dispatchers<a class="headerlink" href="#starting-drivers-through-dispatchers" title="Permalink to this headline">¶</a></h3>
 <p>There are certain instruments that multiplex data to a single location or over a single port.  In order to create data streams for each of the independent instruments in the multiplexed stream, a dispatcher is needed to de-multiplex the bytes and call the pertinent drivers to add the data to the DataTurbine.</p>
 <div class="section" id="adam-module-engineering-data">
-<h4>1.2.3.1. ADAM Module engineering data<a class="headerlink" href="#adam-module-engineering-data" title="Permalink to this headline">¶</a></h4>
-<p>Since all of the data from all of the ADAM modules come into the server on a single UDP port, a dispatcher program is used to harvest the data packets and push them into the DataTurbine as the appropriate individual data Sources.  This is the ADAMDispatcher, which is started with</p>
+<h4>1.2.4.1. ADAM Module engineering data<a class="headerlink" href="#adam-module-engineering-data" title="Permalink to this headline">¶</a></h4>
+<p>Since all of the data from all of the ADAM modules come into the server on a single UDP port, a dispatcher program is used to harvest the data packets and push them into the DataTurbine as the appropriate individual data Sources.  This is the <code class="docutils literal"><span class="pre">ADAMDispatcher</span></code>, which is started with</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Start-KNXXXX_XXXADAMXXXXXX.sh
 </pre></div>
 </div>
-<p>The AdamDispatcher reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/sensor.properties.xml</span></code>, and will create an ADAMSource for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <cite>&lt;sensor&gt;</cite> with the pertinent details, and the ADAMDispatcher must be restarted.  The following example shows a <code class="docutils literal"><span class="pre">&lt;sensor&gt;</span></code> entry in the file</p>
+<p>The <code class="docutils literal"><span class="pre">AdamDispatcher</span></code> reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/sensor.properties.xml</span></code>, and will create an <code class="docutils literal"><span class="pre">ADAMSource</span></code> for each ADAM module listed in the file.  To add a new ADAM module, it must be added as a <code class="docutils literal"><span class="pre">&lt;sensor&gt;</span></code> with the pertinent details, and the <code class="docutils literal"><span class="pre">ADAMDispatcher</span></code> must be restarted.  The following example shows a <code class="docutils literal"><span class="pre">&lt;sensor&gt;</span></code> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;sensor&gt;</span>
     <span class="nt">&lt;address&gt;</span>192.168.100.208<span class="nt">&lt;/address&gt;</span>
@@ -454,7 +485,7 @@ $ Start-KN02XX_020ADCPXXXR00.sh
 <span class="nt">&lt;/sensor&gt;</span>
 </pre></div>
 </div>
-<p>This XML entry provides the pertinent DataTurbine details needed to start an ADAMSource driver, including:
+<p>This XML entry provides the pertinent DataTurbine details needed to start an <code class="docutils literal"><span class="pre">ADAMSource</span></code> driver, including:
 IP Address of the incoming UDP datagrams</p>
 <ul class="simple">
 <li>Name of the Source</li>
@@ -472,12 +503,12 @@ IP Address of the incoming UDP datagrams</p>
 <p>These mappings are critical to creating the correct DataTurbine channels for each measurement voltage.</p>
 </div>
 <div class="section" id="stor-x-data-logger-data">
-<h4>1.2.3.2. STOR-X Data Logger data<a class="headerlink" href="#stor-x-data-logger-data" title="Permalink to this headline">¶</a></h4>
-<p>For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the <code class="docutils literal"><span class="pre">wqb</span></code> user&#8217;s inbox, but are also immediately forwarded to <code class="docutils literal"><span class="pre">hiooswqb&#64;gmail.com</span></code>.  This is email account is monitored every minute over IMAP by the StorXDispatcher, which is started with</p>
+<h4>1.2.4.2. STOR-X Data Logger data<a class="headerlink" href="#stor-x-data-logger-data" title="Permalink to this headline">¶</a></h4>
+<p>For the HIOOS water quality buoys, data are telemetered via a cellular link to the SOEST email server over SMTP. The data are spooled as email attachments for both the WQB-AW and WQB-KN buoys, since the Satlantic STOR-X data logger can only transmit data over SMTP.  The email files reside in the <code class="docutils literal"><span class="pre">wqb</span></code> user&#8217;s inbox, but are also immediately forwarded to <code class="docutils literal"><span class="pre">hiooswqb&#64;gmail.com</span></code>.  This is email account is monitored every minute over IMAP by the <code class="docutils literal"><span class="pre">StorXDispatcher</span></code>, which is started with</p>
 <div class="highlight-python"><div class="highlight"><pre>$ Start-HIXXXX_XXXCTDXXXXXXX.sh
 </pre></div>
 </div>
-<p>The StorXDispatcher reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/email.account.properties.xml</span></code>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: StorXSource, ISUSSource, and CTDSource, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <code class="docutils literal"><span class="pre">&lt;account&gt;</span></code> entry with a single <code class="docutils literal"><span class="pre">&lt;logger&gt;</span></code> entry in the file</p>
+<p>The <code class="docutils literal"><span class="pre">StorXDispatcher</span></code> reads an XML configuration file located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/lib/email.account.properties.xml</span></code>, and will create Source drivers for each of the instruments connected to the STOR-X data logger, including a driver for the data logger itself, which records battery voltage and other analog channels.    There are currently three drivers in use: <code class="docutils literal"><span class="pre">StorXSource</span></code>, <code class="docutils literal"><span class="pre">ISUSSource</span></code>, and <code class="docutils literal"><span class="pre">CTDSource</span></code>, corresponding to each instrument send data in the binary Satlantic Data frame format. The following example shows an <code class="docutils literal"><span class="pre">&lt;account&gt;</span></code> entry with a single <code class="docutils literal"><span class="pre">&lt;logger&gt;</span></code> entry in the file</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;accounts&gt;</span>
     <span class="nt">&lt;account&gt;</span>
@@ -539,40 +570,29 @@ IP Address of the incoming UDP datagrams</p>
 <p>This XML entry provides the pertinent DataTurbine details needed to establish the IMAP connection, process the emails, extract the data file attachments, parse the binary data, and create Source connections for each instrument sample being added to the DataTurbine.</p>
 </div>
 </div>
-<div class="section" id="stopping-instrument-drivers">
-<h3>1.2.4. Stopping Instrument Drivers<a class="headerlink" href="#stopping-instrument-drivers" title="Permalink to this headline">¶</a></h3>
-<p>As above, each instrument driver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Stop-SOURCENAME.sh</span></code>.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following command in the terminal</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Stop-KN02XX_020ADCPXXXR00.sh
+<div class="section" id="id1">
+<h3>1.2.5. Stopping Instrument Drivers<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>As with starting instrument drivers, they can be stopped using the <code class="docutils literal"><span class="pre">manage-instruments</span></code> script.  To stop instrument drivers, use the <code class="docutils literal"><span class="pre">-c</span></code> command option with a value of <code class="docutils literal"><span class="pre">driver</span></code>, a <code class="docutils literal"><span class="pre">-o</span></code> operation option of <code class="docutils literal"><span class="pre">stop</span></code> and either <code class="docutils literal"><span class="pre">-a</span></code> for all drivers or one or more <code class="docutils literal"><span class="pre">-i</span></code> instrument option follwed by the instrument identifier.  For example, to stop a single driver use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o stop -i WK01XX_001CTDXXXXR00
 </pre></div>
 </div>
-<p>This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting Instrument Drivers section. As with the start scripts, the dispatchers are stopped with:</p>
-<p>ADAMDispatcher</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Stop-KNXXXX_XXXADAMXXXXXX.sh
-</pre></div>
-</div>
-<p>StorXDispatcher</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Stop-HIXXXX_XXXCTDXXXXXXX.sh
+<p>To stop all drivers, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c driver -o stop -a
 </pre></div>
 </div>
 </div>
 <div class="section" id="troubleshooting-instrument-drivers">
-<h3>1.2.5. Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h3>
-<p>There may be many reasons why an instrument driver isn&#8217;t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The first step in troubleshooting is to view the log file for the given instrument.  As an example, to view the 20m 1200kHz ADCP streaming log file, issue the following command as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user in a terminal on the server in question (either shore station or campus server)</p>
-<div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/rbnb/KN02XX_020ADCP020R00-Source.log
+<h3>1.2.6. Troubleshooting Instrument Drivers<a class="headerlink" href="#troubleshooting-instrument-drivers" title="Permalink to this headline">¶</a></h3>
+<p>There may be many reasons why an instrument driver isn&#8217;t streaming data, but most issues tend to be associated with power outages, network outages, or memory/file issues with the DataTurbine service.  The log file for all of the nearshore instruments is <code class="docutils literal"><span class="pre">/var/log/realtime-data/realtime-data.log</span></code>. The first step in troubleshooting is to view the log file and find the instrument-specific log entries.  As an example, issue the following command as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user in a terminal on the server:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ tail -f /var/log/realtime-data/realtime-data.log
 </pre></div>
 </div>
-<p>Each of the log files follow the naming convention of <code class="docutils literal"><span class="pre">SOURCENAME-Source.log</span></code>, so just substitute the source name string to view the log of that particular instrument driver.  To stop viewing the log, type <code class="docutils literal"><span class="pre">Control-c</span></code> in the terminal.
-As each instrument sample is read over the wire by the instrument driver, the sample will be parsed and inserted into the DataTurbine, and a line will be added to the log file stating so.  For instance, for the 20m 1200kHz ADCP, the log file entries are one line per 955 byte ensemble, and should look like</p>
-<div class="highlight-python"><div class="highlight"><pre>Processed byte # 955 7f - log msg is: 467204614 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467206774 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467208935 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467211100 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467213265 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467215425 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
-Processed byte # 955 7f - log msg is: 467217590 [StreamingThread] INFO edu.hawaii.soest.kilonalu.adcp.ADCPSource  - Sent ADCP ensemble to the data turbine.
+<p>To stop viewing the log, type <code class="docutils literal"><span class="pre">Control-c</span></code> in the terminal.</p>
+<p>As each instrument sample is read over the wire by the instrument driver, the sample will be parsed and inserted into the DataTurbine, and a line will be added to the log file stating so.  For instance, for the Waikiki Beach CTD, we see:</p>
+<div class="highlight-python"><div class="highlight"><pre>[ INFO] 2020-10-04 16:52:54,366 (SocketTextSource:execute:129) WK01XX_001CTDXXXXR00 Sample sent to the DataTurbine: # 24.4011, 5.15887, 0.785, 34.3569, 04 Oct 2020, 16:52:54
 </pre></div>
 </div>
-<p>The instrument log entries vary per instrument, but they each say something to the effect of &#8216;Sent sample to the DataTurbine&#8217;.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.</p>
+<p>The instrument log entries vary per instrument, but they each say something to the effect of &#8216;Sample sent to the DataTurbine&#8217;.  If you do not see these messages scrolling by as you tail the file, then either no data are being sent over the wire, or the driver has lost its connection to the DataTurbine.  Try stopping and starting the driver in question, and tail the log file again to see if it has recovered.  If not, check to be sure that data are streaming from the instrument through the appropriate cellular modem, WIFI connection, or Digi portserver.  If data are streaming, but not being added to the DataTurbine, look to see if there is a problem with the DataTurbine accepting connections.  See section 1.2.3 above.  If you continue to have trouble, submit an issue at <a class="reference external" href="https://github.com/csjx/realtime-data/issues">https://github.com/csjx/realtime-data/issues</a>.</p>
 </div>
 </div>
 <div class="section" id="rebuilding-channel-data">
@@ -603,8 +623,8 @@ $ rm -rf AW01XX_002CTDXXXXR00
 </div>
 <div class="section" id="replicating-instrument-data-streams">
 <h2>1.4. Replicating Instrument Data Streams<a class="headerlink" href="#replicating-instrument-data-streams" title="Permalink to this headline">¶</a></h2>
-<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <code class="docutils literal"><span class="pre">rbnbAdmin``to</span> <span class="pre">manage</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">streams.</span>&nbsp; <span class="pre">This</span> <span class="pre">program</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">run</span> <span class="pre">from</span> <span class="pre">your</span> <span class="pre">workstation</span> <span class="pre">if</span> <span class="pre">you</span> <span class="pre">have</span> <span class="pre">downloaded</span> <span class="pre">it</span> <span class="pre">and</span> <span class="pre">have</span> <span class="pre">installed</span> <span class="pre">Java,</span> <span class="pre">but</span> <span class="pre">these</span> <span class="pre">instructions</span> <span class="pre">will</span> <span class="pre">describe</span> <span class="pre">how</span> <span class="pre">to</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">administrative</span> <span class="pre">program</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">campus</span> <span class="pre">server.</span>
-<span class="pre">First,</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">campus</span> <span class="pre">server</span> <span class="pre">as</span> <span class="pre">the</span> <span class="pre">``kilonalu</span></code> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <code class="docutils literal"><span class="pre">Open</span> <span class="pre">terminal</span></code> menu item.  In the terminal, issue the following command</p>
+<p>When each of the instrument drivers on the Kilo Nalu array are connected to the shore station DataTurbine, each data stream should then be replicated to the campus DataTurbine.  The DataTurbine software ships with a small graphical administrative program called <code class="docutils literal"><span class="pre">rbnbAdmin</span></code> to manage the data streams.  This program can be run from your workstation if you have downloaded it and have installed Java, but these instructions will describe how to use the administrative program on the campus server.
+First, connect to the campus server as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user using VNC as described in section 1.10.1 in this guide.  Open a terminal by right-clicking on the red Redhat Linux desktop background, and choosing the <code class="docutils literal"><span class="pre">Open</span> <span class="pre">terminal</span></code> menu item.  In the terminal, issue the following command</p>
 <div class="highlight-python"><div class="highlight"><pre>$ java -jar /usr/local/RBNB/current/bin/admin.jar &amp;
 </pre></div>
 </div>
@@ -647,23 +667,52 @@ To see the status of the replicated streams, choose the Hidden menu item under t
 </div>
 <div class="section" id="managing-the-dataturbine-file-archivers">
 <h2>1.5. Managing the DataTurbine File Archivers<a class="headerlink" href="#managing-the-dataturbine-file-archivers" title="Permalink to this headline">¶</a></h2>
-<p>After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).  The FileArchiverSink is a Java program that can write any type of data stream to disk.  If an instrument driver is stopped, it doesn&#8217;t mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it&#8217;s scheduled time period.  The archive directory on the shore station and the campus server is <code class="docutils literal"><span class="pre">/data</span></code>.  For data originating from the Kilo Nalu array, the archivers are set to write files to <code class="docutils literal"><span class="pre">/data/kilonalu/[SOURCENAME]</span></code>.  For data originating wirelessly from the nearshore sensors, the archivers are set to write files to <code class="docutils literal"><span class="pre">/data/raw/alawai/[SOURCENAME]</span></code>. Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.</p>
-<div class="section" id="starting-the-instrument-file-archivers">
-<h3>1.5.1. Starting the Instrument File Archivers<a class="headerlink" href="#starting-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h3>
-<p>Each instrument file archiver can be started by calling a convenience script that has preconfigured startup values for each of the archivers.  These convenience scripts are located in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>, and they all follow the naming pattern of <code class="docutils literal"><span class="pre">Archiver-Start-SOURCENAME.sh</span></code>. Likewise, the stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Archiver-Stop-SOURCENAME.sh</span></code>.  <strong>Note: It&#8217;s a good idea to always stop an archiver before starting one, to ensure that two archivers aren&#8217;t running for the same instrument.  See Stopping Instrument Archivers below.</strong>  As an example, to start the 20m 1200kHz ADCP instrument file archiver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following commands in the terminal</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
-$ Archiver-Start-KN02XX_020ADCPXXXR00.sh
+<p>After each instrument driver is started, a file archiver process should also be started to ensure that data are written to the disk archive directly (either hourly or daily, depending on the archiver configuration).   If an instrument driver is stopped, it doesn&#8217;t mean that the archiver process is also stopped.  An existing archiver should just be idle, and will try to archive any data within it&#8217;s scheduled time period.  Infrequently, a file archiver process may be running, but may not archive files correctly, and may need to be restarted.</p>
+<p>The archive directory on the server is <code class="docutils literal"><span class="pre">/data</span></code>.  For data originating wirelessly from the nearshore sensors, two archivers should be configured in the XML configuration file - one <code class="docutils literal"><span class="pre">raw</span></code> and one <code class="docutils literal"><span class="pre">pacioos-2020-format</span></code>. The former will archive data to the archivers are set to write files to <code class="docutils literal"><span class="pre">/data/raw/[SITE]/[INSTRUMENT]</span></code>, while the latter will write to the <code class="docutils literal"><span class="pre">/data/processed/pacioos/[INSTRUMENT]</span></code> directory.  The <code class="docutils literal"><span class="pre">pacioos-2020-format</span></code> is a common CSV data format across instruments where we convert the raw data from the instrument to a CSV file with a UTC datetime as the first column, followed by one or more measured variable data columns, and termonated with a Unix linefeed character <code class="docutils literal"><span class="pre">\n</span></code>. An example of the converted <code class="docutils literal"><span class="pre">pacioos-2020-format</span></code> data is:</p>
+<div class="highlight-python"><div class="highlight"><pre>2020-10-04T20:16:02.000Z,24.6739,5.22284,1.137,34.6249
+2020-10-04T20:16:07.000Z,24.6727,5.22283,1.011,34.6259
+2020-10-04T20:16:12.000Z,24.6657,5.22218,1.085,34.6263
+2020-10-04T20:16:17.000Z,24.6549,5.22133,1.094,34.6283
 </pre></div>
 </div>
-<p>This will cleanly shut down any existing 20m ADCP file archiver and start a new archiver. The file archiver start and stop scripts are listed below.  Driver development is continuing, and instruments in light gray are pending.</p>
-</div>
-<div class="section" id="stopping-the-instrument-file-archivers">
-<h3>1.5.2. Stopping the Instrument File Archivers<a class="headerlink" href="#stopping-the-instrument-file-archivers" title="Permalink to this headline">¶</a></h3>
-<p>As above, each instrument file archiver can be stopped by calling a convenience script.  Stop scripts follow the naming pattern <code class="docutils literal"><span class="pre">Archiver-Stop-SOURCENAME.sh</span></code>.  As an example, to stop the 20m 1200kHz ADCP instrument driver, ssh to the Linux server in question (shore lab or campus lab) as the <code class="docutils literal"><span class="pre">kilonalu</span></code> user, and execute the following command in the terminal</p>
-<div class="highlight-python"><div class="highlight"><pre>$ Archiver-Stop-KN02XX_020ADCPXXXR00.sh
+<div class="section" id="starting-instrument-file-archivers">
+<h3>1.5.1. Starting Instrument File Archivers<a class="headerlink" href="#starting-instrument-file-archivers" title="Permalink to this headline">¶</a></h3>
+<p>Instrument archivers are managed with a <code class="docutils literal"><span class="pre">manage-instruments</span></code> script in <code class="docutils literal"><span class="pre">${REALTIME_DATA}/scripts/shell</span></code>.  It also manages instrument drivers.  The usage is available on the command line with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -h
+
+Usage: manage-instruments -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+
+Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+
+OPTIONS:
+
+    -a  Start or stop all configured instruments
+    -c  The command to run, &#39;driver&#39; or &#39;archiver&#39;, to stream or archive data respectively.
+    -h  Show this message
+    -i  The instrument id. Use -i multiple times for multiple instruments.
+    -o  Indicate which operation to perform, start or stop.
+    -V  Show the version (1.1.0)
 </pre></div>
 </div>
-<p>This will cleanly shut down any existing 20m ADCP driver.  The current Stop scripts are listed in the table above in the Starting the Instrument File Archivers section.</p>
+<p>The <code class="docutils literal"><span class="pre">manage-instruments</span></code> script is used to start one or many instrument archivers by setting the <code class="docutils literal"><span class="pre">-c</span></code> command option to <code class="docutils literal"><span class="pre">archiver</span></code>, the <code class="docutils literal"><span class="pre">-o</span></code> operation option to <code class="docutils literal"><span class="pre">start</span></code>, and by using one or more <code class="docutils literal"><span class="pre">-i</span></code> options followed by the instrument identifier.  In lieu of the individual <code class="docutils literal"><span class="pre">-i</span></code> option, you can use the <code class="docutils literal"><span class="pre">-a</span></code> option to start all instrument archivers configured in the <code class="docutils literal"><span class="pre">${REALTIME_DATA}/conf</span></code> directory.  For example, to start a single instrument archiver:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c archiver -o start -i WK01XX_001CTDXXXXR00
+</pre></div>
+</div>
+<p>To start all archivers, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c archiver -o start -a
+</pre></div>
+</div>
+</div>
+<div class="section" id="stopping-instrument-archivers">
+<h3>1.5.2. Stopping Instrument Archivers<a class="headerlink" href="#stopping-instrument-archivers" title="Permalink to this headline">¶</a></h3>
+<p>As with starting instrument archivers, they can be stopped using the <code class="docutils literal"><span class="pre">manage-instruments</span></code> script.  To stop instrument archivers, use the <code class="docutils literal"><span class="pre">-c</span></code> command option with a value of <code class="docutils literal"><span class="pre">archiver</span></code>, a <code class="docutils literal"><span class="pre">-o</span></code> operation option of <code class="docutils literal"><span class="pre">stop</span></code> and either <code class="docutils literal"><span class="pre">-a</span></code> for all archivers or one or more <code class="docutils literal"><span class="pre">-i</span></code> instrument option followed by the instrument identifier.  For example, to stop a single archiver use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c archiver -o stop -i WK01XX_001CTDXXXXR00
+</pre></div>
+</div>
+<p>To stop all archivers, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ manage-instruments -c archiver -o stop -a
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="understanding-file-based-replication">
