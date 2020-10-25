@@ -381,8 +381,6 @@ public abstract class SimpleTextSource extends RBNBSource {
           }
         }
       }
-      // stop the streaming when we are done
-      stop();
     }
 
     /**
