@@ -22,6 +22,7 @@ This guide provides documentation for the driver software, including installatio
 
     user/user-guide
     dev/rebuilder-plan
+
 ..  dev/developer-guide
 
 Indices and tables

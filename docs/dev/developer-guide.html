@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. Development Guide &mdash; Realtime Data 1.1.0 documentation</title>
+  <title>Development Guide &mdash; Realtime Data 1.1.0 documentation</title>
   
 
   
@@ -30,8 +30,7 @@
   
 
   
-    <link rel="top" title="Realtime Data 1.1.0 documentation" href="../index.html"/>
-        <link rel="prev" title="1. User Guide" href="../user/user-guide.html"/> 
+    <link rel="top" title="Realtime Data 1.1.0 documentation" href="../index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -70,7 +69,7 @@
         
           
           
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../user/user-guide.html">1. User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#managing-the-dataturbine-server-software">1.1. Managing the DataTurbine Server Software</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-the-dataturbine">1.1.1. Starting the DataTurbine</a></li>
@@ -81,20 +80,21 @@
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#managing-the-dataturbine-instrument-drivers">1.2. Managing the DataTurbine Instrument Drivers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#configuring-instrument-drivers">1.2.1. Configuring Instrument Drivers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-instrument-drivers">1.2.2. Starting Instrument Drivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-drivers-through-dispatchers">1.2.3. Starting Drivers through Dispatchers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../user/user-guide.html#adam-module-engineering-data">1.2.3.1. ADAM Module engineering data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../user/user-guide.html#stor-x-data-logger-data">1.2.3.2. STOR-X Data Logger data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#stopping-instrument-drivers">1.2.3. Stopping Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-drivers-through-dispatchers">1.2.4. Starting Drivers through Dispatchers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user/user-guide.html#adam-module-engineering-data">1.2.4.1. ADAM Module engineering data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user/user-guide.html#stor-x-data-logger-data">1.2.4.2. STOR-X Data Logger data</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#stopping-instrument-drivers">1.2.4. Stopping Instrument Drivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#troubleshooting-instrument-drivers">1.2.5. Troubleshooting Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#id1">1.2.5. Stopping Instrument Drivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#troubleshooting-instrument-drivers">1.2.6. Troubleshooting Instrument Drivers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#rebuilding-channel-data">1.3. Rebuilding Channel Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#replicating-instrument-data-streams">1.4. Replicating Instrument Data Streams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#managing-the-dataturbine-file-archivers">1.5. Managing the DataTurbine File Archivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-the-instrument-file-archivers">1.5.1. Starting the Instrument File Archivers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#stopping-the-instrument-file-archivers">1.5.2. Stopping the Instrument File Archivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#starting-instrument-file-archivers">1.5.1. Starting Instrument File Archivers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user/user-guide.html#stopping-instrument-archivers">1.5.2. Stopping Instrument Archivers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../user/user-guide.html#understanding-file-based-replication">1.6. Understanding File-based replication</a></li>
@@ -107,29 +107,8 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">2. Development Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">2.1. Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#directory-structure">2.2. Directory Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#source-driver-architecture">2.3. Source Driver Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#instrument-specific-drivers">2.4. Instrument-specific Drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#rdi-workhorse-acoustic-doppler-current-profiler">2.4.1. RDI Workhorse Acoustic Doppler Current Profiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#seabird-ctd-sensors">2.4.2. Seabird CTD sensors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#davis-scientific-vantage-pro-2-weather-station">2.4.3. Davis Scientific Vantage Pro 2 weather station</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#ecolabs-flntu-fluorometry-turbidity-sensor">2.4.4. EcoLabs FLNTU fluorometry/turbidity sensor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#satlantic-isus-v3-nitrate-sensor">2.4.5. Satlantic ISUS V3 nitrate sensor</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#generic-text-drivers">2.5. Generic Text Drivers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dispatchers">2.6. Dispatchers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#adamdispatcher">2.6.1. AdamDispatcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#storxdispatcher">2.6.2. StorXDispatcher</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#sink-architecture">2.7. Sink Architecture</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#archiver-sink">2.7.1. Archiver Sink</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#matlab-sink">2.7.2. Matlab Sink</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="rebuilder-plan.html">2. Rebuilding instrument channel and archive data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rebuilder-plan.html#rebuild-sequence-diagram">2.1. Rebuild Sequence Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -156,7 +135,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>2. Development Guide</li>
+    <li>Development Guide</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -170,52 +149,52 @@
           <div role="main" class="document">
             
   <div class="section" id="development-guide">
-<h1>2. Development Guide<a class="headerlink" href="#development-guide" title="Permalink to this headline">¶</a></h1>
+<h1>Development Guide<a class="headerlink" href="#development-guide" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="requirements">
-<h2>2.1. Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">TODO</p>
 </div>
 </div>
 <div class="section" id="directory-structure">
-<h2>2.2. Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">¶</a></h2>
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">TODO</p>
 </div>
 </div>
 <div class="section" id="source-driver-architecture">
-<h2>2.3. Source Driver Architecture<a class="headerlink" href="#source-driver-architecture" title="Permalink to this headline">¶</a></h2>
+<h2>Source Driver Architecture<a class="headerlink" href="#source-driver-architecture" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">TODO</p>
 </div>
 </div>
 <div class="section" id="instrument-specific-drivers">
-<h2>2.4. Instrument-specific Drivers<a class="headerlink" href="#instrument-specific-drivers" title="Permalink to this headline">¶</a></h2>
+<h2>Instrument-specific Drivers<a class="headerlink" href="#instrument-specific-drivers" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">TODO</p>
 </div>
 <div class="section" id="rdi-workhorse-acoustic-doppler-current-profiler">
-<h3>2.4.1. RDI Workhorse Acoustic Doppler Current Profiler<a class="headerlink" href="#rdi-workhorse-acoustic-doppler-current-profiler" title="Permalink to this headline">¶</a></h3>
+<h3>RDI Workhorse Acoustic Doppler Current Profiler<a class="headerlink" href="#rdi-workhorse-acoustic-doppler-current-profiler" title="Permalink to this headline">¶</a></h3>
 <p>ADCPSource.java</p>
 </div>
 <div class="section" id="seabird-ctd-sensors">
-<h3>2.4.2. Seabird CTD sensors<a class="headerlink" href="#seabird-ctd-sensors" title="Permalink to this headline">¶</a></h3>
+<h3>Seabird CTD sensors<a class="headerlink" href="#seabird-ctd-sensors" title="Permalink to this headline">¶</a></h3>
 <p>CTDSource.java</p>
 </div>
 <div class="section" id="davis-scientific-vantage-pro-2-weather-station">
-<h3>2.4.3. Davis Scientific Vantage Pro 2 weather station<a class="headerlink" href="#davis-scientific-vantage-pro-2-weather-station" title="Permalink to this headline">¶</a></h3>
+<h3>Davis Scientific Vantage Pro 2 weather station<a class="headerlink" href="#davis-scientific-vantage-pro-2-weather-station" title="Permalink to this headline">¶</a></h3>
 <p>DavisWxSource.java</p>
 </div>
 <div class="section" id="ecolabs-flntu-fluorometry-turbidity-sensor">
-<h3>2.4.4. EcoLabs FLNTU fluorometry/turbidity sensor<a class="headerlink" href="#ecolabs-flntu-fluorometry-turbidity-sensor" title="Permalink to this headline">¶</a></h3>
+<h3>EcoLabs FLNTU fluorometry/turbidity sensor<a class="headerlink" href="#ecolabs-flntu-fluorometry-turbidity-sensor" title="Permalink to this headline">¶</a></h3>
 <p>FLNTUSource.java</p>
 </div>
 <div class="section" id="satlantic-isus-v3-nitrate-sensor">
-<h3>2.4.5. Satlantic ISUS V3 nitrate sensor<a class="headerlink" href="#satlantic-isus-v3-nitrate-sensor" title="Permalink to this headline">¶</a></h3>
+<h3>Satlantic ISUS V3 nitrate sensor<a class="headerlink" href="#satlantic-isus-v3-nitrate-sensor" title="Permalink to this headline">¶</a></h3>
 <p>ISUSSource.java
 SBE37Source.java
 SeahorseSource.java
@@ -224,7 +203,7 @@ TChainSource.java</p>
 </div>
 </div>
 <div class="section" id="generic-text-drivers">
-<h2>2.5. Generic Text Drivers<a class="headerlink" href="#generic-text-drivers" title="Permalink to this headline">¶</a></h2>
+<h2>Generic Text Drivers<a class="headerlink" href="#generic-text-drivers" title="Permalink to this headline">¶</a></h2>
 <p>FileSource.java
 FileTextSource.java
 SerialTextSource.java
@@ -232,29 +211,29 @@ SimpleTextSource.java
 SocketTextSource.java</p>
 </div>
 <div class="section" id="dispatchers">
-<h2>2.6. Dispatchers<a class="headerlink" href="#dispatchers" title="Permalink to this headline">¶</a></h2>
+<h2>Dispatchers<a class="headerlink" href="#dispatchers" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">TODO</p>
 </div>
 <div class="section" id="adamdispatcher">
-<h3>2.6.1. AdamDispatcher<a class="headerlink" href="#adamdispatcher" title="Permalink to this headline">¶</a></h3>
+<h3>AdamDispatcher<a class="headerlink" href="#adamdispatcher" title="Permalink to this headline">¶</a></h3>
 <p>AdamDispatcher.java
 AdamSource.java</p>
 </div>
 <div class="section" id="storxdispatcher">
-<h3>2.6.2. StorXDispatcher<a class="headerlink" href="#storxdispatcher" title="Permalink to this headline">¶</a></h3>
+<h3>StorXDispatcher<a class="headerlink" href="#storxdispatcher" title="Permalink to this headline">¶</a></h3>
 <p>StorXDispatcher.java
 StorXSource.java</p>
 </div>
 </div>
 <div class="section" id="sink-architecture">
-<h2>2.7. Sink Architecture<a class="headerlink" href="#sink-architecture" title="Permalink to this headline">¶</a></h2>
+<h2>Sink Architecture<a class="headerlink" href="#sink-architecture" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="archiver-sink">
-<h3>2.7.1. Archiver Sink<a class="headerlink" href="#archiver-sink" title="Permalink to this headline">¶</a></h3>
+<h3>Archiver Sink<a class="headerlink" href="#archiver-sink" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="matlab-sink">
-<h3>2.7.2. Matlab Sink<a class="headerlink" href="#matlab-sink" title="Permalink to this headline">¶</a></h3>
+<h3>Matlab Sink<a class="headerlink" href="#matlab-sink" title="Permalink to this headline">¶</a></h3>
 </div>
 </div>
 </div>
@@ -262,13 +241,6 @@ StorXSource.java</p>
 
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="../user/user-guide.html" class="btn btn-neutral" title="1. User Guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
