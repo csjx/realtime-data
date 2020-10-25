@@ -25,6 +25,7 @@ package edu.hawaii.soest.pacioos.text;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -853,8 +854,8 @@ public abstract class SimpleTextSource extends RBNBSource {
         
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
-            log.info("Sample: " + sample.substring(0, sample.length() - this.recordDelimiters.length) + 
-                    " sent data to the DataTurbine.");
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ]" +
+                " sample: " + sample.trim() + " sent data to the DataTurbine.");
             rbnbChannelMap.Clear();                      
             // in the event we just lost the network, sleep, try again
             while (numberOfChannelsFlushed < 1 ) {
@@ -865,6 +866,7 @@ public abstract class SimpleTextSource extends RBNBSource {
             }
             
         } catch (InterruptedException e) {
+            log.debug("The call to Source.Flush() was interrupted for " + getSource().GetClientName());
             e.printStackTrace();
             
         }
@@ -894,17 +896,14 @@ public abstract class SimpleTextSource extends RBNBSource {
               log.warn("The sample did not validate, and was not sent. The text was: " +
             sampleAsReadableText);
         }
-        
-        try {
-            log.debug("Sample bytes: " + new String(Hex.encodeHex(sample.getBytes("US-ASCII"))));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+
+        if ( log.isTraceEnabled() ) {
+            log.trace("Sample bytes: " +
+                new String(Hex.encodeHex(sample.getBytes(StandardCharsets.US_ASCII))));
+            log.trace("Data pattern is: '" + this.dataPattern.toString() + "'");
+            log.trace("Sample is      :  " + sample);
         }
-        log.debug("Data pattern is: '" + this.dataPattern.toString() + "'");
-        log.debug("Sample is      :  " + sample);
-        
         return isValid;
-        
     }
     
     /**
