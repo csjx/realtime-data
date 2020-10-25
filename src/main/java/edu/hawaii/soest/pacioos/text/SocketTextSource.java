@@ -84,11 +84,13 @@ public class SocketTextSource extends SimpleTextSource {
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 
-        boolean failed = false;
-
         /* Get a connection to the instrument */
         SocketChannel socket = getSocketConnection();
-        if (socket == null) return false;
+        if (socket == null) {
+            log.info("Couldn't get socket connection to the remote instrument host: " +
+                getHostName());
+            return true;
+        }
 
         // while data are being sent, read them into the buffer
         try {
@@ -120,7 +122,7 @@ public class SocketTextSource extends SimpleTextSource {
 
                     // log the byte stream
                     String character = new String(new byte[]{byteOne});
-                    if (log.isDebugEnabled()) {
+                    if (log.isTraceEnabled()) {
                         List<Byte> whitespaceBytes = new ArrayList<Byte>();
                         whitespaceBytes.add(new Byte((byte) 0x0A));
                         whitespaceBytes.add(new Byte((byte) 0x0D));
@@ -128,19 +130,18 @@ public class SocketTextSource extends SimpleTextSource {
                             character = new String(Hex.encodeHex((new byte[]{byteOne})));
 
                         }
+                        log.trace("char: " + character + "\t" +
+                            "b1: " + new String(Hex.encodeHex((new byte[]{byteOne}))) + "\t" +
+                            "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo}))) + "\t" +
+                            "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" +
+                            "b4: " + new String(Hex.encodeHex((new byte[]{byteFour}))) + "\t" +
+                            "sample pos: " + sampleBuffer.position() + "\t" +
+                            "sample rem: " + sampleBuffer.remaining() + "\t" +
+                            "sample cnt: " + sampleByteCount + "\t" +
+                            "buffer pos: " + buffer.position() + "\t" +
+                            "buffer rem: " + buffer.remaining() + "\t" +
+                            "state: " + state);
                     }
-                    log.debug("char: " + character + "\t" +
-                        "b1: " + new String(Hex.encodeHex((new byte[]{byteOne}))) + "\t" +
-                        "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo}))) + "\t" +
-                        "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" +
-                        "b4: " + new String(Hex.encodeHex((new byte[]{byteFour}))) + "\t" +
-                        "sample pos: " + sampleBuffer.position() + "\t" +
-                        "sample rem: " + sampleBuffer.remaining() + "\t" +
-                        "sample cnt: " + sampleByteCount + "\t" +
-                        "buffer pos: " + buffer.position() + "\t" +
-                        "buffer rem: " + buffer.remaining() + "\t" +
-                        "state: " + state);
-
 
                     // evaluate each byte to find the record delimiter(s), and when found, validate and
                     // send the sample to the DataTurbine.
@@ -246,33 +247,30 @@ public class SocketTextSource extends SimpleTextSource {
 
 
             } // end while (more socket bytes to read)
-            socket.close();
+            // socket.close();
 
         } catch (IOException e) {
             // handle exceptions
             // In the event of an i/o exception, log the exception, and allow execute()
             // to return false, which will prompt a retry.
-            failed = true;
             log.error("There was a communication error in sending the data sample. The message was: " +
                 e.getMessage());
             if (log.isDebugEnabled()) {
                 e.printStackTrace();
             }
-            return !failed;
+            return true;
 
         } catch (SAPIException sapie) {
             // In the event of an RBNB communication  exception, log the exception, 
             // and allow execute() to return false, which will prompt a retry.
-            failed = true;
             log.error("There was an RBNB error while sending the data sample. The message was: " +
                 sapie.getMessage());
             if (log.isDebugEnabled()) {
                 sapie.printStackTrace();
             }
-            return !failed;
+            return true;
         }
-
-        return !failed;
+        return false;
 
     } // end if (  !isConnected() )
 
@@ -344,11 +342,9 @@ public class SocketTextSource extends SimpleTextSource {
             dataSocket = SocketChannel.open();
             dataSocket.connect(new InetSocketAddress(host, portNumber));
 
-            // if the connection to the source fails, also disconnect from the RBNB
-            // server and return null
+            // if the connection to the source fails, close the socket
             if (!dataSocket.isConnected()) {
                 dataSocket.close();
-                disconnect();
                 dataSocket = null;
             }
         } catch (UnknownHostException ukhe) {
