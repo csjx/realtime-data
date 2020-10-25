@@ -23,6 +23,19 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import com.rbnb.sapi.ChannelMap;
+import com.rbnb.sapi.SAPIException;
+import com.rbnb.sapi.Sink;
+import org.apache.commons.cli.Options;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nees.rbnb.RBNBSource;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -39,20 +52,6 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.cli.Options;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nees.rbnb.RBNBSource;
-
-import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.SAPIException;
-import com.rbnb.sapi.Sink;
 
 /**
  * a class that represents a simple text-based instrument as a Source driver
@@ -331,12 +330,12 @@ public abstract class SimpleTextSource extends RBNBSource {
      * LastChangedBy, LastChangedRevision, and HeadURL fields.
      */
     public String getCVSVersionString(){
-      return (
-      "$LastChangedDate$" +
-      "$LastChangedBy$" +
-      "$LastChangedRevision$" +
-      "$HeadURL$"
-      );
+        return (
+        "$LastChangedDate$" +
+        "$LastChangedBy$" +
+        "$LastChangedRevision$" +
+        "$HeadURL$"
+        );
     }
 
     /**
@@ -344,8 +343,8 @@ public abstract class SimpleTextSource extends RBNBSource {
      * and if the data streaming Thread has been started
      */
     public boolean isRunning() {
-      // return the connection status and the thread status
-      return ( isConnected() && readyToStream );
+        // return the connection status and the thread status
+        return ( isConnected() && readyToStream );
     }
     
     /*
@@ -354,107 +353,107 @@ public abstract class SimpleTextSource extends RBNBSource {
      * a specified retry interval for the thread.
      */
     private void runWork() {
-      
-      // handle execution problems by retrying if execute() fails
-      boolean retry = true;
-      
-      while ( retry ) {
-        
-        // connect to the RBNB server
-        if ( connect() ) {
-          // run the data streaming code
-          retry = !execute();
-        }
-        
-        disconnect();
-        
-        if ( retry ) {
-          try {
-            Thread.sleep(retryInterval);
-            
-          } catch ( Exception e ){
-            log.info("There was an execution problem. Retrying. Message is: " + e.getMessage());
-            if ( log.isDebugEnabled() ) {
-                e.printStackTrace();
+
+        // handle execution problems by retrying if execute() fails
+        boolean retry = true;
+
+        while (retry) {
+
+            // connect to the RBNB server
+            if (connect()) {
+                // run the data streaming code
+                retry = !execute();
             }
-            
-          }
+
+            disconnect();
+
+            if (retry) {
+                try {
+                    Thread.sleep(retryInterval);
+
+                } catch (Exception e) {
+                    log.info("There was an execution problem. Retrying. Message is: " + e.getMessage());
+                    if (log.isDebugEnabled()) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
         }
-      }
     }
 
     /**
      * A method that starts the streaming of data lines from the source file to
-     * the RBNB server.  
+     * the RBNB server.
      */
     public boolean start() {
-      
-      // return false if the streaming is running
-      if ( isRunning() ) {
-        return false;
-      }
-      
-      // reset the connection to the RBNB server
-      if ( isConnected() ) {
-        disconnect();
-      }
-      connect();
-      
-      // return false if the connection fails
-      if ( !isConnected() ) {
-        return false;
-      }
-      
-      // begin the streaming thread to the source
-      startThread();
-      
-      return true;  
+
+        // return false if the streaming is running
+        if (isRunning()) {
+            return false;
+        }
+
+        // reset the connection to the RBNB server
+        if (isConnected()) {
+            disconnect();
+        }
+        connect();
+
+        // return false if the connection fails
+        if (!isConnected()) {
+            return false;
+        }
+
+        // begin the streaming thread to the source
+        startThread();
+
+        return true;
     }
 
     /**
-     * A method that creates and starts a new Thread with a run() method that 
+     * A method that creates and starts a new Thread with a run() method that
      * begins processing the data streaming from the source file.
      */
     private void startThread() {
-      
-      // build the runnable class and implement the run() method
-      Runnable runner = new Runnable() {
-        public void run() {
-          runWork();
-        }
-      };
-      
-      // build the Thread and start it, indicating that it has been started
-      readyToStream = true;
-      streamingThread = new Thread(runner, "StreamingThread");
-      streamingThread.start();     
-      
+
+        // build the runnable class and implement the run() method
+        Runnable runner = new Runnable() {
+            public void run() {
+                runWork();
+            }
+        };
+
+        // build the Thread and start it, indicating that it has been started
+        readyToStream = true;
+        streamingThread = new Thread(runner, "StreamingThread");
+        streamingThread.start();
+
     }
 
     /**
      * A method that stops the streaming of data between the source file and
-     * the RBNB server.  
-     */ 
+     * the RBNB server.
+     */
     public boolean stop() {
-      
-      // return false if the thread is not running
-      if ( !isRunning() ) {
-        return false;
-      }
-      
-      // stop the thread and disconnect from the RBNB server
-      stopThread();
-      disconnect();
-      return true;
+
+        // return false if the thread is not running
+        if (!isRunning()) {
+            return false;
+        }
+
+        // stop the thread and disconnect from the RBNB server
+        stopThread();
+        disconnect();
+        return true;
     }
 
     /**
      * A method that interrupts the thread created in startThread()
      */
     private void stopThread() {
-      // set the streaming status to false and stop the Thread
-      readyToStream = false;
-      streamingThread.interrupt();
+        // set the streaming status to false and stop the Thread
+        readyToStream = false;
+        streamingThread.interrupt();
     }
 
     /**
@@ -500,25 +499,25 @@ public abstract class SimpleTextSource extends RBNBSource {
         return this.identifier;
     }
 
-      /**
-       * A method that gets the timezone string
-       *
-       * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
-       */
-      public String getTimezone() {
+    /**
+     * A method that gets the timezone string
+     *
+     * @return timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
+     */
+    public String getTimezone() {
         return this.timezone;
-        
-      }
-      
-      /**
-       * A method that sets the timezone string
-       *
-       * @param timezone  the timezone string (like "UTC", "HST", "PONT" etc.)
-       */
-      public void setTimezone(String timezone) {
+
+    }
+
+    /**
+     * A method that sets the timezone string
+     *
+     * @param timezone the timezone string (like "UTC", "HST", "PONT" etc.)
+     */
+    public void setTimezone(String timezone) {
         this.timezone = timezone;
-        
-      }
+
+    }
 
     /**
      * a method that gets the field delimiter set for the data sample
@@ -808,15 +807,15 @@ public abstract class SimpleTextSource extends RBNBSource {
         
         return lastSampleTimeAsSecondsSinceEpoch;
     }
-    
+
     /**
      * Send the sample to the DataTurbine
-     * 
+     *
      * @param sample the ASCII sample string to send
      * @throws IOException
      * @throws SAPIException
      */
-     public int sendSample(String sample) throws IOException, SAPIException {
+    public int sendSample(String sample) throws IOException, SAPIException {
         int numberOfChannelsFlushed = 0;
         long sampleTimeAsSecondsSinceEpoch;
 
@@ -835,40 +834,40 @@ public abstract class SimpleTextSource extends RBNBSource {
         }
 
 
-         // send the sample to the data turbine
+        // send the sample to the data turbine
         rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
 
-         // Add the delimiters back on to the sample after they were trimmed off
-         StringBuilder sampleBuilder = new StringBuilder(sample);
-         for (int i = 0; i < getRecordDelimiters().length; i++ ) {
+        // Add the delimiters back on to the sample after they were trimmed off
+        StringBuilder sampleBuilder = new StringBuilder(sample);
+        for (int i = 0; i < getRecordDelimiters().length; i++) {
             sampleBuilder.append(
-                new String(new byte[] {Integer.decode(getRecordDelimiters()[i]).byteValue()})
+                new String(new byte[]{Integer.decode(getRecordDelimiters()[i]).byteValue()})
             );
-         }
-         sample = sampleBuilder.toString();
-         rbnbChannelMap.PutDataAsString(channelIndex, sample);
-        
+        }
+        sample = sampleBuilder.toString();
+        rbnbChannelMap.PutDataAsString(channelIndex, sample);
+
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
             log.info("[" + getIdentifier() + "/" + getChannelName() + " ]" +
                 " sample: " + sample.trim() + " sent data to the DataTurbine.");
-            rbnbChannelMap.Clear();                      
+            rbnbChannelMap.Clear();
             // in the event we just lost the network, sleep, try again
-            while (numberOfChannelsFlushed < 1 ) {
+            while (numberOfChannelsFlushed < 1) {
                 log.debug("No channels flushed, trying again in 10 seconds.");
                 Thread.sleep(10000L);
                 numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
 
             }
-            
+
         } catch (InterruptedException e) {
             log.debug("The call to Source.Flush() was interrupted for " + getSource().GetClientName());
             e.printStackTrace();
-            
+
         }
-            
+
 
         return numberOfChannelsFlushed;
     }
@@ -917,5 +916,4 @@ public abstract class SimpleTextSource extends RBNBSource {
     public byte getSecondDelimiterByte() {
         return this.secondDelimiterByte;
     }
-
 }
