@@ -576,4 +576,12 @@ public class Configuration {
     public String getConnectionType() {
         return xmlConfig.getString("connectionType");
     }
+
+    /**
+     * Get the data file path for file text sources
+     * @return filePath the path to the data file
+     */
+    public String getDataFilePath() {
+        return xmlConfig.getString("connectionParams.filePath");
+    }
 }
