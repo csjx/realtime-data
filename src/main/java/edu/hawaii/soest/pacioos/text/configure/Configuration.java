@@ -568,4 +568,12 @@ public class Configuration {
         }
         return recordDelimiters.toString();
     }
+
+    /**
+     * Get the instrument connection type
+     * @return connectionType the instrument connection type
+     */
+    public String getConnectionType() {
+        return xmlConfig.getString("connectionType");
+    }
 }
