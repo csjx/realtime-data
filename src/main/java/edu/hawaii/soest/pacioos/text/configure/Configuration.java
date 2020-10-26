@@ -584,4 +584,20 @@ public class Configuration {
     public String getDataFilePath() {
         return xmlConfig.getString("connectionParams.filePath");
     }
+
+    /**
+     * Get the socket connection type parameter host name
+     * @return hostName the host name
+     */
+    public String getHostNameConnectionParam() {
+        return xmlConfig.getString("connectionParams.hostName");
+    }
+
+    /**
+     * Get the socket connection type host port
+     * @return hostPort the host port
+     */
+    public int getHostPortConnectionParam() {
+        return xmlConfig.getInt("connectionParams.hostPort");
+    }
 }
