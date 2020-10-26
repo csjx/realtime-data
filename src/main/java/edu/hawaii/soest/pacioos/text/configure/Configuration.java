@@ -48,9 +48,17 @@ public class Configuration {
 
     private final String DATE_TIME_RANGE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+    /**
+     * Construct an empty configuration
+     */
     public Configuration() {
     }
 
+    /**
+     * Construct a configuration from the given file path
+     * @param xmlConfiguration the path to the XML configuration file
+     * @throws ConfigurationException a configuration exception
+     */
     public Configuration(String xmlConfiguration) throws ConfigurationException {
 
         // Load the given XML config file from the path
