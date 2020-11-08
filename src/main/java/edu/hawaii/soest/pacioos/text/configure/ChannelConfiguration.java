@@ -293,4 +293,12 @@ public class ChannelConfiguration {
     public void setArchiverConfigurations(List<ArchiverConfiguration> archiverConfigurations) {
         this.archiverConfigurations = archiverConfigurations;
     }
+
+    public int getTotalArchivers() {
+        int totalArchivers = 0;
+        if ( getArchiverConfigurations() != null ) {
+            totalArchivers = getArchiverConfigurations().size();
+        }
+        return totalArchivers;
+    }
 }
