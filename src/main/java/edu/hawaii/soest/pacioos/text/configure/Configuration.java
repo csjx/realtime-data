@@ -48,6 +48,9 @@ public class Configuration {
 
     private final String DATE_TIME_RANGE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+    /* The list of channel  configurations */
+    private List<ChannelConfiguration> channelConfigurations;
+
     /**
      * Construct an empty configuration
      */
@@ -64,6 +67,95 @@ public class Configuration {
         // Load the given XML config file from the path
         xmlConfig.setListDelimiter("|".charAt(0));
         xmlConfig.load(xmlConfiguration);
+
+
+        // Set the channel configurations
+        List<ChannelConfiguration> channelConfigurations = new ArrayList<>();
+        Collection<?> channels = xmlConfig.getList("channels.channel.name");
+        if ( channels != null ) {
+            for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+                ChannelConfiguration channelConfiguration = new ChannelConfiguration(
+                    isDefaultChannel(channelIndex),
+                    getChannelName(channelIndex),
+                    getChannelDataType(channelIndex),
+                    getChannelDataPattern(channelIndex),
+                    getDataPrefix(channelIndex),
+                    getColumnTypes(channelIndex),
+                    getFieldDelimiter(channelIndex),
+                    getRecordDelimiter(channelIndex),
+                    getDateFormats(channelIndex),
+                    getDateFields(channelIndex),
+                    getTimeZoneID(channelIndex),
+                    getArchiverConfigurations(channelIndex));
+            }
+        }
+    }
+
+    /**
+     * List the channel archiver configurations
+     * @return archiverConfigurations the list of archiver configurations
+     */
+    public List<ArchiverConfiguration> getArchiverConfigurations(int channelIndex) {
+        List<ArchiverConfiguration> archiverConfigurations = new ArrayList<>();
+        Collection<?> archivers =
+            xmlConfig.getList(
+                "channels.channel(" +
+                channelIndex +
+                ").archivers.archiver.archiveType");
+
+        for (int archiverIndex = 0; archiverIndex < archivers.size(); archiverIndex++) {
+            ArchiverConfiguration archiverConfiguration =
+                new ArchiverConfiguration(
+                    getArchiveType(channelIndex, archiverIndex),
+                    getArchiveInterval(channelIndex, archiverIndex),
+                    getArchiveBaseDirectory(channelIndex, archiverIndex)
+                );
+            archiverConfigurations.add(archiverConfiguration);
+        }
+        return archiverConfigurations;
+    }
+
+
+    /**
+     * Get the channel data pattern
+     * @param channelIndex the channel index
+     * @return dataPattern the channel data pattern
+     */
+    public String getChannelDataPattern(int channelIndex) {
+        return xmlConfig.getString(
+            "channels.channel(" + channelIndex + ").dataPattern"
+        );
+    }
+
+
+    /**
+     * Get the channel data type
+     * @param channelIndex the channel index
+     * @return dataType the channel data type
+     */
+    public String getChannelDataType(int channelIndex) {
+        return xmlConfig.getString(
+            "channels.channel(" + channelIndex + ").dataType"
+        );
+    }
+
+    /**
+     * Check if the channel is the default
+     * @param channelIndex the channel index
+     * @return true if the channel is the default
+     */
+    public boolean isDefaultChannel(int channelIndex) {
+        return xmlConfig.getBoolean(
+            "channels.channel(" + channelIndex + ")[@default]"
+        );
+    }
+
+    /**
+     * Get the RBNB client name
+     * @return rbnbName the RBNB client name
+     */
+    public String getClientName() {
+        return xmlConfig.getString("rbnbName");
     }
 
     /**
@@ -96,11 +188,9 @@ public class Configuration {
      */
     public int getTotalChannels() {
         int totalChannels = 0;
-        Collection<?> channels = xmlConfig.getList("channels.channel.name");
 
-        // Set the total channels
-        if (channels != null) {
-            totalChannels = channels.size();
+        if ( getChannelConfigurations() != null ) {
+            totalChannels = getChannelConfigurations().size();
         }
         return totalChannels;
     }
@@ -111,10 +201,11 @@ public class Configuration {
      */
     public int getTotalArchivers() {
         int totalArchivers = 0;
-        Collection<?> archivers =
-            xmlConfig.getList("channels.channel.archivers.archiver.archiveType");
-        if (archivers != null) {
-            totalArchivers = archivers.size();
+
+        if ( getChannelConfigurations() != null ) {
+            for (ChannelConfiguration channelConfiguration : getChannelConfigurations() ) {
+                totalArchivers += channelConfiguration.getTotalArchivers();
+            }
         }
         return totalArchivers;
     }
@@ -359,6 +450,22 @@ public class Configuration {
     }
 
     /**
+     * Get the RBNB archive memory amount (in bytes)
+     * @return archiveMemory the RBNB archive memory amount (in bytes)
+     */
+    public int getArchiveMemory() {
+        return xmlConfig.getInt("archiveMemory");
+    }
+
+    /**
+     * Get the RBNB archive size (in bytes)
+     * @return archiveSize the RBNB archive size (in bytes)
+     */
+    public int getArchiveSize() {
+        return xmlConfig.getInt("archiveSize");
+    }
+
+    /**
      * Get the missing value code
      * @param channelIndex the desired channel index
      * @return missingValueCode the missingValueCode present in the sample data
@@ -394,9 +501,8 @@ public class Configuration {
      * Get the column types
      * @param channelIndex the desired channel index
      * @return columnTypes the column types of the sample table
-     * @throws ConfigurationException a configuration exception
      */
-    public ColumnType[] getColumnTypes(int channelIndex) throws ConfigurationException {
+    public ColumnType[] getColumnTypes(int channelIndex) {
         List<ColumnType> columnTypes = new ArrayList<>();
         List<String> desiredTypes;
         String type;
@@ -415,7 +521,7 @@ public class Configuration {
         for ( String desiredType : desiredTypes ) {
             type = desiredType.trim();
             if ( ! allowed.contains(type) ) {
-                throw new ConfigurationException("The column type: " +
+                log.warn("The column type: " +
                     desiredType +
                     " is not allowed in the configuration. Allowed types are: " +
                     Arrays.toString(allowedTypes));
@@ -558,7 +664,6 @@ public class Configuration {
     public String getRecordDelimiter(int channelIndex) {
         List<String> recordDelims = xmlConfig.getList(
             "channels.channel(" + channelIndex + ").recordDelimiters");
-        // List<String> recordDelimList = new ArrayList<>(Arrays.asList(recordDelims.split("\\|")));
 
         StringBuilder recordDelimiters = new StringBuilder();
         for (String delim : recordDelims) {
@@ -567,6 +672,11 @@ public class Configuration {
             );
         }
         return recordDelimiters.toString();
+    }
+
+    public String[] getRecordDelimiters(int channelIndex) {
+        return xmlConfig.getStringArray(
+            "channels.channel(" + channelIndex + ").recordDelimiters");
     }
 
     /**
@@ -599,5 +709,61 @@ public class Configuration {
      */
     public int getHostPortConnectionParam() {
         return xmlConfig.getInt("connectionParams.hostPort");
+    }
+
+    /**
+     * Get the serial port connection parameter
+     * @return serialPort the serial port setting
+     */
+    public String getSerialPortConnectionParam() {
+        return xmlConfig.getString("connectionParams.serialPort");
+    }
+
+    /**
+     * Get the serial port connection parameter
+     * @return serialBaudRate the serial baud rate setting
+     */
+    public int getSerialBaudRateConnectionParam() {
+        return xmlConfig.getInt("connectionParams.serialPortParams.baudRate");
+    }
+
+    /**
+     * Get the serial data bits connection parameter
+     * @return serialDataBits the serial data bits setting
+     */
+    public int getSerialDataBitsConnectionParam() {
+        return xmlConfig.getInt("connectionParams.serialPortParams.dataBits");
+    }
+
+    /**
+     * Get the serial stop bits connection parameter
+     * @return serialStopBits the serial stop bits setting
+     */
+    public int getSerialStopBitsConnectionParam() {
+        return xmlConfig.getInt("connectionParams.serialPortParams.stopBits");
+    }
+
+    /**
+     * Get the serial parity connection parameter
+     * @return serialParity the serial parity setting
+     */
+    public String getSerialParityConnectionParam() {
+        return xmlConfig.getString("connectionParams.serialPortParams.parity");
+    }
+
+    /**
+     * Get the list of channel configurations
+     * @return channelConfigurations the list of channel configurations
+     */
+    public List<ChannelConfiguration> getChannelConfigurations() {
+        return channelConfigurations;
+    }
+
+    /**
+     * Set the list of channel configurations
+     * @param channelConfigurations  the list of channel configurations
+     */
+    public void setChannelConfigurations(List<ChannelConfiguration> channelConfigurations) {
+        this.channelConfigurations = channelConfigurations;
     }
 }
