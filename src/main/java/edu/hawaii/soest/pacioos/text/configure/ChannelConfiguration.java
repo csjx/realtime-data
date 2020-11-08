@@ -17,6 +17,8 @@
  */
 package edu.hawaii.soest.pacioos.text.configure;
 
+import tech.tablesaw.api.ColumnType;
+
 import java.util.List;
 
 /**
@@ -42,13 +44,13 @@ public class ChannelConfiguration {
     private String dataPrefix;
 
     /* The channel column types */
-    private List<String> columnTypes;
+    private ColumnType[] columnTypes;
 
     /* The channel field delimiter */
     private String fieldDelimiter;
 
-    /* The channel record delimiters */
-    private List<String> recordDelimiters;
+    /* The channel record delimiter */
+    private String recordDelimiter;
 
     /* The channel date formats */
     private List<String> dateFormats;
@@ -78,15 +80,15 @@ public class ChannelConfiguration {
      * @param dataPrefix the channel data prefix
      * @param columnTypes the channel column types
      * @param fieldDelimiter the channel field delimiter
-     * @param recordDelimiters the channel record delimiters
+     * @param recordDelimiter the channel record delimiters
      * @param dateFormats the channel date formats
      * @param dateFields the channel date fields
      * @param timeZone the channel timezone
      * @param archiverConfigurations the list of archiver configurations
      */
     public ChannelConfiguration(boolean defaultChannel, String name, String dataType,
-        String dataPattern, String dataPrefix, List<String> columnTypes,
-        String fieldDelimiter, List<String> recordDelimiters, List<String> dateFormats,
+        String dataPattern, String dataPrefix, ColumnType[] columnTypes,
+        String fieldDelimiter, String recordDelimiter, List<String> dateFormats,
         List<String> dateFields, String timeZone, List<ArchiverConfiguration> archiverConfigurations) {
         this.defaultChannel = defaultChannel;
         this.name = name;
@@ -95,7 +97,7 @@ public class ChannelConfiguration {
         this.dataPrefix = dataPrefix;
         this.columnTypes = columnTypes;
         this.fieldDelimiter = fieldDelimiter;
-        this.recordDelimiters = recordDelimiters;
+        this.recordDelimiter = recordDelimiter;
         this.dateFormats = dateFormats;
         this.dateFields = dateFields;
         this.timeZone = timeZone;
@@ -186,7 +188,7 @@ public class ChannelConfiguration {
      * Get the channel columnTypes
      * @return columnTypes the channel column types
      */
-    public List<String> getColumnTypes() {
+    public ColumnType[] getColumnTypes() {
         return columnTypes;
     }
 
@@ -194,7 +196,7 @@ public class ChannelConfiguration {
      * Set the channel column types
      * @param columnTypes the channel column types
      */
-    public void setColumnTypes(List<String> columnTypes) {
+    public void setColumnTypes(ColumnType[] columnTypes) {
         this.columnTypes = columnTypes;
     }
 
@@ -216,18 +218,18 @@ public class ChannelConfiguration {
 
     /**
      * Get the channel record delimiters
-     * @return recordDelimiters the channel record delimiters
+     * @return recordDelimiter the channel record delimiter
      */
-    public List<String> getRecordDelimiters() {
-        return recordDelimiters;
+    public String getRecordDelimiters() {
+        return recordDelimiter;
     }
 
     /**
-     * Set the channel record delimiters
-     * @param recordDelimiters  the channel record delimiters
+     * Set the channel record delimiter
+     * @param recordDelimiter  the channel record delimiter
      */
-    public void setRecordDelimiters(List<String> recordDelimiters) {
-        this.recordDelimiters = recordDelimiters;
+    public void setRecordDelimiters(String recordDelimiter) {
+        this.recordDelimiter = recordDelimiter;
     }
 
     /**
