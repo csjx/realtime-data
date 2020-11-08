@@ -5,6 +5,8 @@ import org.apache.commons.cli.Options;
 
 import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Source;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A base class for all RBNB sources.
@@ -12,7 +14,10 @@ import com.rbnb.sapi.Source;
  * @author Jason P. Hanley
  */
 public abstract class RBNBSource extends RBNBBase {
-  private static final int DEFAULT_CACHE_SIZE = 1024;
+
+    private final static Log log = LogFactory.getLog(RBNBSource.class);
+
+    private static final int DEFAULT_CACHE_SIZE = 1024;
   protected int cacheSize = DEFAULT_CACHE_SIZE;
   
   private static final int DEFAULT_ARCHIVE_SIZE = 0;
@@ -114,6 +119,9 @@ public abstract class RBNBSource extends RBNBBase {
 
   protected void disconnect() { 
     if ((cacheSize != 0 || archiveSize != 0) && source != null) {
+        if (log.isDebugEnabled()) {
+            log.debug( this.getRBNBClientName() + " detaching from the source: " + connected);
+        }
       source.Detach (); // close and keep cache and archive
     } else if (source != null) { // they are both zero; close and scrap
       source.CloseRBNBConnection();
@@ -129,7 +137,10 @@ public abstract class RBNBSource extends RBNBBase {
    * @return  true if connected, false if not
    */
   public boolean isConnected() {
-    return connected;
+      if (log.isDebugEnabled()) {
+          log.debug( this.getRBNBClientName() + " is connected: " + connected);
+      }
+      return connected;
   }
   
   /**
@@ -153,7 +164,7 @@ public abstract class RBNBSource extends RBNBBase {
   /**
    * Set the cache size (in frames) for the RBNB source.
    * 
-   * @param  the cache size in frames
+   * @param  size the cache size in frames
    */
   public void setCacheSize(int size) {
     cacheSize = size;
@@ -171,7 +182,7 @@ public abstract class RBNBSource extends RBNBBase {
   /**
    * Set the archive size (in frames) for the RBNB source.
    * 
-   * @param  the archive size in frames
+   * @param  size the archive size in frames
    */
   public void setArchiveSize(int size) {
     archiveSize = size;
