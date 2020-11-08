@@ -1,17 +1,6 @@
-/**
- *  Copyright: 2013 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that provides properties and methods 
- *             for a simple instrument driver streaming data from a
- *             text-based serial connection.
- *
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,14 +17,14 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+
 
 /**
- * @author cjones
- *
+ * Represents a simple instrument driver streaming data from a
+ *  text-based serial connection.
  */
 public class SerialTextSource extends SimpleTextSource {
 
@@ -56,11 +45,11 @@ public class SerialTextSource extends SimpleTextSource {
 	
 	/**
 	 * constructor: create an instance of the SerialTextSource 
-	 * @param xmlConfig 
-	 * @throws ConfigurationException 
+	 * @param config a configurtion instance
+	 * @throws ConfigurationException a configuration exception
 	 */
-	public SerialTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-		super(xmlConfig);
+	public SerialTextSource(Configuration config) throws ConfigurationException {
+		super(config);
 		
 	}
 	
