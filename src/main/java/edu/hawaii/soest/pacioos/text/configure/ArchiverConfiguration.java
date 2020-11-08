@@ -28,7 +28,7 @@ public class ArchiverConfiguration {
     private String archiveType;
 
     /* The archive interval (hourly, daily) */
-    private String archiveInterval;
+    private int archiveInterval;
 
     /* The archive base directory for storing data */
     private String archiveBaseDirectory;
@@ -46,8 +46,8 @@ public class ArchiverConfiguration {
      * @param archiveInterval the archive interval
      * @param archiveBaseDirectory the archive base directory
      */
-    public ArchiverConfiguration(String archiveType, String archiveInterval,
-        String archiveBaseDirectory) {
+    public ArchiverConfiguration(String archiveType, int archiveInterval,
+                                 String archiveBaseDirectory) {
         this.archiveType = archiveType;
         this.archiveInterval = archiveInterval;
         this.archiveBaseDirectory = archiveBaseDirectory;
@@ -73,7 +73,7 @@ public class ArchiverConfiguration {
      * Get the archive interval
      * @return archiveInterval the archive interval
      */
-    public String getArchiveInterval() {
+    public int getArchiveInterval() {
         return archiveInterval;
     }
 
@@ -81,7 +81,7 @@ public class ArchiverConfiguration {
      * Set the archive interval
      * @param archiveInterval  the archive interval
      */
-    public void setArchiveInterval(String archiveInterval) {
+    public void setArchiveInterval(int archiveInterval) {
         this.archiveInterval = archiveInterval;
     }
 
