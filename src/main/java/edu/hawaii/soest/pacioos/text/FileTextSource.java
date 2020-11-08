@@ -29,9 +29,9 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,15 +50,14 @@ public class FileTextSource extends SimpleTextSource {
 
     /* The buffered reader data representing the data file stream  */
     private BufferedReader fileReader;
-    
 
     /**
-     * constructor: create an instance of the SerialTextSource 
-     * @param xmlConfig the XML configuration file
+     * Construct a FileTextSource
+     * @param config the configuration instance
      * @throws ConfigurationException  a configuration exception
      */
-    public FileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-        super(xmlConfig);
+    public FileTextSource(Configuration config) throws ConfigurationException {
+        super(config);
         
     }
     
