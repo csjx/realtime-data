@@ -1,9 +1,5 @@
 /*
- * Copyright: 2013 Regents of the University of Hawaii and the
- * School of Ocean and Earth Science and Technology
- * Purpose: A class that provides properties and methods
- * for a simple instrument driver streaming data from a
- * text-based, TCP socket connection.
+ * Copyright: 2020 Regents of the University of Hawaii and the
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +18,10 @@
 package edu.hawaii.soest.pacioos.text;
 
 import com.rbnb.sapi.SAPIException;
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,12 +61,12 @@ public class SocketTextSource extends SimpleTextSource {
     private int sampleByteCount = 0;
 
     /**
-     * constructor: create an instance of the SerialTextSource 
-     * @param xmlConfig the XML configuration
+     * constructor: create an instance of the SocketTextSource
+     * @param config the configuration
      * @throws ConfigurationException a configuration exception
      */
-    public SocketTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-        super(xmlConfig);
+    public SocketTextSource(Configuration config) throws ConfigurationException {
+        super(config);
 
     }
 
@@ -89,7 +85,13 @@ public class SocketTextSource extends SimpleTextSource {
         if (socket == null) {
             log.info("Couldn't get socket connection to the remote instrument host: " +
                 getHostName());
-            return true;
+            try {
+                socket.close();
+            } catch (IOException e) {
+                log.warn("Couldn't close the socket channel: " + e. getMessage());
+                e.printStackTrace();
+            }
+            return false;
         }
 
         // while data are being sent, read them into the buffer
@@ -160,7 +162,7 @@ public class SocketTextSource extends SimpleTextSource {
                             byte[] sampleArray = new byte[sampleByteCount];
                             sampleBuffer.flip();
                             sampleBuffer.get(sampleArray);
-                            String sampleString = new String(sampleArray, "US-ASCII");
+                            String sampleString = new String(sampleArray, StandardCharsets.US_ASCII);
 
                             if (validateSample(sampleString)) {
                                 numberOfChannelsFlushed = sendSample(sampleString);
@@ -245,9 +247,7 @@ public class SocketTextSource extends SimpleTextSource {
                 // prepare the buffer to read in more bytes from the stream
                 buffer.compact();
 
-
             } // end while (more socket bytes to read)
-            // socket.close();
 
         } catch (IOException e) {
             // handle exceptions
@@ -258,7 +258,7 @@ public class SocketTextSource extends SimpleTextSource {
             if (log.isDebugEnabled()) {
                 e.printStackTrace();
             }
-            return true;
+            return false;
 
         } catch (SAPIException sapie) {
             // In the event of an RBNB communication  exception, log the exception, 
@@ -268,11 +268,10 @@ public class SocketTextSource extends SimpleTextSource {
             if (log.isDebugEnabled()) {
                 sapie.printStackTrace();
             }
-            return true;
+            return false;
         }
         return false;
-
-    } // end if (  !isConnected() )
+    }
 
     /* (non-Javadoc)
      * @see org.nees.rbnb.RBNBBase#setArgs(org.apache.commons.cli.CommandLine)
@@ -350,12 +349,10 @@ public class SocketTextSource extends SimpleTextSource {
         } catch (UnknownHostException ukhe) {
 
             log.info("Unable to look up host: " + host + "\n");
-            disconnect();
             dataSocket = null;
 
         } catch (IOException nioe) {
             log.info("Couldn't get I/O connection to: " + host + ":" + portNumber);
-            disconnect();
             dataSocket = null;
         }
         return dataSocket;
