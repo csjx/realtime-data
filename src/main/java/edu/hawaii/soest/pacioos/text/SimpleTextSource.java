@@ -26,28 +26,24 @@ package edu.hawaii.soest.pacioos.text;
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Sink;
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
 import org.apache.commons.cli.Options;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nees.rbnb.RBNBSource;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.IllegalFormatException;
+
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -134,8 +130,8 @@ public abstract class SimpleTextSource extends RBNBSource {
     /* The identifier of the instrument (e.g. NS01) */
     private String identifier;
 
-    /* The XML-based configuration instance used to configure the class */
-    private XMLConfiguration xmlConfig;
+    /* The configuration instance used to configure the class */
+    private Configuration config;
 
     /* The list of record delimiter characters provided by the config (usually 0x0D,0x0A) */
     protected String[] recordDelimiters;
@@ -147,108 +143,69 @@ public abstract class SimpleTextSource extends RBNBSource {
     protected byte secondDelimiterByte;
       
     /**
-     * Constructor: create an instance of the simple SimpleTextSource
-     * @param xmlConfig the XML configuration file
+     * Constructor: create an instance of the SimpleTextSource
+     * @param config a configuration instance
      */
-    public SimpleTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
+    public SimpleTextSource(Configuration config) throws ConfigurationException {
         
-        this.xmlConfig = xmlConfig;
         // Pull the general configuration from the properties file
-        Configuration config   = new PropertiesConfiguration("textsource.properties");
-        this.archiveMode       = config.getString("textsource.archive_mode");
-        this.rbnbChannelName   = config.getString("textsource.rbnb_channel");
-        this.serverName        = config.getString("textsource.server_name ");
-        this.delimiter         = config.getString("textsource.delimiter");
-        this.pollInterval      = config.getInt("textsource.poll_interval");
-        this.retryInterval     = config.getInt("textsource.retry_interval");
+        /* The properties configuration used to provide general settings */
+        PropertiesConfiguration propsConfig = new PropertiesConfiguration("textsource.properties");
+        this.archiveMode       = propsConfig.getString("textsource.archive_mode");
+        this.rbnbChannelName   = propsConfig.getString("textsource.rbnb_channel");
+        this.serverName        = propsConfig.getString("textsource.server_name ");
+        this.delimiter         = propsConfig.getString("textsource.delimiter");
+        this.pollInterval      = propsConfig.getInt("textsource.poll_interval");
+        this.retryInterval     = propsConfig.getInt("textsource.retry_interval");
         this.defaultDateFormatter =
-            DateTimeFormatter.ofPattern(config.getString("textsource.default_date_format"));
+            DateTimeFormatter.ofPattern(propsConfig.getString("textsource.default_date_format"));
 
         
         // parse the record delimiter from the config file
         // set the XML configuration in the simple text source for later use
-        this.setConfiguration(xmlConfig);
-        
+        this.setConfiguration(config);
+
+        // Get the number of channels for the instrument
+        int totalChannels = config.getTotalChannels();
+
         // set the common configuration fields
-        String connectionType = this.xmlConfig.getString("connectionType");
-        this.setConnectionType(connectionType);
-        String channelName = xmlConfig.getString("channelName");
-        this.setChannelName(channelName);
-        String identifier = xmlConfig.getString("identifier");
-        this.setIdentifier(identifier);
-        String rbnbName = xmlConfig.getString("rbnbName");
-        this.setRBNBClientName(rbnbName);
-        String rbnbServer = xmlConfig.getString("rbnbServer");
-        this.setServerName(rbnbServer);
-        int rbnbPort = xmlConfig.getInt("rbnbPort");
-        this.setServerPort(rbnbPort);
-        int archiveMemory = xmlConfig.getInt("archiveMemory");
-        this.setCacheSize(archiveMemory);
-        int archiveSize = xmlConfig.getInt("archiveSize");
-        this.setArchiveSize(archiveSize);
-        
-        // set the default channel information 
-        Object channels = xmlConfig.getList("channels.channel.name");
-        int totalChannels = 1;
-        if ( channels instanceof Collection) {
-            totalChannels = ((Collection<?>) channels).size();
-            
-        }        
+        this.setConnectionType(config.getConnectionType());
+        this.setIdentifier(config.getIdentifier());
+        this.setRBNBClientName(config.getClientName());
+        this.setServerName(config.getServerName());
+        this.setServerPort(config.getServerPort());
+        this.setCacheSize(config.getArchiveMemory());
+        this.setArchiveSize(config.getArchiveSize());
+
         // find the default channel with the ASCII data string
-        for (int i = 0; i < totalChannels; i++) {
-            boolean isDefaultChannel = xmlConfig.getBoolean("channels.channel(" + i + ")[@default]");
+        for (int channelIndex = 0; channelIndex < totalChannels; channelIndex++) {
+            boolean isDefaultChannel = config.isDefaultChannel(channelIndex);
             if ( isDefaultChannel ) {
-                String name = xmlConfig.getString("channels.channel(" + i + ").name");
-                this.setChannelName(name);
-                String dataPattern = xmlConfig.getString("channels.channel(" + i + ").dataPattern");
-                this.setPattern(dataPattern);
-                String fieldDelimiter = xmlConfig.getString("channels.channel(" + i + ").fieldDelimiter");
+                this.setChannelName(config.getChannelName(channelIndex));
+                this.setPattern(config.getChannelDataPattern(channelIndex));
+                String fieldDelimiter = config.getFieldDelimiter(channelIndex);
                 // handle hex-encoded field delimiters
                 if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
                     
-                    Byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
-                    byte[] delimAsByteArray = new byte[]{delimBytes.byteValue()};
+                    byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+                    byte[] delimAsByteArray = new byte[]{delimBytes};
                     String delim = null;
-                    try {
-                        delim = new String(delimAsByteArray, 0, delimAsByteArray.length, "ASCII");
-                        
-                    } catch (UnsupportedEncodingException e) {
-                        throw new ConfigurationException("There was an error parsing the field delimiter." +
-                            " The message was: " + e.getMessage());
-                    }
+                    delim = new String(
+                        delimAsByteArray, 0,
+                        delimAsByteArray.length,
+                        StandardCharsets.US_ASCII);
                     this.setDelimiter(delim);
                     
                 } else {
                     this.setDelimiter(fieldDelimiter);
 
                 }
-                String[] recordDelimiters = xmlConfig.getStringArray("channels.channel(" + i + ").recordDelimiters");
-                this.setRecordDelimiters(recordDelimiters);
+                this.setRecordDelimiters(config.getRecordDelimiters(channelIndex));
                 // set the date formats list
-                List<String> dateFormats = (List<String>) xmlConfig.getList("channels.channel(" + i + ").dateFormats.dateFormat");
-                if ( dateFormats.size() != 0 ) {
-                    for (String dateFormat : dateFormats) {
-                        
-                        // validate the date format string
-                        try {
-                            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-                            
-                        } catch (IllegalFormatException ife) {
-                            String msg = "There was an error parsing the date format " +
-                                dateFormat + ". The message was: " + ife.getMessage();
-                            if ( log.isDebugEnabled() ) {
-                                ife.printStackTrace();
-                            }
-                            throw new ConfigurationException(msg);
-                        }
-                    }
-                    setDateFormats(dateFormats);
-                } else {
-                    log.warn("No date formats have been configured for this instrument.");
-                }
-                
+                setDateFormats(config.listDateFormats(channelIndex));
+
                 // set the date fields list
-                List<String> dateFieldList = xmlConfig.getList("channels.channel(" + i + ").dateFields.dateField");
+                List<String> dateFieldList = config.listDateFormats(channelIndex);
                 List<Integer> dateFields = new ArrayList<Integer>();
                 if ( dateFieldList.size() != 0 ) {
                     for ( String dateField : dateFieldList ) {
@@ -266,8 +223,7 @@ public abstract class SimpleTextSource extends RBNBSource {
                 } else {
                     log.warn("No date fields have been configured for this instrument.");
                 }
-                String timeZone = xmlConfig.getString("channels.channel(" + i + ").timeZone");
-                this.setTimezone(timeZone);
+                this.setTimezone(config.getTimeZoneID(channelIndex));
                 break;
             }
             
@@ -299,7 +255,7 @@ public abstract class SimpleTextSource extends RBNBSource {
     
     /**
      * Return the RBNB DataTurbine channel name for this text source
-     * @return
+     * @return rbnbChannelName the RBNB channel name
      */
     public String getChannelName() {
         return this.rbnbChannelName;
@@ -317,7 +273,7 @@ public abstract class SimpleTextSource extends RBNBSource {
     
     /**
      * Return the connection type for this text source
-     * @return
+     * @return connectionType the connection type
      */
     public String getConnectionType() {
         return this.connectionType;
@@ -369,14 +325,15 @@ public abstract class SimpleTextSource extends RBNBSource {
 
             if (retry) {
                 try {
+                    log.debug("Sleeping " + retryInterval + " while retrying the connection.");
                     Thread.sleep(retryInterval);
 
                 } catch (Exception e) {
-                    log.info("There was an execution problem. Retrying. Message is: " + e.getMessage());
+                    log.info("[" + getIdentifier() + "/" + getChannelName() + " ]" +
+                        "There was an execution problem. Retrying. Message is: " + e.getMessage());
                     if (log.isDebugEnabled()) {
                         e.printStackTrace();
                     }
-
                 }
             }
         }
@@ -698,22 +655,22 @@ public abstract class SimpleTextSource extends RBNBSource {
     }
 
     /**
-     * Set the XML configuration object for this simple text source
+     * Set the configuration object for this simple text source
      * 
-     * @param xmlConfig  the XML configuration instance
+     * @param config  the configuration instance
      */
-    public void setConfiguration(XMLConfiguration xmlConfig) {
-        this.xmlConfig = xmlConfig;
+    public void setConfiguration(Configuration config) {
+        this.config = config;
         
     }
 
     /**
-     * Return the XML configuration for this simple text source
+     * Return the configuration for this simple text source
      * 
-     * @return xmlConfig  the XML configuration instance
+     * @return config  the configuration instance
      */
-    public XMLConfiguration getConfiguration(){
-        return this.xmlConfig;
+    public Configuration getConfiguration(){
+        return this.config;
         
     }
     
