@@ -22,10 +22,8 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
-import java.util.Iterator;
-
+import edu.hawaii.soest.pacioos.text.configure.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,98 +47,89 @@ public class TextSourceFactory {
      */
     public static SimpleTextSource getSimpleTextSource(String configLocation) 
         throws ConfigurationException {
-        
-        // Get the per-driver configuration
-        XMLConfiguration xmlConfig = new XMLConfiguration();
-        xmlConfig.setListDelimiter(new String("|").charAt(0));
-        xmlConfig.load(configLocation);
-        String connectionType = xmlConfig.getString("connectionType");
-        
-        if ( log.isDebugEnabled() ) {
-            Iterator i = xmlConfig.getKeys();
-            while ( i.hasNext()) {
-                String key = (String) i.next();
-                String value = xmlConfig.getString(key);
-                log.debug(key + ":\t\t" + value);
-                
-            }
-            
-        }
+
+        // Get a configuration based on the XML configuration
+        Configuration config;
+        config = new Configuration(configLocation);
+
+        String connectionType = config.getConnectionType();
         
         /* The SimpleTextSource used to communicate with the instrument */
         SimpleTextSource simpleTextSource;
 
         // return the correct configuration type
-        if ( connectionType.equals("file") ) {
-            FileTextSource fileTextSource = getFileTextSource(xmlConfig);
-            String filePath = xmlConfig.getString("connectionParams.filePath");
-            fileTextSource.setDataFilePath(filePath);
-
-            simpleTextSource = (SimpleTextSource) fileTextSource;
-
-        } else if ( connectionType.equals("socket") ) {
-            SocketTextSource socketTextSource = getSocketTextSource(xmlConfig);
-            String hostName = xmlConfig.getString("connectionParams.hostName");
-            socketTextSource.setHostName(hostName);
-            int hostPort = xmlConfig.getInt("connectionParams.hostPort");
-            socketTextSource.setHostPort(hostPort);
-
-            simpleTextSource = (SimpleTextSource) socketTextSource;
-
-        } else if ( connectionType.equals("serial") ) {
-            SerialTextSource serialTextSource = getSerialTextSource(xmlConfig);
-            String serialPort = xmlConfig.getString("connectionParams.serialPort");
-            serialTextSource.setSerialPort(serialPort);
-            int baudRate = xmlConfig.getInt("connectionParams.serialPortParams.baudRate");
-            serialTextSource.setBaudRate(baudRate);
-            int dataBits = xmlConfig.getInt("connectionParams.serialPortParams.dataBits");
-            serialTextSource.setDataBits(dataBits);
-            int stopBits = xmlConfig.getInt("connectionParams.serialPortParams.stopBits");
-            serialTextSource.setStopBits(stopBits);
-            String parity = xmlConfig.getString("connectionParams.serialPortParams.parity");
-            serialTextSource.setParity(parity);
-
-            simpleTextSource = (SimpleTextSource) serialTextSource;
-            
-        } else {
-            throw new ConfigurationException("There was an issue parsing the configuration." +
-                 " The connection type of " + connectionType + " wasn't recognized.");
+        switch (connectionType) {
+            case "file":
+                FileTextSource fileTextSource = getFileTextSource(config);
+                String filePath = config.getDataFilePath();
+                fileTextSource.setDataFilePath(filePath);
+                simpleTextSource = fileTextSource;
+                log.debug("Created a file text source.");
+                break;
+            case "socket":
+                SocketTextSource socketTextSource = getSocketTextSource(config);
+                String hostName = config.getHostNameConnectionParam();
+                socketTextSource.setHostName(hostName);
+                int hostPort = config.getHostPortConnectionParam();
+                socketTextSource.setHostPort(hostPort);
+                simpleTextSource = socketTextSource;
+                log.debug("Created a socket text source.");
+                break;
+            case "serial":
+                SerialTextSource serialTextSource = getSerialTextSource(config);
+                String serialPort = config.getSerialPortConnectionParam();
+                serialTextSource.setSerialPort(serialPort);
+                int baudRate = config.getSerialBaudRateConnectionParam();
+                serialTextSource.setBaudRate(baudRate);
+                int dataBits = config.getSerialDataBitsConnectionParam();
+                serialTextSource.setDataBits(dataBits);
+                int stopBits = config.getSerialStopBitsConnectionParam();
+                serialTextSource.setStopBits(stopBits);
+                String parity = config.getSerialParityConnectionParam();
+                serialTextSource.setParity(parity);
+                simpleTextSource = serialTextSource;
+                log.debug("Created a serial text source.");
+                break;
+            default:
+                throw new ConfigurationException("There was an issue parsing the configuration." +
+                    " The connection type of " + connectionType + " wasn't recognized.");
         }
-        
         return simpleTextSource;
-        
     }
 
     /**
      * Provides an instance of a text-based source driver using data from a serial connection
-     * @param xmlConfig  the XML configuration
+     * @param config  the configuration instance
      * 
      * @return a new instance of SimpleTextSource
      * @throws ConfigurationException  a configuration exception
      */
-    private static SerialTextSource getSerialTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-        return new SerialTextSource(xmlConfig);
+    private static SerialTextSource getSerialTextSource(Configuration config)
+        throws ConfigurationException {
+        return new SerialTextSource(config);
     }
 
     /**
      * Provides an instance of a text-based source driver using data from a socket connection
-     * @param xmlConfig  the XML configuration
+     * @param config  the configuration instance
      * 
      * @return a new instance of SimpleTextSource
      * @throws ConfigurationException  a configuration exception
      */
-    private static SocketTextSource getSocketTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-        return new SocketTextSource(xmlConfig);
+    private static SocketTextSource getSocketTextSource(Configuration config)
+        throws ConfigurationException {
+        return new SocketTextSource(config);
     }
 
     /**
      * Provides an instance of a text-based source driver using data from a file
-     * @param xmlConfig  the XML configuration
+     * @param config  the configuration instance
      * 
      * @return a new instance of SimpleTextSource
      * @throws ConfigurationException  a configuration exception
      */
-    private static FileTextSource getFileTextSource(XMLConfiguration xmlConfig) throws ConfigurationException {
-        return new FileTextSource(xmlConfig);
+    private static FileTextSource getFileTextSource(Configuration config)
+        throws ConfigurationException {
+        return new FileTextSource(config);
     }
 }
