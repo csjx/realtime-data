@@ -11,8 +11,8 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <hostName>68.25.168.134</hostName>
-        <hostPort>5113</hostPort>
+        <hostName>24.221.207.27</hostName>
+        <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
     <rbnbName>WK02XX_001CTDXXXXR00</rbnbName>
@@ -124,7 +124,7 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
