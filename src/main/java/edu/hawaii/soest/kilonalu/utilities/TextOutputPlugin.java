@@ -28,26 +28,20 @@
  */
 package edu.hawaii.soest.kilonalu.utilities;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.nees.rbnb.MarkerUtilities;
 import org.nees.rbnb.RBNBBase;
@@ -65,8 +59,8 @@ import edu.hawaii.soest.kilonalu.adcp.Ensemble;
 /**
  * This class grabs data from an RBNB data source and saves it to a
  * directory structure where the data for the time stamp
- * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file prefix_yyyyMMddhhmmssnnn.dat on the
- * directory path base-dir/yyyy/MM/dd/[hh/mm/]. The spliting of files to directory
+ * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file prefix_yyyyMMddHHmmssnnn.dat on the
+ * directory path base-dir/yyyy/MM/dd/[HH/mm/]. The spliting of files to directory
  * structures is done to assure that no directory overflows its index table.
  * 
  * @author Terry E. Weymouth
