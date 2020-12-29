@@ -61,8 +61,8 @@ import com.rbnb.sapi.ChannelTree.Node;
 /**
  * This class grabs data from an RBNB data source and saves it to a
  * directory structure where the data for the time stamp
- * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file prefix_yyyyMMddhhmmssnnn.dat on the
- * directory path base-dir/yyyy/MM/dd/[hh/mm/]. The spliting of files to directory
+ * yyyy-MM-dd:hh:mm:ss.nnn is saved to the file prefix_yyyyMMddHHmmssnnn.dat on the
+ * directory path base-dir/yyyy/MM/dd/[HH/mm/]. The spliting of files to directory
  * structures is done to assure that no directory overflows its index table.
  *
  * @author Terry E. Weymouth
