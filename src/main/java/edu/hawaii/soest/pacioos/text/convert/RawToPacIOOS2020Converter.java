@@ -32,6 +32,7 @@ import tech.tablesaw.api.InstantColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.api.TimeColumn;
+import tech.tablesaw.columns.instant.InstantColumnFormatter;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvWriteOptions;
 import tech.tablesaw.io.csv.CsvWriter;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -141,6 +143,11 @@ public class RawToPacIOOS2020Converter implements Converter {
         TimeColumn[] timeColumns = table.timeColumns();
         DateColumn[] dateColumns = table.dateColumns();
         InstantColumn instantColumn = InstantColumn.create("instantColumn", table.rowCount());
+        instantColumn.setPrintFormatter(new InstantColumnFormatter(
+            DateTimeFormatter
+                .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .withZone(ZoneOffset.ofHours(0)))
+        );
         BooleanColumn uniqueValues = BooleanColumn.create("isUnique", table.rowCount());
 
         // Create an instant column from the datetime
@@ -213,7 +220,6 @@ public class RawToPacIOOS2020Converter implements Converter {
     @Override
     public int write(OutputStream outputStream) throws IOException {
 
-        // TODO: Write the table to the output stream
         CsvWriteOptions options = CsvWriteOptions.builder(outputStream)
             .ignoreLeadingWhitespaces(true)
             .ignoreTrailingWhitespaces(true)
@@ -233,9 +239,6 @@ public class RawToPacIOOS2020Converter implements Converter {
             log.error(convertedTable.print());
             throw(e);
         }
-
-        log.debug("write()");
-
         return getConvertedTable().rowCount();
     }
 
