@@ -46,10 +46,10 @@ public class Configuration {
 
     private final XMLConfiguration xmlConfig = new XMLConfiguration();
 
-    private final String DATE_TIME_RANGE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private final String DATE_TIME_RANGE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /* The list of channel  configurations */
-    private List<ChannelConfiguration> channelConfigurations;
+    private List<ChannelConfiguration> channelConfigurations = new ArrayList<>();
 
     /**
      * Construct an empty configuration
@@ -70,7 +70,6 @@ public class Configuration {
 
 
         // Set the channel configurations
-        List<ChannelConfiguration> channelConfigurations = new ArrayList<>();
         Collection<?> channels = xmlConfig.getList("channels.channel.name");
         if ( channels != null ) {
             for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
@@ -87,6 +86,7 @@ public class Configuration {
                     getDateFields(channelIndex),
                     getTimeZoneID(channelIndex),
                     getArchiverConfigurations(channelIndex));
+                channelConfigurations.add(channelConfiguration);
             }
         }
     }
@@ -575,7 +575,7 @@ public class Configuration {
      * Get the DateFormat from the configuration
      * @param channelIndex the index of the channel in the configuration
      * @return format the date format string
-     * TODO: Note that we have hardcoded the time as the first format in the list. Change this.
+     * TODO: Note that we have hardcoded the date as the first format in the list. Change this.
      */
     public String getDateFormat(int channelIndex) {
         String format = null;
