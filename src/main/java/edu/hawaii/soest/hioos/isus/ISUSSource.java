@@ -103,7 +103,7 @@ public class ISUSSource extends RBNBSource {
         new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 
     /* The timezone used for the sample date */
-    private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
 
     /**
      * Constructor - create an empty instance of the ISUSSource object, using
@@ -235,7 +235,7 @@ public class ISUSSource extends RBNBSource {
                         String sampleDateUTC = dtFormat.format(sampleDateTime);
                         dtFormat.applyPattern("HH:mm:ss");
                         String sampleTimeUTC = dtFormat.format(sampleDateTime);
-                        dtFormat.setTimeZone(TimeZone.getTimeZone("HST"));
+                        dtFormat.setTimeZone(TimeZone.getTimeZone("Pacific/Honolulu"));
                         dtFormat.applyPattern("MM/dd/yy");
                         String sampleDateHST = dtFormat.format(sampleDateTime);
                         dtFormat.applyPattern("HH:mm:ss");

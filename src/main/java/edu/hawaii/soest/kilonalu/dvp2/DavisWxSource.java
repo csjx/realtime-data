@@ -225,7 +225,7 @@ public class DavisWxSource extends RBNBSource {
   /**
    * The timezone used for the sample date
    */
-  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
   
   /*
    * The instance of the DavisWxParser object used to parse the binary LOOP
@@ -626,75 +626,75 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("barTrendAsString");                // Falling Slowly
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getBarTrendAsString());
-               decimalASCIISampleData.append(String.format("\"%16s\"", (Object) davisWxParser.getBarTrendAsString()) + ", ");
+               decimalASCIISampleData.append(String.format("\"%16s\"", davisWxParser.getBarTrendAsString())).append(", ");
                
                // add the packetType field to the ASCII string only
-               decimalASCIISampleData.append(String.format("%1d", (Object) new Integer(davisWxParser.getPacketType())) + ", ");
+               decimalASCIISampleData.append(String.format("%1d", davisWxParser.getPacketType())).append(", ");
                
                // add the nextRecord field to the ASCII string only
-               decimalASCIISampleData.append(String.format("%04d", (Object) new Integer(davisWxParser.getNextRecord())) + ", ");
+               decimalASCIISampleData.append(String.format("%04d", davisWxParser.getNextRecord())).append(", ");
 
                // add the barometer field data
                channelIndex = rbnbChannelMap.Add("barometer");                      // 29.9
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getBarometer()});
-               decimalASCIISampleData.append(String.format("%06.4f", (Object) new Float(davisWxParser.getBarometer())) + ", ");
+               decimalASCIISampleData.append(String.format("%06.4f", davisWxParser.getBarometer())).append(", ");
                
                // add the insideTemperature field data
                channelIndex = rbnbChannelMap.Add("insideTemperature");               // 83.9
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getInsideTemperature()});
-               decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(davisWxParser.getInsideTemperature())) + ", ");
+               decimalASCIISampleData.append(String.format("%05.2f", davisWxParser.getInsideTemperature())).append(", ");
                
                // add the insideHumidity field data
                channelIndex = rbnbChannelMap.Add("insideHumidity");                  // 51
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getInsideHumidity()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getInsideHumidity())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getInsideHumidity())).append(", ");
                
                // add the outsideTemperature field data
                channelIndex = rbnbChannelMap.Add("outsideTemperature");              // 76.7
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getOutsideTemperature()});
-               decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(davisWxParser.getOutsideTemperature())) + ", ");
+               decimalASCIISampleData.append(String.format("%05.2f", davisWxParser.getOutsideTemperature())).append(", ");
                
                // add the windSpeed field data
                channelIndex = rbnbChannelMap.Add("windSpeed");                       // 5
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindSpeed()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getWindSpeed())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getWindSpeed())).append(", ");
                
                // add the tenMinuteAverageWindSpeed field data
                channelIndex = rbnbChannelMap.Add("tenMinuteAverageWindSpeed");      // 4
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getTenMinuteAverageWindSpeed()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getTenMinuteAverageWindSpeed())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getTenMinuteAverageWindSpeed())).append(", ");
                
                // add the windDirection field data
                channelIndex = rbnbChannelMap.Add("windDirection");                   // 80
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getWindDirection()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getWindDirection())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getWindDirection())).append(", ");
                
                
                // add the extraTemperature fields as ASCII only
                float[] extraTemperatures = davisWxParser.getExtraTemperatures();
                for (float temperature : extraTemperatures) {
-                 decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(temperature)) + ", ");
+                 decimalASCIISampleData.append(String.format("%05.2f", temperature)).append(", ");
                  
                }
 
                // add the soilTemperature fields as ASCII only
                float[] soilTemperatures = davisWxParser.getSoilTemperatures();
                for (float soil : soilTemperatures) {
-                 decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(soil)) + ", ");
+                 decimalASCIISampleData.append(String.format("%05.2f", soil)).append(", ");
                  
                }
                
                // add the leafTemperature fields as ASCII only
                float[] leafTemperatures = davisWxParser.getLeafTemperatures();
                for (float leaf : leafTemperatures) {
-                 decimalASCIISampleData.append(String.format("%05.2f", (Object) new Float(leaf)) + ", ");
+                 decimalASCIISampleData.append(String.format("%05.2f", leaf)).append(", ");
                  
                }
                
@@ -702,100 +702,100 @@ public class DavisWxSource extends RBNBSource {
                channelIndex = rbnbChannelMap.Add("outsideHumidity");                 // 73
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getOutsideHumidity()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getOutsideHumidity())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getOutsideHumidity())).append(", ");
                
                // add the rainRate field data
                channelIndex = rbnbChannelMap.Add("rainRate");                        // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getRainRate()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getRainRate())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getRainRate())).append(", ");
                
                // add the uvRadiation field data
                channelIndex = rbnbChannelMap.Add("uvRadiation");                     // 0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsInt32(channelIndex, new int[]{davisWxParser.getUvRadiation()});
-               decimalASCIISampleData.append(String.format("%03d", (Object) new Integer(davisWxParser.getUvRadiation())) + ", ");
+               decimalASCIISampleData.append(String.format("%03d", davisWxParser.getUvRadiation())).append(", ");
                
                // add the solarRadiation field data
                channelIndex = rbnbChannelMap.Add("solarRadiation");                  // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getSolarRadiation()});
-               decimalASCIISampleData.append(String.format("%04.1f", (Object) new Float(davisWxParser.getSolarRadiation())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.1f", davisWxParser.getSolarRadiation())).append(", ");
                
                // add the stormRain field data
                channelIndex = rbnbChannelMap.Add("stormRain");                       // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getStormRain()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getStormRain())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getStormRain())).append(", ");
                
                // add the currentStormStartDate field data
                channelIndex = rbnbChannelMap.Add("currentStormStartDate");           // -1--1-1999
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getCurrentStormStartDate());
-               decimalASCIISampleData.append(String.format("%10s", (Object) davisWxParser.getCurrentStormStartDate()) + ", ");
+               decimalASCIISampleData.append(String.format("%10s", davisWxParser.getCurrentStormStartDate())).append(", ");
                
                // add the dailyRain field data
                channelIndex = rbnbChannelMap.Add("dailyRain");                       // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyRain()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getDailyRain())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getDailyRain())).append(", ");
                
                // add the monthlyRain field data
                channelIndex = rbnbChannelMap.Add("monthlyRain");                     // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyRain()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getMonthlyRain())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getMonthlyRain())).append(", ");
                               
                // add the yearlyRain field data
                channelIndex = rbnbChannelMap.Add("yearlyRain");                      // 15.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyRain()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getYearlyRain())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getYearlyRain())).append(", ");
                               
                // add the dailyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("dailyEvapoTranspiration");         // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getDailyEvapoTranspiration()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getDailyEvapoTranspiration())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getDailyEvapoTranspiration())).append(", ");
                               
                // add the monthlyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("monthlyEvapoTranspiration");       // 0.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getMonthlyEvapoTranspiration()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getMonthlyEvapoTranspiration())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getMonthlyEvapoTranspiration())).append(", ");
                               
                // add the yearlyEvapoTranspiration field data
                channelIndex = rbnbChannelMap.Add("yearlyEvapoTranspiration");        // 93.0
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getYearlyEvapoTranspiration()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getYearlyEvapoTranspiration())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getYearlyEvapoTranspiration())).append(", ");
                
                // add the consoleBatteryVoltage field data
                channelIndex = rbnbChannelMap.Add("consoleBatteryVoltage");           // 4.681640625
                rbnbChannelMap.PutMime(channelIndex, "application/octet-stream");
                rbnbChannelMap.PutDataAsFloat32(channelIndex, new float[]{davisWxParser.getConsoleBatteryVoltage()});
-               decimalASCIISampleData.append(String.format("%04.2f", (Object) new Float(davisWxParser.getConsoleBatteryVoltage())) + ", ");
+               decimalASCIISampleData.append(String.format("%04.2f", davisWxParser.getConsoleBatteryVoltage())).append(", ");
                
                // add the forecastAsString field data
                channelIndex = rbnbChannelMap.Add("forecastAsString");                // Partially Cloudy
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getForecastAsString());
-               decimalASCIISampleData.append(String.format("\"%47s\"", (Object) davisWxParser.getForecastAsString()) + ", ");
+               decimalASCIISampleData.append(String.format("\"%47s\"", davisWxParser.getForecastAsString())).append(", ");
                               
                // add the forecastRuleNumberAsString field data as ASCII only
-               decimalASCIISampleData.append(String.format("\"%167s\"", (Object) davisWxParser.getForecastRuleNumberAsString()) + ", ");
+               decimalASCIISampleData.append(String.format("\"%167s\"", davisWxParser.getForecastRuleNumberAsString())).append(", ");
                
                // add the timeOfSunrise field data
                channelIndex = rbnbChannelMap.Add("timeOfSunrise");                   // 05:49
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunrise());
-               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunrise()) + ", ");
+               decimalASCIISampleData.append(String.format("%5s", davisWxParser.getTimeOfSunrise())).append(", ");
                               
                // add the timeOfSunset field data
                channelIndex = rbnbChannelMap.Add("timeOfSunset");                    // 19:11
                rbnbChannelMap.PutMime(channelIndex, "text/plain");
                rbnbChannelMap.PutDataAsString(channelIndex, davisWxParser.getTimeOfSunset());
-               decimalASCIISampleData.append(String.format("%5s", (Object) davisWxParser.getTimeOfSunset()) + ", ");
+               decimalASCIISampleData.append(String.format("%5s", davisWxParser.getTimeOfSunset())).append(", ");
                
                // then add a timestamp to the end of the sample
                DATE_FORMAT.setTimeZone(TZ);
@@ -874,40 +874,28 @@ public class DavisWxSource extends RBNBSource {
       } // end while (more socket bytes to read)
       this.socketChannel.close();
         
-    } catch ( IOException e ) {
+    } catch ( IOException | SAPIException | InterruptedException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
       failed = true;
       e.printStackTrace();
+      return false;
+    } // In the event of an RBNB communication  exception, log the exception,
+    // and allow execute() to return false, which will prompt a retry.
+
+
       return !failed;
-    } catch ( SAPIException sapie ) {
-      // In the event of an RBNB communication  exception, log the exception, 
-      // and allow execute() to return false, which will prompt a retry.
-      failed = true;
-      sapie.printStackTrace();
-      return !failed;
-    } catch ( java.lang.InterruptedException ine) {
-      failed = true;
-      ine.printStackTrace();
-      return !failed;
-      
-    }
-    
-    return !failed;
   } // end if (  !isConnected() ) 
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
     
     
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = getHostPort();
     SocketChannel dataSocket = null;
     
     try {  
@@ -1030,7 +1018,7 @@ public class DavisWxSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     logger.info("DavisWxSource.main() called.");
     
@@ -1049,12 +1037,8 @@ public class DavisWxSource extends RBNBSource {
       }
       
       // Handle ctrl-c's and other abrupt death signals to the process
-      Runtime.getRuntime().addShutdownHook(new Thread() {
         // stop the streaming process
-        public void run() {
-          davisWxSource.stop();
-        }
-      }
+        Runtime.getRuntime().addShutdownHook(new Thread(davisWxSource::stop)
       );
       
     } catch ( Exception e ) {
@@ -1250,11 +1234,7 @@ public class DavisWxSource extends RBNBSource {
   private void startThread() {
     
     // build the runnable class and implement the run() method
-    Runnable runner = new Runnable() {
-      public void run() {
-        runWork();
-      }
-    };
+    Runnable runner = this::runWork;
     
     // build the Thread and start it, indicating that it has been started
     readyToStream = true;

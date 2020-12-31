@@ -60,7 +60,7 @@ public class ISUSFrame {
 	private static final SimpleDateFormat FRAME_DATE_FORMAT = new SimpleDateFormat("yyyyDDDHHmmss");
 
 	/* The timezone used for the sample date */
-	private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+	private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
 
 	/* A ISUS frame as a ByteBuffer */
 	private ByteBuffer isusFrame = ByteBuffer.allocate(ISUS_FRAME_SIZE);

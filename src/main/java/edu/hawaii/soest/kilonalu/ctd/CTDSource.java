@@ -243,7 +243,7 @@ public class CTDSource extends RBNBSource {
     new SimpleDateFormat("ddMMyyyyHHmmss");
   
   /* The timezone used for the sample date */
-  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
     
   /* The socket or file channel used for instrument communication */
   private ByteChannel channel;
@@ -1767,15 +1767,12 @@ public class CTDSource extends RBNBSource {
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
     
     
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = new Integer(getHostPort());
     SocketChannel dataSocket = null;
     
     try {  
