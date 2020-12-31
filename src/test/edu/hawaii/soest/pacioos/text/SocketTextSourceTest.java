@@ -24,25 +24,18 @@ package edu.hawaii.soest.pacioos.text;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Test;
 
-import com.rbnb.api.AddressException;
-import com.rbnb.api.SerializeException;
-import com.rbnb.api.Server;
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Sink;
