@@ -76,21 +76,16 @@ public class SocketTextSource extends SimpleTextSource {
     @Override
     protected boolean execute() {
 
-        log.debug("SocketTextSource.execute() called.");
+        log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            "SocketTextSource.execute() called.");
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 
         /* Get a connection to the instrument */
         SocketChannel socket = getSocketConnection();
         if (socket == null) {
-            log.info("Couldn't get socket connection to the remote instrument host: " +
-                getHostName());
-            try {
-                socket.close();
-            } catch (IOException e) {
-                log.warn("Couldn't close the socket channel: " + e. getMessage());
-                e.printStackTrace();
-            }
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                "Couldn't get socket connection to the remote instrument host: " + getHostName());
             return false;
         }
 
@@ -158,7 +153,8 @@ public class SocketTextSource extends SimpleTextSource {
                             // extract just the length of the sample bytes out of the
                             // sample buffer, and place it in the channel map as a
                             // byte array.  Then, send it to the DataTurbine.
-                            log.debug("Sample byte count: " + sampleByteCount);
+                            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                                "Sample byte count: " + sampleByteCount);
                             byte[] sampleArray = new byte[sampleByteCount];
                             sampleBuffer.flip();
                             sampleBuffer.get(sampleArray);
@@ -175,7 +171,8 @@ public class SocketTextSource extends SimpleTextSource {
                             byteTwo = 0x00;
                             byteThree = 0x00;
                             byteFour = 0x00;
-                            log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                                "Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
 
                         } else {
                             // still in the middle of the sample, keep adding bytes
@@ -186,7 +183,8 @@ public class SocketTextSource extends SimpleTextSource {
 
                             } else {
                                 sampleBuffer.compact();
-                                log.debug("Compacting sampleBuffer ...");
+                                log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                                    "Compacting sampleBuffer ...");
                                 sampleBuffer.put(byteOne);
 
                             }
@@ -217,7 +215,8 @@ public class SocketTextSource extends SimpleTextSource {
                             byteTwo = 0x00;
                             byteThree = 0x00;
                             byteFour = 0x00;
-                            log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                                "Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
 
                         } else {
                             // still in the middle of the sample, keep adding bytes
@@ -228,7 +227,8 @@ public class SocketTextSource extends SimpleTextSource {
 
                             } else {
                                 sampleBuffer.compact();
-                                log.debug("Compacting sampleBuffer ...");
+                                log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                                    "Compacting sampleBuffer ...");
                                 sampleBuffer.put(byteOne);
 
                             }
@@ -253,7 +253,8 @@ public class SocketTextSource extends SimpleTextSource {
             // handle exceptions
             // In the event of an i/o exception, log the exception, and allow execute()
             // to return false, which will prompt a retry.
-            log.error("There was a communication error in sending the data sample. The message was: " +
+            log.error("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                "There was a communication error in sending the data sample. The message was: " +
                 e.getMessage());
             if (log.isDebugEnabled()) {
                 e.printStackTrace();
@@ -263,7 +264,8 @@ public class SocketTextSource extends SimpleTextSource {
         } catch (SAPIException sapie) {
             // In the event of an RBNB communication  exception, log the exception, 
             // and allow execute() to return false, which will prompt a retry.
-            log.error("There was an RBNB error while sending the data sample. The message was: " +
+            log.error("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                "There was an RBNB error while sending the data sample. The message was: " +
                 sapie.getMessage());
             if (log.isDebugEnabled()) {
                 sapie.printStackTrace();
@@ -348,11 +350,13 @@ public class SocketTextSource extends SimpleTextSource {
             }
         } catch (UnknownHostException ukhe) {
 
-            log.info("Unable to look up host: " + host + "\n");
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                "Unable to look up host: " + host + "\n");
             dataSocket = null;
 
         } catch (IOException nioe) {
-            log.info("Couldn't get I/O connection to: " + host + ":" + portNumber);
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                "Couldn't get I/O connection to: " + host + ":" + portNumber);
             dataSocket = null;
         }
         return dataSocket;
