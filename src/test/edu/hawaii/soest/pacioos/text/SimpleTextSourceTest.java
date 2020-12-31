@@ -105,22 +105,10 @@ public class SimpleTextSourceTest {
 		if ( mockDT != null ) {
 			try {
 				mockDT.stop();
-			} catch (AddressException e) {
-				e.printStackTrace();
-				
-			} catch (SerializeException e) {
-				e.printStackTrace();
-				
-			} catch (EOFException e) {
-				e.printStackTrace();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			} catch (InterruptedException e) {
+			} catch (AddressException | SerializeException | IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+        }
 		
 		// clear the list of test instruments
 		testMockInstruments.clear();
