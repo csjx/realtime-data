@@ -94,7 +94,7 @@ public class FileSourceDateFormatTest {
 		
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-			format.setTimeZone(TimeZone.getTimeZone("HST"));
+			format.setTimeZone(TimeZone.getTimeZone("Pacific/Honolulu"));
 			actualDate = format.parse("09 Dec 2012 15:46:55");
 			
 		} catch (ParseException pe2) {
@@ -154,7 +154,7 @@ public class FileSourceDateFormatTest {
 		
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-			format.setTimeZone(TimeZone.getTimeZone("HST"));
+			format.setTimeZone(TimeZone.getTimeZone("Pacific/Honolulu"));
 			actualDate = format.parse("10/01/2013 14:41:09");
 			
 		} catch (ParseException pe2) {
@@ -214,7 +214,7 @@ public class FileSourceDateFormatTest {
 		
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
-			format.setTimeZone(TimeZone.getTimeZone("HST"));
+			format.setTimeZone(TimeZone.getTimeZone("Pacific/Honolulu"));
 			actualDate = format.parse("09 Dec 2012, 15:44:36");
 			
 		} catch (ParseException pe2) {
@@ -282,7 +282,7 @@ public class FileSourceDateFormatTest {
 		
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
-			format.setTimeZone(TimeZone.getTimeZone("HST"));
+			format.setTimeZone(TimeZone.getTimeZone("Pacific/Honolulu"));
 			actualDate = format.parse("09 Dec 2012, 15:44:36");
 			
 		} catch (ParseException pe2) {
