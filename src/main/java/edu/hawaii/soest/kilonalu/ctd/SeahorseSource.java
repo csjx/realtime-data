@@ -47,6 +47,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
@@ -302,7 +303,7 @@ public class SeahorseSource extends RBNBSource {
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy  HH:mm:ss");
   
   /**  The timezone used for the sample date */
-  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
   
   /* The sample datetime reported by the parsed CTD data file as a Calendar */
   private Calendar sampleDateTime;
@@ -581,7 +582,7 @@ public class SeahorseSource extends RBNBSource {
                                  this.MODEM_COMMAND_SUFFIX;
                   this.sentCommand = queryInstrument(this.command);
                   // allow time for the modem to respond
-                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  Thread.sleep(this.SLEEP_INTERVAL);
                   
                   state = 1;
                   break;
@@ -641,7 +642,7 @@ public class SeahorseSource extends RBNBSource {
                                this.MODEM_COMMAND_SUFFIX;
                 this.sentCommand = queryInstrument(this.command);
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
                 
                 state = 3;
                 break;
@@ -689,7 +690,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 
                 // test the connect rate
                 logger.debug("Result from ATA: " + resultString);
@@ -718,7 +719,7 @@ public class SeahorseSource extends RBNBSource {
                     this.sentCommand = queryInstrument(this.command);
 
                     // allow time for the modem to receive the ACK
-                    streamingThread.sleep(this.SLEEP_INTERVAL);
+                    Thread.sleep(this.SLEEP_INTERVAL);
                     
                     // query the instrument id
                     this.command = this.ID_COMMAND +
@@ -726,7 +727,7 @@ public class SeahorseSource extends RBNBSource {
                     this.sentCommand = queryInstrument(this.command);
                     
                     // allow time for the modem to respond
-                    streamingThread.sleep(this.SLEEP_INTERVAL);
+                    Thread.sleep(this.SLEEP_INTERVAL);
 
                     state = 4;
                     break;
@@ -788,7 +789,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 logger.debug("Seahorse Instrument ID: " + resultString.trim());
                 
                 // set the platformID variable
@@ -809,7 +810,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
                 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
                 
                 state = 5;
                 break;
@@ -855,7 +856,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 logger.debug("Seahorse Battery Voltage: " + resultString.trim());
                 
                 resultBuffer.clear();
@@ -873,7 +874,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
                 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
                 
                 state = 6;
                 break;
@@ -921,7 +922,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 logger.debug("Seahorse GPRMC string: " + resultString.trim());
                 
                 resultBuffer.clear();
@@ -939,7 +940,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
                 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
                 
                 state = 7;
                 break;
@@ -986,7 +987,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 logger.debug("File name result: " + resultString.trim());
                 
                 resultString = resultString.trim();
@@ -1010,7 +1011,7 @@ public class SeahorseSource extends RBNBSource {
                   this.sentCommand = queryInstrument(this.command);
 
                   // allow time for the modem to respond
-                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  Thread.sleep(this.SLEEP_INTERVAL);
                   
                   resultBuffer.clear();
                   this.resultByteCount = 0;
@@ -1522,7 +1523,7 @@ public class SeahorseSource extends RBNBSource {
                   this.sentCommand = queryInstrument(this.command);
 
                   // allow time for the modem to respond
-                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  Thread.sleep(this.SLEEP_INTERVAL);
 
                   // clean up
                   resultBuffer.clear();
@@ -1580,7 +1581,7 @@ public class SeahorseSource extends RBNBSource {
                 resultArray = new byte[this.resultByteCount];
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
-                resultString = new String(resultArray, "US-ASCII");
+                resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 logger.debug("Number of bytes reported: " + resultString.trim());
                 
                 int numberOfBlocksIndex = resultString.indexOf(this.BLOCKSIZE_PREFIX);
@@ -1598,7 +1599,7 @@ public class SeahorseSource extends RBNBSource {
                                 
                 // convert the string to an integer
                 try {
-                  this.numberOfBlocks = new Integer(resultString.trim()).intValue();
+                  this.numberOfBlocks = Integer.parseInt(resultString.trim());
                   logger.debug("Number of bytes to download: " + this.numberOfBlocks);
                 
                 } catch ( java.lang.NumberFormatException nfe ) {
@@ -1619,7 +1620,7 @@ public class SeahorseSource extends RBNBSource {
                   this.sentCommand = queryInstrument(this.command);
 
                   // allow time for the modem to respond
-                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  Thread.sleep(this.SLEEP_INTERVAL);
 
                   //resultBuffer.clear(); dont clear the buffer
                   this.resultByteCount = 0;
@@ -1668,7 +1669,7 @@ public class SeahorseSource extends RBNBSource {
                   this.sentCommand = queryInstrument(this.command);
 
                   // allow time for the modem to respond
-                  streamingThread.sleep(this.SLEEP_INTERVAL);
+                  Thread.sleep(this.SLEEP_INTERVAL);
 
                   //resultBuffer.clear(); dont clear the buffer
                   this.resultByteCount = 0;
@@ -1714,7 +1715,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
                 
                 //resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -1760,7 +1761,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -1804,7 +1805,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -1848,7 +1849,7 @@ public class SeahorseSource extends RBNBSource {
                 this.sentCommand = queryInstrument(this.command);
 
                 // allow time for the modem to respond
-                streamingThread.sleep(this.SLEEP_INTERVAL);
+                Thread.sleep(this.SLEEP_INTERVAL);
 
                 resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -1894,7 +1895,7 @@ public class SeahorseSource extends RBNBSource {
       } // end while (more socketChannel bytes to read)
       socketChannel.close();
         
-    } catch ( IOException e ) {
+    } catch ( IOException | InterruptedException | DataFormatException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
@@ -1902,31 +1903,18 @@ public class SeahorseSource extends RBNBSource {
       e.printStackTrace();
       return !failed;
 
-    } catch ( java.lang.InterruptedException ine) {
-      failed = true;
-      ine.printStackTrace();
-      return !failed;
-    
-    } catch ( java.util.zip.DataFormatException dfe ) {
-      failed = true;
-      dfe.printStackTrace();
-      return !failed;
     }
-    
-    return !failed;
+
+      return !failed;
   } // end if (  !isConnected() ) 
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
-    
-    
+
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = getHostPort();
     SocketChannel dataSocket = null;
     
     try {  
@@ -2046,7 +2034,7 @@ public class SeahorseSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     logger.info("SeahorseSource.main() called.");
     
