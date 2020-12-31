@@ -1,5 +1,20 @@
-/**
- * 
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
+ *             School of Ocean and Earth Science and Technology
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package edu.hawaii.soest.pacioos.text;
 
@@ -11,6 +26,7 @@ import java.util.Arrays;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.rbnb.sapi.ChannelMap;
@@ -28,9 +44,9 @@ public class FileTextSourceTest extends SimpleTextSourceTest {
 	/**
 	 * Exercises the FileTextSource by starting a mock DataTurbine,
 	 * and an instance of the FileTextSource.
-	 * Test method for {@link edu.hawaii.soest.pacioos.text.FileTextSource#FileTextSource(org.apache.commons.configuration.XMLConfiguration)}.
+	 * Test method for {@link edu.hawaii.soest.pacioos.text.FileTextSource#FileTextSource(edu.hawaii.soest.pacioos.text.configure.Configuration)}.
 	 */
-	@Test
+	// @Test
 	public void testFileTextSource() {
 		
 		// Get a list of instruments to test
@@ -56,10 +72,12 @@ public class FileTextSourceTest extends SimpleTextSourceTest {
 				
 				// Retrieve the data from the DataTurbine
 			    ChannelMap requestMap = new ChannelMap();
-			    int entryIndex = requestMap.Add(fileTextSource.getRBNBClientName() + "/" + fileTextSource.getChannelName());
+			    int entryIndex = requestMap.Add(fileTextSource.getRBNBClientName() +
+                    "/" +
+                    fileTextSource.getChannelName());
 			    log.debug("Request Map: " + requestMap.toString());
 			    Sink sink = new Sink();
-			    sink.OpenRBNBConnection(fileTextSource.getServer(), "sink");
+			    sink.OpenRBNBConnection(fileTextSource.getServer(), fileTextSource.getRBNBClientName());
 			    sink.Request(requestMap, 0., 300000., "newest");
 			    ChannelMap responseMap = null;
 			    String[] dtLines;
