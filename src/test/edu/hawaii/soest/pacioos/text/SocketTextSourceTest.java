@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2013 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A test class that exercises the SocketTextSource class.
@@ -57,98 +57,96 @@ public class SocketTextSourceTest extends SimpleTextSourceTest {
 
     private static final Log log = LogFactory.getLog(SocketTextSourceTest.class);
 
-	/**
-	 * Test multiple instrument file formats and instrument configurations:
-	 * Data from NS02
-	 * Data from NS03
-	 * Test method for {@link edu.hawaii.soest.pacioos.text.SocketTextSource#SocketTextSource(org.apache.commons.configuration.XMLConfiguration)}.
-	 */
-	@Test
-	public void testSocketTextSource() {
-		
-		testMockInstruments = new ArrayList<String>();
-		testMockInstruments.add("AW02XX_001CTDXXXXR00");
-		testMockInstruments.add("WK01XX_001CTDXXXXR00");
-		testMockInstruments.add("KN0101_010TCHNXXXR00");
-		testMockInstruments.add("MU01XX_001YSIXXXXR00");
-		
-		// test each mock instrument file, using file ending naming conventions
-		for (String instrument : testMockInstruments) {
-			// start up the mock data source
-			mockCTDData = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" + instrument + "-mock-data.txt";
-			mockDataSource = new MockDataSource(mockCTDData);
-			mockDataSourceThread = new Thread(mockDataSource);
-			mockDataSourceThread.start();
+    /**
+     * Test multiple instrument file formats and instrument configurations:
+     * Data from NS02
+     * Data from NS03
+     * Test method for {@link edu.hawaii.soest.pacioos.text.SocketTextSource#SocketTextSource(edu.hawaii.soest.pacioos.text.configure.Configuration)}.
+     */
+    @Test
+    public void testSocketTextSource() {
+        
+        testMockInstruments = new ArrayList<String>();
+        testMockInstruments.add("AW02XX_001CTDXXXXR00");
+        testMockInstruments.add("WK01XX_001CTDXXXXR00");
+        testMockInstruments.add("KN0101_010TCHNXXXR00");
+        testMockInstruments.add("MU01XX_001YSIXXXXR00");
+        
+        // test each mock instrument file, using file ending naming conventions
+        for (String instrument : testMockInstruments) {
+            // start up the mock data source
+            mockCTDData = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" + instrument + "-mock-data.txt";
+            mockDataSource = new MockDataSource(mockCTDData);
+            mockDataSourceThread = new Thread(mockDataSource);
+            mockDataSourceThread.start();
 
-			String configLocation = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" +
-				instrument + "-instrument-config.xml";
+            String configLocation = testResourcesDirectory + "edu/hawaii/soest/pacioos/text/" +
+                instrument + "-instrument-config.xml";
 
-			SimpleTextSource socketTextSource = null;
-			try {
+            SimpleTextSource socketTextSource = null;
+            try {
 
-				// start the SocketTextSource
-				socketTextSource = TextSourceFactory.getSimpleTextSource(configLocation);
-				socketTextSource.start();
-				
-				// wait while data are streamed from the mock data source
-				while ( mockDataSourceThread.isAlive() ) {
-					Thread.sleep(1000);
-					
-				}
-							
-				// stop the SocketTextSource
-				socketTextSource.stop();
-				
-				// count the number of samples intended to be sent to the DataTurbine
-			    File ctdData = new File(mockCTDData);
-			    int numberOfIntendedSamples = 0;
-			    List<String> lines = new ArrayList<String>();
-				try {
-					lines = FileUtils.readLines(ctdData);
-					for (String line : lines ) {
-						if ( line.matches(socketTextSource.getPattern()) ) {
-							numberOfIntendedSamples++;
-						}
-					}
-					//numberOfIntendedSamples = lines.size();
-				} catch (IOException e) {
-					fail("Couldn't read data file: " + e.getMessage());
-					
-				}
+                // start the SocketTextSource
+                socketTextSource = TextSourceFactory.getSimpleTextSource(configLocation);
+                socketTextSource.start();
+                
+                // wait while data are streamed from the mock data source
+                while ( mockDataSourceThread.isAlive() ) {
+                    Thread.sleep(1000);
+                }
+                            
+                // stop the SocketTextSource
+                socketTextSource.stop();
+                
+                // count the number of samples intended to be sent to the DataTurbine
+                File ctdData = new File(mockCTDData);
+                int numberOfIntendedSamples = 0;
+                List<String> lines = new ArrayList<String>();
+                try {
+                    lines = FileUtils.readLines(ctdData);
+                    for (String line : lines ) {
+                        if ( line.matches(socketTextSource.getPattern()) ) {
+                            numberOfIntendedSamples++;
+                        }
+                    }
+                    //numberOfIntendedSamples = lines.size();
+                } catch (IOException e) {
+                    fail("Couldn't read data file: " + e.getMessage());
+                    
+                }
 
-				// retrieve the data from the DataTurbine
-			    ChannelMap requestMap = new ChannelMap();
-			    int entryIndex = requestMap.Add(socketTextSource.getRBNBClientName() + "/" + socketTextSource.getChannelName());
-			    log.debug("Request Map: " + requestMap.toString());
-			    Sink sink = new Sink();
-			    sink.OpenRBNBConnection(socketTextSource.getServer(), "lastEntrySink");
-			    sink.Request(requestMap, 0., 60000., "newest");
-			    ChannelMap responseMap = sink.Fetch(60000); // get data within 60 seconds
-			    String[] dtLines = responseMap.GetDataAsString(entryIndex);
-			    int numberOfSuccessfulSamples = dtLines.length;
-			    
-			    log.info("Intended samples  : " + numberOfIntendedSamples);
-			    log.info("Successful samples: " + numberOfSuccessfulSamples);
-			    
-			    assertEquals(numberOfIntendedSamples, numberOfSuccessfulSamples);
-				
-				// shut down the data source
-				if ( mockDataSource != null ) {			
-					mockDataSource.stop();
-					
-				}
-				
-			} catch (ConfigurationException e) {
-				log.error(e.getMessage());
-				e.printStackTrace();
-				fail("Couldn't configure a driver using " + configLocation);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			
-			} catch (SAPIException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                // retrieve the data from the DataTurbine
+                ChannelMap requestMap = new ChannelMap();
+                int entryIndex = requestMap.Add(socketTextSource.getRBNBClientName() + "/" + socketTextSource.getChannelName());
+                log.debug("Request Map: " + requestMap.toString());
+                Sink sink = new Sink();
+                sink.OpenRBNBConnection(socketTextSource.getServer(), "lastEntrySink");
+                sink.Request(requestMap, 0., 60000., "newest");
+                ChannelMap responseMap = sink.Fetch(60000); // get data within 60 seconds
+                String[] dtLines = responseMap.GetDataAsString(entryIndex);
+                int numberOfSuccessfulSamples = dtLines.length;
+                
+                log.info("Intended samples  : " + numberOfIntendedSamples);
+                log.info("Successful samples: " + numberOfSuccessfulSamples);
+                
+                assertEquals(numberOfIntendedSamples, numberOfSuccessfulSamples);
+
+                sink.CloseRBNBConnection();
+                // shut down the data source
+                if ( mockDataSource != null ) {
+                    mockDataSource.stop();
+                    
+                }
+                
+            } catch (ConfigurationException e) {
+                log.error(e.getMessage());
+                e.printStackTrace();
+                fail("Couldn't configure a driver using " + configLocation);
+                
+            } catch (InterruptedException | SAPIException e) {
+                e.printStackTrace();
+            
+            }
+        }
+    }
 }
