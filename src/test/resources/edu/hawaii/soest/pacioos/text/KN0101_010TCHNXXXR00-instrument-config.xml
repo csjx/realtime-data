@@ -44,8 +44,8 @@
             <dateFields>
               <dateField></dateField>
             </dateFields>
-            <timeZone></timeZone>
             -->
+            <timeZone>Pacific/Honolulu</timeZone>
         </channel>
     </channels>   
 </instrument>

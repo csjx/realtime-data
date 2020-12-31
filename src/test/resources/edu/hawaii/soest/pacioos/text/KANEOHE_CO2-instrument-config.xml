@@ -98,7 +98,7 @@
                 <dateField>13</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
-            <timeZone>HST</timeZone>
+            <timeZone>Pacific/Honolulu</timeZone>
         </channel>
     </channels>   
 </instrument>

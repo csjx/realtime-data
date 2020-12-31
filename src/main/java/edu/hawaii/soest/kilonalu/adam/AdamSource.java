@@ -123,7 +123,7 @@ public class AdamSource extends RBNBSource {
   /**
    * The timezone used for the sample date
    */
-  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
   
   /*
    * The instance of the AdamParser object used to parse the binary LOOP

@@ -43,7 +43,7 @@
               <dateField>1</dateField>
               <dateField>2</dateField>
             </dateFields>
-            <timeZone>HST</timeZone>
+            <timeZone>Pacific/Honolulu</timeZone>
         </channel>
     </channels>   
 </instrument>
