@@ -120,10 +120,10 @@ public class SocketTextSource extends SimpleTextSource {
                     // log the byte stream
                     String character = new String(new byte[]{byteOne});
                     if (log.isTraceEnabled()) {
-                        List<Byte> whitespaceBytes = new ArrayList<Byte>();
-                        whitespaceBytes.add(new Byte((byte) 0x0A));
-                        whitespaceBytes.add(new Byte((byte) 0x0D));
-                        if (whitespaceBytes.contains(new Byte(byteOne))) {
+                        List<Byte> whitespaceBytes = new ArrayList<>();
+                        whitespaceBytes.add((byte) 0x0A);
+                        whitespaceBytes.add((byte) 0x0D);
+                        if (whitespaceBytes.contains(byteOne)) {
                             character = new String(Hex.encodeHex((new byte[]{byteOne})));
 
                         }
@@ -334,7 +334,7 @@ public class SocketTextSource extends SimpleTextSource {
 
         String host = getHostName();
         int portNumber = getHostPort();
-        SocketChannel dataSocket = null;
+        SocketChannel dataSocket;
 
         try {
 
