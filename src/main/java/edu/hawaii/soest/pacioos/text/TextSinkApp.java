@@ -1,10 +1,6 @@
 /*
  *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that is the main entry point for communicating
- *             with a DataTurbine and archiving channel data to disk.
- *
- *   Authors: Christopher Jones
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +108,7 @@ public class TextSinkApp {
                         // run the archiveData timer task on the hour, every hour (or every day)
                         archiveTimer.scheduleAtFixedRate(archiveDataTask,
                             archiver.getEndArchiveCal().getTime(),
-                            archiver.getArchiveInterval() * 1000);
+                            archiver.getArchiveInterval() * 1000L);
 
                     } else {
                         // archive data once based on the start and end times
@@ -210,14 +206,9 @@ public class TextSinkApp {
                 converter.setDateTimeFormat(config.getDateTimeFormat(channelIndex));
             }
 
-            try {
-                converter.setColumnTypes(config.getColumnTypes(channelIndex));
-            } catch (ConfigurationException e) {
-                log.error("Couldn't configure the archiver for channel " +
-                    channelIndex +
-                    ". The message was: " + e.getMessage());
-                System.exit(1);
-            }
+            // Set the column types
+            converter.setColumnTypes(config.getColumnTypes(channelIndex));
+
             // TODO: set the dateFormats and dateFields in the converter, and use them
             //       to set the dateFormat, or timeFormat, or dateTimeFormat.
 
