@@ -45,6 +45,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
@@ -170,7 +171,7 @@ public class TChainSource extends RBNBSource {
   /**
    * The default field delimiter string used to separate data fields in the sample
    */
-  private String DEFAULT_FIELD_DELIMITER = "  ";
+  private final String DEFAULT_FIELD_DELIMITER = "  ";
 
   /**
    * The field delimiter string used to separate data fields in the sample
@@ -223,7 +224,7 @@ public class TChainSource extends RBNBSource {
   /**
    * The timezone used for the sample date
    */
-  private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+  private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
     
   public TChainSource() {
   }
@@ -375,7 +376,7 @@ public class TChainSource extends RBNBSource {
                 --sampleByteCount;
 
                 // add the delimiter to the end of the sample.
-                byte[] delimiterAsBytes = getFieldDelimiter().getBytes("US-ASCII");
+                byte[] delimiterAsBytes = getFieldDelimiter().getBytes(StandardCharsets.US_ASCII);
                 
                 for ( byte delim : delimiterAsBytes ) {
                   sampleBuffer.put(delim);
@@ -384,7 +385,7 @@ public class TChainSource extends RBNBSource {
                 
                 // then add a timestamp to the end of the sample
                 DATE_FORMAT.setTimeZone(TZ);
-                byte[] sampleDateAsBytes = DATE_FORMAT.format(new Date()).getBytes("US-ASCII");
+                byte[] sampleDateAsBytes = DATE_FORMAT.format(new Date()).getBytes(StandardCharsets.US_ASCII);
                 for ( byte b : sampleDateAsBytes ) {
                   sampleBuffer.put(b);
                   sampleByteCount++;
@@ -415,7 +416,7 @@ public class TChainSource extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                String sampleString = new String(sampleArray, "US-ASCII");
+                String sampleString = new String(sampleArray, StandardCharsets.US_ASCII);
                 int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
@@ -467,35 +468,28 @@ public class TChainSource extends RBNBSource {
       } // end while (more socket bytes to read)
       socket.close();
         
-    } catch ( IOException e ) {
+    } catch ( IOException | SAPIException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
       failed = true;
       e.printStackTrace();
       return !failed;
-    } catch ( SAPIException sapie ) {
-      // In the event of an RBNB communication  exception, log the exception, 
-      // and allow execute() to return false, which will prompt a retry.
-      failed = true;
-      sapie.printStackTrace();
+    } // In the event of an RBNB communication  exception, log the exception,
+    // and allow execute() to return false, which will prompt a retry.
+
+
       return !failed;
-    }
-    
-    return !failed;
   } // end if (  !isConnected() ) 
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
     
     
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = getHostPort();
     SocketChannel dataSocket = null;
     
     try {  
@@ -612,7 +606,7 @@ public class TChainSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     try {
       // create a new instance of the TChainSource object, and parse the command 
@@ -755,15 +749,11 @@ public class TChainSource extends RBNBSource {
 
           }
 
-        } catch (org.apache.commons.codec.DecoderException de ) {
+        } catch (Exception de ) {
           logger.info("Please set the record delimiter (-l) with a one or two byte" +
                        " comma-sparated sequence in hexadecimal format, such as 0D,0A" +
                        " (which represents a Windows line ending \\r\\n).");
 
-        } catch (java.lang.Exception e ) {
-          logger.info("Please set the record delimiter (-l) with a one or two byte" +
-                       " comma-sparated sequence in hexadecimal format, such as 0D,0A" +
-                       " (which represents a Windows line ending \\r\\n).");
         }
       }
     }

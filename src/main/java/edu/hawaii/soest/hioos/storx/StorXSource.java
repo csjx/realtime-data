@@ -97,7 +97,7 @@ public class StorXSource extends RBNBSource {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z");
 
     /* The timezone used for the sample date */
-    private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
 
     /*
      * The instance of the StorXParser object used to parse the STOR-X

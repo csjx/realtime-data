@@ -100,7 +100,7 @@ public class StorXParser {
         new SimpleDateFormat("yyyyDDDHHmmssSSS");
 
     /* The timezone used for the sample date */
-    private static final TimeZone TZ = TimeZone.getTimeZone("HST");
+    private static final TimeZone TZ = TimeZone.getTimeZone("Pacific/Honolulu");
 
     /**
      * Constructor: Creates an empty StorXParser instance
