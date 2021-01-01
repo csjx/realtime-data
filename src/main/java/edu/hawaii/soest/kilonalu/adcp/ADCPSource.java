@@ -1,14 +1,6 @@
-/**
- *  Copyright: 2007 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To convert an ADCP PD0 binary data source into RBNB Data Turbine
- *             frames for archival and realtime access.
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +34,8 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.nees.rbnb.RBNBSource;
 
@@ -166,7 +158,7 @@ public class ADCPSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(ADCPSource.class);
+  private static Log logger = LogFactory.getLog(ADCPSource.class);
 
   //private int DEFAULT_CACHE_FRAME_SIZE =   100000; // ~100MB for 1K Ensembles
   //private int DEFAULT_ARCHIVE_FRAME_SIZE = 1000000; // ~1GB for 1K Ensembles
@@ -784,9 +776,6 @@ public class ADCPSource extends RBNBSource {
    */
 
   public static void main (String[] args) {
-    
-    // Set up a simple logger that logs to the console
-    BasicConfigurator.configure();
     
     logger.info("ADCPSource.main() called.");
     

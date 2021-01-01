@@ -22,7 +22,6 @@
 package edu.hawaii.soest.hioos.storx;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,9 +48,6 @@ public class StorXParserTest {
         // read the sample data from a binary StorX file
         try {
 
-            // Set up a simple logger that logs to the console
-            BasicConfigurator.configure();
-
             // create a byte buffer from the binary file data
             storXData = this.getClass().getResourceAsStream(
                 "/edu/hawaii/soest/kilonalu/ctd/2010171.raw");
@@ -61,13 +57,9 @@ public class StorXParserTest {
             // create a parser instance and test that it succeeds
             this.parser = new StorXParser();
 
-        } catch (IOException ioe) {
+        } catch (IOException | NullPointerException ioe) {
             fail("There was a problem reading the" +
                 " data file.  The error was: " + ioe.getMessage());
-
-        } catch (NullPointerException npe) {
-            fail("There was a problem reading the" +
-                " data file.  The error was: " + npe.getMessage());
 
         }
 

@@ -1,15 +1,6 @@
-/**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that represents a single Satlantic STOR-X frame
- *             from a binary data file.
- *
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,25 +19,12 @@
 package edu.hawaii.soest.hioos.storx;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import java.io.UnsupportedEncodingException;
 
-import java.text.SimpleDateFormat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.TimeZone;
-
-import org.apache.commons.codec.binary.Hex;
-
-import org.apache.commons.io.IOUtils;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  *  A class that represents a single binary frame from a Satlantic 
@@ -61,7 +39,7 @@ public class StorXFrame {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(StorXFrame.class);
+  private static Log logger = LogFactory.getLog(StorXFrame.class);
 
   /* A field that stores the binary frame input as a ByteBuffer */
   private ByteBuffer storXFrame = ByteBuffer.allocate(8192);

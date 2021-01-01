@@ -29,18 +29,12 @@
 package edu.hawaii.soest.kilonalu.utilities;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * A utility class that provides methods used in archiving data from an RBNB

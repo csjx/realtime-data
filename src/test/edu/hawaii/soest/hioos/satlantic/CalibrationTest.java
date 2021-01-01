@@ -1,14 +1,6 @@
-/**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that tests functionality of the Calibration class
- *
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +19,6 @@
 
 package edu.hawaii.soest.hioos.satlantic;
 
-import edu.hawaii.soest.hioos.satlantic.Calibration;
-
 import java.text.ParseException;
 
 import java.util.ArrayList;
@@ -36,13 +26,6 @@ import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.log4j.BasicConfigurator;
-
-import org.hamcrest.core.IsInstanceOf;
-
-import org.junit.Assert;
-import org.junit.Before;
 
 /**
  * Unit tests for the Calibration class
@@ -64,9 +47,6 @@ public class CalibrationTest extends TestCase {
     
     // read the sample data from a binary StorX file
     try {
-      
-      // Set up a simple logger that logs to the console
-      BasicConfigurator.configure();
       
       // create a parser instance and test that it succeeds
       this.calibration = new Calibration();
@@ -93,15 +73,15 @@ public class CalibrationTest extends TestCase {
    *  Test the POLYU calibration
    */
   public void testApplyPolyU() {
-    Double observedValue = 32787d; 
+    double observedValue = 32787d;
     boolean isImmersed = true;
     ArrayList<Double> coefficients = new ArrayList<Double>();
-    coefficients.add(new Double(0.25d));
-    coefficients.add(new Double(0.000382698d));
+    coefficients.add(0.25d);
+    coefficients.add(0.000382698d);
     String fitType = "POLYU";
     
     Double result = this.calibration.apply(observedValue, isImmersed, fitType);
-    assertTrue(result.equals(new Double(12.797519326d)));
+    assertTrue(result.equals(12.797519326d));
   }
   
   /**

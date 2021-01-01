@@ -46,8 +46,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
 
 import org.nees.rbnb.MarkerUtilities;
 import org.nees.rbnb.RBNBBase;
@@ -190,9 +188,6 @@ public class FileArchiverSink extends RBNBBase {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-        // Set up a simple logger that logs to the console
-        BasicConfigurator.configure();
 
         final FileArchiverSink fileArchiverSink = new FileArchiverSink();
 

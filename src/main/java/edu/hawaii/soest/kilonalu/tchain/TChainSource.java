@@ -19,15 +19,8 @@
 package edu.hawaii.soest.kilonalu.tchain;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
-
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -47,15 +40,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.DecoderException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
-import org.nees.rbnb.RBNBBase;
+
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -610,9 +599,6 @@ public class TChainSource extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( tChainSource.parseArgs(args) ) {
-
-        // Set up a simple logger that logs to the console
-        PropertyConfigurator.configure(tChainSource.getLogConfigurationFile());
         logger.info("TChainSource.main() called.");
     
         tChainSource.start();

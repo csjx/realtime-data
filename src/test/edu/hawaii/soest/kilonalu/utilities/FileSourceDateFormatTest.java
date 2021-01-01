@@ -35,8 +35,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 /**
@@ -49,12 +49,8 @@ import org.junit.Test;
 public class FileSourceDateFormatTest {
 
 	private FileSource fileSource = new FileSource();
-	private static final Logger log = Logger.getLogger(FileSourceDateFormatTest.class);
+	private static final Log log = LogFactory.getLog(FileSourceDateFormatTest.class);
 
-	static {
-		BasicConfigurator.configure();
-	}
-	
 	/**
 	 * Test date parsing with the last column of the sample containing 
 	 * the single date timestamp. Typical of SBE16plus CTD ASCII output.
@@ -72,7 +68,7 @@ public class FileSourceDateFormatTest {
 		
 		// set the one-based date field index list
 		List<Integer> dateFields = new ArrayList<Integer>();
-		dateFields.add(new Integer(7));
+		dateFields.add(7);
 		
 		// set the one-based date format list
 		List<String> dateFormats = new ArrayList<String>();
@@ -130,8 +126,8 @@ public class FileSourceDateFormatTest {
 		
 		// set the one-based date field index list
 		List<Integer> dateFields = new ArrayList<Integer>();
-		dateFields.add(new Integer(1));
-		dateFields.add(new Integer(2));
+		dateFields.add(1);
+		dateFields.add(2);
 		
 		// set the one-based date format list
 		List<String> dateFormats = new ArrayList<String>();
@@ -190,8 +186,8 @@ public class FileSourceDateFormatTest {
 		
 		// set the one-based date field index list
 		List<Integer> dateFields = new ArrayList<Integer>();
-		dateFields.add(new Integer(5)); // date is in column 5
-		dateFields.add(new Integer(6)); // time is in column 6
+		dateFields.add(5); // date is in column 5
+		dateFields.add(6); // time is in column 6
 		
 		// set the one-based date format list
 		List<String> dateFormats = new ArrayList<String>();
@@ -250,12 +246,12 @@ public class FileSourceDateFormatTest {
 		
 		// set the one-based date field index list
 		List<Integer> dateFields = new ArrayList<Integer>();
-		dateFields.add(new Integer(1)); // year
-		dateFields.add(new Integer(2)); // month
-		dateFields.add(new Integer(3)); // day
-		dateFields.add(new Integer(4)); // hour
-		dateFields.add(new Integer(5)); // min
-		dateFields.add(new Integer(6)); // sec
+		dateFields.add(1); // year
+		dateFields.add(2); // month
+		dateFields.add(3); // day
+		dateFields.add(4); // hour
+		dateFields.add(5); // min
+		dateFields.add(6); // sec
 		
 		// set the one-based date format list
 		List<String> dateFormats = new ArrayList<String>();

@@ -20,7 +20,6 @@ package edu.hawaii.soest.kilonalu.utilities;
 
 import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.Sink;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
 import java.io.BufferedReader;
@@ -49,11 +48,8 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 
-import org.nees.rbnb.RBNBBase;
+
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -517,10 +513,7 @@ public class FileSource extends RBNBSource {
         }
       }
       );
-      
-      // Set up a simple logger that logs to the console
-      PropertyConfigurator.configure(fileSource.getLogConfigurationFile());
-      
+
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( fileSource.parseArgs(args) ) {
