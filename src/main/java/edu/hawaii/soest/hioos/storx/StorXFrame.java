@@ -39,7 +39,7 @@ public class StorXFrame {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(StorXFrame.class);
+  private static Log log = LogFactory.getLog(StorXFrame.class);
 
   /* A field that stores the binary frame input as a ByteBuffer */
   private ByteBuffer storXFrame = ByteBuffer.allocate(8192);
@@ -183,7 +183,7 @@ public class StorXFrame {
       return new String(this.header.array(), "US-ASCII");
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }
@@ -200,7 +200,7 @@ public class StorXFrame {
       return new String(this.serialNumber.array(), "US-ASCII");
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }
@@ -346,7 +346,7 @@ public class StorXFrame {
       return new String(this.terminator.array(), "US-ASCII");
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }

@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
 public class CTDFrame {
     
   /* The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(CTDFrame.class);
+  private static Log log = LogFactory.getLog(CTDFrame.class);
 
   /* A Seabird SBE CTD sensor frame ID as a String */
   private final String SBE_CTD_FRAME_ID = "SATSBE";
@@ -132,7 +132,7 @@ public class CTDFrame {
       return new String(this.header.array(), "US-ASCII");
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }
@@ -149,7 +149,7 @@ public class CTDFrame {
       return new String(this.serialNumber.array(), "US-ASCII");
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }
@@ -185,7 +185,7 @@ public class CTDFrame {
       }
       
     } catch (UnsupportedEncodingException uee) {
-      logger.debug("The string encoding was not recognized: " +
+      log.debug("The string encoding was not recognized: " +
                    uee.getMessage());
       return null;
     }

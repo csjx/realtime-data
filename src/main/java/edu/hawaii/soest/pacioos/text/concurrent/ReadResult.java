@@ -29,7 +29,7 @@ import java.nio.file.Path;
  */
 public class ReadResult {
 
-    /* Set up a logger */
+    /* Set up a log */
     private final Log log = LogFactory.getLog(ReadResult.class);
 
     /* The path to the file that the table with be created from*/

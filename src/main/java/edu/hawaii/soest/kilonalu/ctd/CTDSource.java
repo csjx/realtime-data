@@ -158,7 +158,7 @@ public class CTDSource extends RBNBSource {
   private int sampleByteCount = 0;
   
   /* The Logger instance used to log system messages */
-  static Log logger = LogFactory.getLog(CTDSource.class);
+  static Log log = LogFactory.getLog(CTDSource.class);
 
   protected int state = 0;
   
@@ -361,7 +361,7 @@ public class CTDSource extends RBNBSource {
    */
   public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
-    logger.debug("CTDSource.process() called.");
+    log.debug("CTDSource.process() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -387,7 +387,7 @@ public class CTDSource extends RBNBSource {
       String calibrationURL     = null;
       String type               = null;
       
-      List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
+      List sensorList = xmlConfig.configurationsAt("account.log.sensor");
       
       for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
       //  
@@ -444,7 +444,7 @@ public class CTDSource extends RBNBSource {
           // DataTurbine
           getSource().Register(registerChannelMap);
           getSource().Flush(rbnbChannelMap);
-          logger.info("Sample sent to the DataTurbine: (" + 
+          log.info("Sample sent to the DataTurbine: (" + 
                       sensorSerialNumber                  + 
                       ") "                                + 
                       sampleString);
@@ -475,7 +475,7 @@ public class CTDSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("CTDSource.execute() called.");
+    log.debug("CTDSource.execute() called.");
     
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
@@ -494,7 +494,7 @@ public class CTDSource extends RBNBSource {
       this.channel = getSocketConnection();
       
     } else {
-      logger.info("There was an error establishing either a serial or " +
+      log.info("There was an error establishing either a serial or " +
                   "socket connection to the instrument.  Please be sure " +
                   "the connection type is set to either 'serial' or 'socket'.");
       return false;
@@ -535,7 +535,7 @@ public class CTDSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          logger.debug(
+          log.debug(
             "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
@@ -639,7 +639,7 @@ public class CTDSource extends RBNBSource {
                 
                 } else {
                   
-                  logger.info("The CTD output type is not recognized. " +
+                  log.info("The CTD output type is not recognized. " +
                               "Please set the output type to either "   +
                               "'xml' or 'text'.");
                   failed = true;
@@ -651,7 +651,7 @@ public class CTDSource extends RBNBSource {
                       this.channel.close();
 
                     } catch ( IOException cioe ) {
-                      logger.debug("An error occurred trying to close the byte channel. " +
+                      log.debug("An error occurred trying to close the byte channel. " +
                                    " The error message was: " + cioe.getMessage());
                       return !failed;
                       
@@ -1043,7 +1043,7 @@ public class CTDSource extends RBNBSource {
                 this.sentCommand = queryInstrument(command);        
                 streamingThread.sleep(5000);
                 this.clockIsSynced = true;
-                logger.info("The instrument clock has bee synced at " + 
+                log.info("The instrument clock has bee synced at " + 
                             this.clockSyncDate.toString());
                 this.state = 10;
                 break;
@@ -1442,14 +1442,14 @@ public class CTDSource extends RBNBSource {
 
                   // send the sample to the data turbine
                   getSource().Flush(rbnbChannelMap);
-                  logger.info("Sent sample to the DataTurbine: " + this.responseString);
+                  log.info("Sent sample to the DataTurbine: " + this.responseString);
                   
                   // reset variables for the next sample
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   channelIndex = 0;
                   rbnbChannelMap.Clear();                      
-                  logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                  log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   
                   // check if the clock needs syncing (daily)
                   if ( this.enableSendCommands ) {
@@ -1484,15 +1484,15 @@ public class CTDSource extends RBNBSource {
                 // the sample looks more like an instrument message, don't flush
                 } else {
                   
-                  logger.info("This string does not look like a sample, " +
+                  log.info("This string does not look like a sample, " +
                               "and was not sent to the DataTurbine.");
-                  logger.info("Skipping sample: " + this.responseString);
+                  log.info("Skipping sample: " + this.responseString);
 
                   // reset variables for the next sample
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
-                  logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                  log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   this.state = 11;
                   break;
                   
@@ -1507,7 +1507,7 @@ public class CTDSource extends RBNBSource {
                   sampleBuffer.put(byteOne);
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   
                 }
@@ -1653,7 +1653,7 @@ public class CTDSource extends RBNBSource {
           this.channel.close();
           
         } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
+          log.debug("An error occurred trying to close the byte channel. " +
                        " The error message was: " + cioe.getMessage());
                        
         }
@@ -1678,7 +1678,7 @@ public class CTDSource extends RBNBSource {
           this.channel.close();
           
         } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
+          log.debug("An error occurred trying to close the byte channel. " +
                        " The error message was: " + cioe.getMessage());
                        
         }
@@ -1705,7 +1705,7 @@ public class CTDSource extends RBNBSource {
           this.channel.close();
           
         } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
+          log.debug("An error occurred trying to close the byte channel. " +
                        " The error message was: " + cioe.getMessage());
                        
         }
@@ -1729,7 +1729,7 @@ public class CTDSource extends RBNBSource {
           this.channel.close();
           
         } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
+          log.debug("An error occurred trying to close the byte channel. " +
                        " The error message was: " + cioe.getMessage());
                        
         }
@@ -1740,7 +1740,7 @@ public class CTDSource extends RBNBSource {
         disconnect();
       }
       
-      logger.info("There was an error parsing the metadata response. " +
+      log.info("There was an error parsing the metadata response. " +
                   "The error message was: " + pe.getMessage());
       return !failed;
       
@@ -1754,7 +1754,7 @@ public class CTDSource extends RBNBSource {
           this.channel.close();
           
         } catch ( IOException cioe ) {
-          logger.debug("An error occurred trying to close the byte channel. " +
+          log.debug("An error occurred trying to close the byte channel. " +
                        " The error message was: " + cioe.getMessage());
                        
         }
@@ -1791,11 +1791,11 @@ public class CTDSource extends RBNBSource {
       }      
     }  catch ( UnknownHostException ukhe ) {
       
-      logger.info("Unable to look up host: " + host + "\n");
+      log.info("Unable to look up host: " + host + "\n");
       disconnect();
       dataSocket = null;
     } catch (IOException nioe ) {
-      logger.info("Couldn't get I/O connection to: " + host);
+      log.info("Couldn't get I/O connection to: " + host);
       disconnect();
       dataSocket = null;
     } catch (Exception e) {
@@ -1810,7 +1810,7 @@ public class CTDSource extends RBNBSource {
    * A method used to get a serial connection for communication
    */
   protected ByteChannel getSerialConnection() {
-    logger.debug("CTDSource.getSerialConnection() called.");
+    log.debug("CTDSource.getSerialConnection() called.");
     
     ByteChannel serialChannel = (ByteChannel) new SerialChannel(getSerialPort());  
     return serialChannel;
@@ -1962,7 +1962,7 @@ public class CTDSource extends RBNBSource {
       }
             
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -1991,7 +1991,7 @@ public class CTDSource extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -2007,7 +2007,7 @@ public class CTDSource extends RBNBSource {
    */
   public boolean queryInstrument(String command) {
     
-    logger.debug("CTDSource.queryInstrument() called.");
+    log.debug("CTDSource.queryInstrument() called.");
 
     // the result of the query
     boolean result = false;
@@ -2024,11 +2024,11 @@ public class CTDSource extends RBNBSource {
       
       try {
         this.channel.write(commandBuffer);
-        logger.debug("Wrote " + command + " to the instrument channel.");
+        log.debug("Wrote " + command + " to the instrument channel.");
         result = true;
         
       } catch (IOException ioe ) {
-        logger.info("There was a problem sending the command to the " + 
+        log.info("There was a problem sending the command to the " + 
                     "instrument. The error message was: " +
                     ioe.getMessage());
         result = false;
@@ -2068,7 +2068,7 @@ public class CTDSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }
@@ -2100,7 +2100,7 @@ public class CTDSource extends RBNBSource {
           setConnectionType(connectionType);
           
         } else {
-          logger.info("The connection type was not recognized.  Please " +
+          log.info("The connection type was not recognized.  Please " +
                       "use either 'serial' or 'socket' for the '-t' option.");
           return false;
           
@@ -2117,7 +2117,7 @@ public class CTDSource extends RBNBSource {
           setOutputType(outputType);          
           
         } else {
-          logger.info("The output type was not recognized.  Please " +
+          log.info("The output type was not recognized.  Please " +
                       "use either 'xml' or 'text' for the '-o' option.");
           return false;
           
@@ -2130,7 +2130,7 @@ public class CTDSource extends RBNBSource {
     
     if ( (command.hasOption("H") || command.hasOption("P")) &&
           command.hasOption("c") && (!command.hasOption("t")) ) {
-      logger.info("There was a configuration error.  The '-H' and '-P' " +
+      log.info("There was a configuration error.  The '-H' and '-P' " +
                   "options are mutually exclusive of the '-c' option "   +
                   "(socket vs. serial connection type).  You must "      +
                   "include the '-t' option designating the connection "  +

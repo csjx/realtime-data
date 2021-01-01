@@ -61,7 +61,7 @@ import java.util.HashMap;
  */
 public class Ensemble {
 
-    private Log logger = LogFactory.getLog(Ensemble.class);
+    private Log log = LogFactory.getLog(Ensemble.class);
 
     /**
      * A field that stores the RDI reserved BIT data (two bytes) in a ByteBuffer

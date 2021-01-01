@@ -81,7 +81,7 @@ public class CTDParser {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /**  The Logger instance used to log system messages  */
-  static Log logger = LogFactory.getLog(CTDParser.class);
+  static Log log = LogFactory.getLog(CTDParser.class);
   
   /*  A field that stores the metadata and data file string input as a String */
   private String metadataAndDataString = "";
@@ -991,7 +991,7 @@ public class CTDParser {
    *  observations, based on the presence/absence of certain data or voltages.
    */
   public void parse() throws ParseException {
-    logger.debug("CTDParser.parse() called.");
+    log.debug("CTDParser.parse() called.");
         
     if ( ! this.metadataAndDataString.equals("") ) {
       
@@ -1065,7 +1065,7 @@ public class CTDParser {
         // order into the dataValuesMap
         while ( dataTokenizer.hasMoreTokens() ) {
           String dataLine = dataTokenizer.nextToken();
-          //logger.debug("|" + dataLine + "|");
+          //log.debug("|" + dataLine + "|");
           this.dataValuesMap.put(dataValuesMap.size() + 1, dataLine);  
 
         }
@@ -1091,7 +1091,7 @@ public class CTDParser {
       // order into the dataValuesMap
       while ( dataTokenizer.hasMoreTokens() ) {
         String dataLine = dataTokenizer.nextToken();
-        //logger.debug("|" + dataLine + "|");
+        //log.debug("|" + dataLine + "|");
         this.dataValuesMap.put(dataValuesMap.size() + 1, dataLine);  
 
       }
@@ -1104,7 +1104,7 @@ public class CTDParser {
    *  data output format, and pertinent metadata fields.
    */
   public void setData(String dataString) throws ParseException {
-    logger.debug("CTDParser.setData() called.");
+    log.debug("CTDParser.setData() called.");
     
     // make the observations available to the class
     this.observationsString = dataString;
@@ -1147,7 +1147,7 @@ public class CTDParser {
           }
   
         } else {
-          logger.info("There is no pressure sensor.");
+          log.info("There is no pressure sensor.");
         }
   
         // Is there a channel zero voltage present?
@@ -1209,7 +1209,7 @@ public class CTDParser {
   
         for ( int rowIndex = 1; rowIndex < this.dataValuesMap.size(); rowIndex++ ) {
           hexDataString = this.dataValuesMap.get(rowIndex);
-          logger.debug(rowIndex + ") hexDataString is: " + hexDataString);
+          log.debug(rowIndex + ") hexDataString is: " + hexDataString);
           
           for ( offsetIndex = 0; offsetIndex < this.dataVariableOffsets.size(); offsetIndex++ ) {
             endIndex = this.dataVariableOffsets.get(offsetIndex);
@@ -1240,7 +1240,7 @@ public class CTDParser {
               double convertedValue = convert(value, this.dataVariableNames.get(offsetIndex));                                           
               
               convertedDataValuesMatrix.setEntry(rowIndex - 1, offsetIndex, convertedValue);
-              logger.debug("\t"                                    + 
+              log.debug("\t"                                    + 
                            this.dataVariableNames.get(offsetIndex) + 
                            " is:\t"                                + 
                            value                                   + 
@@ -1250,7 +1250,7 @@ public class CTDParser {
               beginIndex = endIndex;  
             
             } catch ( DecoderException de ){
-              logger.debug("Could not decode the Hex string: " + hexSubstring); 
+              log.debug("Could not decode the Hex string: " + hexSubstring); 
             }
             
           } // for
@@ -1319,7 +1319,7 @@ public class CTDParser {
           this.dataVariableUnits.add("decibars");
       
         } else {
-          logger.info("There is no pressure sensor.");
+          log.info("There is no pressure sensor.");
         }
         
         // Is there a channel zero voltage present?
@@ -1410,12 +1410,12 @@ public class CTDParser {
    *  modes, and builds metadata fields based on the data output format.
    */
   public void setMetadata() throws ParseException {
-    logger.debug("CTDParser.setMetadata() called.");
+    log.debug("CTDParser.setMetadata() called.");
     
     // Are we in profile or moored mode?
     if ( this.SAMPLING_MODE != null ) {
       this.samplingMode = this.metadataValuesMap.get(this.SAMPLING_MODE);
-      logger.info("Sampling mode is: " + this.samplingMode);
+      log.info("Sampling mode is: " + this.samplingMode);
   
     } else {
       throw new ParseException("There was an error parsing the data string. "  +
@@ -1428,7 +1428,7 @@ public class CTDParser {
     // Determine the output format
     if ( this.OUTPUT_FORMAT != null ) {
       this.outputFormat = this.metadataValuesMap.get(this.OUTPUT_FORMAT);
-      logger.info("Data output format is: " + this.outputFormat);
+      log.info("Data output format is: " + this.outputFormat);
   
     } else {
       throw new ParseException("There was an error parsing the data string. "  +
@@ -1463,7 +1463,7 @@ public class CTDParser {
       }
   
     } else {
-      logger.info("There is no pressure sensor.");
+      log.info("There is no pressure sensor.");
   
     }
   
@@ -1475,10 +1475,10 @@ public class CTDParser {
         this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_ZERO).trim();
       if ( this.externalVoltageChannelZero.equals("yes") ) {
         this.hasVoltageChannelZero = true;
-        logger.info("There is a channel 0 voltage.");
+        log.info("There is a channel 0 voltage.");
   
       } else {
-        logger.info("There is no channel 0 voltage.");
+        log.info("There is no channel 0 voltage.");
   
       }
     }
@@ -1489,10 +1489,10 @@ public class CTDParser {
         this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_ONE).trim();
       if ( this.externalVoltageChannelOne.equals("yes") ) {
         this.hasVoltageChannelOne = true;
-        logger.info("There is a channel 1 voltage.");
+        log.info("There is a channel 1 voltage.");
   
       } else {
-        logger.info("There is no channel 1 voltage.");
+        log.info("There is no channel 1 voltage.");
   
       }
     }
@@ -1503,10 +1503,10 @@ public class CTDParser {
         this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_TWO).trim();
       if ( this.externalVoltageChannelTwo.equals("yes") ) {
         this.hasVoltageChannelTwo = true;
-        logger.info("There is a channel 2 voltage.");
+        log.info("There is a channel 2 voltage.");
   
       } else {
-        logger.info("There is no channel 2 voltage.");
+        log.info("There is no channel 2 voltage.");
   
       }
     }
@@ -1517,10 +1517,10 @@ public class CTDParser {
         this.metadataValuesMap.get(this.EXTERNAL_VOLTAGE_CHANNEL_THREE).trim();
       if ( this.externalVoltageChannelThree.equals("yes") ) {
         this.hasVoltageChannelThree = true;
-        logger.info("There is a channel 3 voltage.");
+        log.info("There is a channel 3 voltage.");
   
       } else {
-        logger.info("There is no channel 3 voltage.");
+        log.info("There is no channel 3 voltage.");
   
       }
     }
@@ -1550,140 +1550,140 @@ public class CTDParser {
     // set the first sample time field
     if ( this.FIRST_SAMPLE_TIME != null ) {
       this.firstSampleTime = this.metadataValuesMap.get(this.FIRST_SAMPLE_TIME);
-      logger.info("First sample time is: " + this.firstSampleTime);
+      log.info("First sample time is: " + this.firstSampleTime);
   
     }
     
     // set the file name time field
     if ( this.FILE_NAME != null ) {
       this.fileName = this.metadataValuesMap.get(this.FILE_NAME);
-      logger.info("File name is: " + this.fileName);
+      log.info("File name is: " + this.fileName);
   
     }
     
     // set the temperature serial number field
     if ( this.TEMPERATURE_SERIAL_NUMBER != null ) {
       this.temperatureSerialNumber = this.metadataValuesMap.get(this.TEMPERATURE_SERIAL_NUMBER);
-      logger.info("Temperature serial number is: " + this.temperatureSerialNumber);
+      log.info("Temperature serial number is: " + this.temperatureSerialNumber);
   
     }
     
     // set the conductivity serial number field
     if ( this.CONDUCTIVITY_SERIAL_NUMBER != null ) {
       this.conductivitySerialNumber = this.metadataValuesMap.get(this.CONDUCTIVITY_SERIAL_NUMBER);
-      logger.info("Conductivity serial number is: " + this.conductivitySerialNumber);
+      log.info("Conductivity serial number is: " + this.conductivitySerialNumber);
   
     }
     
     // set the system upload time field
     if ( this.SYSTEM_UPLOAD_TIME != null ) {
       this.systemUpLoadTime = this.metadataValuesMap.get(this.SYSTEM_UPLOAD_TIME);
-      logger.info("System upload time is: " + this.systemUpLoadTime);
+      log.info("System upload time is: " + this.systemUpLoadTime);
   
     }
     
     // set the cruise information field
     if ( this.CRUISE_INFORMATION != null ) {
       this.cruiseInformation = this.metadataValuesMap.get(this.CRUISE_INFORMATION);
-      logger.info("Cruise information is: " + this.cruiseInformation);
+      log.info("Cruise information is: " + this.cruiseInformation);
   
     }
     
     // set the station information field
     if ( this.STATION_INFORMATION != null ) {
       this.stationInformation = this.metadataValuesMap.get(this.STATION_INFORMATION);
-      logger.info("Station information is: " + this.stationInformation);
+      log.info("Station information is: " + this.stationInformation);
   
     }
     
     // set the ship information field
     if ( this.SHIP_INFORMATION != null ) {
       this.shipInformation = this.metadataValuesMap.get(this.SHIP_INFORMATION);
-      logger.info("Ship information is: " + this.shipInformation);
+      log.info("Ship information is: " + this.shipInformation);
   
     }
     
     // set the chief scientist field
     if ( this.CHIEF_SCIENTIST != null ) {
       this.chiefScientist = this.metadataValuesMap.get(this.CHIEF_SCIENTIST);
-      logger.info("Chief scientist is: " + this.chiefScientist);
+      log.info("Chief scientist is: " + this.chiefScientist);
   
     }
     
     // set the organization field
     if ( this.ORGANIZATION != null ) {
       this.organization = this.metadataValuesMap.get(this.ORGANIZATION);
-      logger.info("Organization is: " + this.organization);
+      log.info("Organization is: " + this.organization);
   
     }
     
     // set the area of operation field
     if ( this.AREA_OF_OPERATION != null ) {
       this.areaOfOperation = this.metadataValuesMap.get(this.AREA_OF_OPERATION);
-      logger.info("Area of operation is: " + this.areaOfOperation);
+      log.info("Area of operation is: " + this.areaOfOperation);
   
     }
     
     // set the instrument package field
     if ( this.INSTRUMENT_PACKAGE != null ) {
       this.instrumentPackage = this.metadataValuesMap.get(this.INSTRUMENT_PACKAGE);
-      logger.info("Instrument package is: " + this.instrumentPackage);
+      log.info("Instrument package is: " + this.instrumentPackage);
   
     }
     
     // set the mooring number field
     if ( this.MOORING_NUMBER != null ) {
       this.mooringNumber = this.metadataValuesMap.get(this.MOORING_NUMBER);
-      logger.info("Mooring number is: " + this.mooringNumber);
+      log.info("Mooring number is: " + this.mooringNumber);
   
     }
     
     // set the instrument latitude field
     if ( this.INSTRUMENT_LATITUDE != null ) {
       this.instrumentLatitude = this.metadataValuesMap.get(this.INSTRUMENT_LATITUDE);
-      logger.info("Instrument latitude is: " + this.instrumentLatitude);
+      log.info("Instrument latitude is: " + this.instrumentLatitude);
   
     }
     
     // set the instrument longitude field
     if ( this.INSTRUMENT_LONGITUDE != null ) {
       this.instrumentLongitude = this.metadataValuesMap.get(this.INSTRUMENT_LONGITUDE);
-      logger.info("Instrument longitude is: " + this.instrumentLongitude);
+      log.info("Instrument longitude is: " + this.instrumentLongitude);
   
     }
     
     // set the depth sounding field
     if ( this.DEPTH_SOUNDING != null ) {
       this.depthSounding = this.metadataValuesMap.get(this.DEPTH_SOUNDING);
-      logger.info("Depth sounding is: " + this.depthSounding);
+      log.info("Depth sounding is: " + this.depthSounding);
   
     }
     
     // set the profile number field
     if ( this.PROFILE_NUMBER != null ) {
       this.profileNumber = this.metadataValuesMap.get(this.PROFILE_NUMBER);
-      logger.info("Profile number is: " + this.profileNumber);
+      log.info("Profile number is: " + this.profileNumber);
   
     }
     
     // set the profile direction field
     if ( this.PROFILE_DIRECTION != null ) {
       this.profileDirection = this.metadataValuesMap.get(this.PROFILE_DIRECTION);
-      logger.info("Profile direction is: " + this.profileDirection);
+      log.info("Profile direction is: " + this.profileDirection);
   
     }
     
     // set the deployment notes field
     if ( this.DEPLOYMENT_NOTES != null ) {
       this.deploymentNotes = this.metadataValuesMap.get(this.DEPLOYMENT_NOTES);
-      logger.info("Deployment notes are: " + this.deploymentNotes);
+      log.info("Deployment notes are: " + this.deploymentNotes);
   
     }
     
     // set the main battery voltage field
     if ( this.MAIN_BATTERY_VOLTAGE != null ) {
       this.mainBatteryVoltage = this.metadataValuesMap.get(this.MAIN_BATTERY_VOLTAGE);
-      logger.info("Main battery voltage is: " + this.mainBatteryVoltage);
+      log.info("Main battery voltage is: " + this.mainBatteryVoltage);
   
     }
     
@@ -1691,21 +1691,21 @@ public class CTDParser {
     if ( this.LITHIUM_BATTERY_VOLTAGE != null ) {
       this.lithiumBatteryVoltage = 
         this.metadataValuesMap.get(this.LITHIUM_BATTERY_VOLTAGE);
-      logger.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
+      log.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
   
     }
     
     // set the operating current field
     if ( this.OPERATING_CURRENT != null ) {
       this.operatingCurrent = this.metadataValuesMap.get(this.OPERATING_CURRENT);
-      logger.info("Operating current is: " + this.operatingCurrent);
+      log.info("Operating current is: " + this.operatingCurrent);
   
     }
     
     // set the pump current field
     if ( this.PUMP_CURRENT != null ) {
       this.pumpCurrent = this.metadataValuesMap.get(this.PUMP_CURRENT);
-      logger.info("Pump current is: " + this.pumpCurrent);
+      log.info("Pump current is: " + this.pumpCurrent);
   
     }
     
@@ -1713,7 +1713,7 @@ public class CTDParser {
     if ( this.CHANNELS_01_EXTERNAL_CURRENT != null ) {
       this.channels01ExternalCurrent = 
       this.metadataValuesMap.get(this.CHANNELS_01_EXTERNAL_CURRENT);
-      logger.info("Channels 0 and 1 external current is: " + 
+      log.info("Channels 0 and 1 external current is: " + 
                   this.channels01ExternalCurrent);
   
     }
@@ -1722,7 +1722,7 @@ public class CTDParser {
     if ( this.CHANNELS_23_EXTERNAL_CURRENT != null ) {
       this.channels23ExternalCurrent = 
       this.metadataValuesMap.get(this.CHANNELS_23_EXTERNAL_CURRENT);
-      logger.info("Channels 2 and 3 external current is: " + 
+      log.info("Channels 2 and 3 external current is: " + 
                   this.channels23ExternalCurrent);
   
     }
@@ -1730,7 +1730,7 @@ public class CTDParser {
     // set the logging status field
     if ( this.LOGGING_STATUS != null ) {
       this.loggingStatus = this.metadataValuesMap.get(this.LOGGING_STATUS);
-      logger.info("Logging status is: " + this.loggingStatus);
+      log.info("Logging status is: " + this.loggingStatus);
   
     }
     
@@ -1738,7 +1738,7 @@ public class CTDParser {
     if ( this.NUMBER_OF_SCANS_TO_AVERAGE != null ) {
       this.numberOfScansToAverage = 
         this.metadataValuesMap.get(this.NUMBER_OF_SCANS_TO_AVERAGE);
-      logger.info("Number of scans to average is: " + 
+      log.info("Number of scans to average is: " + 
                   this.numberOfScansToAverage);
   
     }
@@ -1746,7 +1746,7 @@ public class CTDParser {
     // set the number of samples field
     if ( this.NUMBER_OF_SAMPLES != null ) {
       this.numberOfSamples = this.metadataValuesMap.get(this.NUMBER_OF_SAMPLES);
-      logger.info("Number of samples is: " + this.numberOfSamples);
+      log.info("Number of samples is: " + this.numberOfSamples);
   
     }
     
@@ -1754,7 +1754,7 @@ public class CTDParser {
     if ( this.NUMBER_OF_AVAILABLE_SAMPLES != null ) {
       this.numberOfAvailableSamples = 
         this.metadataValuesMap.get(this.NUMBER_OF_AVAILABLE_SAMPLES);
-      logger.info("Number of available samples is: " + 
+      log.info("Number of available samples is: " + 
                   this.numberOfAvailableSamples);
   
     }
@@ -1762,28 +1762,28 @@ public class CTDParser {
     // set the sample interval field
     if ( this.SAMPLE_INTERVAL != null ) {
       this.sampleInterval = this.metadataValuesMap.get(this.SAMPLE_INTERVAL);
-      logger.info("Sample interval is: " + this.sampleInterval);
+      log.info("Sample interval is: " + this.sampleInterval);
   
     }
     
     // set the measurements per sample field
     if ( this.MEASUREMENTS_PER_SAMPLE != null ) {
       this.measurementsPerSample = this.metadataValuesMap.get(this.MEASUREMENTS_PER_SAMPLE);
-      logger.info("Measurements per sample is: " + this.measurementsPerSample);
+      log.info("Measurements per sample is: " + this.measurementsPerSample);
   
     }
     
     // set the transmit real time field
     if ( this.TRANSMIT_REALTIME != null ) {
       this.transmitRealtime = this.metadataValuesMap.get(this.TRANSMIT_REALTIME);
-      logger.info("Transmit real time state is: " + this.transmitRealtime);
+      log.info("Transmit real time state is: " + this.transmitRealtime);
   
     }
     
     // set the number of casts field
     if ( this.NUMBER_OF_CASTS != null ) {
       this.numberOfCasts = this.metadataValuesMap.get(this.NUMBER_OF_CASTS);
-      logger.info("Number of casts is: " + this.numberOfCasts);
+      log.info("Number of casts is: " + this.numberOfCasts);
   
     }
     
@@ -1791,7 +1791,7 @@ public class CTDParser {
     if ( this.MINIMUM_CONDUCTIVITY_FREQUENCY != null ) {
       this.minimumConductivityFrequency = 
         this.metadataValuesMap.get(this.MINIMUM_CONDUCTIVITY_FREQUENCY);
-      logger.info("Minimum conductivity frequency is: " + 
+      log.info("Minimum conductivity frequency is: " + 
                   this.minimumConductivityFrequency);
   
     }
@@ -1799,35 +1799,35 @@ public class CTDParser {
     // set the pump delay field
     if ( this.PUMP_DELAY != null ) {
       this.pumpDelay = this.metadataValuesMap.get(this.PUMP_DELAY);
-      logger.info("Pump delay is: " + this.pumpDelay);
+      log.info("Pump delay is: " + this.pumpDelay);
   
     }
     
     // set the automatic logging field
     if ( this.AUTOMATIC_LOGGING != null ) {
       this.automaticLogging = this.metadataValuesMap.get(this.AUTOMATIC_LOGGING);
-      logger.info("Automatic logging is: " + this.automaticLogging);
+      log.info("Automatic logging is: " + this.automaticLogging);
   
     }
     
     // set the ignore magnetic switch field
     if ( this.IGNORE_MAGNETIC_SWITCH != null ) {
       this.ignoreMagneticSwitch = this.metadataValuesMap.get(this.IGNORE_MAGNETIC_SWITCH);
-      logger.info("Ignore magnetic switch is: " + this.ignoreMagneticSwitch);
+      log.info("Ignore magnetic switch is: " + this.ignoreMagneticSwitch);
   
     }
     
     // set the battery type field
     if ( this.BATTERY_TYPE != null ) {
       this.batteryType = this.metadataValuesMap.get(this.BATTERY_TYPE);
-      logger.info("Battery type is: " + this.batteryType);
+      log.info("Battery type is: " + this.batteryType);
   
     }
     
     // set the echo commands field
     if ( this.ECHO_COMMANDS != null ) {
       this.echoCommands = this.metadataValuesMap.get(this.ECHO_COMMANDS);
-      logger.info("Echo commands state is: " + this.echoCommands);
+      log.info("Echo commands state is: " + this.echoCommands);
   
     }
     
@@ -1835,7 +1835,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_CALIBRATION_DATE != null ) {
       this.temperatureCalibrationDate = 
         this.metadataValuesMap.get(this.TEMPERATURE_CALIBRATION_DATE);
-      logger.info("Temperature calibration date is: " + 
+      log.info("Temperature calibration date is: " + 
                   this.temperatureCalibrationDate);
   
     }
@@ -1844,7 +1844,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_COEFFICIENT_TA0 != null ) {
       this.temperatureCoefficientTA0 = 
         this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA0);
-      logger.info("Temperature coefficient TA0 is: " + 
+      log.info("Temperature coefficient TA0 is: " + 
                   this.temperatureCoefficientTA0);
   
     }
@@ -1853,7 +1853,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_COEFFICIENT_TA1 != null ) {
       this.temperatureCoefficientTA1 = 
         this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA1);
-      logger.info("Temperature coefficient TA1 is: " + 
+      log.info("Temperature coefficient TA1 is: " + 
                   this.temperatureCoefficientTA1);
   
     }
@@ -1862,7 +1862,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_COEFFICIENT_TA2 != null ) {
       this.temperatureCoefficientTA2 = 
         this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA2);
-      logger.info("Temperature coefficient TA2 is: " + 
+      log.info("Temperature coefficient TA2 is: " + 
                   this.temperatureCoefficientTA2);
   
     }
@@ -1871,7 +1871,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_COEFFICIENT_TA3 != null ) {
       this.temperatureCoefficientTA3 = 
         this.metadataValuesMap.get(this.TEMPERATURE_COEFFICIENT_TA3);
-      logger.info("Temperature coefficient TA3 is: " + 
+      log.info("Temperature coefficient TA3 is: " + 
                   this.temperatureCoefficientTA3);
   
     }
@@ -1880,7 +1880,7 @@ public class CTDParser {
     if ( this.TEMPERATURE_OFFSET_COEFFICIENT != null ) {
       this.temperatureOffsetCoefficient = 
         this.metadataValuesMap.get(this.TEMPERATURE_OFFSET_COEFFICIENT);
-      logger.info("Temperature offset coefficient is: " + 
+      log.info("Temperature offset coefficient is: " + 
                   this.temperatureOffsetCoefficient);
   
     }
@@ -1889,7 +1889,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_CALIBRATION_DATE != null ) {
       this.conductivityCalibrationDate = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_CALIBRATION_DATE);
-      logger.info("Conductivity calibration date is: " + 
+      log.info("Conductivity calibration date is: " + 
                   this.conductivityCalibrationDate);
   
     }
@@ -1898,7 +1898,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_G != null ) {
       this.conductivityCoefficientG = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_G);
-      logger.info("Conductivity coefficient G is: " + 
+      log.info("Conductivity coefficient G is: " + 
                   this.conductivityCoefficientG);
   
     }
@@ -1907,7 +1907,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_H != null ) {
       this.conductivityCoefficientH = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_H);
-      logger.info("Conductivity coefficient H is: " + 
+      log.info("Conductivity coefficient H is: " + 
                   this.conductivityCoefficientH);
   
     }
@@ -1916,7 +1916,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_I != null ) {
       this.conductivityCoefficientI = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_I);
-      logger.info("Conductivity coefficient I is: " + 
+      log.info("Conductivity coefficient I is: " + 
                   this.conductivityCoefficientI);
   
     }
@@ -1925,7 +1925,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_J != null ) {
       this.conductivityCoefficientJ = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_J);
-      logger.info("Conductivity coefficient J is: " + 
+      log.info("Conductivity coefficient J is: " + 
                   this.conductivityCoefficientJ);
   
     }
@@ -1934,7 +1934,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_CF0 != null ) {
       this.conductivityCoefficientCF0 = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CF0);
-      logger.info("Conductivity coefficient CF0 is: " + 
+      log.info("Conductivity coefficient CF0 is: " + 
                   this.conductivityCoefficientCF0);
   
     }
@@ -1943,7 +1943,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_CPCOR != null ) {
       this.conductivityCoefficientCPCOR = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CPCOR);
-      logger.info("Conductivity coefficient CPCOR is: " + 
+      log.info("Conductivity coefficient CPCOR is: " + 
                   this.conductivityCoefficientCPCOR);
   
     }
@@ -1952,7 +1952,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_CTCOR != null ) {
       this.conductivityCoefficientCTCOR = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CTCOR);
-      logger.info("Conductivity coefficient CTCOR is: " + 
+      log.info("Conductivity coefficient CTCOR is: " + 
                   this.conductivityCoefficientCTCOR);
   
     }
@@ -1961,7 +1961,7 @@ public class CTDParser {
     if ( this.CONDUCTIVITY_COEFFICIENT_CSLOPE != null ) {
       this.conductivityCoefficientCSLOPE = 
         this.metadataValuesMap.get(this.CONDUCTIVITY_COEFFICIENT_CSLOPE);
-      logger.info("Conductivity coefficient CSLOPE is: " + 
+      log.info("Conductivity coefficient CSLOPE is: " + 
                   this.conductivityCoefficientCSLOPE);
   
     }
@@ -1969,7 +1969,7 @@ public class CTDParser {
     // set the pressure serial number field
     if ( this.PRESSURE_SERIAL_NUMBER != null ) {
       this.pressureSerialNumber = this.metadataValuesMap.get(this.PRESSURE_SERIAL_NUMBER);
-      logger.info("Pressure serial number is: " + this.pressureSerialNumber);
+      log.info("Pressure serial number is: " + this.pressureSerialNumber);
   
     }
     
@@ -1977,7 +1977,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PA0 != null ) {
       this.pressureCoefficientPA0 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA0);
-      logger.info("Pressure coefficient PA0 is: " + 
+      log.info("Pressure coefficient PA0 is: " + 
                   this.pressureCoefficientPA0);
   
     }
@@ -1986,7 +1986,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PA1 != null ) {
       this.pressureCoefficientPA1 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA1);
-      logger.info("Pressure coefficient PA1 is: " + 
+      log.info("Pressure coefficient PA1 is: " + 
                   this.pressureCoefficientPA1);
   
     }
@@ -1995,7 +1995,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PA2 != null ) {
       this.pressureCoefficientPA2 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PA2);
-      logger.info("Pressure coefficient PA2 is: " + 
+      log.info("Pressure coefficient PA2 is: " + 
                   this.pressureCoefficientPA2);
   
     }
@@ -2004,7 +2004,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCA0 != null ) {
       this.pressureCoefficientPTCA0 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA0);
-      logger.info("Pressure coefficient PTCA0 is: " + 
+      log.info("Pressure coefficient PTCA0 is: " + 
                   this.pressureCoefficientPTCA0);
   
     }
@@ -2013,7 +2013,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCA1 != null ) {
       this.pressureCoefficientPTCA1 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA1);
-      logger.info("Pressure coefficient PTCA1 is: " + 
+      log.info("Pressure coefficient PTCA1 is: " + 
                   this.pressureCoefficientPTCA1);
   
     }
@@ -2022,7 +2022,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCA2 != null ) {
       this.pressureCoefficientPTCA2 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCA2);
-      logger.info("Pressure coefficient PTCA2 is: " + 
+      log.info("Pressure coefficient PTCA2 is: " + 
                   this.pressureCoefficientPTCA2);
   
     }
@@ -2031,7 +2031,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCB0 != null ) {
       this.pressureCoefficientPTCB0 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB0);
-      logger.info("Pressure coefficient PTCB0 is: " + 
+      log.info("Pressure coefficient PTCB0 is: " + 
                   this.pressureCoefficientPTCB0);
   
     }
@@ -2040,7 +2040,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCB1 != null ) {
       this.pressureCoefficientPTCB1 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB1);
-      logger.info("Pressure coefficient PTCB1 is: " + 
+      log.info("Pressure coefficient PTCB1 is: " + 
                   this.pressureCoefficientPTCB1);
   
     }
@@ -2049,7 +2049,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTCB2 != null ) {
       this.pressureCoefficientPTCB2 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTCB2);
-      logger.info("Pressure coefficient PTCB2 is: " + 
+      log.info("Pressure coefficient PTCB2 is: " + 
                   this.pressureCoefficientPTCB2);
   
     }
@@ -2058,7 +2058,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTEMPA0 != null ) {
       this.pressureCoefficientPTEMPA0 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA0);
-      logger.info("Pressure coefficient PTEMPA0 is: " + 
+      log.info("Pressure coefficient PTEMPA0 is: " + 
                   this.pressureCoefficientPTEMPA0);
   
     }
@@ -2067,7 +2067,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTEMPA1 != null ) {
       this.pressureCoefficientPTEMPA1 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA1);
-      logger.info("Pressure coefficient PTEMPA1 is: " + 
+      log.info("Pressure coefficient PTEMPA1 is: " + 
                   this.pressureCoefficientPTEMPA1);
   
     }
@@ -2076,7 +2076,7 @@ public class CTDParser {
     if ( this.PRESSURE_COEFFICIENT_PTEMPA2 != null ) {
       this.pressureCoefficientPTEMPA2 = 
         this.metadataValuesMap.get(this.PRESSURE_COEFFICIENT_PTEMPA2);
-      logger.info("Pressure coefficient PTEMPA2 is: " + 
+      log.info("Pressure coefficient PTEMPA2 is: " + 
                   this.pressureCoefficientPTEMPA2);
   
     }
@@ -2085,7 +2085,7 @@ public class CTDParser {
     if ( this.PRESSURE_OFFSET_COEFFICIENT != null ) {
       this.pressureOffsetCoefficient = 
         this.metadataValuesMap.get(this.PRESSURE_OFFSET_COEFFICIENT);
-      logger.info("Pressure offset coefficient is: " + 
+      log.info("Pressure offset coefficient is: " + 
                   this.pressureOffsetCoefficient);
   
     }
@@ -2100,13 +2100,13 @@ public class CTDParser {
    * @param xmlString - the CTD's XML output string containing the metadata values
    */
   public void setMetadata(String xmlString) throws ParseException {
-    logger.debug("CTDParser.setMetadata(xmlString) called.");
+    log.debug("CTDParser.setMetadata(xmlString) called.");
     
     try {
       // create an XML Document object from the instrument XML string
       StringReader xmlReader = new StringReader(xmlString);
       this.xmlMetadata = XMLUtilities.getXMLReaderAsDOMDocument(xmlReader);
-      logger.debug(XMLUtilities.getDOMTreeAsXPathMap(xmlMetadata.getDocumentElement()));
+      log.debug(XMLUtilities.getDOMTreeAsXPathMap(xmlMetadata.getDocumentElement()));
       
       // set the configuration metadata fields
       if ( this.xmlMetadata.getDocumentElement().getTagName()
@@ -2118,20 +2118,20 @@ public class CTDParser {
         this.deviceType = 
           XMLUtilities.getAttributeNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/@" + this.DEVICE_TYPE).getNodeValue().trim();
-        logger.info("Device type is: " + this.deviceType);
+        log.info("Device type is: " + this.deviceType);
         
         // set the instrument serial number field
         this.instrumentSerialNumber = 
           XMLUtilities.getAttributeNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/@" + this.INSTRUMENT_SERIAL_NUMBER).getNodeValue().trim();
-        logger.info("Instrument serial number is: " + this.instrumentSerialNumber);
+        log.info("Instrument serial number is: " + this.instrumentSerialNumber);
         
         // set the pressure installed field
         this.pressureInstalled = 
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/" + this.PRESSURE_INSTALLED)
           .getFirstChild().getNodeValue().trim();
-        logger.info("Pressure installed is: " + this.pressureInstalled);
+        log.info("Pressure installed is: " + this.pressureInstalled);
           
         if (this.pressureInstalled.equals("yes") ) {
           this.hasPressure = true;
@@ -2143,7 +2143,7 @@ public class CTDParser {
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/" + this.PUMP_INSTALLED)
           .getFirstChild().getNodeValue().trim();
-        logger.info("Pump installed is: " + this.pumpInstalled);
+        log.info("Pump installed is: " + this.pumpInstalled);
         
         if (this.pumpInstalled.equals("yes") ) {
           this.hasPump = true;
@@ -2155,21 +2155,21 @@ public class CTDParser {
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/" + this.MINIMUM_CONDUCTIVITY_FREQUENCY)
           .getFirstChild().getNodeValue().trim();
-        logger.info("Minimum conductivity frequency is: " + this.minimumConductivityFrequency);
+        log.info("Minimum conductivity frequency is: " + this.minimumConductivityFrequency);
         
         // set the output format field
         this.outputFormat = 
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/SampleDataFormat")
           .getFirstChild().getNodeValue().trim();
-        logger.info("Output format is: " + this.outputFormat);
+        log.info("Output format is: " + this.outputFormat);
         
         // set the output salinity state field
         this.outputSalinity = 
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/" + this.OUTPUT_SALINITY)
           .getFirstChild().getNodeValue().trim();
-        logger.info("Output salinity state is: " + this.outputSalinity);
+        log.info("Output salinity state is: " + this.outputSalinity);
         
         if (this.outputSalinity.equals("yes") ) {
           this.willOutputSalinity = true;
@@ -2181,7 +2181,7 @@ public class CTDParser {
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/" + this.OUTPUT_SOUND_VELOCITY)
           .getFirstChild().getNodeValue().trim();
-        logger.info("Output sound velocity state is: " + this.outputSoundVelocity);
+        log.info("Output sound velocity state is: " + this.outputSoundVelocity);
         
         if (this.outputSoundVelocity.equals("yes") ) {
           this.willOutputSoundVelocity = true;
@@ -2193,13 +2193,13 @@ public class CTDParser {
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/TxRealTime")
           .getFirstChild().getNodeValue().trim();
-        logger.info("Transmit real time state is: " + this.transmitRealtime);
+        log.info("Transmit real time state is: " + this.transmitRealtime);
         
         if (this.transmitRealtime.equals("yes") ) {
           
           // set the sampling mode to moored since profile mode doesn't support this
           this.samplingMode = "moored";
-          logger.info("Sampling mode is: " + this.samplingMode);
+          log.info("Sampling mode is: " + this.samplingMode);
           
         }
         
@@ -2208,14 +2208,14 @@ public class CTDParser {
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/SampleInterval")
           .getFirstChild().getNodeValue().trim();
-        logger.info("Sample interval is: " + this.sampleInterval);
+        log.info("Sample interval is: " + this.sampleInterval);
         
         // set the synchronization mode state field
         this.synchronizationMode = 
           XMLUtilities.getNodeWithXPath(xmlMetadata, 
           "//ConfigurationData/SyncMode")
           .getFirstChild().getNodeValue().trim();
-        logger.info("Synchronization mode state state is: " + this.synchronizationMode);
+        log.info("Synchronization mode state state is: " + this.synchronizationMode);
       
         this.hasConfigurationMetadata = true;
         
@@ -2226,27 +2226,27 @@ public class CTDParser {
          this.deviceType = 
            XMLUtilities.getAttributeNodeWithXPath(xmlMetadata, 
            "//StatusData/@" + this.DEVICE_TYPE).getNodeValue().trim();
-         logger.info("Device type is: " + this.deviceType);
+         log.info("Device type is: " + this.deviceType);
 
          // set the instrument serial number field
          this.instrumentSerialNumber = 
            XMLUtilities.getAttributeNodeWithXPath(xmlMetadata, 
            "//StatusData/@" + this.INSTRUMENT_SERIAL_NUMBER).getNodeValue().trim();
-         logger.info("Instrument serial number is: " + this.instrumentSerialNumber);
+         log.info("Instrument serial number is: " + this.instrumentSerialNumber);
 
          // set the instrument date time field
          this.instrumentDateTime = 
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.INSTRUMENT_DATE_TIME)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Instrument date time is: " + this.instrumentDateTime);
+         log.info("Instrument date time is: " + this.instrumentDateTime);
          
          // set the number of instrument events field
          this.numberOfInstrumentEvents = 
            XMLUtilities.getAttributeNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_INSTRUMENT_EVENTS)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of instrument events is: " + 
+         log.info("Number of instrument events is: " + 
                      this.numberOfInstrumentEvents);
          
          // set the main battery voltage field
@@ -2254,35 +2254,35 @@ public class CTDParser {
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/Power/vMain")
            .getFirstChild().getNodeValue().trim();
-         logger.info("Main battery voltage is: " + this.mainBatteryVoltage);
+         log.info("Main battery voltage is: " + this.mainBatteryVoltage);
       
          // set the lithium battery voltage field
          this.lithiumBatteryVoltage = 
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/Power/vLith")
            .getFirstChild().getNodeValue().trim();
-         logger.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
+         log.info("Lithium battery voltage is: " + this.lithiumBatteryVoltage);
       
          // set the number of bytes in memory field
          this.numberOfBytes = 
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_BYTES)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of bytes in memory is: " + this.numberOfBytes);
+         log.info("Number of bytes in memory is: " + this.numberOfBytes);
       
          // set the number of samples in memory field
          this.numberOfSamples = 
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_SAMPLES)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of samples in memory is: " + this.numberOfSamples);
+         log.info("Number of samples in memory is: " + this.numberOfSamples);
       
          // set the number of available samples in memory field
          this.numberOfAvailableSamples = 
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.NUMBER_OF_AVAILABLE_SAMPLES)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of available samples in memory is: " + 
+         log.info("Number of available samples in memory is: " + 
                      this.numberOfAvailableSamples);
       
          // set the number of bytes per sample in memory field
@@ -2290,7 +2290,7 @@ public class CTDParser {
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.SAMPLE_BYTE_LENGTH)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Number of bytes per sample in memory is: " + 
+         log.info("Number of bytes per sample in memory is: " + 
                      this.sampleByteLength);
       
          // set the autonomous sampling state field
@@ -2298,7 +2298,7 @@ public class CTDParser {
            XMLUtilities.getNodeWithXPath(xmlMetadata, 
            "//StatusData/" + this.AUTONOMOUS_SAMPLING)
            .getFirstChild().getNodeValue().trim();
-         logger.info("Autonomous sampling state is: " + this.autonomousSampling);
+         log.info("Autonomous sampling state is: " + this.autonomousSampling);
       
         this.hasStatusMetadata = true;
         
@@ -2325,49 +2325,49 @@ public class CTDParser {
             this.temperatureCalibrationFormat = 
               XMLUtilities.getAttributeNodeWithXPath(calibrationNode, 
                 this.TEMPERATURE_CALIBRATION_FORMAT).getNodeValue().trim();
-            logger.info("Temperature calibration format is: " + 
+            log.info("Temperature calibration format is: " + 
                         this.temperatureCalibrationFormat);
             
             // set the temperature serial number field
             this.temperatureSerialNumber = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "SerialNum").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature serial number is: " + 
+            log.info("Temperature serial number is: " + 
                         this.temperatureSerialNumber);
             
             // set the temperature calibration date field
             this.temperatureCalibrationDate = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "CalDate").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature calibration date is: " + 
+            log.info("Temperature calibration date is: " + 
                         this.temperatureCalibrationDate);
             
             // set the temperature calibration A0 field
             this.temperatureCoefficientTA0 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "A0").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature calibration A0 is: " + 
+            log.info("Temperature calibration A0 is: " + 
                         this.temperatureCoefficientTA0);
             
             // set the temperature calibration A1 field
             this.temperatureCoefficientTA1 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "A1").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature calibration A1 is: " + 
+            log.info("Temperature calibration A1 is: " + 
                         this.temperatureCoefficientTA1);
             
             // set the temperature calibration A2 field
             this.temperatureCoefficientTA2 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "A2").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature calibration A2 is: " + 
+            log.info("Temperature calibration A2 is: " + 
                         this.temperatureCoefficientTA2);
             
             // set the temperature calibration A3 field
             this.temperatureCoefficientTA3 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "A3").getFirstChild().getNodeValue().trim();
-            logger.info("Temperature calibration A3 is: " + 
+            log.info("Temperature calibration A3 is: " + 
                         this.temperatureCoefficientTA3);
             
           } else if ( idString.equals("Conductivity") ) {
@@ -2376,70 +2376,70 @@ public class CTDParser {
             this.conductivityCalibrationFormat = 
               XMLUtilities.getAttributeNodeWithXPath(calibrationNode, 
                 this.CONDUCTIVITY_CALIBRATION_FORMAT).getNodeValue().trim();
-            logger.info("Conductivity calibration format is: " + 
+            log.info("Conductivity calibration format is: " + 
                         this.conductivityCalibrationFormat);
             
             // set the conductivity serial number field
             this.conductivitySerialNumber = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "SerialNum").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity serial number is: " + 
+            log.info("Conductivity serial number is: " + 
                         this.conductivitySerialNumber);
             
             // set the conductivity calibration date field
             this.conductivityCalibrationDate = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "CalDate").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration date is: " + 
+            log.info("Conductivity calibration date is: " + 
                         this.conductivityCalibrationDate);
             
             // set the conductivity calibration G field
             this.conductivityCoefficientG = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "G").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration G is: " + 
+            log.info("Conductivity calibration G is: " + 
                         this.conductivityCoefficientG);
             
             // set the conductivity calibration H field
             this.conductivityCoefficientH = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "H").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration H is: " + 
+            log.info("Conductivity calibration H is: " + 
                         this.conductivityCoefficientH);
             
             // set the conductivity calibration I field
             this.conductivityCoefficientI = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "I").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration I is: " + 
+            log.info("Conductivity calibration I is: " + 
                         this.conductivityCoefficientI);
             
             // set the conductivity calibration J field
             this.conductivityCoefficientJ = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "J").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration J is: " + 
+            log.info("Conductivity calibration J is: " + 
                         this.conductivityCoefficientJ);
             
             // set the conductivity calibration PCOR field
             this.conductivityCoefficientCPCOR = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PCOR").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration PCOR is: " + 
+            log.info("Conductivity calibration PCOR is: " + 
                         this.conductivityCoefficientCPCOR);
 
             // set the conductivity calibration TCOR field
             this.conductivityCoefficientCTCOR = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "TCOR").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration TCOR is: " + 
+            log.info("Conductivity calibration TCOR is: " + 
                         this.conductivityCoefficientCTCOR);
             
             // set the conductivity calibration WBOTC field
             this.conductivityCoefficientWBOTC = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "WBOTC").getFirstChild().getNodeValue().trim();
-            logger.info("Conductivity calibration WBOTC is: " + 
+            log.info("Conductivity calibration WBOTC is: " + 
                         this.conductivityCoefficientWBOTC);
 
           } else if ( idString.equals("Pressure") ) {
@@ -2448,119 +2448,119 @@ public class CTDParser {
             this.pressureCalibrationFormat = 
               XMLUtilities.getAttributeNodeWithXPath(calibrationNode, 
                 this.PRESSURE_CALIBRATION_FORMAT).getNodeValue().trim();
-            logger.info("Pressure calibration format is: " + 
+            log.info("Pressure calibration format is: " + 
                         this.pressureCalibrationFormat);
             
             // set the pressure serial number field
             this.pressureSerialNumber = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "SerialNum").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure serial number is: " + 
+            log.info("Pressure serial number is: " + 
                         this.pressureSerialNumber);
             
             // set the pressure calibration date field
             this.pressureCalibrationDate = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "CalDate").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration date is: " + 
+            log.info("Pressure calibration date is: " + 
                         this.pressureCalibrationDate);
             
             // set the pressure calibration PA0 field
             this.pressureCoefficientPA0 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PA0").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PA0 is: " + 
+            log.info("Pressure calibration PA0 is: " + 
                         this.pressureCoefficientPA0);
             
             // set the pressure calibration PA1 field
             this.pressureCoefficientPA1 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PA1").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PA1 is: " + 
+            log.info("Pressure calibration PA1 is: " + 
                         this.pressureCoefficientPA1);
             
             // set the pressure calibration PA2 field
             this.pressureCoefficientPA2 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PA2").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PA2 is: " + 
+            log.info("Pressure calibration PA2 is: " + 
                         this.pressureCoefficientPA2);
             
             // set the pressure calibration PTCA0 field
             this.pressureCoefficientPTCA0 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCA0").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCA0 is: " + 
+            log.info("Pressure calibration PTCA0 is: " + 
                         this.pressureCoefficientPTCA0);
             
             // set the pressure calibration PTCA1 field
             this.pressureCoefficientPTCA1 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCA1").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCA1 is: " + 
+            log.info("Pressure calibration PTCA1 is: " + 
                         this.pressureCoefficientPTCA1);
 
             // set the pressure calibration PTCA2 field
             this.pressureCoefficientPTCA2 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCA2").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCA2 is: " + 
+            log.info("Pressure calibration PTCA2 is: " + 
                         this.pressureCoefficientPTCA2);
             
             // set the pressure calibration PTCB0 field
             this.pressureCoefficientPTCB0 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCB0").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCB0 is: " + 
+            log.info("Pressure calibration PTCB0 is: " + 
                         this.pressureCoefficientPTCB0);
             
             // set the pressure calibration PTCB1 field
             this.pressureCoefficientPTCB1 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCB1").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCB1 is: " + 
+            log.info("Pressure calibration PTCB1 is: " + 
                         this.pressureCoefficientPTCB1);
             
             // set the pressure calibration PTCB2 field
             this.pressureCoefficientPTCB2 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTCB2").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTCB2 is: " + 
+            log.info("Pressure calibration PTCB2 is: " + 
                         this.pressureCoefficientPTCB2);
 
             // set the pressure calibration PTEMPA0 field
             this.pressureCoefficientPTEMPA0 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTEMPA0").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTEMPA0 is: " + 
+            log.info("Pressure calibration PTEMPA0 is: " + 
                         this.pressureCoefficientPTEMPA0);
             
             // set the pressure calibration PTEMPA1 field
             this.pressureCoefficientPTEMPA1 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTEMPA1").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTEMPA1 is: " + 
+            log.info("Pressure calibration PTEMPA1 is: " + 
                         this.pressureCoefficientPTEMPA1);
             
             // set the pressure calibration PTEMPA2 field
             this.pressureCoefficientPTEMPA2 = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PTEMPA2").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure calibration PTEMPA2 is: " + 
+            log.info("Pressure calibration PTEMPA2 is: " + 
                         this.pressureCoefficientPTEMPA2);
 
             // set the pressure calibration POFFSET field
             this.pressureOffsetCoefficient = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "POFFSET").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure offset calibration is: " + 
+            log.info("Pressure offset calibration is: " + 
                         this.pressureOffsetCoefficient);
             
             // set the pressure sensor range field
             this.pressureSensorRange = 
               XMLUtilities.getNodeWithXPath(calibrationNode, 
                 "PRANGE").getFirstChild().getNodeValue().trim();
-            logger.info("Pressure sensor range is: " + 
+            log.info("Pressure sensor range is: " + 
                         this.pressureSensorRange);
 
           } else {
@@ -2589,12 +2589,12 @@ public class CTDParser {
       }
     
     } catch ( IOException ioe ) {
-      logger.info("There was an error reading the XML metadata. " +
+      log.info("There was an error reading the XML metadata. " +
         "The error message was: " + ioe.getMessage());
       throw new ParseException(ioe.getMessage(), 0);
       
     } catch ( TransformerException te ) {
-      logger.info("There was an error creating the XML configuration. " +
+      log.info("There was an error creating the XML configuration. " +
         "The error message was: " + te.getMessage());
         throw new ParseException(te.getMessage(), 0);
       
@@ -2757,7 +2757,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the mainBatteryVoltage " + 
+      log.debug("There was a problem parsing the mainBatteryVoltage " + 
                    "value.  The value is: " + this.mainBatteryVoltage);
       return value;
     
@@ -2779,7 +2779,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the lithiumBatteryVoltage " + 
+      log.debug("There was a problem parsing the lithiumBatteryVoltage " + 
                    "value.  The value is: " + this.lithiumBatteryVoltage);
       return value;
       
@@ -2801,7 +2801,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the operatingCurrent " + 
+      log.debug("There was a problem parsing the operatingCurrent " + 
                    "value.  The value is: " + this.operatingCurrent);
       return value;
     }
@@ -2822,7 +2822,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pumpCurrent " + 
+      log.debug("There was a problem parsing the pumpCurrent " + 
                    "value.  The value is: " + this.pumpCurrent);
       return value;
     }
@@ -2843,7 +2843,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the channels01ExternalCurrent " + 
+      log.debug("There was a problem parsing the channels01ExternalCurrent " + 
                    "value.  The value is: " + this.channels01ExternalCurrent);
       return value;
     }
@@ -2864,7 +2864,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the channels23ExternalCurrent " + 
+      log.debug("There was a problem parsing the channels23ExternalCurrent " + 
                    "value.  The value is: " + this.channels23ExternalCurrent);
       return value;
     
@@ -2888,12 +2888,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the numberOfScansToAverage " + 
+      log.debug("There was a problem parsing the numberOfScansToAverage " + 
                    "value.  The value is: " + this.numberOfScansToAverage);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the numberOfScansToAverage " + 
+      log.debug("There was a problem parsing the numberOfScansToAverage " + 
                    "value.  The value is: " + this.numberOfScansToAverage);
       return value;
     }
@@ -2909,12 +2909,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the numberOfSamples " + 
+      log.debug("There was a problem parsing the numberOfSamples " + 
                    "value.  The value is: " + this.numberOfSamples);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the numberOfSamples " + 
+      log.debug("There was a problem parsing the numberOfSamples " + 
                    "value.  The value is: " + this.numberOfSamples);
       return value;
     }
@@ -2930,12 +2930,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the numberOfAvailableSamples " + 
+      log.debug("There was a problem parsing the numberOfAvailableSamples " + 
                    "value.  The value is: " + this.numberOfAvailableSamples);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the numberOfAvailableSamples " + 
+      log.debug("There was a problem parsing the numberOfAvailableSamples " + 
                    "value.  The value is: " + this.numberOfAvailableSamples);
       return value;
     }
@@ -2951,12 +2951,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the sampleInterval " + 
+      log.debug("There was a problem parsing the sampleInterval " + 
                    "value.  The value is: " + this.sampleInterval);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the sampleInterval " + 
+      log.debug("There was a problem parsing the sampleInterval " + 
                    "value.  The value is: " + this.sampleInterval);
       return value;
     }
@@ -2972,12 +2972,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the measurementsPerSample " + 
+      log.debug("There was a problem parsing the measurementsPerSample " + 
                    "value.  The value is: " + this.measurementsPerSample);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the measurementsPerSample " + 
+      log.debug("There was a problem parsing the measurementsPerSample " + 
                    "value.  The value is: " + this.measurementsPerSample);
       return value;
     }
@@ -3000,12 +3000,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the numberOfCasts " + 
+      log.debug("There was a problem parsing the numberOfCasts " + 
                    "value.  The value is: " + this.numberOfCasts);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the numberOfCasts " + 
+      log.debug("There was a problem parsing the numberOfCasts " + 
                    "value.  The value is: " + this.numberOfCasts);
       return value;
     }
@@ -3021,12 +3021,12 @@ public class CTDParser {
       return value;
       
     } catch ( NumberFormatException nfe ) {
-      logger.debug("There was a problem parsing the minimumConductivityFrequency " + 
+      log.debug("There was a problem parsing the minimumConductivityFrequency " + 
                    "value.  The value is: " + this.minimumConductivityFrequency);
       return value;
     
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the minimumConductivityFrequency " + 
+      log.debug("There was a problem parsing the minimumConductivityFrequency " + 
                    "value.  The value is: " + this.minimumConductivityFrequency);
       return value;
     }
@@ -3047,7 +3047,7 @@ public class CTDParser {
       return new Integer(strParts[0]).intValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pumpDelay " + 
+      log.debug("There was a problem parsing the pumpDelay " + 
                    "value.  The value is: " + this.pumpDelay);
       return value;
     }
@@ -3187,7 +3187,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the temperatureCoefficientTA0 " + 
+      log.debug("There was a problem parsing the temperatureCoefficientTA0 " + 
                    "value.  The value is: " + this.temperatureCoefficientTA0);
       return value;
     }
@@ -3208,7 +3208,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the temperatureCoefficientTA1 " + 
+      log.debug("There was a problem parsing the temperatureCoefficientTA1 " + 
                    "value.  The value is: " + this.temperatureCoefficientTA1);
       return value;
     }
@@ -3229,7 +3229,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the temperatureCoefficientTA2 " + 
+      log.debug("There was a problem parsing the temperatureCoefficientTA2 " + 
                    "value.  The value is: " + this.temperatureCoefficientTA2);
       return value;
     }
@@ -3250,7 +3250,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the temperatureCoefficientTA3 " + 
+      log.debug("There was a problem parsing the temperatureCoefficientTA3 " + 
                    "value.  The value is: " + this.temperatureCoefficientTA3);
       return value;
     }
@@ -3271,7 +3271,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the temperatureOffsetCoefficient " + 
+      log.debug("There was a problem parsing the temperatureOffsetCoefficient " + 
                    "value.  The value is: " + this.temperatureOffsetCoefficient);
       return value;
     }
@@ -3299,7 +3299,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientG " + 
+      log.debug("There was a problem parsing the conductivityCoefficientG " + 
                    "value.  The value is: " + this.conductivityCoefficientG);
       return value;
     }
@@ -3320,7 +3320,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientH " + 
+      log.debug("There was a problem parsing the conductivityCoefficientH " + 
                    "value.  The value is: " + this.conductivityCoefficientH);
       return value;
     }
@@ -3341,7 +3341,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientI " + 
+      log.debug("There was a problem parsing the conductivityCoefficientI " + 
                    "value.  The value is: " + this.conductivityCoefficientI);
       return value;
     }
@@ -3362,7 +3362,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientJ " + 
+      log.debug("There was a problem parsing the conductivityCoefficientJ " + 
                    "value.  The value is: " + this.conductivityCoefficientJ);
       return value;
     }
@@ -3383,7 +3383,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientCF0 " + 
+      log.debug("There was a problem parsing the conductivityCoefficientCF0 " + 
                    "value.  The value is: " + this.conductivityCoefficientCF0);
       return value;
     }
@@ -3404,7 +3404,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientCPCOR " + 
+      log.debug("There was a problem parsing the conductivityCoefficientCPCOR " + 
                    "value.  The value is: " + this.conductivityCoefficientCPCOR);
       return value;
     }
@@ -3425,7 +3425,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientCTCOR " + 
+      log.debug("There was a problem parsing the conductivityCoefficientCTCOR " + 
                    "value.  The value is: " + this.conductivityCoefficientCTCOR);
       return value;
     }
@@ -3446,7 +3446,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the conductivityCoefficientCSLOPE " + 
+      log.debug("There was a problem parsing the conductivityCoefficientCSLOPE " + 
                    "value.  The value is: " + this.conductivityCoefficientCSLOPE);
       return value;
     }
@@ -3474,7 +3474,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPA0 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPA0 " + 
                    "value.  The value is: " + this.pressureCoefficientPA0);
       return value;
     }
@@ -3495,7 +3495,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPA1 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPA1 " + 
                    "value.  The value is: " + this.pressureCoefficientPA1);
       return value;
     }
@@ -3516,7 +3516,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPA2 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPA2 " + 
                    "value.  The value is: " + this.pressureCoefficientPA2);
       return value;
     }
@@ -3537,7 +3537,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCA0 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCA0 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCA0);
       return value;
     }
@@ -3558,7 +3558,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCA1 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCA1 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCA1);
       return value;
     }
@@ -3579,7 +3579,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCA2 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCA2 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCA2);
       return value;
     }
@@ -3600,7 +3600,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCB0 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCB0 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCB0);
       return value;
     }
@@ -3621,7 +3621,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCB1 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCB1 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCB1);
       return value;
     }
@@ -3642,7 +3642,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTCB2 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTCB2 " + 
                    "value.  The value is: " + this.pressureCoefficientPTCB2);
       return value;
     }
@@ -3663,7 +3663,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA0 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTEMPA0 " + 
                    "value.  The value is: " + this.pressureCoefficientPTEMPA0);
       return value;
     }
@@ -3684,7 +3684,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA1 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTEMPA1 " + 
                    "value.  The value is: " + this.pressureCoefficientPTEMPA1);
       return value;
     }
@@ -3705,7 +3705,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureCoefficientPTEMPA2 " + 
+      log.debug("There was a problem parsing the pressureCoefficientPTEMPA2 " + 
                    "value.  The value is: " + this.pressureCoefficientPTEMPA2);
       return value;
     }
@@ -3726,7 +3726,7 @@ public class CTDParser {
       return new Double(strParts[0]).doubleValue();
       
     } catch ( NullPointerException npe ) {
-      logger.debug("There was a problem parsing the pressureOffsetCoefficient " + 
+      log.debug("There was a problem parsing the pressureOffsetCoefficient " + 
                    "value.  The value is: " + this.pressureOffsetCoefficient);
       return value;
     }

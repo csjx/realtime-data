@@ -63,7 +63,7 @@ public class Calibration {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(Calibration.class);
+  private static Log log = LogFactory.getLog(Calibration.class);
   
   /* The URL of the calibration file */
   private String calibrationURL;
@@ -243,7 +243,7 @@ public class Calibration {
         
       }
       
-      logger.debug("applied calibrationType " + calibrationType.toString() +
+      log.debug("applied calibrationType " + calibrationType.toString() +
                    ", produced " + returnValue   +
                    "\t\tfrom "      + observedValue +
                    "\t\tfor "       + variable);
@@ -585,7 +585,7 @@ public class Calibration {
           this.calibrationMap.put("calibration/coeffLines", coeffLines);
           this.calibrationMap.put("calibration/fitType", fitType);
           
-          //logger.debug(this.calibrationMap.toXMLString(1000));
+          //log.debug(this.calibrationMap.toXMLString(1000));
           
           // add the map if there are no more coefficient lines
           if ( coeffCount == 0 ) {
@@ -617,7 +617,7 @@ public class Calibration {
           
         // handle comments and blank lines
         } else if ( line.matches("^#.*") || line.matches("^$") ) {
-          //logger.debug("Skipping blank or commented calibration file lines.");
+          //log.debug("Skipping blank or commented calibration file lines.");
           
         } // end if()
         
@@ -636,7 +636,7 @@ public class Calibration {
       
     } // end try/catch
     
-    //logger.debug(this.calibrationsMap.toString());
+    //log.debug(this.calibrationsMap.toString());
     
     return success;
   }

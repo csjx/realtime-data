@@ -169,7 +169,7 @@ public class DavisWxSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(DavisWxSource.class);
+  private static Log log = LogFactory.getLog(DavisWxSource.class);
 
   /*
    * An integer value indicating the execution state.  This is used by the 
@@ -287,7 +287,7 @@ public class DavisWxSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("DavisWxSource.execute() called.");
+    log.debug("DavisWxSource.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -456,7 +456,7 @@ public class DavisWxSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+          //log.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
           //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
           //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
           //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
@@ -531,7 +531,7 @@ public class DavisWxSource extends RBNBSource {
                   sampleBuffer.put(byteOne);
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   
                 }
@@ -588,7 +588,7 @@ public class DavisWxSource extends RBNBSource {
                  this.davisWxParser = new DavisWxParser(sampleBuffer);
                  
                } catch (java.lang.Exception e) {
-                 logger.info("There was a problem parsing the binary weather LOOP packet. Skipping this sample.");
+                 log.info("There was a problem parsing the binary weather LOOP packet. Skipping this sample.");
                  byteOne   = 0x00;
                  byteTwo   = 0x00;
                  byteThree = 0x00;
@@ -798,34 +798,34 @@ public class DavisWxSource extends RBNBSource {
                // finally, send the channel map of data to the DataTurbine
                getSource().Flush(rbnbChannelMap);
                String sampleString = new String(Hex.encodeHex(sampleArray));
-               logger.info("Sample: " + sampleString);
-               logger.debug("barTrendAsString:               " + davisWxParser.getBarTrendAsString());
-               logger.debug("barometer:                      " + davisWxParser.getBarometer());
-               logger.debug("insideTemperature:              " + davisWxParser.getInsideTemperature());
-               logger.debug("insideHumidity:                 " + davisWxParser.getInsideHumidity());
-               logger.debug("outsideTemperature:             " + davisWxParser.getOutsideTemperature());
-               logger.debug("windSpeed:                      " + davisWxParser.getWindSpeed());
-               logger.debug("tenMinuteAverageWindSpeed:      " + davisWxParser.getTenMinuteAverageWindSpeed());
-               logger.debug("windDirection:                  " + davisWxParser.getWindDirection());
-               logger.debug("outsideHumidity:                " + davisWxParser.getOutsideHumidity());
-               logger.debug("rainRate:                       " + davisWxParser.getRainRate());
-               logger.debug("uvRadiation:                    " + davisWxParser.getUvRadiation());
-               logger.debug("solarRadiation:                 " + davisWxParser.getSolarRadiation());
-               logger.debug("stormRain:                      " + davisWxParser.getStormRain());
-               logger.debug("currentStormStartDate:          " + davisWxParser.getCurrentStormStartDate());
-               logger.debug("dailyRain:                      " + davisWxParser.getDailyRain());
-               logger.debug("monthlyRain:                    " + davisWxParser.getMonthlyRain());
-               logger.debug("yearlyRain:                     " + davisWxParser.getYearlyRain());
-               logger.debug("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
-               logger.debug("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
-               logger.debug("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
-               logger.debug("transmitterBatteryStatus:       " + Arrays.toString(davisWxParser.getTransmitterBatteryStatus()));
-               logger.debug("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
-               logger.debug("forecastAsString:               " + davisWxParser.getForecastAsString());
-               //logger.debug("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
-               logger.debug("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
-               logger.debug("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
-               logger.info(" flushed data to the DataTurbine. ");
+               log.info("Sample: " + sampleString);
+               log.debug("barTrendAsString:               " + davisWxParser.getBarTrendAsString());
+               log.debug("barometer:                      " + davisWxParser.getBarometer());
+               log.debug("insideTemperature:              " + davisWxParser.getInsideTemperature());
+               log.debug("insideHumidity:                 " + davisWxParser.getInsideHumidity());
+               log.debug("outsideTemperature:             " + davisWxParser.getOutsideTemperature());
+               log.debug("windSpeed:                      " + davisWxParser.getWindSpeed());
+               log.debug("tenMinuteAverageWindSpeed:      " + davisWxParser.getTenMinuteAverageWindSpeed());
+               log.debug("windDirection:                  " + davisWxParser.getWindDirection());
+               log.debug("outsideHumidity:                " + davisWxParser.getOutsideHumidity());
+               log.debug("rainRate:                       " + davisWxParser.getRainRate());
+               log.debug("uvRadiation:                    " + davisWxParser.getUvRadiation());
+               log.debug("solarRadiation:                 " + davisWxParser.getSolarRadiation());
+               log.debug("stormRain:                      " + davisWxParser.getStormRain());
+               log.debug("currentStormStartDate:          " + davisWxParser.getCurrentStormStartDate());
+               log.debug("dailyRain:                      " + davisWxParser.getDailyRain());
+               log.debug("monthlyRain:                    " + davisWxParser.getMonthlyRain());
+               log.debug("yearlyRain:                     " + davisWxParser.getYearlyRain());
+               log.debug("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
+               log.debug("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
+               log.debug("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
+               log.debug("transmitterBatteryStatus:       " + Arrays.toString(davisWxParser.getTransmitterBatteryStatus()));
+               log.debug("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
+               log.debug("forecastAsString:               " + davisWxParser.getForecastAsString());
+               //log.debug("forecastRuleNumberAsString:     " + davisWxParser.getForecastRuleNumberAsString());
+               log.debug("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
+               log.debug("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
+               log.info(" flushed data to the DataTurbine. ");
                
                  byteOne   = 0x00;
                  byteTwo   = 0x00;
@@ -834,7 +834,7 @@ public class DavisWxSource extends RBNBSource {
                  sampleBuffer.clear();
                  sampleByteCount = 0;
                  rbnbChannelMap.Clear();                      
-                 //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                 //log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                  //state = 0;
 
                 // Once the sample is flushed, take a new sample
@@ -965,7 +965,7 @@ public class DavisWxSource extends RBNBSource {
       
       try {
         this.socketChannel.write(commandBuffer);
-        logger.debug("Wrote " + command + " to the socket channel.");
+        log.debug("Wrote " + command + " to the socket channel.");
         result = true;
         
       } catch (IOException ioe ) {
@@ -1007,14 +1007,14 @@ public class DavisWxSource extends RBNBSource {
 
   public static void main (String[] args) {
     
-    logger.info("DavisWxSource.main() called.");
+    log.info("DavisWxSource.main() called.");
     
     try {
       // create a new instance of the DavisWxSource object, and parse the command 
       // line arguments as settings for this instance
       final DavisWxSource davisWxSource = new DavisWxSource();
       
-      // Set up a simple logger that logs to the console
+      // Set up a simple log that logs to the console
       PropertyConfigurator.configure(davisWxSource.getLogConfigurationFile());
 
       // parse the commandline arguments to configure the connection, then 
@@ -1029,7 +1029,7 @@ public class DavisWxSource extends RBNBSource {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -1058,7 +1058,7 @@ public class DavisWxSource extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -1098,7 +1098,7 @@ public class DavisWxSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }

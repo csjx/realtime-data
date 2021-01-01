@@ -1,7 +1,7 @@
 /*
  *  Copyright: 2016 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that represents a Satlantic STOR-X data logger sample
+ *    Purpose: A class that represents a Satlantic STOR-X data log sample
  *             from a binary data file.
  *
  *   Authors: Christopher Jones
@@ -38,16 +38,16 @@ import java.util.TimeZone;
 
 /**
  * A class that represents a single binary data file from a Satlantic
- * STOR-X data logger.  The parser treats the binary format as a series of
+ * STOR-X data log.  The parser treats the binary format as a series of
  * frames as defined by Satlantic's binary file format.  It parses each frame
  * out of the binary data based on the frame type and creates a frame map that
  * enables access to the individual fields of data.  It cuurently supports
- * the parsing of native StorX logger frames and Seabird CTD ASCII frames.
+ * the parsing of native StorX log frames and Seabird CTD ASCII frames.
  */
 public class StorXParser {
 
     /* The Logger instance used to log system messages */
-    static Log logger = LogFactory.getLog(StorXParser.class);
+    static Log log = LogFactory.getLog(StorXParser.class);
 
     /* A field that stores the binary UPD packet data input as a ByteBuffer */
     private ByteBuffer fileBuffer = ByteBuffer.allocate(8192);
@@ -150,10 +150,10 @@ public class StorXParser {
      */
     public void parse(ByteBuffer fileBuffer) throws Exception {
 
-        logger.debug("StorXParser.parse() called.");
+        log.debug("StorXParser.parse() called.");
 
         this.fileBuffer = fileBuffer;
-        //logger.debug(this.fileBuffer.toString());
+        //log.debug(this.fileBuffer.toString());
 
         try {
 
@@ -182,7 +182,7 @@ public class StorXParser {
                 byteOne = fileBuffer.get();
 
                 // show the byte stream coming in
-                //logger.debug("b1: " + new String(Hex.encodeHex(new byte[]{byteOne}))   + "\t" +
+                //log.debug("b1: " + new String(Hex.encodeHex(new byte[]{byteOne}))   + "\t" +
                 //             "b2: " + new String(Hex.encodeHex(new byte[]{byteTwo}))   + "\t" +
                 //             "b3: " + new String(Hex.encodeHex(new byte[]{byteThree})) + "\t" +
                 //             "b4: " + new String(Hex.encodeHex(new byte[]{byteFour}))  + "\t" +
@@ -297,7 +297,7 @@ public class StorXParser {
                                     currentFrameBuffer.clear();
 
                                 } else {
-                                    logger.debug(frameHeader + " frame " + frameCount +
+                                    log.debug(frameHeader + " frame " + frameCount +
                                         " length is " + currentFrameBuffer.capacity() +
                                         " not " + this.STOR_X_FRAME_SIZE);
                                 }
@@ -323,7 +323,7 @@ public class StorXParser {
                                         (BasicHierarchicalMap) frameMap.clone());
 
                                 } else {
-                                    logger.debug("This CTD frame is not a data sample." +
+                                    log.debug("This CTD frame is not a data sample." +
                                         " Skipping it. The string is: " +
                                         ctdFrame.getSample());
                                 }
@@ -354,7 +354,7 @@ public class StorXParser {
                                     currentFrameBuffer.clear();
 
                                 } else {
-                                    logger.debug(frameHeader + " frame " + frameCount +
+                                    log.debug(frameHeader + " frame " + frameCount +
                                         " length is " + currentFrameBuffer.capacity() +
                                         " not " + this.ISUS_FRAME_SIZE);
                                 }
@@ -384,7 +384,7 @@ public class StorXParser {
                                     currentFrameBuffer.clear();
 
                                 } else {
-                                    logger.debug(frameHeader + " frame " + frameCount +
+                                    log.debug(frameHeader + " frame " + frameCount +
                                         " length is " + currentFrameBuffer.capacity() +
                                         " not " + this.ISUS_FRAME_SIZE);
                                 }
@@ -392,7 +392,7 @@ public class StorXParser {
                                 currentFrameBuffer.clear();
 
                             } else {
-                                logger.info("The current frame type is not recognized. " +
+                                log.info("The current frame type is not recognized. " +
                                     "Discarding it.  The header was: " + frameHeader);
                                 currentFrameBuffer.clear();
 
@@ -424,10 +424,10 @@ public class StorXParser {
 
             } // end while()
 
-            logger.debug(this.framesMap.toXMLString(1000));
+            log.debug(this.framesMap.toXMLString(1000));
 
         } catch (Exception e) {
-            logger.debug("Failed to parse the data file.  The error message was:" +
+            log.debug("Failed to parse the data file.  The error message was:" +
                 e.getMessage());
             e.printStackTrace();
 
@@ -476,12 +476,12 @@ public class StorXParser {
 
         } catch (BufferUnderflowException bue) {
 
-            logger.debug("There was a problem reading the timestamp. " +
+            log.debug("There was a problem reading the timestamp. " +
                 "The error message was: " + bue.getMessage());
 
         } catch (NullPointerException npe) {
 
-            logger.debug("There was a problem converting the timestamp. " +
+            log.debug("There was a problem converting the timestamp. " +
                 "The error message was: " + npe.getMessage());
 
         } finally {

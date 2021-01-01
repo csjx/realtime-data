@@ -64,7 +64,7 @@ import java.util.TimerTask;
 
 /**
  * A class used to harvest a decimal ASCII data from a Seacat 16plus CTD) from
- * an emails created by a Satlantic STOR-X logger. The data are converted into
+ * an emails created by a Satlantic STOR-X log. The data are converted into
  * RBNB frames and pushed into the RBNB DataTurbine real time server. This class
  * extends org.nees.rbnb.RBNBSource, which in turn extends
  * org.nees.rbnb.RBNBBase, and therefore follows the API conventions found in
@@ -142,7 +142,7 @@ public class StorXDispatcher extends RBNBSource {
     private int sampleByteCount = 0;
 
     /* The Logger instance used to log system messages */
-    private static Log logger = LogFactory.getLog(StorXDispatcher.class);
+    private static Log log = LogFactory.getLog(StorXDispatcher.class);
 
     /* The XML configuration file location for the list of sensor properties */
     private String xmlConfigurationFile = "lib/email.account.properties.xml";
@@ -245,7 +245,7 @@ public class StorXDispatcher extends RBNBSource {
      * @return failed True if the execution failed
      */
     protected boolean execute() {
-        logger.debug("StorXDispatcher.execute() called.");
+        log.debug("StorXDispatcher.execute() called.");
         boolean failed = true; // indicates overall success of execute()
         boolean messageProcessed = false; // indicates per message success
 
@@ -278,7 +278,7 @@ public class StorXDispatcher extends RBNBSource {
             processedMailbox = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").processedMailbox");
             prefetch = (String) this.xmlConfiguration.getProperty("account(" + aIndex + ").prefetch");
 
-            logger.debug("\n\nACCOUNT DETAILS: \n" +
+            log.debug("\n\nACCOUNT DETAILS: \n" +
                 "accountName     : " + accountName + "\n" +
                 "server          : " + server + "\n" +
                 "username        : " + username + "\n" +
@@ -303,14 +303,14 @@ public class StorXDispatcher extends RBNBSource {
 
                 try {
                     // pause for 10 seconds
-                    logger.debug(
+                    log.debug(
                         "There was a problem connecting to the IMAP server. " + "Waiting 10 seconds to retry.");
                     Thread.sleep(10000L);
                     this.mailStore = mailSession.getStore(protocol);
 
                 } catch (NoSuchProviderException nspe2) {
 
-                    logger.debug("There was an error connecting to the mail server. The " + "message was: "
+                    log.debug("There was an error connecting to the mail server. The " + "message was: "
                         + nspe2.getMessage());
                     nspe2.printStackTrace();
                     failed = true;
@@ -318,7 +318,7 @@ public class StorXDispatcher extends RBNBSource {
 
                 } catch (InterruptedException ie) {
 
-                    logger.debug("The thread was interrupted: " + ie.getMessage());
+                    log.debug("The thread was interrupted: " + ie.getMessage());
                     failed = true;
                     return !failed;
 
@@ -364,7 +364,7 @@ public class StorXDispatcher extends RBNBSource {
 
                 });
 
-                logger.debug("Number of messages: " + messages.size());
+                log.debug("Number of messages: " + messages.size());
                 for (Message message : messages) {
 
                     // Copy the message to ensure we have the full attachment
@@ -378,12 +378,12 @@ public class StorXDispatcher extends RBNBSource {
 
                     // The subfolder of the processed mail folder (e.g. 2016-12);
                     String destinationFolder = formatter.format(sentDate);
-                    logger.debug("Message date: " + sentDate +
+                    log.debug("Message date: " + sentDate +
                         "\tNumber: " + copiedMessage.getMessageNumber());
                     String[] subjectParts = messageSubject.split("\\s");
-                    String loggerSerialNumber = "SerialNumber";
+                    String logSerialNumber = "SerialNumber";
                     if (subjectParts.length > 1) {
-                        loggerSerialNumber = subjectParts[2];
+                        logSerialNumber = subjectParts[2];
 
                     }
 
@@ -391,22 +391,22 @@ public class StorXDispatcher extends RBNBSource {
                     // process
                     if (copiedMessage.isMimeType("multipart/mixed")) {
 
-                        logger.debug("Message size: " + copiedMessage.getSize());
+                        log.debug("Message size: " + copiedMessage.getSize());
 
                         MimeMessageParser parser = new MimeMessageParser(copiedMessage);
                         try {
                             parser.parse();
 
                         } catch (Exception e) {
-                            logger.error("Failed to parse the MIME message: " + e.getMessage());
+                            log.error("Failed to parse the MIME message: " + e.getMessage());
                             continue;
                         }
                         ByteBuffer messageAttachment = ByteBuffer.allocate(256); // init only
 
-                        logger.debug("Has attachments: " + parser.hasAttachments());
+                        log.debug("Has attachments: " + parser.hasAttachments());
                         for (DataSource dataSource : parser.getAttachmentList()) {
                             if (StringUtils.isNotBlank(dataSource.getName())) {
-                                logger.debug("Attachment: " +
+                                log.debug("Attachment: " +
                                     dataSource.getName() + ", " +
                                     dataSource.getContentType());
 
@@ -436,14 +436,14 @@ public class StorXDispatcher extends RBNBSource {
 
                             BasicHierarchicalMap frameMap = (BasicHierarchicalMap) framesIterator.next();
 
-                            // logger.debug(frameMap.toXMLString(1000));
+                            // log.debug(frameMap.toXMLString(1000));
 
                             String frameType = (String) frameMap.get("type");
                             String sensorSerialNumber = (String) frameMap.get("serialNumber");
 
                             // handle each instrument type
                             if (frameType.equals("HDR")) {
-                                logger.debug("This is a header frame. Skipping it.");
+                                log.debug("This is a header frame. Skipping it.");
 
                             } else if (frameType.equals("STX")) {
 
@@ -504,21 +504,21 @@ public class StorXDispatcher extends RBNBSource {
 
                             } else {
 
-                                logger.debug("The frame type " + frameType + " is not recognized. Skipping it.");
+                                log.debug("The frame type " + frameType + " is not recognized. Skipping it.");
                             }
 
                         } // end while()
 
-                        if (this.sourceMap.get(loggerSerialNumber) != null) {
+                        if (this.sourceMap.get(logSerialNumber) != null) {
 
                             // Note: Use message (not copiedMessage) when setting flags 
 
                             if (!messageProcessed) {
-                                logger.info("Failed to process message: " + "Message Number: "
-                                    + message.getMessageNumber() + "  " + "Logger Serial:" + loggerSerialNumber);
+                                log.info("Failed to process message: " + "Message Number: "
+                                    + message.getMessageNumber() + "  " + "Logger Serial:" + logSerialNumber);
                                 // leave it in the inbox, flagged as seen (read)
                                 message.setFlag(Flags.Flag.SEEN, true);
-                                logger.debug("Saw message " + message.getMessageNumber());
+                                log.debug("Saw message " + message.getMessageNumber());
 
                             } else {
 
@@ -528,18 +528,18 @@ public class StorXDispatcher extends RBNBSource {
                                 boolean created = destination.create(Folder.HOLDS_MESSAGES);
                                 inbox.copyMessages(new Message[]{message}, destination);
                                 message.setFlag(Flags.Flag.DELETED, true);
-                                logger.debug("Deleted message " + message.getMessageNumber());
+                                log.debug("Deleted message " + message.getMessageNumber());
                             } // end if()
 
                         } else {
-                            logger.debug("There is no configuration information for " + "the logger serial number "
-                                + loggerSerialNumber + ". Please add the configuration to the "
+                            log.debug("There is no configuration information for " + "the log serial number "
+                                + logSerialNumber + ". Please add the configuration to the "
                                 + "email.account.properties.xml configuration file.");
 
                         } // end if()
 
                     } else {
-                        logger.debug("This is not a data email since there is no "
+                        log.debug("This is not a data email since there is no "
                             + "attachment. Skipping it. Subject: " + messageSubject);
 
                     } // end if()
@@ -560,7 +560,7 @@ public class StorXDispatcher extends RBNBSource {
                     return !failed;
 
                 }
-                logger.info("There was an error reading the mail message. The " + "message was: " + me.getMessage());
+                log.info("There was an error reading the mail message. The " + "message was: " + me.getMessage());
                 me.printStackTrace();
                 failed = true;
                 return !failed;
@@ -574,7 +574,7 @@ public class StorXDispatcher extends RBNBSource {
                     return !failed;
 
                 }
-                logger.info(
+                log.info(
                     "There was an I/O error reading the message part. The " + "message was: " + me.getMessage());
                 me.printStackTrace();
                 failed = true;
@@ -589,7 +589,7 @@ public class StorXDispatcher extends RBNBSource {
                     return !failed;
 
                 }
-                logger.info("There was an error reading messages from the folder. The " + "message was: "
+                log.info("There was an error reading messages from the folder. The " + "message was: "
                     + ese.getMessage());
                 failed = true;
                 return !failed;
@@ -600,7 +600,7 @@ public class StorXDispatcher extends RBNBSource {
                     this.mailStore.close();
 
                 } catch (MessagingException me2) {
-                    logger.debug("Couldn't close the mail store: " + me2.getMessage());
+                    log.debug("Couldn't close the mail store: " + me2.getMessage());
 
                 }
 
@@ -618,7 +618,7 @@ public class StorXDispatcher extends RBNBSource {
      * serial number.
      */
     protected boolean connect() {
-        logger.debug("StorXDispatcher.execute() called.");
+        log.debug("StorXDispatcher.execute() called.");
 
         if (isConnected()) {
             return true;
@@ -636,8 +636,8 @@ public class StorXDispatcher extends RBNBSource {
 
             // the sensor properties to be pulled from each account's sensor
             // list.
-            String loggerName = "";
-            String loggerSerialNumber = "";
+            String logName = "";
+            String logSerialNumber = "";
 
             String sourceName = "";
             String sourceType = "";
@@ -654,22 +654,22 @@ public class StorXDispatcher extends RBNBSource {
 
                 int aIndex = accountList.indexOf(aIterator.next());
 
-                // evaluate each logger listed in the
+                // evaluate each log listed in the
                 // email.account.properties.xml file
-                List loggerList = xmlConfiguration.getList("account.logger.loggerName");
+                List logList = xmlConfiguration.getList("account.log.logName");
 
-                for (Iterator gIterator = loggerList.iterator(); gIterator.hasNext(); ) {
+                for (Iterator gIterator = logList.iterator(); gIterator.hasNext(); ) {
 
-                    int gIndex = loggerList.indexOf(gIterator.next());
+                    int gIndex = logList.indexOf(gIterator.next());
 
-                    loggerName = (String) this.xmlConfiguration
-                        .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerName");
-                    loggerSerialNumber = (String) this.xmlConfiguration
-                        .getProperty("account(" + aIndex + ").logger(" + gIndex + ").loggerSerialNumber");
+                    logName = (String) this.xmlConfiguration
+                        .getProperty("account(" + aIndex + ").log(" + gIndex + ").logName");
+                    logSerialNumber = (String) this.xmlConfiguration
+                        .getProperty("account(" + aIndex + ").log(" + gIndex + ").logSerialNumber");
 
-                    // evaluate each logger listed in the
+                    // evaluate each log listed in the
                     // email.account.properties.xml file
-                    List sensorList = xmlConfiguration.getList("account.logger.sensor.name");
+                    List sensorList = xmlConfiguration.getList("account.log.sensor.name");
 
                     for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
 
@@ -677,19 +677,19 @@ public class StorXDispatcher extends RBNBSource {
                         int sIndex = sensorList.indexOf(sIterator.next());
 
                         sourceName = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").name");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").name");
                         sourceType = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").type");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").type");
                         serialNumber = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").serialNumber");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").serialNumber");
                         description = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").description");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").description");
                         cacheSize = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").cacheSize");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").cacheSize");
                         archiveSize = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveSize");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").archiveSize");
                         archiveChannel = (String) this.xmlConfiguration.getProperty(
-                            "account(" + aIndex + ").logger(" + gIndex + ").sensor(" + sIndex + ").archiveChannel");
+                            "account(" + aIndex + ").log(" + gIndex + ").sensor(" + sIndex + ").archiveChannel");
 
                         // test for all of the critical source information
                         if (sourceName != null && sourceType != null && cacheSize != null && archiveSize != null
@@ -740,12 +740,12 @@ public class StorXDispatcher extends RBNBSource {
 
             } // end for()
 
-            logger.debug(this.sourceMap.toString());
+            log.debug(this.sourceMap.toString());
 
             return true;
 
         } catch (Exception e) {
-            logger.debug("Failed to connect. Message: " + e.getMessage());
+            log.debug("Failed to connect. Message: " + e.getMessage());
             return false;
 
         }
@@ -820,7 +820,7 @@ public class StorXDispatcher extends RBNBSource {
 
                                                                  // disconnect StorX sources
                                                                  StorXSource source = (StorXSource) sourceObject;
-                                                                 logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                 log.info("Disconnecting source: " + source.getRBNBClientName());
                                                                  source.stopConnection();
 
                                                              } catch (java.lang.ClassCastException cce) {
@@ -828,14 +828,14 @@ public class StorXDispatcher extends RBNBSource {
                                                                  // disconnect ISUS sources
                                                                  try {
                                                                      ISUSSource source = (ISUSSource) sourceObject;
-                                                                     logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                     log.info("Disconnecting source: " + source.getRBNBClientName());
                                                                      source.stopConnection();
 
                                                                  } catch (java.lang.ClassCastException cce2) {
 
                                                                      // disconnect CTD sources
                                                                      CTDSource source = (CTDSource) sourceObject;
-                                                                     logger.info("Disconnecting source: " + source.getRBNBClientName());
+                                                                     log.info("Disconnecting source: " + source.getRBNBClientName());
                                                                      source.stopConnection();
 
                                                                  } // end try/catch
@@ -861,7 +861,7 @@ public class StorXDispatcher extends RBNBSource {
                     // fetch data on a schedule
                     TimerTask fetchData = new TimerTask() {
                         public void run() {
-                            logger.debug("TimerTask.run() called.");
+                            log.debug("TimerTask.run() called.");
                             storXDispatcher.execute();
                         }
                     };
@@ -871,14 +871,14 @@ public class StorXDispatcher extends RBNBSource {
                     executeTimer.scheduleAtFixedRate(fetchData, new Date(), storXDispatcher.executeInterval);
 
                 } else {
-                    logger.info("Could not establish a connection to the DataTurbine. Exiting.");
+                    log.info("Could not establish a connection to the DataTurbine. Exiting.");
                     System.exit(0);
                 }
 
             }
 
         } catch (Exception e) {
-            logger.info("Error in main(): " + e.getMessage());
+            log.info("Error in main(): " + e.getMessage());
             e.printStackTrace();
 
         }
@@ -950,11 +950,11 @@ public class StorXDispatcher extends RBNBSource {
             failed = false;
 
         } catch (NullPointerException npe) {
-            logger.info("There was an error reading the XML configuration file. " + "The error message was: "
+            log.info("There was an error reading the XML configuration file. " + "The error message was: "
                 + npe.getMessage());
 
         } catch (ConfigurationException ce) {
-            logger.info("There was an error creating the XML configuration. " + "The error message was: "
+            log.info("There was an error creating the XML configuration. " + "The error message was: "
                 + ce.getMessage());
 
         }

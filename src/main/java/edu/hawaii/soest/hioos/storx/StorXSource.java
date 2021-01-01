@@ -42,7 +42,7 @@ import java.util.TimeZone;
 
 /**
  * A simple class used to process binary data from a Satlantic
- * STOR-X data logger.  The data file is converted into RBNB frames
+ * STOR-X data log.  The data file is converted into RBNB frames
  * and pushed into the RBNB DataTurbine real time server.  This class extends
  * org.nees.rbnb.RBNBSource, which in turn extends org.nees.rbnb.RBNBBase,
  * and therefore follows the API conventions found in the org.nees.rbnb code.
@@ -53,7 +53,7 @@ import java.util.TimeZone;
 public class StorXSource extends RBNBSource {
 
     /* The Logger instance used to log system messages */
-    static Log logger = LogFactory.getLog(StorXSource.class);
+    static Log log = LogFactory.getLog(StorXSource.class);
 
     /* The XML configuration file location for the list of sensor properties */
     private String xmlConfigurationFile = "lib/sensor.properties.xml";
@@ -152,7 +152,7 @@ public class StorXSource extends RBNBSource {
      */
     public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
 
-        logger.debug("StorXSource.process() called.");
+        log.debug("StorXSource.process() called.");
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 
@@ -176,7 +176,7 @@ public class StorXSource extends RBNBSource {
             boolean isImmersed = false;
             String calibrationURL = null;
 
-            List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
+            List sensorList = xmlConfig.configurationsAt("account.log.sensor");
 
             for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
                 //
@@ -330,14 +330,14 @@ public class StorXSource extends RBNBSource {
                         // DataTurbine
                         getSource().Register(registerChannelMap);
                         getSource().Flush(rbnbChannelMap);
-                        logger.info("Sample sent to the DataTurbine:" + sampleString);
+                        log.info("Sample sent to the DataTurbine:" + sampleString);
 
                         registerChannelMap.Clear();
                         rbnbChannelMap.Clear();
 
                     } else {
 
-                        logger.info("Couldn't apply the calibration coefficients. " +
+                        log.info("Couldn't apply the calibration coefficients. " +
                             "Skipping this sample.");
 
                     } // end if()

@@ -66,7 +66,7 @@ public class AdamSource extends RBNBSource {
   /**
    * The Log instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(AdamSource.class);
+  private static Log log = LogFactory.getLog(AdamSource.class);
   
   
 ///**
@@ -182,7 +182,7 @@ public class AdamSource extends RBNBSource {
   protected boolean process(String datagramAddress, XMLConfiguration xmlConfig,
                             ByteBuffer sampleBuffer) {
     
-    logger.debug("AdamSource.process() called.");
+    log.debug("AdamSource.process() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -200,7 +200,7 @@ public class AdamSource extends RBNBSource {
         
       this.adamParser = new AdamParser(sampleBuffer);
       
-      logger.debug(                                                        "\n" +
+      log.debug(                                                        "\n" +
         "channelZero       : "  + this.adamParser.getChannelZero()       + "\n" +
         "channelOne        : "  + this.adamParser.getChannelOne()        + "\n" +
         "channelTwo        : "  + this.adamParser.getChannelTwo()        + "\n" +
@@ -271,7 +271,7 @@ public class AdamSource extends RBNBSource {
         type        = (String) xmlConfig.getProperty("sensor(" + index + ").type" );
         
         
-        logger.debug("Sensor details:"                      + 
+        log.debug("Sensor details:"                      + 
                      "\n\t\t\t\t\t\t\t\t\t\taddress     : " + address +
                      "\n\t\t\t\t\t\t\t\t\t\tname        : " + sourceName +
                      "\n\t\t\t\t\t\t\t\t\t\tdescription : " + description +
@@ -295,7 +295,7 @@ public class AdamSource extends RBNBSource {
                                 pindex                             +
                                 ")[@number]");
                                 
-          logger.debug("\tport " + portNumber + " details:");
+          log.debug("\tport " + portNumber + " details:");
           
           List measurementList = xmlConfig.getList("sensor("       +
                                                    index           +
@@ -327,7 +327,7 @@ public class AdamSource extends RBNBSource {
             // get the voltageChannel and measurement label values
             voltageChannel = (String) xmlConfig.getProperty(voltagePath);
             measurement    = (String) xmlConfig.getProperty(measurementPath);
-            logger.debug("\t\t"                     + 
+            log.debug("\t\t"                     + 
                          "voltageChannel: "         + 
                          voltageChannel             + 
                          "\n\t\t\t\t\t\t\t\t\t\t\t" + 
@@ -348,12 +348,12 @@ public class AdamSource extends RBNBSource {
                 voltageChannelTreeMap.put(voltageChannelInt, channelPath);
                 
               } else {
-              logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
+              log.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
               
               } // end sourceName if() statement
             
             } else {
-              logger.debug("\t\tNo IP address match. " + datagramAddress + " != " + address);
+              log.debug("\t\tNo IP address match. " + datagramAddress + " != " + address);
             
             } //end IP address if() statement
           } // end for each channel
@@ -409,7 +409,7 @@ public class AdamSource extends RBNBSource {
         registerChannelMap.PutUserInfo(channelIndex, "units=volts");
         registerChannelMap.PutUserInfo(channelIndex, "description=" + description);
         
-        logger.debug("Voltage Channel Tree Map: " + voltageChannelTreeMap.toString());
+        log.debug("Voltage Channel Tree Map: " + voltageChannelTreeMap.toString());
         
         // then the channel and voltage
         channelIndex = rbnbChannelMap.Add(channelPathFromMap);
@@ -442,13 +442,13 @@ public class AdamSource extends RBNBSource {
         // DataTurbine
         getSource().Register(registerChannelMap);
         getSource().Flush(rbnbChannelMap);
-        logger.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
+        log.info(getRBNBClientName() + " Sample sent to the DataTurbine: " + decimalASCIISampleData.toString());
         registerChannelMap.Clear();
         rbnbChannelMap.Clear();
         
         sampleBuffer.clear();
       } else {
-        logger.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
+        log.debug("\t\tSource names don't match: " + sourceName + " != " + getRBNBClientName());
         registerChannelMap.Clear();
         rbnbChannelMap.Clear();
         

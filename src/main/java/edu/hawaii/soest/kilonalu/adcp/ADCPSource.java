@@ -158,7 +158,7 @@ public class ADCPSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(ADCPSource.class);
+  private static Log log = LogFactory.getLog(ADCPSource.class);
 
   //private int DEFAULT_CACHE_FRAME_SIZE =   100000; // ~100MB for 1K Ensembles
   //private int DEFAULT_ARCHIVE_FRAME_SIZE = 1000000; // ~1GB for 1K Ensembles
@@ -332,7 +332,7 @@ public class ADCPSource extends RBNBSource {
               int upperEnsembleByte = (byteOne & 0xFF) << 8;
               int lowerEnsembleByte = (byteTwo  & 0xFF);
               ensembleBytes = upperEnsembleByte + lowerEnsembleByte;
-              logger.debug("Number of Bytes in the Ensemble: " +
+              log.debug("Number of Bytes in the Ensemble: " +
                            ensembleBytes);
 
               if ( ensembleBuffer.remaining() > 0 ) {
@@ -527,7 +527,7 @@ public class ADCPSource extends RBNBSource {
                   rbnbChannelMap.PutTimeAuto("server");
                   rbnbChannelMap.PutDataAsByteArray(channelIndex, ensembleArray);
                   getSource().Flush(rbnbChannelMap);
-                  logger.debug(
+                  log.debug(
                     "flushed: "   + ensembleByteCount          + " "    +
                     "ens cksum: " + ensembleChecksum           + "\t\t" +
                     "ens pos: "   + ensembleBuffer.position()  + "\t"   +
@@ -536,7 +536,7 @@ public class ADCPSource extends RBNBSource {
                     "buf rem: "   + buffer.remaining()         + "\t"   +
                     "state: "     + state
                   );
-                  logger.info("Sent ADCP ensemble to the data turbine.");
+                  log.info("Sent ADCP ensemble to the data turbine.");
     
                   // only clear all four bytes if we are not one or two bytes 
                   // from the end of the byte buffer (i.e. the header id 
@@ -546,7 +546,7 @@ public class ADCPSource extends RBNBSource {
                        buffer.position() == 0) {
                     byteThree = 0x00;
                     byteFour = 0x00;
-                    logger.debug("Cleared ONLY b3, b4.");
+                    log.debug("Cleared ONLY b3, b4.");
                   } else if ( byteOne == 0x7f && 
                               ensembleByteCount > ensembleBytes &&
                               buffer.position() == 1 ) {
@@ -554,20 +554,20 @@ public class ADCPSource extends RBNBSource {
                       byteTwo = 0x00;
                       byteThree = 0x00;
                       byteFour = 0x00;
-                      logger.debug("Cleared ONLY b2, b3, b4.");
+                      log.debug("Cleared ONLY b2, b3, b4.");
     
                   } else {
                     byteOne = 0x00;
                     byteTwo = 0x00;
                     byteThree = 0x00;
                     byteFour = 0x00;                      
-                    logger.debug("Cleared ALL b1, b2, b3, b4.");
+                    log.debug("Cleared ALL b1, b2, b3, b4.");
                   }
     
                   //rewind the position to before the next ensemble's header id
                   if ( buffer.position() >= 2 ) {
                     buffer.position(buffer.position() - 2);
-                    logger.debug("Moved position back two, now: " +
+                    log.debug("Moved position back two, now: " +
                                  buffer.position());
                   }
     
@@ -582,7 +582,7 @@ public class ADCPSource extends RBNBSource {
                 } else {
     
                   // The checksums don't match, move on 
-                  logger.info("not equal: " +
+                  log.info("not equal: " +
                                "calc chksum: " + 
                                (ensembleChecksum % 65535) +
                                "\tens chksum: " + trueChecksum +
@@ -625,7 +625,7 @@ public class ADCPSource extends RBNBSource {
           byteThree = byteTwo;
           byteTwo = byteOne;
 
-          logger.debug("remaining:\t" + buffer.remaining() +
+          log.debug("remaining:\t" + buffer.remaining() +
                        "\tstate:\t" + state +
                        "\tens byte count:\t" + ensembleByteCount +
                        "\tens bytes:\t" + ensembleBytes +
@@ -777,7 +777,7 @@ public class ADCPSource extends RBNBSource {
 
   public static void main (String[] args) {
     
-    logger.info("ADCPSource.main() called.");
+    log.info("ADCPSource.main() called.");
     
     try {
       // create a new instance of the ADCPSource object, and parse the command 
@@ -800,7 +800,7 @@ public class ADCPSource extends RBNBSource {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -829,7 +829,7 @@ public class ADCPSource extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -871,7 +871,7 @@ public class ADCPSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }

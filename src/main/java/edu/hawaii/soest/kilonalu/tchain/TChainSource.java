@@ -49,7 +49,7 @@ import org.nees.rbnb.RBNBSource;
 
 /**
  * A simple class used to harvest a decimal ASCII data stream from a TChain 
- * temperature logger) over a TCP socket connection to a
+ * temperature log) over a TCP socket connection to a
  * serial2ip converter host. The data stream is then converted into RBNB frames 
  * and pushed into the RBNB DataTurbine real time server.  This class extends 
  * org.nees.rbnb.RBNBSource, which in turn extends org.nees.rbnb.RBNBBase, 
@@ -143,7 +143,7 @@ public class TChainSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(TChainSource.class);
+  private static Log log = LogFactory.getLog(TChainSource.class);
 
   protected int state = 0;
   
@@ -271,7 +271,7 @@ public class TChainSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("TChainSource.execute() called.");
+    log.debug("TChainSource.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -310,7 +310,7 @@ public class TChainSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-         logger.debug("char: " + (char) byteOne                                   + "\t" + 
+         log.debug("char: " + (char) byteOne                                   + "\t" + 
                       "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
@@ -404,7 +404,7 @@ public class TChainSource extends RBNBSource {
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info("Sample: " + 
+                log.info("Sample: " + 
                             sampleString.substring(0, sampleString.length() - 2) + 
                             " sent data to the DataTurbine. ");
                                             
@@ -415,7 +415,7 @@ public class TChainSource extends RBNBSource {
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   rbnbChannelMap.Clear();                      
-                  logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                  log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   //state = 0;
                   
               } else { // not 0x0D20
@@ -427,7 +427,7 @@ public class TChainSource extends RBNBSource {
                   sampleBuffer.put(byteOne);
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   
                 }
@@ -599,7 +599,7 @@ public class TChainSource extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( tChainSource.parseArgs(args) ) {
-        logger.info("TChainSource.main() called.");
+        log.info("TChainSource.main() called.");
     
         tChainSource.start();
       }
@@ -614,7 +614,7 @@ public class TChainSource extends RBNBSource {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -643,7 +643,7 @@ public class TChainSource extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -683,7 +683,7 @@ public class TChainSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }
@@ -730,7 +730,7 @@ public class TChainSource extends RBNBSource {
           }
 
         } catch (Exception de ) {
-          logger.info("Please set the record delimiter (-l) with a one or two byte" +
+          log.info("Please set the record delimiter (-l) with a one or two byte" +
                        " comma-sparated sequence in hexadecimal format, such as 0D,0A" +
                        " (which represents a Windows line ending \\r\\n).");
 

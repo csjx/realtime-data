@@ -51,15 +51,15 @@ public class AdamParser {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(AdamParser.class);
+  private static Log log = LogFactory.getLog(AdamParser.class);
   
   /**
-   *  The voltage sense range for the ADAM logger (+/- 10 volts)
+   *  The voltage sense range for the ADAM log (+/- 10 volts)
    */
   private float voltageSenseRange = 20f; 
 
   /**
-   *  The voltage full range for the ADAM logger (16-bit == 65536)
+   *  The voltage full range for the ADAM log (16-bit == 65536)
    */
   private float voltageFullRange = 65536f;
   

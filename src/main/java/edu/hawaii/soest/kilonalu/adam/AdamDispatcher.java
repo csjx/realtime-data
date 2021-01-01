@@ -67,7 +67,7 @@ public class AdamDispatcher {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(AdamDispatcher.class);
+  private static Log log = LogFactory.getLog(AdamDispatcher.class);
   
   
   /**
@@ -202,7 +202,7 @@ public class AdamDispatcher {
    * @return failed True if the execution fails
    */
   protected boolean execute() {
-    logger.info("AdamDispatcher.execute() called.");
+    log.info("AdamDispatcher.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -225,7 +225,7 @@ public class AdamDispatcher {
         // receive any incoming UDP packets and parse the data payload
         datagramSocket.receive(this.datagramPacket);
         
-        logger.debug("Host: " + datagramPacket.getAddress() + 
+        log.debug("Host: " + datagramPacket.getAddress() + 
                       " data: " + new String(Hex.encodeHex(datagramPacket.getData())));
         
         // the address seems to be returned with a leading slash (/). Trim it.
@@ -243,7 +243,7 @@ public class AdamDispatcher {
           source.process(datagramAddress, this.xmlConfiguration, sampleBuffer);
             
         } else {
-          logger.debug("There is no configuration information for " +
+          log.debug("There is no configuration information for " +
                       "the ADAM module at " + datagramAddress      +
                       ". Please add the configuration to the "     +
                       "sensor.properties.xml configuration file.");
@@ -361,7 +361,7 @@ public class AdamDispatcher {
       
       AdamSource adamSource = sourceMap.get(sIterator.next());
       adamSource.stopConnection();
-      logger.info("Disconnected from source: " + adamSource.getRBNBClientName());
+      log.info("Disconnected from source: " + adamSource.getRBNBClientName());
     }
     connected = false;
     
@@ -419,7 +419,7 @@ public class AdamDispatcher {
       // line arguments and xml configuration as settings for this instance
       final AdamDispatcher adamDispatcher = new AdamDispatcher();
       
-      logger.info("AdamDispatcher.main() called.");
+      log.info("AdamDispatcher.main() called.");
       
       // parse the commandline arguments and the sensor configuration file
       // to configure the UDP source and RBNB serverconnections, then 
@@ -438,7 +438,7 @@ public class AdamDispatcher {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -469,7 +469,7 @@ public class AdamDispatcher {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -491,7 +491,7 @@ public class AdamDispatcher {
       command = ( new PosixParser() ).parse(setOptions(), args);
       
     } catch ( ParseException pe ) {
-      logger.info("There was an error parsing the command line options. "  + 
+      log.info("There was an error parsing the command line options. "  + 
       "Please be sure to use the correct options. The error message was: " +
       pe.getMessage());
       return false;
@@ -518,11 +518,11 @@ public class AdamDispatcher {
        failed = false;
        
      } catch ( NullPointerException npe ) {
-       logger.info("There was an error reading the XML configuration file. " +
+       log.info("There was an error reading the XML configuration file. " +
          "The error message was: " + npe.getMessage());
 
      } catch ( ConfigurationException ce ) {
-       logger.info("There was an error creating the XML configuration. " +
+       log.info("There was an error creating the XML configuration. " +
          "The error message was: " + ce.getMessage());
        
      }
@@ -582,7 +582,7 @@ public class AdamDispatcher {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Please enter a numeric value for the host port. " +
+          log.info("Please enter a numeric value for the host port. " +
                       hostPort + " is not a valid number.");
           return false;
         }

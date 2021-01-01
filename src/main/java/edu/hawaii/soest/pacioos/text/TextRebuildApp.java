@@ -118,7 +118,7 @@ public class TextRebuildApp {
     /* A map of write task results for reporting */
     private static Map<String, String> completedWriteTasks = new HashMap<>();
 
-    /* Set up a logger */
+    /* Set up a log */
     private static final Log log = LogFactory.getLog(TextRebuildApp.class);
 
     /* The list of date time instants associated with the rebuild */

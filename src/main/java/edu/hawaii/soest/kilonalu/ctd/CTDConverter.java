@@ -59,7 +59,7 @@ public class CTDConverter {
   /**
    * The Logger instance used to log system messages 
    */
-  static Log logger = LogFactory.getLog(CTDConverter.class);
+  static Log log = LogFactory.getLog(CTDConverter.class);
         
   /**
    * The instance of the CTDParser object that holds the original data and
@@ -83,9 +83,6 @@ public class CTDConverter {
    *  of the 'DS' command and the 'DCAL' command in order to inform the parser
    *  which data fields should be expected, and which CTD output format to expect.
    *  The data observations should follow the output of the 'DS' and 'DCAL' commands.
-   *
-   *  @param dataString The CTDParser object that contains the data and metadata  
-   *                    from the instrument
    */
   public CTDConverter(CTDParser ctdParser) {
     

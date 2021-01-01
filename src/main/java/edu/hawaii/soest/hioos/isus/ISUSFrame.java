@@ -51,7 +51,7 @@ import org.apache.commons.logging.LogFactory;
 public class ISUSFrame {
 
 	/* The Logger instance used to log system messages */
-	private static Log logger = LogFactory.getLog(ISUSFrame.class);
+	private static Log log = LogFactory.getLog(ISUSFrame.class);
 
 	/* A ISUS frame size in bytes as an integer */
 	private final int ISUS_FRAME_SIZE = 8192;
@@ -316,7 +316,7 @@ public class ISUSFrame {
 			return new String(this.header.array(), "US-ASCII");
 
 		} catch (UnsupportedEncodingException uee) {
-			logger.debug("The string encoding was not recognized: " + uee.getMessage());
+			log.debug("The string encoding was not recognized: " + uee.getMessage());
 			return null;
 		}
 
@@ -338,7 +338,7 @@ public class ISUSFrame {
 			return new String(fourBytes, "US-ASCII");
 
 		} catch (UnsupportedEncodingException uee) {
-			logger.debug("The string encoding was not recognized: " + uee.getMessage());
+			log.debug("The string encoding was not recognized: " + uee.getMessage());
 			return null;
 		}
 
@@ -396,7 +396,7 @@ public class ISUSFrame {
 			sampleDateTime = sampleDateFormat.parse(dateString);
 
 		} catch (ParseException pe) {
-			logger.debug(
+			log.debug(
 					"There was a problem parsing the sampleDateTime. The error " + "message was: " + pe.getMessage());
 		}
 

@@ -60,7 +60,7 @@ public class DavisWxParser {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(DavisWxParser.class);
+  private static Log log = LogFactory.getLog(DavisWxParser.class);
   
   /*
    *  A field that stores the binary LOOP packet input as a ByteBuffer
@@ -645,7 +645,7 @@ public class DavisWxParser {
     
     // Ensure we have a path to the binary file
     if (args.length != 1) {
-      logger.info("Please provide the path to a file containing a binary LOOP packet.");
+      log.info("Please provide the path to a file containing a binary LOOP packet.");
       System.exit(1);
     } else {
       try {
@@ -668,49 +668,49 @@ public class DavisWxParser {
         // create an instance of the parser, and report the field contents after parsing
         DavisWxParser davisWxParser = new DavisWxParser(packetBuffer);
 
-        logger.info("loopID:                         " + davisWxParser.getLoopID());
-        logger.info("barTrend:                       " + davisWxParser.getBarTrend());
-        logger.info("barTrendAsString:               " + davisWxParser.getBarTrendAsString());
-        logger.info("packetType:                     " + davisWxParser.getPacketType());
-        logger.info("nextRecord:                     " + davisWxParser.getNextRecord());
-        logger.info("barometer:                      " + davisWxParser.getBarometer());
-        logger.info("insideTemperature:              " + davisWxParser.getInsideTemperature());
-        logger.info("insideHumidity:                 " + davisWxParser.getInsideHumidity());
-        logger.info("outsideTemperature:             " + davisWxParser.getOutsideTemperature());
-        logger.info("windSpeed:                      " + davisWxParser.getWindSpeed());
-        logger.info("tenMinuteAverageWindSpeed:      " + davisWxParser.getTenMinuteAverageWindSpeed());
-        logger.info("windDirection:                  " + davisWxParser.getWindDirection());
-        logger.info("extraTemperatures:              " + Arrays.toString(davisWxParser.getExtraTemperatures()));
-        logger.info("soilTemperatures:               " + Arrays.toString(davisWxParser.getSoilTemperatures()));
-        logger.info("leafTemperatures:               " + Arrays.toString(davisWxParser.getLeafTemperatures()));
-        logger.info("outsideHumidity:                " + davisWxParser.getOutsideHumidity());
-        logger.info("extraHumidities:                " + Arrays.toString(davisWxParser.getExtraHumidities()));
-        logger.info("rainRate:                       " + davisWxParser.getRainRate());
-        logger.info("uvRadiation:                    " + davisWxParser.getUvRadiation());
-        logger.info("solarRadiation:                 " + davisWxParser.getSolarRadiation());
-        logger.info("stormRain:                      " + davisWxParser.getStormRain());
-        logger.info("currentStormStartDate:          " + davisWxParser.getCurrentStormStartDate());
-        logger.info("dailyRain:                      " + davisWxParser.getDailyRain());
-        logger.info("monthlyRain:                    " + davisWxParser.getMonthlyRain());
-        logger.info("yearlyRain:                     " + davisWxParser.getYearlyRain());
-        logger.info("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
-        logger.info("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
-        logger.info("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
-        logger.info("soilMoistures:                  " + Arrays.toString(davisWxParser.getSoilMoistures()));
-        logger.info("leafWetnesses:                  " + Arrays.toString(davisWxParser.getLeafWetnesses()));
-        logger.info("insideAlarm:                    " + davisWxParser.getInsideAlarm());
-        logger.info("rainAlarm:                      " + davisWxParser.getRainAlarm());
-        logger.info("outsideAlarms:                  " + davisWxParser.getOutsideAlarms());
-        logger.info("extraTemperatureHumidityAlarms: " + davisWxParser.getExtraTemperatureHumidityAlarms());
-        logger.info("soilLeafAlarms:                 " + davisWxParser.getSoilLeafAlarms());
-        logger.info("transmitterBatteryStatus:       " + davisWxParser.getTransmitterBatteryStatus());
-        logger.info("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
-        logger.info("forecastIconValues:             " + davisWxParser.getForecastAsString());
-        logger.info("forecastRuleNumber:             " + davisWxParser.getForecastRuleNumberAsString());
-        logger.info("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
-        logger.info("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
-        logger.info("recordDelimiter:                " + davisWxParser.getRecordDelimiterAsHexString());
-        logger.info("crcChecksum:                    " + davisWxParser.getCrcChecksum());
+        log.info("loopID:                         " + davisWxParser.getLoopID());
+        log.info("barTrend:                       " + davisWxParser.getBarTrend());
+        log.info("barTrendAsString:               " + davisWxParser.getBarTrendAsString());
+        log.info("packetType:                     " + davisWxParser.getPacketType());
+        log.info("nextRecord:                     " + davisWxParser.getNextRecord());
+        log.info("barometer:                      " + davisWxParser.getBarometer());
+        log.info("insideTemperature:              " + davisWxParser.getInsideTemperature());
+        log.info("insideHumidity:                 " + davisWxParser.getInsideHumidity());
+        log.info("outsideTemperature:             " + davisWxParser.getOutsideTemperature());
+        log.info("windSpeed:                      " + davisWxParser.getWindSpeed());
+        log.info("tenMinuteAverageWindSpeed:      " + davisWxParser.getTenMinuteAverageWindSpeed());
+        log.info("windDirection:                  " + davisWxParser.getWindDirection());
+        log.info("extraTemperatures:              " + Arrays.toString(davisWxParser.getExtraTemperatures()));
+        log.info("soilTemperatures:               " + Arrays.toString(davisWxParser.getSoilTemperatures()));
+        log.info("leafTemperatures:               " + Arrays.toString(davisWxParser.getLeafTemperatures()));
+        log.info("outsideHumidity:                " + davisWxParser.getOutsideHumidity());
+        log.info("extraHumidities:                " + Arrays.toString(davisWxParser.getExtraHumidities()));
+        log.info("rainRate:                       " + davisWxParser.getRainRate());
+        log.info("uvRadiation:                    " + davisWxParser.getUvRadiation());
+        log.info("solarRadiation:                 " + davisWxParser.getSolarRadiation());
+        log.info("stormRain:                      " + davisWxParser.getStormRain());
+        log.info("currentStormStartDate:          " + davisWxParser.getCurrentStormStartDate());
+        log.info("dailyRain:                      " + davisWxParser.getDailyRain());
+        log.info("monthlyRain:                    " + davisWxParser.getMonthlyRain());
+        log.info("yearlyRain:                     " + davisWxParser.getYearlyRain());
+        log.info("dailyEvapoTranspiration:        " + davisWxParser.getDailyEvapoTranspiration());
+        log.info("monthlyEvapoTranspiration:      " + davisWxParser.getMonthlyEvapoTranspiration());
+        log.info("yearlyEvapoTranspiration:       " + davisWxParser.getYearlyEvapoTranspiration());
+        log.info("soilMoistures:                  " + Arrays.toString(davisWxParser.getSoilMoistures()));
+        log.info("leafWetnesses:                  " + Arrays.toString(davisWxParser.getLeafWetnesses()));
+        log.info("insideAlarm:                    " + davisWxParser.getInsideAlarm());
+        log.info("rainAlarm:                      " + davisWxParser.getRainAlarm());
+        log.info("outsideAlarms:                  " + davisWxParser.getOutsideAlarms());
+        log.info("extraTemperatureHumidityAlarms: " + davisWxParser.getExtraTemperatureHumidityAlarms());
+        log.info("soilLeafAlarms:                 " + davisWxParser.getSoilLeafAlarms());
+        log.info("transmitterBatteryStatus:       " + davisWxParser.getTransmitterBatteryStatus());
+        log.info("consoleBatteryVoltage:          " + davisWxParser.getConsoleBatteryVoltage());
+        log.info("forecastIconValues:             " + davisWxParser.getForecastAsString());
+        log.info("forecastRuleNumber:             " + davisWxParser.getForecastRuleNumberAsString());
+        log.info("timeOfSunrise:                  " + davisWxParser.getTimeOfSunrise());
+        log.info("timeOfSunset:                   " + davisWxParser.getTimeOfSunset());
+        log.info("recordDelimiter:                " + davisWxParser.getRecordDelimiterAsHexString());
+        log.info("crcChecksum:                    " + davisWxParser.getCrcChecksum());
 
       } catch ( java.io.FileNotFoundException fnfe){
         fnfe.printStackTrace();

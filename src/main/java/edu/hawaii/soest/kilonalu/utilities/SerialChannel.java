@@ -82,7 +82,7 @@ public class SerialChannel implements ByteChannel {
    private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
 
    /* The Logger instance used to log system messages */
-   private static Log logger = LogFactory.getLog(SerialChannel.class);
+   private static Log log = LogFactory.getLog(SerialChannel.class);
   
   /**
    * Constructor: creates an empty SerialChannel object
@@ -96,7 +96,7 @@ public class SerialChannel implements ByteChannel {
       open();
       
     } catch (IOException ioe ) {
-      logger.debug("Couldn't open the serial port. " +
+      log.debug("Couldn't open the serial port. " +
                    "Error message is " + ioe.getMessage());
     }
         
@@ -109,7 +109,7 @@ public class SerialChannel implements ByteChannel {
         CommPortIdentifier.getPortIdentifier(this.serialPortName);
       
       if ( portIdentifier.isCurrentlyOwned() ) {
-        logger.debug("Error: Port is currently in use.");
+        log.debug("Error: Port is currently in use.");
         throw new IOException("Error: Serial port is currently in use.");
       
       } else {
@@ -133,7 +133,7 @@ public class SerialChannel implements ByteChannel {
            this.isOpen       = true;
            
         } else {
-          logger.debug("Error: Only serial ports are handled.");
+          log.debug("Error: Only serial ports are handled.");
           throw new IOException("Error opening the the port. " +
                                 "The port is not a serial port.  Please " +
                                 "provide a valid serial port name.");
@@ -196,13 +196,13 @@ public class SerialChannel implements ByteChannel {
       }
 
     } catch ( BufferOverflowException bofe ) {
-      logger.info("There a problem reading from the serial port: " +
+      log.info("There a problem reading from the serial port: " +
                   bofe.getMessage());
       this.serialPort.close();
       throw new IOException(bofe.getMessage());
     
     } catch ( ReadOnlyBufferException robe ) {
-      logger.info("There a problem reading from the serial port: " +
+      log.info("There a problem reading from the serial port: " +
                   robe.getMessage());
       this.serialPort.close();
       throw new IOException(robe.getMessage());

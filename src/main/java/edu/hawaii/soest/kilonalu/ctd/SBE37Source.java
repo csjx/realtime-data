@@ -163,7 +163,7 @@ public class SBE37Source extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(SBE37Source.class);
+  private static Log log = LogFactory.getLog(SBE37Source.class);
 
   protected int state = 0;
   
@@ -249,7 +249,7 @@ public class SBE37Source extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("SBE37Source.execute() called.");
+    log.debug("SBE37Source.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -321,11 +321,11 @@ public class SBE37Source extends RBNBSource {
             if (Integer.parseInt(idString) > 0 ) {
               setInstrumentID(idString);
               buffer.clear();
-              logger.debug("Instrument ID is " + getInstrumentID() + ".");
+              log.debug("Instrument ID is " + getInstrumentID() + ".");
               break;
 
             } else {
-              logger.debug("Instrument ID \"" + idString + "\" was not set.");
+              log.debug("Instrument ID \"" + idString + "\" was not set.");
             }
 
           } else {
@@ -358,7 +358,7 @@ public class SBE37Source extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+          //log.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
           //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
           //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
           //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
@@ -424,8 +424,8 @@ public class SBE37Source extends RBNBSource {
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info("Sample: " + sampleString);
-                logger.info("flushed data to the DataTurbine. ");
+                log.info("Sample: " + sampleString);
+                log.info("flushed data to the DataTurbine. ");
                 
                   byteOne   = 0x00;
                   byteTwo   = 0x00;
@@ -434,7 +434,7 @@ public class SBE37Source extends RBNBSource {
                   sampleBuffer.clear();
                   sampleByteCount = 0;
                   //rbnbChannelMap.Clear();                      
-                  //logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                  //log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                   //state = 0;
                   
                   // Once the sample is flushed, take a new sample
@@ -457,7 +457,7 @@ public class SBE37Source extends RBNBSource {
                   sampleBuffer.put(byteOne);
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   
                 }
@@ -601,7 +601,7 @@ public class SBE37Source extends RBNBSource {
       
       try {
         this.socketChannel.write(commandBuffer);
-        logger.debug("Wrote " + command + " to the socket channel.");
+        log.debug("Wrote " + command + " to the socket channel.");
         result = true;
         
       } catch (IOException ioe ) {
@@ -651,9 +651,9 @@ public class SBE37Source extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( sbe37Source.parseArgs(args) ) {
-        // Set up a simple logger that logs to the console
+        // Set up a simple log that logs to the console
         PropertyConfigurator.configure(sbe37Source.getLogConfigurationFile());
-        logger.info("SBE37Source.main() called.");
+        log.info("SBE37Source.main() called.");
         
         sbe37Source.start();
       }
@@ -668,7 +668,7 @@ public class SBE37Source extends RBNBSource {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -697,7 +697,7 @@ public class SBE37Source extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -737,7 +737,7 @@ public class SBE37Source extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }

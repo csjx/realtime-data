@@ -58,7 +58,7 @@ import java.util.TreeMap;
 public class ISUSSource extends RBNBSource {
 
     /* The Logger instance used to log system messages */
-    private static Log logger = LogFactory.getLog(ISUSSource.class);
+    private static Log log = LogFactory.getLog(ISUSSource.class);
 
     /* The XML configuration file location for the list of sensor properties */
     private String xmlConfigurationFile = "lib/sensor.properties.xml";
@@ -152,7 +152,7 @@ public class ISUSSource extends RBNBSource {
      */
     public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
 
-        logger.debug("ISUSSource.process() called.");
+        log.debug("ISUSSource.process() called.");
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 
@@ -176,7 +176,7 @@ public class ISUSSource extends RBNBSource {
             String calibrationURL = null;
             String type = null;
 
-            List sensorList = xmlConfig.configurationsAt("account.logger.sensor");
+            List sensorList = xmlConfig.configurationsAt("account.log.sensor");
 
             for (Iterator sIterator = sensorList.iterator(); sIterator.hasNext(); ) {
                 //
@@ -201,7 +201,7 @@ public class ISUSSource extends RBNBSource {
                             break;
 
                         } else {
-                            logger.debug("There was no match for " + type);
+                            log.debug("There was no match for " + type);
                         }
                     }
 
@@ -509,7 +509,7 @@ public class ISUSSource extends RBNBSource {
                         // DataTurbine
                         getSource().Register(registerChannelMap);
                         getSource().Flush(rbnbChannelMap);
-                        logger.info(frameDateAsString + " " +
+                        log.info(frameDateAsString + " " +
                             "Sample sent to the DataTurbine: (" +
                             serialNumber +
                             ") " +
@@ -520,7 +520,7 @@ public class ISUSSource extends RBNBSource {
 
                     } else {
 
-                        logger.info("Couldn't apply the calibration coefficients. " +
+                        log.info("Couldn't apply the calibration coefficients. " +
                             "Skipping this sample.");
 
                     } // end if()
@@ -535,7 +535,7 @@ public class ISUSSource extends RBNBSource {
         } catch (ParseException pe) {
             // parsing of the calibration file failed.  Log the exception, return false
             success = false;
-            logger.debug("There was a problem parsing the calibration file. The " +
+            log.debug("There was a problem parsing the calibration file. The " +
                 "error message was: " + pe.getMessage());
             return success;
 

@@ -91,7 +91,7 @@ public class DavisWxXMLSink extends RBNBBase {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(DavisWxXMLSink.class);
+  private static Log log = LogFactory.getLog(DavisWxXMLSink.class);
   
   /**
    * Constructor: creates DavisWxXMLSink.
@@ -110,7 +110,7 @@ public class DavisWxXMLSink extends RBNBBase {
     
     final DavisWxXMLSink davisWxXMLSink = new DavisWxXMLSink();
     
-    // Set up a simple logger that logs to the console
+    // Set up a simple log that logs to the console
     PropertyConfigurator.configure(davisWxXMLSink.getLogConfigurationFile());
         
     if ( davisWxXMLSink.parseArgs(args) ) {
@@ -119,7 +119,7 @@ public class DavisWxXMLSink extends RBNBBase {
 
         TimerTask exportXML = new TimerTask() {
           public void run() {
-            logger.debug("TimerTask.run() called.");
+            log.debug("TimerTask.run() called.");
               davisWxXMLSink.export();      
           }
         };
@@ -148,7 +148,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * of the various command line arguments
    */
   protected boolean setArgs(CommandLine cmd) {
-    logger.debug("DavisWxXMLSink.setArgs() called.");
+    log.debug("DavisWxXMLSink.setArgs() called.");
     
     if (cmd.hasOption('f')) {
       String a = cmd.getOptionValue('f');
@@ -169,7 +169,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * @return                   true if the setup succeeded, false otherwise
    */
   public boolean setup(String serverName, int serverPort, String sinkName) {
-    logger.debug("DavisWxXMLSink.setup() called.");
+    log.debug("DavisWxXMLSink.setup() called.");
     
     setServerName(serverName);
     setServerPort(serverPort);
@@ -183,7 +183,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * Export data to disk.
    */
   public boolean export() {
-    logger.debug("DavisWxXMLSink.export() called.");
+    log.debug("DavisWxXMLSink.export() called.");
 
     if ( setup(this.getServerName(), 
                this.getServerPort(), 
@@ -283,28 +283,28 @@ public class DavisWxXMLSink extends RBNBBase {
           sb.append("  <forecast>"    + responseMap.GetDataAsString(responseMap.GetIndex(fullSourceName             + "forecastAsString")         )[0]              + "</forecast>\n"  );
           sb.append("</wx>\n");
           
-          logger.info("\n" + sb.toString());
+          log.info("\n" + sb.toString());
           
           this.fileOutputStream.write(sb.toString().getBytes());
           this.fileOutputStream.close();
           
         } else {
-          logger.debug("The index is out of bounds: " + index);
+          log.debug("The index is out of bounds: " + index);
         }
                                                                                          
       } catch ( java.io.FileNotFoundException fnfe ) {
-        logger.debug("Error: Unable to open XML output file for writing.");
-        logger.debug("Error message: " + fnfe.getMessage());
+        log.debug("Error: Unable to open XML output file for writing.");
+        log.debug("Error message: " + fnfe.getMessage());
         disconnect();
         return false;
       } catch ( java.io.IOException ioe ) {
-        logger.debug("Error: There was a problem writing to the XML file.");
-        logger.debug("Error message: " + ioe.getMessage());
+        log.debug("Error: There was a problem writing to the XML file.");
+        log.debug("Error message: " + ioe.getMessage());
         disconnect();
         return false;
       } catch ( com.rbnb.sapi.SAPIException sapie ){
-        logger.debug("Error: There was a problem with the DataTurbine connection.");
-        logger.debug("Error message: " + sapie.getMessage());
+        log.debug("Error: There was a problem with the DataTurbine connection.");
+        log.debug("Error message: " + sapie.getMessage());
         disconnect();
         return false;
         
@@ -324,7 +324,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * @return  true if connected, false otherwise
    */
   private boolean connect() {
-    logger.debug("DavisWxXMLSink.connect() called.");
+    log.debug("DavisWxXMLSink.connect() called.");
     if (isConnected()) {
       return true;
     }
@@ -333,7 +333,7 @@ public class DavisWxXMLSink extends RBNBBase {
       sink.OpenRBNBConnection(getServer(), sinkName);
       
     } catch ( SAPIException e ) {
-      logger.debug("Error: Unable to connect to server.");
+      log.debug("Error: Unable to connect to server.");
       disconnect();
       return false;
     }
@@ -347,7 +347,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * Disconnects from the RBNB server.
    */
   private void disconnect() {
-    logger.debug("DavisWxXMLSink.disconnect() called.");
+    log.debug("DavisWxXMLSink.disconnect() called.");
     if (!isConnected()) {
       return;
     }

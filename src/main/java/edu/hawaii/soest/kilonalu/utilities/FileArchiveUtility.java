@@ -50,7 +50,7 @@ public class FileArchiveUtility {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Log logger = LogFactory.getLog(FileArchiveUtility.class);
+  private static Log log = LogFactory.getLog(FileArchiveUtility.class);
   
   /** The date format for the command **/
   private static final SimpleDateFormat COMMAND = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -96,7 +96,7 @@ public class FileArchiveUtility {
    */
   public static File makePathFromTime(File base, long time, String filePrefix,
                                       SimpleDateFormat format, String extension) {
-    logger.debug("FileArchiveUtility.makePathFromTime() called.");
+    log.debug("FileArchiveUtility.makePathFromTime() called.");
     Date t = new Date(time);
     String path;
     

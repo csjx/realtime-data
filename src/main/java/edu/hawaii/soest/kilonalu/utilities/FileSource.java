@@ -141,7 +141,7 @@ public class FileSource extends RBNBSource {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(FileSource.class);
+  private static Log log = LogFactory.getLog(FileSource.class);
 
   /* The state used to track the data processing */
   protected int state = 0;
@@ -178,7 +178,7 @@ public class FileSource extends RBNBSource {
    * reading the data and interpreting the data files.
    */
   protected boolean execute() {
-    logger.debug("FileSource.execute() called.");
+    log.debug("FileSource.execute() called.");
     boolean failed = true; // indicates overall success of execute()
     
     // do not execute the stream if there is no connection
@@ -208,7 +208,7 @@ public class FileSource extends RBNBSource {
       // and be sure the following inserts are after that date
       ChannelMap requestMap = new ChannelMap();
       int entryIndex = requestMap.Add(getRBNBClientName() + "/" + getRBNBChannelName());
-      logger.debug("Request Map: " + requestMap.toString());
+      log.debug("Request Map: " + requestMap.toString());
       Sink sink = new Sink();
       sink.OpenRBNBConnection(getServer(), "lastEntrySink");
       
@@ -217,13 +217,13 @@ public class FileSource extends RBNBSource {
       // initialize the last sample date 
       Date initialDate = new Date();
       long lastSampleTimeAsSecondsSinceEpoch = initialDate.getTime()/1000L;
-      logger.debug("Initialized the last sample date to: " + initialDate.toString());
-      logger.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
+      log.debug("Initialized the last sample date to: " + initialDate.toString());
+      log.debug("The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
       
       if ( responseMap.NumberOfChannels() == 0 )  {
         // set the last sample time to 0 since there are no channels yet
         lastSampleTimeAsSecondsSinceEpoch = 0L;
-        logger.debug("Resetting the last sample date to the epoch: " +
+        log.debug("Resetting the last sample date to the epoch: " +
                      (new Date(
                           lastSampleTimeAsSecondsSinceEpoch * 1000L
                           )).toString()
@@ -232,7 +232,7 @@ public class FileSource extends RBNBSource {
       } else if ( responseMap.NumberOfChannels() > 0 )  {
         lastSampleTimeAsSecondsSinceEpoch = 
           new Double(responseMap.GetTimeStart(entryIndex)).longValue();
-        logger.debug("There are existing channels. Last sample time: " +
+        log.debug("There are existing channels. Last sample time: " +
                      (new Date(
                          lastSampleTimeAsSecondsSinceEpoch * 1000L
                          )).toString()
@@ -256,15 +256,15 @@ public class FileSource extends RBNBSource {
           
           // if the line matches the data pattern, insert it into the DataTurbine
           if ( matcher.matches() ) {
-            logger.debug("This line matches the data line pattern: " + line);
+            log.debug("This line matches the data line pattern: " + line);
             
             Date sampleDate = getSampleDate(line);
                         
             if ( this.dateFormats == null || this.dateFields == null ) {
-            	logger.warn("Using the default datetime format and field for sample data. " +
+            	log.warn("Using the default datetime format and field for sample data. " +
                     "Use the -f and -d options to explicitly set date time fields.");
             }
-            logger.debug("Sample date is: " + sampleDate.toString());
+            log.debug("Sample date is: " + sampleDate.toString());
             
             // convert the sample date to seconds since the epoch
             long sampleTimeAsSecondsSinceEpoch = (sampleDate.getTime()/1000L);
@@ -302,7 +302,7 @@ public class FileSource extends RBNBSource {
             	
             	// in the event we just lost the network, sleep, try again
             	while (numberOfChannelsFlushed < 1 ) {
-            		logger.debug("No channels flushed, trying again in 10 seconds.");
+            		log.debug("No channels flushed, trying again in 10 seconds.");
             		Thread.sleep(10000L);
                 	numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
 
@@ -310,17 +310,17 @@ public class FileSource extends RBNBSource {
                 
               } catch ( SAPIException sapie ) {
                 // reconnect if an exception is thrown on Flush()
-            	logger.debug("Error while flushing the source: " + sapie.getMessage());
+            	log.debug("Error while flushing the source: " + sapie.getMessage());
             	
-            	logger.debug("Disconnecting from the DataTurbine.");
+            	log.debug("Disconnecting from the DataTurbine.");
                 disconnect();
-            	logger.debug("Connecting to the DataTurbine.");
+            	log.debug("Connecting to the DataTurbine.");
             	connect();
                 getSource().Flush(rbnbChannelMap);
             	
                 // in the event we just lost the network, sleep, try again
             	while (numberOfChannelsFlushed < 1 ) {
-            		logger.debug("No channels flushed, trying again in 10 seconds.");
+            		log.debug("No channels flushed, trying again in 10 seconds.");
             		Thread.sleep(10000L);
                 	numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
 
@@ -330,18 +330,18 @@ public class FileSource extends RBNBSource {
               
               // reset the last sample time to the sample just inserted
               lastSampleTimeAsSecondsSinceEpoch = sampleTimeAsSecondsSinceEpoch;
-              logger.debug("Last sample time is now: " + 
+              log.debug("Last sample time is now: " + 
                             (new Date(
                                         lastSampleTimeAsSecondsSinceEpoch * 1000L
                                      ).toString())
                           );
-              logger.info(getRBNBClientName()                 +
+              log.info(getRBNBClientName()                 +
                           " Sample sent to the DataTurbine: " +
                           line.trim());
               rbnbChannelMap.Clear();
               
             } else {
-              logger.info("The current line is earlier than the last entry " +
+              log.info("The current line is earlier than the last entry " +
                           "in the Data Turbine or is a date in the future. " +
                           "Skipping it.  The line was: " +
                           line);
@@ -349,7 +349,7 @@ public class FileSource extends RBNBSource {
             }
             
           } else {
-            logger.info("The current line doesn't match an expected "     +
+            log.info("The current line doesn't match an expected "     +
                         "data line pattern. Skipping it.  The line was: " +
                         line);
                         
@@ -358,42 +358,42 @@ public class FileSource extends RBNBSource {
       } // end while
       
     } catch ( ParseException pe ) {
-      logger.info("There was a problem parsing the sample date string. " +
+      log.info("There was a problem parsing the sample date string. " +
                   "The message was: " + pe.getMessage());
       try {
         this.fileReader.close();        
       } catch (IOException ioe2) {
-        logger.info("There was a problem closing the data file.  The " +
+        log.info("There was a problem closing the data file.  The " +
                     "message was: " + ioe2.getMessage());
       }
       failed = true;
       return !failed;
     } catch ( SAPIException sapie ) {
-      logger.info("There was a problem communicating with the DataTurbine. " +
+      log.info("There was a problem communicating with the DataTurbine. " +
                   "The message was: " + sapie.getMessage());
       try {
         this.fileReader.close();        
       } catch (IOException ioe2) {
-        logger.info("There was a problem closing the data file.  The " +
+        log.info("There was a problem closing the data file.  The " +
                     "message was: " + ioe2.getMessage());
       }
       failed = true;
       return !failed;
       
     } catch ( InterruptedException ie ) {
-      logger.info("There was a problem while polling the data file. The " +
+      log.info("There was a problem while polling the data file. The " +
                    "message was: " + ie.getMessage());
       try {
         this.fileReader.close();        
       } catch (IOException ioe2) {
-        logger.info("There was a problem closing the data file.  The " +
+        log.info("There was a problem closing the data file.  The " +
                     "message was: " + ioe2.getMessage());
       }
       failed = true;
       return !failed;
       
     } catch ( IOException ioe ) {
-      logger.info("There was a problem opening the data file. " + 
+      log.info("There was a problem opening the data file. " + 
                    "The message was: " + ioe.getMessage());
       failed = true;
       return !failed;
@@ -468,7 +468,7 @@ public class FileSource extends RBNBSource {
           Thread.sleep(RETRY_INTERVAL);
           
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
           
         }
@@ -522,7 +522,7 @@ public class FileSource extends RBNBSource {
       }
         
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
       
     }
@@ -939,8 +939,8 @@ public Date getSampleDate(String line) throws ParseException {
     String dateFormatStr = "";
     String dateString    = "";
     String[] columns     = line.trim().split(this.delimiter);
-    logger.debug("Delimiter is: " + this.delimiter);
-    logger.debug(Arrays.toString(columns));
+    log.debug("Delimiter is: " + this.delimiter);
+    log.debug(Arrays.toString(columns));
     
     // build the total date format from the individual fields listed in dateFields
     int index = 0;
@@ -949,12 +949,12 @@ public Date getSampleDate(String line) throws ParseException {
     	dateString    += columns[dateField.intValue() - 1].trim(); //zero-based list
     	index++;
     }
-	logger.debug("Using date format string: " + dateFormatStr);
-	logger.debug("Using date string       : " + dateString);
+	log.debug("Using date format string: " + dateFormatStr);
+	log.debug("Using date string       : " + dateString);
 
     this.tz = TimeZone.getTimeZone(this.timezone);
     if ( this.dateFormats == null || this.dateFields == null ) {
-    	logger.warn("Using the defaault datetime field for sample data. " +
+    	log.warn("Using the defaault datetime field for sample data. " +
             "Use the -f and -d options to explicitly set date time fields.");
     	dateFormat = this.defaultDateFormat;
     }

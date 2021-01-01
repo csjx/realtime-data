@@ -168,7 +168,7 @@ public class FLNTUSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static final Log logger = LogFactory.getLog(FLNTUSource.class);
+  private static final Log log = LogFactory.getLog(FLNTUSource.class);
 
   protected int state = 0;
   
@@ -252,7 +252,7 @@ public class FLNTUSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("FLNTUSource.execute() called.");
+    log.debug("FLNTUSource.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -291,7 +291,7 @@ public class FLNTUSource extends RBNBSource {
         // while there are unread bytes in the ByteBuffer
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
-         logger.debug("char: " + (char) byteOne                                   + "\t" + 
+         log.debug("char: " + (char) byteOne                                   + "\t" + 
                       "b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
                       "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
                       "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
@@ -342,7 +342,7 @@ public class FLNTUSource extends RBNBSource {
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 rbnbChannelMap.Clear();                      
-                logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                 state = 0;
                 
               // if we're not at the sample set end, look for individual samples    
@@ -355,7 +355,7 @@ public class FLNTUSource extends RBNBSource {
                   sampleByteCount++;
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   sampleByteCount++;
                   
@@ -375,7 +375,7 @@ public class FLNTUSource extends RBNBSource {
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
-                logger.info("Sample: " + 
+                log.info("Sample: " + 
                             sampleString.substring(0, sampleString.length() - 2) + 
                             " sent data to the DataTurbine. ");                
                 byteOne   = 0x00;
@@ -385,7 +385,7 @@ public class FLNTUSource extends RBNBSource {
                 sampleBuffer.clear();
                 sampleByteCount = 0;
                 rbnbChannelMap.Clear();                      
-                logger.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
+                log.debug("Cleared b1,b2,b3,b4. Cleared sampleBuffer. Cleared rbnbChannelMap.");
                 break;
                 
               } else { // not 0x0
@@ -397,7 +397,7 @@ public class FLNTUSource extends RBNBSource {
                   sampleBuffer.put(byteOne);
                 } else {
                   sampleBuffer.compact();
-                  logger.debug("Compacting sampleBuffer ...");
+                  log.debug("Compacting sampleBuffer ...");
                   sampleBuffer.put(byteOne);
                   
                 }
@@ -557,9 +557,9 @@ public class FLNTUSource extends RBNBSource {
       // start the streaming connection between the source and the RBNB server.
       if ( tChainSource.parseArgs(args) ) {
 
-        // Set up a simple logger that logs to the console
+        // Set up a simple log that logs to the console
         PropertyConfigurator.configure(tChainSource.getLogConfigurationFile());
-        logger.info("FLNTUSource.main() called.");
+        log.info("FLNTUSource.main() called.");
     
         tChainSource.start();
       }
@@ -574,7 +574,7 @@ public class FLNTUSource extends RBNBSource {
       );
       
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -603,7 +603,7 @@ public class FLNTUSource extends RBNBSource {
         try {
           Thread.sleep(RETRY_INTERVAL);
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -643,7 +643,7 @@ public class FLNTUSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }

@@ -54,7 +54,7 @@ public class SerialWriter implements Runnable {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
 
   /* The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(SerialWriter.class);
+  private static Log log = LogFactory.getLog(SerialWriter.class);
  
   /**
    * The constructor - creates a new SerialWriter object given an OutputStream
@@ -66,7 +66,7 @@ public class SerialWriter implements Runnable {
     this.serialWriter = new BufferedWriter(new OutputStreamWriter(out));
     this.writeBuffer.position(0);
     this.writeBuffer.limit(0);
-    logger.debug("writeBuffer at init: " + this.writeBuffer.toString());
+    log.debug("writeBuffer at init: " + this.writeBuffer.toString());
     
   }
   
@@ -76,7 +76,7 @@ public class SerialWriter implements Runnable {
    * OutputStream.
    */
   public void run() {
-    logger.debug("SerialWriter.run() called.");
+    log.debug("SerialWriter.run() called.");
     try {
 
       while ( this.writeBuffer.position() != -1 ) {
@@ -93,7 +93,7 @@ public class SerialWriter implements Runnable {
       }
       
     } catch (IOException e) {
-      logger.debug("There was an error writing to the serial port: " + e.getMessage());
+      log.debug("There was an error writing to the serial port: " + e.getMessage());
       
     }
   }
@@ -106,20 +106,20 @@ public class SerialWriter implements Runnable {
    */
   public int write(ByteBuffer writeBuffer) throws IOException {
 
-    logger.debug("SerialWriter.write() called.");
+    log.debug("SerialWriter.write() called.");
     try {
  
       // duplicate the incoming writeBuffer when it is not locked
       synchronized(writeBuffer) {
 
         this.writeBuffer = writeBuffer.duplicate();
-        logger.debug("SerialWriter.write(): duplicated the ByteBuffer.");
+        log.debug("SerialWriter.write(): duplicated the ByteBuffer.");
       }
       
       this.writeBuffer.flip();
       
       while ( ! this.isComplete ) {
-        logger.debug("SerialWriter.write(): waiting for write to complete.");
+        log.debug("SerialWriter.write(): waiting for write to complete.");
         // do nothing.  wait for the thread to write the data
       }
       // copy and reset the bytesWritten, reset the isComplete state
@@ -130,7 +130,7 @@ public class SerialWriter implements Runnable {
 
       
     } catch ( BufferUnderflowException bufe ) {
-      //logger.debug("There was an underflow problem:");
+      //log.debug("There was an underflow problem:");
       bufe.printStackTrace();
       throw new IOException(bufe.getMessage());
             

@@ -71,7 +71,7 @@ import edu.hawaii.soest.kilonalu.adcp.Ensemble;
 public class TextOutputPlugin extends RBNBBase {
 
   /** The Logger instance used to log system messages */
-  private static Log logger = LogFactory.getLog(TextOutputPlugin.class);
+  private static Log log = LogFactory.getLog(TextOutputPlugin.class);
   
   /** the default RBNB sink name */
   private static final String DEFAULT_SINK_NAME = "TextOutputPlugin";
@@ -172,7 +172,7 @@ public class TextOutputPlugin extends RBNBBase {
    * on the hour.
    */
   private void setupArchiveTime(final TextOutputPlugin textOutputPlugin) {
-    logger.debug("TextOutputPlugin.setupArchiveTime() called.");
+    log.debug("TextOutputPlugin.setupArchiveTime() called.");
     
     // remove the time ranges assumed from the command line args
     timeRanges.clear();
@@ -203,7 +203,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @param textOutputPlugin  the TextOutputPlugin to stop
    */
   private static void setupShutdownHook(final TextOutputPlugin textOutputPlugin) {
-    logger.debug("TextOutputPlugin.setupShutdownHook() called.");
+    log.debug("TextOutputPlugin.setupShutdownHook() called.");
     final Thread workerThread = Thread.currentThread();
     
     Runtime.getRuntime ().addShutdownHook (new Thread () {
@@ -220,7 +220,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @param textOutputPlugin  the TextOutputPlugin to monitor
    */
   private static void setupProgressListener(TextOutputPlugin textOutputPlugin) {
-    logger.debug("TextOutputPlugin.setupProgressListener() called.");
+    log.debug("TextOutputPlugin.setupProgressListener() called.");
     textOutputPlugin.addTimeProgressListener(new TimeProgressListener() {
       public void progressUpdate(double estimatedDuration, double consumedTime) {
         if (estimatedDuration == Double.MAX_VALUE) {
@@ -259,7 +259,7 @@ public class TextOutputPlugin extends RBNBBase {
    * of the various command line arguments
    */
   protected boolean setArgs(CommandLine cmd) {
-    logger.debug("TextOutputPlugin.setArgs() called.");
+    log.debug("TextOutputPlugin.setArgs() called.");
 
     if (!setBaseArgs(cmd))
       return false;
@@ -290,7 +290,7 @@ public class TextOutputPlugin extends RBNBBase {
           long t = d.getTime();
           startTime = ((double) t) / 1000.0;
         } catch (Exception e) {
-          logger.debug("Parse of start time failed " + a + e.getMessage());
+          log.debug("Parse of start time failed " + a + e.getMessage());
           printUsage();
           return false;
         }
@@ -307,7 +307,7 @@ public class TextOutputPlugin extends RBNBBase {
           long t = d.getTime();
           endTime = ((double) t) / 1000.0;
         } catch (Exception e) {
-          logger.debug("Parse of end time failed " + a);
+          log.debug("Parse of end time failed " + a);
           printUsage();
           return false;
         }
@@ -322,13 +322,13 @@ public class TextOutputPlugin extends RBNBBase {
           startTime = System.currentTimeMillis()/1000d - secondsResetStart;
           endTime = System.currentTimeMillis()/1000d;
         } catch (NumberFormatException nf) {
-          logger.debug("Please enter a number for seconds to reset the start to.");
+          log.debug("Please enter a number for seconds to reset the start to.");
           return false;
         }
       }
     }
     if (startTime >= endTime) {
-      logger.debug("The start time must come before the end time.");
+      log.debug("The start time must come before the end time.");
       return false;
     }
 
@@ -365,7 +365,7 @@ public class TextOutputPlugin extends RBNBBase {
   //                     double endTime, String eventMarkerFilter) {
   //
   //  if (startTime >= endTime) {
-  //    logger.debug("The start time must come before the end time.");
+  //    log.debug("The start time must come before the end time.");
   //    return false;
   //  }
   //
@@ -389,7 +389,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the setup is valid, false otherwise
    */
   private boolean validateSetup() {
-    logger.debug("TextOutputPlugin.validateSetup() called.");
+    log.debug("TextOutputPlugin.validateSetup() called.");
     printSetup();
     
     if (!connect()) {
@@ -411,20 +411,20 @@ public class TextOutputPlugin extends RBNBBase {
    * Prints the setup parameters.
    */
   private void printSetup() {
-    logger.debug("TextOutputPlugin.printSetup() called.");
-    logger.debug("Starting TextOutputPlugin on " + getServer() +
+    log.debug("TextOutputPlugin.printSetup() called.");
+    log.debug("Starting TextOutputPlugin on " + getServer() +
                  " as " + sinkName);
-    logger.debug("  Archiving channel " + channelPath);
+    log.debug("  Archiving channel " + channelPath);
     
     if (endTime != Double.MAX_VALUE) {
-      logger.debug("  from " + RBNBUtilities.secondsToISO8601(startTime) +
+      log.debug("  from " + RBNBUtilities.secondsToISO8601(startTime) +
           " to " + RBNBUtilities.secondsToISO8601(endTime));
     } else if (startTime != 0) {
-      logger.debug("  from " + RBNBUtilities.secondsToISO8601(startTime));
+      log.debug("  from " + RBNBUtilities.secondsToISO8601(startTime));
     }
     
     if (eventMarkerFilter != null) {
-      logger.debug("  using event marker filter " + eventMarkerFilter);
+      log.debug("  using event marker filter " + eventMarkerFilter);
     }
   }
 
@@ -435,7 +435,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the time ranges are setup
    */
   private boolean setupTimeRanges() {
-    logger.debug("TextOutputPlugin.setupTimeRanges() called.");
+    log.debug("TextOutputPlugin.setupTimeRanges() called.");
     if (eventMarkerFilter == null) {
       timeRanges = new ArrayList<TimeRange>();
       timeRanges.add(new TimeRange(startTime, endTime));
@@ -443,10 +443,10 @@ public class TextOutputPlugin extends RBNBBase {
       try {
         timeRanges = MarkerUtilities.getTimeRanges(sink, eventMarkerFilter, startTime, endTime);
       } catch (SAPIException e) {
-        logger.debug("Error retreiving event markers from server.");
+        log.debug("Error retreiving event markers from server.");
         return false;
       } catch (IllegalArgumentException e) {
-        logger.debug("Error: The event marker filter format is invalid.");
+        log.debug("Error: The event marker filter format is invalid.");
         return false;
       }
     }
@@ -460,17 +460,17 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the time ranges are valid
    */
   private boolean checkTimeRanges() {
-    logger.debug("TextOutputPlugin.checkTimeRanges() called.");
+    log.debug("TextOutputPlugin.checkTimeRanges() called.");
     Node channelMetadata;
     try {
       channelMetadata = RBNBUtilities.getMetadata(getServer(), channelPath);
     } catch (SAPIException e) {
-      logger.debug("Error retreiving channel metadata from the server.");
+      log.debug("Error retreiving channel metadata from the server.");
       return false;
     }
     
     if (channelMetadata == null) {
-      logger.debug("Error: Channel " + channelPath + " not found.");
+      log.debug("Error: Channel " + channelPath + " not found.");
       return false;      
     }
     
@@ -490,7 +490,7 @@ public class TextOutputPlugin extends RBNBBase {
       
       // skip time ranges in the past where there is no data
       if (!timeRange.intersects(channelTimeRange)) {
-        logger.debug("Warning: Skipping the time range from " +
+        log.debug("Warning: Skipping the time range from " +
                      RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                      " to " +
                      RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
@@ -500,8 +500,8 @@ public class TextOutputPlugin extends RBNBBase {
     }
     
     if (timeRanges.size() == 0) {
-      logger.debug("Error: There are no data for the specified time ranges.");
-      logger.debug("There is data from " +
+      log.debug("Error: There are no data for the specified time ranges.");
+      log.debug("There is data from " +
                    RBNBUtilities.secondsToISO8601(channelStartTime) +
                    " to " +
                    RBNBUtilities.secondsToISO8601(channelEndTime) +
@@ -513,7 +513,7 @@ public class TextOutputPlugin extends RBNBBase {
     // move up start time to first data point
     TimeRange firstTimeRange = timeRanges.get(0);
     if (firstTimeRange.getStartTime() < channelTimeRange.getStartTime()) {
-      logger.debug("Warning: Setting start time to " + 
+      log.debug("Warning: Setting start time to " +
                    RBNBUtilities.secondsToISO8601(channelTimeRange.getStartTime()) +
                    " since there is no data before it.");
       firstTimeRange.setStartTime(channelTimeRange.getStartTime());
@@ -553,7 +553,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Convert data to ASCII streams.
    */
   public boolean convert() {
-    logger.debug("TextOutputPlugin.convert() called.");
+    log.debug("TextOutputPlugin.convert() called.");
     doTextConversion = true;
     
     if (!runWork()) {
@@ -569,7 +569,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Stop converting data to disk. This will return immediately.
    */
   public void stopConversion() {
-    logger.debug("TextOutputPlugin.stopConversion() called.");
+    log.debug("TextOutputPlugin.stopConversion() called.");
     doTextConversion = false;
   }
   
@@ -586,7 +586,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Converts the data.
    */
   private boolean runWork() {
-    logger.debug("TextOutputPlugin.runWork() called.");
+    log.debug("TextOutputPlugin.runWork() called.");
     int dataFramesConverted = 0;
 
     try {
@@ -615,13 +615,13 @@ public class TextOutputPlugin extends RBNBBase {
       double elapsedTime = 0;
       for (TimeRange timeRange : timeRanges) {
         if (timeRange.getEndTime() != Double.MAX_VALUE) {
-          logger.debug("Converting data from " +
+          log.debug("Converting data from " +
                         RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                         " to " +
                         RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
                         ".");
         } else {
-          logger.debug("Converting data from " +
+          log.debug("Converting data from " +
                        RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                        ".");
         }
@@ -646,19 +646,19 @@ public class TextOutputPlugin extends RBNBBase {
         }
       }
     } catch (SAPIException e) {
-      logger.debug("Error getting data from server: " + e.getMessage() + ".");
+      log.debug("Error getting data from server: " + e.getMessage() + ".");
       return false;
     } catch (IOException e) {
-      logger.debug("Error writing data to file: " + e.getMessage() + ".");
+      log.debug("Error writing data to file: " + e.getMessage() + ".");
       return false;
     } finally {
       disconnect();
     }
     
     if (doTextConversion) {
-      logger.debug("Conversion complete. Wrote " + dataFramesConverted + " data frames.              ");
+      log.debug("Conversion complete. Wrote " + dataFramesConverted + " data frames.              ");
     } else {
-      logger.debug("Conversion stopped. Wrote " + dataFramesConverted + " data frames.               ");
+      log.debug("Conversion stopped. Wrote " + dataFramesConverted + " data frames.               ");
     }
     
     return true;
@@ -678,7 +678,7 @@ public class TextOutputPlugin extends RBNBBase {
    */
   private int convertData(ChannelMap map, ChannelMap cmap, double startTime, double endTime, 
     double duration, double baseTime) throws SAPIException, IOException {
-    logger.debug("TextOutputPlugin.convertData() called.");
+    log.debug("TextOutputPlugin.convertData() called.");
 
     sink.Subscribe(map, startTime, 0.0, "absolute");
     //sink.Subscribe(map, startTime, duration, "absolute");
@@ -691,10 +691,10 @@ public class TextOutputPlugin extends RBNBBase {
       
       if (m.GetIfFetchTimedOut()) {
         if (++fetchRetryCount < 10) {
-          logger.debug("Warning: Request for data timed out, retrying.");
+          log.debug("Warning: Request for data timed out, retrying.");
           continue;
         } else {
-          logger.debug("Error: Unable to get data from server.");
+          log.debug("Error: Unable to get data from server.");
           break;
         }
       } else {
@@ -712,7 +712,7 @@ public class TextOutputPlugin extends RBNBBase {
         // create an Ensemble
         ensembleBuffer.put(data[i]);
         Ensemble ensemble = new Ensemble(ensembleBuffer);
-        logger.info("Ensemble is valid: " + ensemble.isValid());
+        log.info("Ensemble is valid: " + ensemble.isValid());
         
         if ( ensemble.isValid() ) {
           int ensYear =      (ensemble.getRealTimeY2KClockCentury() * 100) +
@@ -724,13 +724,13 @@ public class TextOutputPlugin extends RBNBBase {
           int ensSecond =     ensemble.getRealTimeY2KClockSecond();
           int ensHundredths = ensemble.getRealTimeY2KClockHundredths();
           
-          logger.debug("ensYear      : " + ensYear        );
-          logger.debug("ensMonth     : " + ensMonth       );
-          logger.debug("ensDay       : " + ensDay         );
-          logger.debug("ensHour      : " + ensHour        );
-          logger.debug("ensMinute    : " + ensMinute      );
-          logger.debug("ensSecond    : " + ensSecond      );
-          logger.debug("ensHundredths: " + ensHundredths  );
+          log.debug("ensYear      : " + ensYear        );
+          log.debug("ensMonth     : " + ensMonth       );
+          log.debug("ensDay       : " + ensDay         );
+          log.debug("ensHour      : " + ensHour        );
+          log.debug("ensMinute    : " + ensMinute      );
+          log.debug("ensSecond    : " + ensSecond      );
+          log.debug("ensHundredths: " + ensHundredths  );
           
           Calendar ensCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
           ensCalendar.set(ensYear, ensMonth, ensDay, ensHour, ensMinute, ensSecond);
@@ -740,7 +740,7 @@ public class TextOutputPlugin extends RBNBBase {
           // set the data frame timestamp to the observation timestamp
           double[] times = new double[1];
           times[0] = (double) (ensCalendar.getTime().getTime()/1000);
-          logger.debug("Observation time: = " + RBNBUtilities.secondsToISO8601(times[0]));          
+          log.debug("Observation time: = " + RBNBUtilities.secondsToISO8601(times[0]));
           cmap.PutTimes(times);
           
           String[] channelList = new String[cmap.NumberOfChannels()];
@@ -748,26 +748,26 @@ public class TextOutputPlugin extends RBNBBase {
             channelList[j] = cmap.GetName(j);
             // add temperature data channel
             if ( channelList[j].equals("temperature") ) {
-              //logger.debug("Temperature: " + ensemble.getTemperature());
+              //log.debug("Temperature: " + ensemble.getTemperature());
               cmap.PutDataAsFloat32(cmap.GetIndex(channelList[j]), 
                 new float[] {ensemble.getTemperature()});
             }            
             // add pressure data channel
             if ( channelList[j].equals("pressure") ) {
-              //logger.debug("Pressure: " + ensemble.getPressure());
+              //log.debug("Pressure: " + ensemble.getPressure());
               cmap.PutDataAsFloat32(cmap.GetIndex(channelList[j]), 
                 new float[] {ensemble.getPressure()});
             }            
             // add salinity data channel
             if ( channelList[j].equals("salinity") ) {
-              //logger.debug("Salinity: " + ensemble.getSalinity());
+              //log.debug("Salinity: " + ensemble.getSalinity());
               cmap.PutDataAsInt32(cmap.GetIndex(channelList[j]), 
                 new int[] {ensemble.getSalinity()});
             }            
           }
           // Flush the data frame to rbnb
           source.Flush(cmap);
-          logger.debug("Flushed data to data turbine.");                    
+          log.debug("Flushed data to data turbine.");
         }
         
       }
@@ -783,7 +783,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if connected, false otherwise
    */
   private boolean connect() {
-    logger.debug("TextOutputPlugin.connect() called.");
+    log.debug("TextOutputPlugin.connect() called.");
     if (isConnected()) {
       return true;
     }
@@ -792,8 +792,8 @@ public class TextOutputPlugin extends RBNBBase {
       sink.OpenRBNBConnection(getServer(), sinkName);
       source.OpenRBNBConnection(getServer(), "KN02XX_020ADCP020R00_CHANNELS");
     } catch (SAPIException e) {
-      logger.debug("Error: Unable to connect to server.");
-      logger.debug(e.getMessage());
+      log.debug("Error: Unable to connect to server.");
+      log.debug(e.getMessage());
       e.printStackTrace();
       disconnect();
       return false;
@@ -808,7 +808,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Disconnects from the RBNB server.
    */
   private void disconnect() {
-    logger.debug("TextOutputPlugin.disconnect() called.");
+    log.debug("TextOutputPlugin.disconnect() called.");
     if (!isConnected()) {
       return;
     }

@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 public class ReaderTask implements Callable<ReadResult> {
 
-    /* Set up a logger */
+    /* Set up a log */
     private final Log log = LogFactory.getLog(ReaderTask.class);
 
     /* The path to the file that the table with be created from*/

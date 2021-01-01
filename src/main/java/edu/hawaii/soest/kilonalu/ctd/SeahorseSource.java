@@ -245,7 +245,7 @@ public class SeahorseSource extends RBNBSource {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /** The Logger instance used to log system messages  */
-  private static Log logger = LogFactory.getLog(SeahorseSource.class);
+  private static Log log = LogFactory.getLog(SeahorseSource.class);
   
   /* The channel map object used to transfer data to the DataTurbine*/
   private ChannelMap rbnbChannelMap;
@@ -353,7 +353,7 @@ public class SeahorseSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    logger.debug("SeahorseSource.execute() called.");
+    log.debug("SeahorseSource.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -405,7 +405,7 @@ public class SeahorseSource extends RBNBSource {
         while ( buffer.hasRemaining() ) {
           byteOne = buffer.get();
 
-          //logger.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
+          //log.debug("b1: " + new String(Hex.encodeHex((new byte[]{byteOne})))   + "\t" + 
           //             "b2: " + new String(Hex.encodeHex((new byte[]{byteTwo})))   + "\t" + 
           //             "b3: " + new String(Hex.encodeHex((new byte[]{byteThree}))) + "\t" + 
           //             "b4: " + new String(Hex.encodeHex((new byte[]{byteFour})))  + "\t" +
@@ -433,7 +433,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
                    byteThree == 0x4B && byteFour == 0x4F ) {
                 
-                logger.debug("Received the registration status result.");
+                log.debug("Received the registration status result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -452,7 +452,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
-                logger.debug("Network Registration Result: " +
+                log.debug("Network Registration Result: " +
                              resultString.trim());
                 
                 resultBuffer.clear();
@@ -498,7 +498,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x0A && byteTwo  == 0x0D && 
                    byteThree == 0x4B && byteFour == 0x4F ) {
                 
-                logger.debug("Received the signal strength result.");
+                log.debug("Received the signal strength result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -517,7 +517,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, "US-ASCII");
-                logger.debug("Signal Strength Result: " +
+                log.debug("Signal Strength Result: " +
                              resultString.trim());
                 
                 int signalStrengthIndex = resultString.indexOf(
@@ -576,7 +576,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
                   
                 }
@@ -591,7 +591,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x47 && byteTwo  == 0x4E && 
                    byteThree == 0x49 && byteFour == 0x52 ) {
                 
-                logger.debug("Received the RING command.");
+                log.debug("Received the RING command.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -634,7 +634,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
                   
                 }
@@ -650,7 +650,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne   == 0x0D && byteTwo  == 0x59 && 
                    byteThree == 0x44 && byteFour == 0x41) {
                 
-                logger.debug("Received the ready status result.");
+                log.debug("Received the ready status result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -671,15 +671,15 @@ public class SeahorseSource extends RBNBSource {
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
                 
                 // test the connect rate
-                logger.debug("Result from ATA: " + resultString);
+                log.debug("Result from ATA: " + resultString);
                 
                 if ( resultString.indexOf(this.CONNECT_RATE) > 0 ) {
-                  logger.debug("Connect Rate Result: " +
+                  log.debug("Connect Rate Result: " +
                                this.CONNECT_RATE);
                   
                   // test the ready status
                   if ( resultString.indexOf(this.READY_STATUS) > 0 ) {
-                    logger.debug("Connect Rate Result: " +
+                    log.debug("Connect Rate Result: " +
                                  this.READY_STATUS);
                   
                     resultBuffer.clear();
@@ -711,7 +711,7 @@ public class SeahorseSource extends RBNBSource {
                     break;
                     
                   } else {
-                    logger.debug("The ready status differs from: " +
+                    log.debug("The ready status differs from: " +
                                  this.READY_STATUS);
                   
                     // throw an exception here?
@@ -719,7 +719,7 @@ public class SeahorseSource extends RBNBSource {
                   }
                   
                 } else {
-                  logger.debug("The connect rate differs from: " +
+                  log.debug("The connect rate differs from: " +
                                this.CONNECT_RATE);
                   
                   // throw an exception here?
@@ -735,7 +735,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -749,7 +749,7 @@ public class SeahorseSource extends RBNBSource {
               // the instrument ID string should end in \r
               if ( byteOne == 0x0D ) {
                 
-                logger.debug("Received the instrument ID result.");
+                log.debug("Received the instrument ID result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -768,7 +768,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
-                logger.debug("Seahorse Instrument ID: " + resultString.trim());
+                log.debug("Seahorse Instrument ID: " + resultString.trim());
                 
                 // set the platformID variable
                 this.platformID = resultString.substring(0, resultString.length() - 1);
@@ -802,7 +802,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -816,7 +816,7 @@ public class SeahorseSource extends RBNBSource {
               // the battery voltage string should end in \r
               if ( byteOne == 0x0D ) {
                 
-                logger.debug("Received the instrument battery voltage result.");
+                log.debug("Received the instrument battery voltage result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -835,7 +835,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
-                logger.debug("Seahorse Battery Voltage: " + resultString.trim());
+                log.debug("Seahorse Battery Voltage: " + resultString.trim());
                 
                 resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -866,7 +866,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -882,7 +882,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne == 0x0D && byteTwo ==  0x44 && 
                    byteThree == 0x4E && byteFour == 0x45 ) {
                 
-                logger.debug("Received the GPRMS result.");
+                log.debug("Received the GPRMS result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -901,7 +901,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
-                logger.debug("Seahorse GPRMC string: " + resultString.trim());
+                log.debug("Seahorse GPRMC string: " + resultString.trim());
                 
                 resultBuffer.clear();
                 this.resultByteCount = 0;
@@ -932,7 +932,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -947,7 +947,7 @@ public class SeahorseSource extends RBNBSource {
               // note bytes are in reverse order in the FIFO window
               if ( byteOne == 0x0D && byteTwo == 0x5A && byteThree == 0x2E) {
                 
-                logger.debug("Received the file name result.");
+                log.debug("Received the file name result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -966,7 +966,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
-                logger.debug("File name result: " + resultString.trim());
+                log.debug("File name result: " + resultString.trim());
                 
                 resultString = resultString.trim();
                 int fileNameIndex = resultString.indexOf(this.FILENAME_PREFIX);
@@ -977,7 +977,7 @@ public class SeahorseSource extends RBNBSource {
                     (fileNameIndex + (this.FILENAME_PREFIX).length()), 
                     resultString.length());
                 
-                logger.debug("File name to download: " + this.fileNameToDownload);
+                log.debug("File name to download: " + this.fileNameToDownload);
                 
                 // test to see if the GFN command returns FILES=NONE
                 if ( !(resultString.indexOf(this.END_OF_FILES) > 0) ) {
@@ -1478,7 +1478,7 @@ public class SeahorseSource extends RBNBSource {
                         this.rbnbChannelMap.PutTime(sampleTimeAsSecondsSinceEpoch, 0d);
                         getSource().Flush(this.rbnbChannelMap);
                       
-                        logger.info("Flushed data to the DataTurbine.");
+                        log.info("Flushed data to the DataTurbine.");
                         this.rbnbChannelMap.Clear(); 
                         
                         // samples are taken 4x per second, so increment the
@@ -1490,7 +1490,7 @@ public class SeahorseSource extends RBNBSource {
                     } //  end if !failed
 
                   } catch ( Exception e ) {
-                    logger.debug("Failed to parse the CTD data file: " + 
+                    log.debug("Failed to parse the CTD data file: " + 
                                   e.getMessage());
                                   
                   }
@@ -1527,7 +1527,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1541,7 +1541,7 @@ public class SeahorseSource extends RBNBSource {
               // the number of blocks string should end in \r
               if ( byteOne == 0x0D ) {
                 
-                logger.debug("Received the number of blocks result.");
+                log.debug("Received the number of blocks result.");
                 
                 this.resultByteCount++; // add the last byte found to the count
                 
@@ -1560,7 +1560,7 @@ public class SeahorseSource extends RBNBSource {
                 resultBuffer.flip();
                 resultBuffer.get(resultArray);
                 resultString = new String(resultArray, StandardCharsets.US_ASCII);
-                logger.debug("Number of bytes reported: " + resultString.trim());
+                log.debug("Number of bytes reported: " + resultString.trim());
                 
                 int numberOfBlocksIndex = resultString.indexOf(this.BLOCKSIZE_PREFIX);
                 
@@ -1578,12 +1578,12 @@ public class SeahorseSource extends RBNBSource {
                 // convert the string to an integer
                 try {
                   this.numberOfBlocks = Integer.parseInt(resultString.trim());
-                  logger.debug("Number of bytes to download: " + this.numberOfBlocks);
+                  log.debug("Number of bytes to download: " + this.numberOfBlocks);
                 
                 } catch ( java.lang.NumberFormatException nfe ) {
                   failed = true;
                   nfe.printStackTrace();
-                  logger.debug("Failed to convert returned string value " + 
+                  log.debug("Failed to convert returned string value " + 
                   "to an integer value.  The returned string is: " + this.numberOfBlocks);
                       
                 }
@@ -1628,15 +1628,15 @@ public class SeahorseSource extends RBNBSource {
                     this.dataFileString = new String(output);
                     
                     //report the file contents to the log
-                    logger.debug("File " + this.fileNameToDownload + ": ");                   
-                    logger.debug(this.dataFileString);                   
+                    log.debug("File " + this.fileNameToDownload + ": ");                   
+                    log.debug(this.dataFileString);                   
                     
                   } else {
                     this.castFileString = new String(output);
                     
                     //report the file contents to the log
-                    logger.debug("File " + this.fileNameToDownload + ": ");                   
-                    logger.debug(this.castFileString);                   
+                    log.debug("File " + this.fileNameToDownload + ": ");                   
+                    log.debug(this.castFileString);                   
                     
                     
                   }
@@ -1672,7 +1672,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1715,7 +1715,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1731,7 +1731,7 @@ public class SeahorseSource extends RBNBSource {
               if ( byteOne == 0x0D && byteTwo == 0x45 && 
                    byteThree == 0x59 && byteFour == 0x42 ) {
                 
-                logger.debug("Received the BYE command.");
+                log.debug("Received the BYE command.");
                 
                 // continue to disconnect. send the escape sequence
                 this.command = this.ESCAPE_SEQUENCE_COMMAND +
@@ -1760,7 +1760,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1804,7 +1804,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1848,7 +1848,7 @@ public class SeahorseSource extends RBNBSource {
                   resultBuffer.put(byteOne);
                 } else {
                   resultBuffer.compact();
-                  logger.debug("Compacting resultBuffer ...");
+                  log.debug("Compacting resultBuffer ...");
                   resultBuffer.put(byteOne);
               
                 }
@@ -1964,7 +1964,7 @@ public class SeahorseSource extends RBNBSource {
       
       try {
         this.socketChannel.write(commandBuffer);
-        logger.debug("Wrote " + command + " to the socket channel.");
+        log.debug("Wrote " + command + " to the socket channel.");
         result = true;
         
       } catch (IOException ioe ) {
@@ -2014,14 +2014,14 @@ public class SeahorseSource extends RBNBSource {
 
   public static void main (String[] args) {
     
-    logger.info("SeahorseSource.main() called.");
+    log.info("SeahorseSource.main() called.");
     
     try {
       // create a new instance of the SeahorseSource object, and parse the command 
       // line arguments as settings for this instance
       final SeahorseSource seahorseSource = new SeahorseSource();
       
-      // Set up a simple logger that logs to the console
+      // Set up a simple log that logs to the console
       PropertyConfigurator.configure(seahorseSource.getLogConfigurationFile());
       
       // parse the commandline arguments to configure the connection, then 
@@ -2040,7 +2040,7 @@ public class SeahorseSource extends RBNBSource {
       );
 
     } catch ( Exception e ) {
-      logger.info("Error in main(): " + e.getMessage());
+      log.info("Error in main(): " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -2405,7 +2405,7 @@ public class SeahorseSource extends RBNBSource {
      } catch ( SAPIException sapie ) {
        // In the event of an RBNB communication  exception, log the exception, 
        // and allow execute() to return false, which will prompt a retry.
-       logger.debug("There was a problem registering the channels." +
+       log.debug("There was a problem registering the channels." +
                     " The error message was: " + sapie.getMessage());
                     
        sapie.printStackTrace();
@@ -2439,7 +2439,7 @@ public class SeahorseSource extends RBNBSource {
           Thread.sleep(RETRY_INTERVAL);
         
         } catch ( Exception e ){
-          logger.info("There was an execution problem. Retrying. Message is: " +
+          log.info("There was an execution problem. Retrying. Message is: " +
           e.getMessage());
         }
       }
@@ -2479,7 +2479,7 @@ public class SeahorseSource extends RBNBSource {
           setHostPort(Integer.parseInt(hostPort));
           
         } catch ( NumberFormatException nfe ){
-          logger.info("Error: Enter a numeric value for the host port. " +
+          log.info("Error: Enter a numeric value for the host port. " +
                              hostPort + " is not a valid number.");
           return false;
         }
