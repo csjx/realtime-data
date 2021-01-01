@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -54,7 +56,7 @@ public class FileArchiveUtility {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(FileArchiveUtility.class);
+  private static Log logger = LogFactory.getLog(FileArchiveUtility.class);
   
   /** The date format for the command **/
   private static final SimpleDateFormat COMMAND = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

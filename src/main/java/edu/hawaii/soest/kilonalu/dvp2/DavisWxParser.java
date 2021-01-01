@@ -1,16 +1,6 @@
-/**
- *  Copyright: 2009 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that represents a single LOOP sample of data produced by
- *            a Davis Scientific Vantage Pro 2 Weather station as described in
- *            the Davis Vantage Serial Protocol document (Vantage Pro and 
- *            Vantage Pro2 Serial Support 2.2 - 01-25-2005)
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +18,6 @@
  */ 
 package edu.hawaii.soest.kilonalu.dvp2;
 
-import edu.hawaii.soest.kilonalu.dvp2.DavisWxParser;
-
 import java.io.File; 
 import java.io.FileInputStream; 
 
@@ -43,9 +31,8 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  A class that represents a single Rev "B" sample of data produced by
@@ -73,7 +60,7 @@ public class DavisWxParser {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(DavisWxParser.class);
+  private static Log logger = LogFactory.getLog(DavisWxParser.class);
   
   /*
    *  A field that stores the binary LOOP packet input as a ByteBuffer
@@ -680,10 +667,7 @@ public class DavisWxParser {
         
         // create an instance of the parser, and report the field contents after parsing
         DavisWxParser davisWxParser = new DavisWxParser(packetBuffer);
-        
-        // Set up a simple logger that logs to the console
-        PropertyConfigurator.configure(davisWxParser.getLogConfigurationFile());
-        
+
         logger.info("loopID:                         " + davisWxParser.getLoopID());
         logger.info("barTrend:                       " + davisWxParser.getBarTrend());
         logger.info("barTrendAsString:               " + davisWxParser.getBarTrendAsString());

@@ -1,13 +1,6 @@
-/**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To provide a Java NIO channel for serial communication
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +23,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
-import java.nio.ReadOnlyBufferException;
 import java.nio.ByteBuffer;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
     
 public class SerialWriter implements Runnable {
   
@@ -62,7 +54,7 @@ public class SerialWriter implements Runnable {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
 
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(SerialWriter.class);
+  private static Log logger = LogFactory.getLog(SerialWriter.class);
  
   /**
    * The constructor - creates a new SerialWriter object given an OutputStream

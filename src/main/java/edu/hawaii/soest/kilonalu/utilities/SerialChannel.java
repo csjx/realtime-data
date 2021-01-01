@@ -1,13 +1,6 @@
-/**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To provide a Java NIO channel for serial communication
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +18,16 @@
  */ 
 package edu.hawaii.soest.kilonalu.utilities;
 
-import edu.hawaii.soest.kilonalu.utilities.SerialWriter;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 import java.nio.BufferOverflowException;
-import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
-import java.nio.channels.Channels;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -49,10 +36,9 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 
-import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  *
@@ -96,7 +82,7 @@ public class SerialChannel implements ByteChannel {
    private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
 
    /* The Logger instance used to log system messages */
-   private static Logger logger = Logger.getLogger(SerialChannel.class);
+   private static Log logger = LogFactory.getLog(SerialChannel.class);
   
   /**
    * Constructor: creates an empty SerialChannel object

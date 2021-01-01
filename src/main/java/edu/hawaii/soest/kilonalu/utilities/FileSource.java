@@ -1,14 +1,6 @@
-/**
- *  Copyright: 2010 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To convert lines of an  ASCII data file into RBNB Data Turbine
- *             frames for archival and realtime access.
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +47,8 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -151,7 +145,7 @@ public class FileSource extends RBNBSource {
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
   
   /* The Logger instance used to log system messages */
-  private static Logger logger = Logger.getLogger(FileSource.class);
+  private static Log logger = LogFactory.getLog(FileSource.class);
 
   /* The state used to track the data processing */
   protected int state = 0;

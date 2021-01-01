@@ -27,15 +27,8 @@
 package edu.hawaii.soest.kilonalu.flntu;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
-
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -49,13 +42,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.DecoderException;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 
-import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -177,7 +168,7 @@ public class FLNTUSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static final Logger logger = Logger.getLogger(FLNTUSource.class);
+  private static final Log logger = LogFactory.getLog(FLNTUSource.class);
 
   protected int state = 0;
   

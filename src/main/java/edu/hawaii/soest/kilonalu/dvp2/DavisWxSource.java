@@ -1,15 +1,9 @@
-/**
- *  Copyright: 2007 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: To convert a Davis Scientific Vantage Pro 2 ASCII data source into 
  *             RBNB Data Turbine frames for archival and realtime access.
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
- *
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,17 +21,10 @@
 package edu.hawaii.soest.kilonalu.dvp2;
 
 import com.rbnb.sapi.ChannelMap;
-import com.rbnb.sapi.Source;
 import com.rbnb.sapi.SAPIException;
 
-import java.lang.StringBuffer;
 import java.lang.StringBuilder;
 import java.lang.InterruptedException;
-
-import java.io.PrintWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -57,11 +44,11 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.codec.binary.Hex;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.log4j.PropertyConfigurator;
 
-import org.nees.rbnb.RBNBBase;
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -182,7 +169,7 @@ public class DavisWxSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(DavisWxSource.class);
+  private static Log logger = LogFactory.getLog(DavisWxSource.class);
 
   /*
    * An integer value indicating the execution state.  This is used by the 

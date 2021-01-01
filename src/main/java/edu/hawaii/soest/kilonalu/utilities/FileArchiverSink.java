@@ -44,6 +44,8 @@ import edu.hawaii.soest.pacioos.text.convert.Converter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 
@@ -73,7 +75,7 @@ import com.rbnb.sapi.ChannelTree.Node;
 public class FileArchiverSink extends RBNBBase {
 
     /** The Logger instance used to log system messages */
-    private static Logger logger = Logger.getLogger(FileArchiverSink.class);
+    private static final Log logger = LogFactory.getLog(FileArchiverSink.class);
 
     /** the default RBNB sink name */
     private static final String DEFAULT_SINK_NAME = "FileArchiver";

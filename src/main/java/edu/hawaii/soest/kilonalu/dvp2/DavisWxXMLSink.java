@@ -1,15 +1,6 @@
-/**
- *  Copyright: 2009 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that fetches certain LOOP sample data fields produced by
- *            a Davis Scientific Vantage Pro 2 Weather station and converts them
- *            an ad hoc XML file syntax to update a weather web page.
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +37,8 @@ import com.rbnb.sapi.Sink;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -98,7 +91,7 @@ public class DavisWxXMLSink extends RBNBBase {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(DavisWxXMLSink.class);
+  private static Log logger = LogFactory.getLog(DavisWxXMLSink.class);
   
   /**
    * Constructor: creates DavisWxXMLSink.
