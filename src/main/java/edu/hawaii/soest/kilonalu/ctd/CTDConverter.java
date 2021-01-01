@@ -1,22 +1,6 @@
-/**
- *  Copyright: 2009 Regents of the University of Hawaii and the
+/*
+ *  Copyright: 2020 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: A class that represents a converted  sample of data produced by
- *             a Seabird Seacat 19plus CTD profiler as described in
- *            the SBE 19plus SEACAT Profiler User's Manual 
- *            (Manual Version #010, 01/02/03 ).  The converter is intended to 
- *            convert raw frequencies and voltages as described in OUTPUTFORMAT 
- *            2 in the manual.  It uses formulas stated in the SBE19plus
- *            calibration sheets for converting temperature counts to degrees
- *            celsius, conductivity frequencies to Siemens/m, and pressure counts
- *            to decibars.
- *
- *   Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +18,7 @@
  */ 
 package edu.hawaii.soest.kilonalu.ctd;
 
-import edu.hawaii.soest.kilonalu.ctd.CTDParser;
-
 import java.text.ParseException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
