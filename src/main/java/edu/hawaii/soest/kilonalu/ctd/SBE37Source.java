@@ -1,14 +1,6 @@
-/**
+/*
  *  Copyright: 2007 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
- *    Purpose: To convert a Seacat ASCII data source into RBNB Data Turbine
- *             frames for archival and realtime access.
- *    Authors: Christopher Jones
- *
- * $HeadURL$
- * $LastChangedDate$
- * $LastChangedBy$
- * $LastChangedRevision$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +36,7 @@ import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -135,7 +128,7 @@ public class SBE37Source extends RBNBSource {
   /**
    * The default log configuration file location
    */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j2.properties";
 
   /**
    * The log configuration file location
@@ -312,7 +305,7 @@ public class SBE37Source extends RBNBSource {
       // verify the instrument ID is correct
       while ( getInstrumentID() == null ) {
         // allow time for the instrument response
-        streamingThread.sleep(2000);
+        Thread.sleep(2000);
         buffer.clear();
         // send the command and update the sentCommand status
         this.sentCommand = queryInstrument(this.command);
@@ -324,7 +317,7 @@ public class SBE37Source extends RBNBSource {
 
           buffer.flip();
           while ( buffer.hasRemaining() ) {
-            String nextCharacter = new String(new byte[]{buffer.get()}, "US-ASCII");
+            String nextCharacter = new String(new byte[]{buffer.get()}, StandardCharsets.US_ASCII);
             responseString.append(nextCharacter);
           }
           // look for the command line ending
@@ -335,7 +328,7 @@ public class SBE37Source extends RBNBSource {
             int idStopIndex = responseString.indexOf("=") + 4;
             String idString = responseString.substring(idStartIndex, idStopIndex);
             // test that the ID is a valid number and set the instrument ID
-            if ( (new Integer(idString)).intValue() > 0 ) {
+            if (Integer.parseInt(idString) > 0 ) {
               setInstrumentID(idString);
               buffer.clear();
               logger.debug("Instrument ID is " + getInstrumentID() + ".");
@@ -359,7 +352,7 @@ public class SBE37Source extends RBNBSource {
       // instrumentID is set
 
       // allow time for the instrument response
-      streamingThread.sleep(5000);
+      Thread.sleep(5000);
       this.command = this.commandPrefix + 
                      getInstrumentID()  + 
                      this.takeSampleCommand +
@@ -437,7 +430,7 @@ public class SBE37Source extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                String sampleString = new String(sampleArray, "US-ASCII");
+                String sampleString = new String(sampleArray, StandardCharsets.US_ASCII);
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
                 getSource().Flush(rbnbChannelMap);
@@ -457,7 +450,7 @@ public class SBE37Source extends RBNBSource {
                   // Once the sample is flushed, take a new sample
                   if ( getInstrumentID() != null ) {
                     // allow time for the instrument response
-                    streamingThread.sleep(2000);
+                    Thread.sleep(2000);
                     this.command = this.commandPrefix + 
                                    getInstrumentID()  + 
                                    this.takeSampleCommand +
@@ -498,20 +491,16 @@ public class SBE37Source extends RBNBSource {
       } // end while (more socket bytes to read)
       this.socketChannel.close();
         
-    } catch ( IOException e ) {
+    } catch ( IOException | SAPIException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
       failed = true;
       e.printStackTrace();
       return !failed;
-    } catch ( SAPIException sapie ) {
-      // In the event of an RBNB communication  exception, log the exception, 
-      // and allow execute() to return false, which will prompt a retry.
-      failed = true;
-      sapie.printStackTrace();
-      return !failed;
-    } catch ( java.lang.InterruptedException ie ) {
+    } // In the event of an RBNB communication  exception, log the exception,
+    // and allow execute() to return false, which will prompt a retry.
+    catch ( java.lang.InterruptedException ie ) {
       ie.printStackTrace();
     }
     
@@ -520,15 +509,12 @@ public class SBE37Source extends RBNBSource {
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
     
     
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = getHostPort();
     SocketChannel dataSocket = null;
     
     try {  
@@ -665,7 +651,7 @@ public class SBE37Source extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     try {
       // create a new instance of the SBE37Source object, and parse the command 

@@ -145,7 +145,7 @@ public class FileSource extends RBNBSource {
   private String timezone = "UTC";
   
   /* The default log configuration file location */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j2.properties";
 
   /* The log configuration file location */
   private String logConfigurationFile = DEFAULT_LOG_CONFIGURATION_FILE;
@@ -492,7 +492,7 @@ public class FileSource extends RBNBSource {
    * The main method for running the code
    * @ param args[] the command line list of string arguments, none are needed
    */
-  public static void main (String args[]) {
+  public static void main (String[] args) {
 
 	/*
 	args = new String[]{

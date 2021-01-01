@@ -150,7 +150,7 @@ public class TChainSource extends RBNBSource {
   /**
    * The default log configuration file location
    */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j2.properties";
 
   /**
    * The log configuration file location

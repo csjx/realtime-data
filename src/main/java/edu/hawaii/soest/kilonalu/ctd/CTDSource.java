@@ -1939,7 +1939,7 @@ public class CTDSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
         
     try {
       // create a new instance of the CTDSource object, and parse the command 

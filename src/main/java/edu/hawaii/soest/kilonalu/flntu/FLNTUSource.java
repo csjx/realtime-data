@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2007 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: To convert a WetLabs ECO FLNTU ASCII data source into RBNB Data Turbine
@@ -43,6 +43,7 @@ import java.net.UnknownHostException;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLine;
@@ -113,13 +114,13 @@ public class FLNTUSource extends RBNBSource {
    * @see setArchiveMode()
    * @see getArchiveMode()
    */
-  private String archiveMode = DEFAULT_ARCHIVE_MODE;
+  private final String archiveMode = DEFAULT_ARCHIVE_MODE;
 
   /*
    * The default size of the ByteBuffer used to beffer the TCP stream from the
    * source instrument.
    */  
-  private int DEFAULT_BUFFER_SIZE = 8096; // 8K
+  private final int DEFAULT_BUFFER_SIZE = 8096; // 8K
 
   /**
    * The size of the ByteBuffer used to beffer the TCP stream from the 
@@ -130,7 +131,7 @@ public class FLNTUSource extends RBNBSource {
   /*
    *  A default RBNB channel name for the given source instrument
    */  
-  private String DEFAULT_RBNB_CHANNEL = "DecimalASCIISampleData";
+  private final String DEFAULT_RBNB_CHANNEL = "DecimalASCIISampleData";
 
   /**
    * The name of the RBNB channel for this data stream
@@ -166,7 +167,7 @@ public class FLNTUSource extends RBNBSource {
   /**
    * The default log configuration file location
    */
-  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j.properties";
+  private final String DEFAULT_LOG_CONFIGURATION_FILE = "lib/log4j2.properties";
 
   /**
    * The log configuration file location
@@ -176,7 +177,7 @@ public class FLNTUSource extends RBNBSource {
   /**
    * The Logger instance used to log system messages 
    */
-  private static Logger logger = Logger.getLogger(FLNTUSource.class);
+  private static final Logger logger = Logger.getLogger(FLNTUSource.class);
 
   protected int state = 0;
   
@@ -378,7 +379,7 @@ public class FLNTUSource extends RBNBSource {
                 
                 // send the sample to the data turbine
                 rbnbChannelMap.PutTimeAuto("server");
-                String sampleString = new String(sampleArray, "US-ASCII");
+                String sampleString = new String(sampleArray, StandardCharsets.US_ASCII);
                 int channelIndex = rbnbChannelMap.Add(getRBNBChannelName());
                 rbnbChannelMap.PutMime(channelIndex, "text/plain");
                 rbnbChannelMap.PutDataAsString(channelIndex, sampleString);
@@ -429,35 +430,28 @@ public class FLNTUSource extends RBNBSource {
       } // end while (more socket bytes to read)
       socket.close();
         
-    } catch ( IOException e ) {
+    } catch ( IOException | SAPIException e ) {
       // handle exceptions
       // In the event of an i/o exception, log the exception, and allow execute()
       // to return false, which will prompt a retry.
       failed = true;
       e.printStackTrace();
       return !failed;
-    } catch ( SAPIException sapie ) {
-      // In the event of an RBNB communication  exception, log the exception, 
-      // and allow execute() to return false, which will prompt a retry.
-      failed = true;
-      sapie.printStackTrace();
+    } // In the event of an RBNB communication  exception, log the exception,
+    // and allow execute() to return false, which will prompt a retry.
+
+
       return !failed;
-    }
-    
-    return !failed;
   } // end if (  !isConnected() ) 
   
    /**
    * A method used to the TCP socket of the remote source host for communication
-   * @param host       the name or IP address of the host to connect to for the
-   *                   socket connection (reading)
-   * @param portNumber the number of the TCP port to connect to (i.e. 2604)
    */
   protected SocketChannel getSocketConnection() {
     
     
     String host = getHostName();
-    int portNumber = new Integer(getHostPort()).intValue();
+    int portNumber = getHostPort();
     SocketChannel dataSocket = null;
     
     try {  
@@ -561,7 +555,7 @@ public class FLNTUSource extends RBNBSource {
    * @ param args[] the command line list of string arguments, none are needed
    */
 
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     
     try {
       // create a new instance of the FLNTUSource object, and parse the command 

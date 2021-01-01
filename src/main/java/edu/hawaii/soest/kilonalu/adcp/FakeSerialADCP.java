@@ -139,7 +139,7 @@ public class FakeSerialADCP {
      * @ param args  the command line list of string arguments, none are needed
      */
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             // ( new FakeSerialADCP() ).listPorts();
             (new FakeSerialADCP()).connect(SERIAL_PORT);

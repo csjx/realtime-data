@@ -164,7 +164,7 @@ public class FakeSerialCTD {
    * The main method for running the code
    * @ param args  the command line list of string arguments, none are needed
    */
-  public static void main (String args[]) {
+  public static void main (String[] args) {
     try {
       
       FakeSerialCTD fakeSerialCTD = new FakeSerialCTD();

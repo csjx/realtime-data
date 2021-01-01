@@ -7,7 +7,7 @@ $REALTIME_DATA/lib/commons-codec-1.3.jar:\
 $REALTIME_DATA/lib/commons-cli-1.0.jar:\
 $REALTIME_DATA/lib/commons-logging-1.0.4.jar:\
 $REALTIME_DATA/lib/log4j-1.2.8.jar:\
-$REALTIME_DATA/lib/log4j.properties
+$REALTIME_DATA/lib/log4j2.properties
 
 # run the ADCPSource driver, connecting to the ADCP @ 192.168.1.101:2104
 # and to the RBNB server @ 192.168.1.103:3333, defining the source name as

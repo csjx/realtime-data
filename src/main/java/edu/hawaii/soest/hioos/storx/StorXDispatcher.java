@@ -799,7 +799,7 @@ public class StorXDispatcher extends RBNBSource {
      *
      * @param args - the arguments array
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         try {
             // create a new instance of the StorXDispatcher object, and parse
