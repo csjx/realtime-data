@@ -332,7 +332,7 @@ public class TextRebuildApp {
         Table mergedTable = null;
         ReadResult readResult = null;
 
-        while ( readQueue.size() - 1 > 0 ) {
+        while ( readQueue.size() - 1 >= 0 ) {
             try {
                 // Poll the readQueue as table results are generated
                 Future<ReadResult> tableResultFuture = readQueue.poll(10, TimeUnit.MINUTES);
@@ -368,12 +368,29 @@ public class TextRebuildApp {
         Instant previousInstant = null;
         List<Instant> rebuildHoursInUTC = new ArrayList<>();
         ZonedDateTime currentZonedDateTime;
+
+        // Handle the single day scenario
+        if ( rebuildDatesInUTC.size() == 1 ) {
+            previousInstant = rebuildDatesInUTC.get(0);
+            count = 1;
+        }
+
+        // Iterate through all dates and create writer tasks
         for (Instant currentInstant : rebuildDatesInUTC) {
             if (count == 0) {
                 previousInstant = currentInstant;
             } else {
-                // Roll the current back into the day by a millisecond
-                currentInstant = currentInstant.minus(1L, ChronoUnit.MILLIS);
+                if ( previousInstant == currentInstant) {
+                    // When working within a single day, add a day and roll back a millisecond
+                    currentInstant = currentInstant
+                        .plus(1L, ChronoUnit.DAYS)
+                        .truncatedTo(ChronoUnit.DAYS);
+                    currentInstant = currentInstant.minus(1L, ChronoUnit.MILLIS);
+
+                } else {
+                    // Just roll the current back into the day by a millisecond
+                    currentInstant = currentInstant.minus(1L, ChronoUnit.MILLIS);
+                }
                 currentZonedDateTime = currentInstant.atZone(ZoneOffset.ofHours(0));
 
                 // Write the PacIOOS 2020 format converted file
@@ -515,11 +532,11 @@ public class TextRebuildApp {
                     String year = String.format("%4d", zonedDateTime.getYear());
                     String month = String.format("%02d", zonedDateTime.getMonthValue());
                     String day = String.format("%02d", zonedDateTime.getDayOfMonth());
-                    Path rawPath = Paths.get(
+                    Path processedPath = Paths.get(
                         processedArchiveBaseDirectory, instrumentName, year, month, day
                     );
-                    if (!Files.exists(rawPath)) {
-                        Files.createDirectories(rawPath);
+                    if (!Files.exists(processedPath)) {
+                        Files.createDirectories(processedPath);
                     }
                 }
             }
