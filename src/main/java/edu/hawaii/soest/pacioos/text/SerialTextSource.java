@@ -28,147 +28,147 @@ import org.apache.commons.configuration.ConfigurationException;
  */
 public class SerialTextSource extends SimpleTextSource {
 
-	/* The serial port device for the serial connection to the instrument */
-	private String serialPort;
-	
-	/* The baud rate for the serial connection to the instrument */
-	private int baudRate;
-	
-	/* The number of data bits for the serial connection to the instrument */
-	private int dataBits;
-	
-	/* The number of stop bits for the serial connection to the instrument */
-	private int stopBits;
-	
-	/* The parity setting for the serial connection to the instrument */
-	private String parity;
-	
-	/**
-	 * constructor: create an instance of the SerialTextSource 
-	 * @param config a configurtion instance
-	 * @throws ConfigurationException a configuration exception
-	 */
-	public SerialTextSource(Configuration config) throws ConfigurationException {
-		super(config);
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.hawaii.soest.pacioos.text.SimpleTextSource#execute()
-	 */
-	@Override
-	protected boolean execute() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /* The serial port device for the serial connection to the instrument */
+    private String serialPort;
+    
+    /* The baud rate for the serial connection to the instrument */
+    private int baudRate;
+    
+    /* The number of data bits for the serial connection to the instrument */
+    private int dataBits;
+    
+    /* The number of stop bits for the serial connection to the instrument */
+    private int stopBits;
+    
+    /* The parity setting for the serial connection to the instrument */
+    private String parity;
+    
+    /**
+     * constructor: create an instance of the SerialTextSource 
+     * @param config a configurtion instance
+     * @throws ConfigurationException a configuration exception
+     */
+    public SerialTextSource(Configuration config) throws ConfigurationException {
+        super(config);
+        
+    }
+    
+    /* (non-Javadoc)
+     * @see edu.hawaii.soest.pacioos.text.SimpleTextSource#execute()
+     */
+    @Override
+    protected boolean execute() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.nees.rbnb.RBNBBase#setArgs(org.apache.commons.cli.CommandLine)
-	 */
-	@Override
-	protected boolean setArgs(CommandLine cmd) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.nees.rbnb.RBNBBase#setArgs(org.apache.commons.cli.CommandLine)
+     */
+    @Override
+    protected boolean setArgs(CommandLine cmd) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	/**
-	 * Return the serial port device for the serial connection to the instrument (e.g. /dev/tty0)
-	 * 
-	 * @return the serialPort
-	 */	
-	public String getSerialPort() {
-		return serialPort;
-		
-	}
+    /**
+     * Return the serial port device for the serial connection to the instrument (e.g. /dev/tty0)
+     * 
+     * @return the serialPort
+     */    
+    public String getSerialPort() {
+        return serialPort;
+        
+    }
 
-	/**
-	 * Set the serial port device for the serial connection to the instrument (e.g. /dev/tty0)
-	 * 
-	 * @return the baudRate
-	 */
-	public void setSerialPort(String serialPort) {
-		this.serialPort = serialPort;
-		
-	}
+    /**
+     * Set the serial port device for the serial connection to the instrument (e.g. /dev/tty0)
+     * 
+     * @return the baudRate
+     */
+    public void setSerialPort(String serialPort) {
+        this.serialPort = serialPort;
+        
+    }
 
-	/**
-	 * Return the configured baud rate for the serial connection to the instrument
-	 * 
-	 * @return the baudRate
-	 */
-	public int getBaudRate() {
-		return baudRate;
-		
-	}
+    /**
+     * Return the configured baud rate for the serial connection to the instrument
+     * 
+     * @return the baudRate
+     */
+    public int getBaudRate() {
+        return baudRate;
+        
+    }
 
-	/**
-	 * Set the baud rate for the serial connection to the instrument
-	 * 
-	 * @param baudRate the baudRate to set
-	 */
-	public void setBaudRate(int baudRate) {
-		this.baudRate = baudRate;
-		
-	}
+    /**
+     * Set the baud rate for the serial connection to the instrument
+     * 
+     * @param baudRate the baudRate to set
+     */
+    public void setBaudRate(int baudRate) {
+        this.baudRate = baudRate;
+        
+    }
 
-	/**
-	 * Return the number of data bits set for the serial connection to the instrument (e.g. 8)
-	 * 
-	 * @return the dataBits
-	 */
-	public int getDataBits() {
-		return dataBits;
-		
-	}
+    /**
+     * Return the number of data bits set for the serial connection to the instrument (e.g. 8)
+     * 
+     * @return the dataBits
+     */
+    public int getDataBits() {
+        return dataBits;
+        
+    }
 
-	/**
-	 * Set the number of data bits set for the serial connection to the instrument (e.g. 8)
-	 * 
-	 * @param dataBits the dataBits to set
-	 */
-	public void setDataBits(int dataBits) {
-		this.dataBits = dataBits;
-		
-	}
+    /**
+     * Set the number of data bits set for the serial connection to the instrument (e.g. 8)
+     * 
+     * @param dataBits the dataBits to set
+     */
+    public void setDataBits(int dataBits) {
+        this.dataBits = dataBits;
+        
+    }
 
-	/**
-	 * Return the number of stop bits set for the serial connection to the instrument (e.g. 1)
-	 * 
-	 * @return the stopBits
-	 */
-	public int getStopBits() {
-		return stopBits;
-		
-	}
+    /**
+     * Return the number of stop bits set for the serial connection to the instrument (e.g. 1)
+     * 
+     * @return the stopBits
+     */
+    public int getStopBits() {
+        return stopBits;
+        
+    }
 
-	/**
-	 * Set the number of stop bits set for the serial connection to the instrument (e.g. 8)
-	 * 
-	 * @param stopBits the stopBits to set
-	 */
-	public void setStopBits(int stopBits) {
-		this.stopBits = stopBits;
-		
-	}
+    /**
+     * Set the number of stop bits set for the serial connection to the instrument (e.g. 8)
+     * 
+     * @param stopBits the stopBits to set
+     */
+    public void setStopBits(int stopBits) {
+        this.stopBits = stopBits;
+        
+    }
 
-	/**
-	 * Return the parity for the serial connection to the instrument (e.g. NONE)
-	 * 
-	 * @return the parity
-	 */
-	public String getParity() {
-		return parity;
-		
-	}
+    /**
+     * Return the parity for the serial connection to the instrument (e.g. NONE)
+     * 
+     * @return the parity
+     */
+    public String getParity() {
+        return parity;
+        
+    }
 
-	/**
-	 * Set the parity for the serial connection to the instrument (e.g. NONE)
-	 * 
-	 * @param parity the parity to set
-	 */
-	public void setParity(String parity) {
-		this.parity = parity;
-		
-	}
+    /**
+     * Set the parity for the serial connection to the instrument (e.g. NONE)
+     * 
+     * @param parity the parity to set
+     */
+    public void setParity(String parity) {
+        this.parity = parity;
+        
+    }
 
 }
