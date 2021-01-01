@@ -2,10 +2,6 @@
 #
 #  Copyright: 2020 Regents of the University of Hawaii and the
 #             School of Ocean and Earth Science and Technology
-#    Purpose: A convenience script to start instrument drivers using the
-#             SimpleTextSource class.
-#
-#   Authors: Christopher Jones
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +17,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+RESET="\033[0m";
+RED="\033[0;31m";
+YELLOW="\033[0;33m";
+BLUE="\033[0;34m";
 LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
 REALTIME_DATA=".";                     # installed realtime-data software location
@@ -36,9 +36,9 @@ unset option;                     # command line options variable
 
 # ensure the logging file is writable
 if [[ ! -d $LOG_DIR ]]; then
-    echo "WARN: The logging directory does not exist. Please issue:";
-    echo "sudo mkdir -p $LOG_DIR";
-    echo "sudo chown -R $USER $LOG_DIR";
+    echo -e "${YELLOW}WARN: The logging directory does not exist. Please issue:";
+    echo -e "sudo mkdir -p $LOG_DIR";
+    echo -e "sudo chown -R $USER $LOG_DIR${RESET}";
     exit 1;
 fi
 
@@ -46,17 +46,24 @@ fi
 usage() {
     cat << EOF
 
-Usage: $(basename ${0}) -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+Usage:
+$(basename "${0}") -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
+$(basename "${0}") -c rebuilder -i instr [-f file] [-d directory]
 
 Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+
+Alternatively, rebuild an instrument archive by providing the instrument id, and either a file
+with samples to add to the archive, or an existing raw archive directory path.
 
 OPTIONS:
 
     -a  Start or stop all configured instruments
-    -c  The command to run, 'driver' or 'archiver', to stream or archive data respectively.
-    -h  Show this message
-    -i  The instrument id. Use -i multiple times for multiple instruments.
-    -o  Indicate which operation to perform, start or stop.
+    -c  The command to run, 'driver', 'archiver', 'rebuilder', to stream, archive, or rebuild data.
+    -h  Show this message.
+    -i  The instrument id. Use -i multiple times for multiple instruments. Use once for a rebuild.
+    -o  Indicate which operation to perform, start or stop (requires 'driver' or 'archiver' commands).
+    -f  The file to add to the instrument archive (requires 'rebuilder' command).
+    -d  The existing instrument archive to rebuild (requires 'rebuilder' command).
     -V  Show the version (${VERSION})
 
 EOF
@@ -76,7 +83,7 @@ start() {
 
     # Start the instrument driver
     if [[ "${command}" == "driver" ]]; then
-        echo "INFO: Starting the instrument driver for ${instrumentName}.";
+        echo -e "${BLUE}: Starting the instrument driver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSourceApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
@@ -86,7 +93,7 @@ start() {
 
     # Or start the instrument archiver
     elif [[ "${command}" == "archiver" ]]; then
-        echo "INFO: Starting the instrument archiver for ${instrumentName}.";
+        echo -e "${BLUE}INFO: Starting the instrument archiver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
@@ -98,82 +105,152 @@ start() {
 
 # stop the source driver or archiver given a process id, command, and instrument name
 stop() {
+
     pidToKill=${1};
     command=${2}
     instrumentName=${3};
-    echo "Stopping the instrument ${command} for ${instrumentName}.";
+
+    echo -e "${BLUE}INFO: Stopping the instrument ${command} for ${instrumentName}.${RESET}";
     kill -15 "${pidToKill}";
     sleep 1;
     rm ${REALTIME_DATA}/run/"${instrumentName}-${command}.pid";
-
 }
 
+# rebuild an instrument archive from a file or directory
+rebuild() {
+    location=${1};
+    instrumentName=${2};
+    echo -e "\n${BLUE}INFO: Rebuilding ${instrumentName} archive from ${location}\n${RESET}";
+    java -cp ${CLASSPATH} \
+        edu.hawaii.soest.pacioos.text.TextRebuildApp \
+        ${REALTIME_DATA}/conf/"${instrumentName}.xml" "${location}" 2>&1 &
+}
+
+
+instruments=() # initialize an empty instruments array
 # figure out how we were called
-while getopts ":ac:hVi:o:" OPTION; do
+while getopts ":ac:hVi:o:f:d:" OPTION; do
     case ${OPTION} in
-        "a") instruments=$(ls ${REALTIME_DATA}/conf);;
+        "a") instruments=("${REALTIME_DATA}/conf/*xml");;
         "c") command="${OPTARG}";;
         "h") usage;;
-        "i") instruments="${instruments} ${OPTARG}.xml";;
+        "i") instruments+=("${OPTARG}.xml");;
         "o") operation="${OPTARG}";;
+        "f") location="${OPTARG}";;
+        "d") location="${OPTARG}";;
         "V") show_version;;
-         \?) echo "ERROR:   Invalid option: -${OPTARG}";usage; exit 1;;
+         \?) echo -e "${RED}ERROR:   Invalid option: -${OPTARG}${RESET}";usage; exit 1;;
     esac
 done
 
+# instruments="${instruments/# /}" # Replace whitespace at the beginning with nothing
+
 # ensure options are passed
-if [ -z "${instruments}" ]; then
-    echo -e "\nWARN: Use the -a option to start or stop all instrument drivers or archivers, ";
-    echo "or optionally use the -i option one or more times."
-    usage;
+if [ "${#instruments[@]}" -eq 0 ]; then
+    if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
+        echo -e "\n${RED}ERROR: Use the -a option to start or stop all instrument drivers or archivers, ";
+        echo -e "or optionally use the -i option one or more times.${RESET}";
+        usage;
+    elif [ "${command}" == "rebuilder" ]; then
+        echo -e "\n${RED}ERROR: The -i option is required to rebuild an instrument archive.${RESET}";
+        usage;
+    fi
 fi
 
 # validate the command
-if [ "${command}" != "driver" ] && [ "${command}" != "archiver" ] && [ "${OPTION}" != "V" ]; then
-    echo "ERROR: The -c option value must be either driver or archiver.";
+if [ "${command}" != "driver" ] && \
+   [ "${command}" != "archiver" ] && \
+   [ "${command}" != "rebuilder" ] && \
+   [ "${OPTION}" != "V" ]; then
+    echo -e "\n${RED}ERROR: The -c option value must be driver, archiver, or rebuilder.${RESET}";
     usage;
 fi
 
-# validate the operation
-if [ "${operation}" != "start" ] && [ "${operation}" != "stop" ] && [ "${OPTION}" != "V" ]; then
-    echo "ERROR: The -o option value must be either start or stop.";
-    usage;
+# validate the operation for drivers and archivers
+if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
+    if [ "${operation}" != "start" ] && [ "${operation}" != "stop" ] && [ "${OPTION}" != "V" ]; then
+        echo -e "${RED}ERROR: The -o option value must be either start or stop.${RESET}";
+        usage;
+    fi
+fi
+
+# validate the location for the rebuilder
+if [ "${command}" == "rebuilder" ]; then
+    # ensure the file or directory path exists
+    if [ ! -e "${location}" ] ; then
+        echo -e "\n${RED}ERROR: This location does not exist: ${location}";
+        echo -e "Please provide a valid path.\n${RESET}";
+        usage;
+    fi
+
+    # for directories, ensure they are in the raw data archive
+    if [ -d "${location}" ]; then
+        if [[ ! ("${location}" =~ "\/data\/raw") ]]; then
+            echo -e "\n${RED}ERROR: The directory to rebuild must be within the /data/raw directory.\n${RESET}";
+            usage;
+        fi
+    fi
+fi
+
+# validate the instruments array size for the rebuilder
+if [ "${command}" == "rebuilder" ]; then
+    if [ ${#instruments[@]} -gt 1 ]; then
+        echo -e "\n${RED}ERROR: For the rebuilder, use just one -i instrument option.${RESET}";
+        usage;
+    fi
 fi
 
 # if needed, make the directory to store running driver processes
-if [ ! -d ${REALTIME_DATA}/run ]; then
-    mkdir -p ${REALTIME_DATA}/run;
+if [ ! -d "${REALTIME_DATA}/run" ]; then
+    mkdir -p "${REALTIME_DATA}/run";
 fi
 
-# iterate through the list and perform the start or stop operation
-for instrument in ${instruments}; do
-    existingPid="";
-    runningPid="";
-    if [ -e ${REALTIME_DATA}/conf/"${instrument}" ]; then
-        
-        # Stop the running instrument driver or archiver (even on start if needed)
-        if [ -e ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid" ]; then
-            existingPid=$(cat ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid");
-            if [ -n "${existingPid}" ]; then
-                runningPid=$(ps -o pid "${existingPid}" | grep -v PID);
+# iterate through the list and perform the start or stop operation for drivers and archivers
+if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
+    for instrument in "${instruments[@]}"; do
+        existingPid="";
+        runningPid="";
+        if [ -e "${REALTIME_DATA}/conf/${instrument}" ]; then
+
+            # Stop the running instrument driver or archiver (even on start if needed)
+            if [ -e "${REALTIME_DATA}/run/${instrument%.xml}-${command}.pid" ]; then
+                runningPid=$(pgrep -F ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid");
             fi
-        fi
-        
-        if [ -n "${existingPid}" ] && [ -n "${runningPid}" ]; then
-            stop "${existingPid}" "${command}" "${instrument%.xml}";
+
+            if [ -n "${runningPid}" ]; then
+                stop "${existingPid}" "${command}" "${instrument%.xml}";
+            fi
+
+            # Conditionally start the instrument driver or archiver
+            if [ "${operation}" == "start" ]; then
+                start "${command}" "${instrument%.xml}" ;
+            fi
+
         else
-            echo "INFO: Didn't stop ${instrument%.xml} - it's not running.";
+          echo -e "${YELLOW}WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.${RESET}";
         fi
-        
-        # Conditionally start the instrument driver or archiver
-        if [ "${operation}" == "start" ]; then
-            start "${command}" "${instrument%.xml}" ;
-        fi
-              
-    else
-      echo "WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.";
+    done
+fi
+
+# rebuild the archive given the file or directory location
+if [ "${command}" == "rebuilder" ]; then
+
+
+    if [ "${operation}" == "start" ]; then
+        echo -e "\n${YELLOW}WARN: The start operation is not used with the rebuilder command.${RESET}";
+        usage;
+    elif [ "${operation}" == "stop" ]; then
+        echo -e "\n${YELLOW}WARN: The stop operation is not used with the rebuilder command.${RESET}";
+        usage;
     fi
-done
+
+    instrument="${instruments[0]}";
+    if [ -e "${REALTIME_DATA}/conf/${instrument}" ]; then
+        rebuild "${location}" "${instrument%.xml}" ;
+    else
+        echo -e "${YELLOW}WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.${RESET}";
+    fi
+fi
 
 exit 0;
 
