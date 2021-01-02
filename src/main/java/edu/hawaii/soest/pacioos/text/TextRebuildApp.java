@@ -181,13 +181,6 @@ public class TextRebuildApp {
             // Deduplicate and sort rows of the merged table
             sortedTable = deduplicateAndSortTable(mergedTable);
 
-            // For debugging, write out the table
-            try {
-                sortedTable.write().csv("table-csj.csv");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             // Add a table Instant column for filtering by day and hour
             DateTimeColumn dateTimeColumn =
                 (DateTimeColumn) sortedTable.column(sortedTable.columns().size() - 1);
