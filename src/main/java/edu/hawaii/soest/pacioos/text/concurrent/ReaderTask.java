@@ -104,7 +104,6 @@ public class ReaderTask implements Callable<ReadResult> {
                     .replaceAll("# ", "\n")
                     .replaceFirst("\n", "");
             }
-            log.debug(samplesString);
             samples.close();
 
             // Create a new InputStream for to load the data into tablesaw
@@ -163,10 +162,7 @@ public class ReaderTask implements Callable<ReadResult> {
             String msg = "For " + config.getIdentifier() + ", path " + path.toString() +
                 ". Couldn't generate the table correctly. The message was: " +
                 e.getMessage();
-            if (log.isDebugEnabled()) {
-                log.debug(msg);
-                e.printStackTrace();
-            }
+            log.info(msg);
             throw e;
         }
         return readResult;
