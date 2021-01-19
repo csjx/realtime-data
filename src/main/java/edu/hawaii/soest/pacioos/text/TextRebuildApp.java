@@ -255,16 +255,20 @@ public class TextRebuildApp {
         // Get a relative path of the given data path
         Path relativePath = Paths.get("/").relativize(Paths.get(path));
 
+        String recoveryTimestamp =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")
+                .format(Instant.now().atZone(ZoneOffset.ofHours(0)));
         // When the default recovery directory is unavailable, use the home directory
         if (!recoveryPathIsValid(recoveryPath)) {
             recoveryPath = String.join(
                 FileSystems.getDefault().getSeparator(),
                 System.getProperty("user.home"),
                 "recovery",
+                recoveryTimestamp,
                 relativePath.toString()
             );
         } else {
-            recoveryPath = Paths.get(recoveryPath, relativePath.toString()).toString();
+            recoveryPath = Paths.get(recoveryPath, recoveryTimestamp, relativePath.toString()).toString();
         }
 
         // Move the original directory with files to the recovery directory
@@ -341,7 +345,7 @@ public class TextRebuildApp {
             } catch (Exception e) {
                 // The table creation failed. Store the status.
                 if (readResult != null) {
-                    completedReadTasks.put(readResult.getPath().toString(), e.getMessage());
+                    completedReadTasks.put(readResult.getPath().toString(), e.toString());
                 }
             }
             if (log.isInfoEnabled()) {
@@ -556,11 +560,11 @@ public class TextRebuildApp {
 
         // Add paths and messages to an error JSON object
         ArrayNode errorArrayNode = mapper.getNodeFactory().arrayNode();
-        ObjectNode errorTasksNode = mapper.getNodeFactory().objectNode();
         for (String key : completedReadTasks.keySet()) {
             String value = completedReadTasks.get(key);
             if ( value != null && ! value.matches("COMPLETE")) {
                 log.debug(key + ": " + value);
+                ObjectNode errorTasksNode = mapper.getNodeFactory().objectNode();
                 errorTasksNode.put("path", key);
                 errorTasksNode.put("message", value);
                 errorArrayNode.add(errorTasksNode);
@@ -572,16 +576,17 @@ public class TextRebuildApp {
 
         // Add paths and messages to a success JSON object
         ArrayNode successArrayNode = mapper.getNodeFactory().arrayNode();
-        ObjectNode successTasksNode = mapper.getNodeFactory().objectNode();
         for (String key : completedWriteTasks.keySet()) {
             String value = completedWriteTasks.get(key);
             if ( value != null && ! value.matches("COMPLETE")) {
                 log.debug(key + ": " + value);
+                ObjectNode errorTasksNode = mapper.getNodeFactory().objectNode();
                 errorTasksNode.put("path", key);
                 errorTasksNode.put("message", value);
                 errorArrayNode.add(errorTasksNode);
                 writeErrorCount++;
             } else {
+                ObjectNode successTasksNode = mapper.getNodeFactory().objectNode();
                 successTasksNode.put("path", key);
                 successTasksNode.put("message", value);
                 successArrayNode.add(successTasksNode);
@@ -592,7 +597,8 @@ public class TextRebuildApp {
         // Log any errors to the error log file
         FileLock errorFileLock = null;
         try {
-            Path rebuildErrorFilePath = Paths.get(timestamp + "_" + rebuildErrorFile);
+            Path rebuildErrorFilePath =
+                Paths.get(recoveryPath, timestamp + "_" + rebuildErrorFile);
             FileChannel errorChannel = FileChannel.open(
                 rebuildErrorFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
             );
@@ -614,7 +620,8 @@ public class TextRebuildApp {
         // Log all successes to the success log file
         FileLock successFileLock = null;
         try {
-            Path rebuildSuccessFilePath = Paths.get(timestamp + "_" + rebuildSuccessFile);
+            Path rebuildSuccessFilePath =
+                Paths.get(recoveryPath, timestamp + "_" + rebuildSuccessFile);
             FileChannel successChannel = FileChannel.open(
                 rebuildSuccessFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
             );
@@ -646,9 +653,9 @@ public class TextRebuildApp {
         log.info("---------------------------------------------------------");
         log.warn("See the error log for processing error details.");
         if ( readCount > 0 ) {
-            log.info("The data in\n" + path + "\nhave been moved to\n" + recoveryPath);
+            log.info("\nThe data in\n" + path + "\nhave been moved to\n" + recoveryPath);
             log.info("If there were errors, don't delete the recovery directory so they can be dealt with.");
-            log.info("If you are satisfied with the rebuild, delete the recovery directory.");
+            log.info("Review the new files, and if you are satisfied with the rebuild, delete the recovery directory.");
         }
 
     }
