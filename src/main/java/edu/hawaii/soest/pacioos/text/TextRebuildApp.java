@@ -175,9 +175,6 @@ public class TextRebuildApp {
 
         if ( mergedTable != null ) {
 
-            // Remove the original datetime column
-            mergedTable = (Table) mergedTable.removeColumns(mergedTable.columnCount() - 2);
-
             // Deduplicate and sort rows of the merged table
             sortedTable = deduplicateAndSortTable(mergedTable);
 
@@ -281,7 +278,7 @@ public class TextRebuildApp {
             Files.move(Paths.get(path),  recoveryDirectory, StandardCopyOption.REPLACE_EXISTING);
             log.info(
                 ConsoleColors.BLUE +
-                "Moved\n" + path +"\nto recovery directory:\n" + recoveryPath +
+                "\nMoved\n" + path +"\nto recovery directory:\n" + recoveryPath +
                 ConsoleColors.RESET);
 
         } catch (IOException e) {
