@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.hawaii.soest</groupId>
     <artifactId>realtime-data</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <name>Realtime Data Streaming Software</name>
     <description>Software for streaming and managing scientific instrument data. See
         https://csjx.github.io/realtime-data.
@@ -67,6 +67,7 @@
             <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- Temporary reversion to Log4J 1.x
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
@@ -81,6 +82,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.13.2</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -169,16 +176,18 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>9</source>
                     <target>9</target>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>jar-with-dependencies</id>
@@ -190,6 +199,11 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                            <archive>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </execution>
                     <execution>
