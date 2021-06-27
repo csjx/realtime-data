@@ -141,7 +141,7 @@ instruments=() # initialize an empty instruments array
 # figure out how we were called
 while getopts ":ac:hVi:o:f:d:" OPTION; do
     case ${OPTION} in
-        "a") instruments=("${REALTIME_DATA}/conf/*xml");;
+        "a") instruments=("${REALTIME_DATA}/conf/**/*xml");;
         "c") command="${OPTARG}";;
         "h") usage;;
         "i") instruments+=("${OPTARG}.xml");;
@@ -224,13 +224,18 @@ fi
 
 # iterate through the list and perform the start or stop operation for drivers and archivers
 if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
-    for instrument in "${instruments[@]}"; do
+    for instrument_path in "${instruments[@]}"; do
         existingPid="";
         runningPid="";
-        if [ -e "${REALTIME_DATA}/conf/${instrument}" ]; then
+        # Convert the instrument_path to a path when only given as an instrument name
+        if [ ! -f "${instrument_path}" ]; then
+            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}.xml" -print);
+        fi
 
+        if [ -f "${instrument_path}" ]; then
+            instrument=$(basename "${instrument_path}");
             # Stop the running instrument driver or archiver (even on start if needed)
-            if [ -e "${RUN_DIR}/${instrument%.xml}-${command}.pid" ]; then
+            if [ -f "${RUN_DIR}/${instrument%.xml}-${command}.pid" ]; then
                 runningPid=$(pgrep -F "${RUN_DIR}/${instrument%.xml}-${command}.pid");
             fi
 
@@ -244,14 +249,13 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
             fi
 
         else
-          echo -e "${YELLOW}WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.${RESET}";
+          echo -e "${YELLOW}WARN: Couldn't find config file ${instrument}. Skipping it.${RESET}";
         fi
     done
 fi
 
 # rebuild the archive given the file or directory location
 if [ "${command}" == "rebuilder" ]; then
-
 
     if [ "${operation}" == "start" ]; then
         usage;
@@ -263,11 +267,12 @@ if [ "${command}" == "rebuilder" ]; then
         exit 1;
     fi
 
-    instrument="${instruments[0]}";
-    if [ -e "${REALTIME_DATA}/conf/${instrument}" ]; then
+    instrument_path="${instruments[0]}";
+    if [ -f "${instrument_path}" ]; then
+        instrument=$(basename "${instrument_path}");
         rebuild "${location}" "${instrument%.xml}" ;
     else
-        echo -e "${YELLOW}WARN: Couldn't find config file ${REALTIME_DATA}/conf/${instrument}. Skipping it.${RESET}";
+        echo -e "${YELLOW}WARN: Couldn't find config file ${instrument_path}. Skipping it.${RESET}";
     fi
 fi
 
