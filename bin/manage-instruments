@@ -23,13 +23,23 @@ YELLOW="\033[0;33m";
 BLUE="\033[0;34m";
 LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
-REALTIME_DATA=".";                     # installed realtime-data software location
+    REALTIME_DATA=".";                 # installed realtime-data software location
 fi
-CLASSPATH="${REALTIME_DATA}/realtime-data-1.1.0-jar-with-dependencies.jar";
-if [[ -e /etc/realtime-data/log4j.properties ]]; then
-    CLASSPATH="/etc/realtime-data:${CLASSPATH}";
+VERSION="1.2.0";                  # keep track of this script's version
+if [[ -d "/etc/realtime-data" ]]; then
+    CLASSPATH="/etc/realtime-data:${REALTIME_DATA}/realtime-data-${VERSION}-jar-with-dependencies.jar";
+else
+    CLASSPATH="${REALTIME_DATA}/src/main/resources:${REALTIME_DATA}/realtime-data-${VERSION}-jar-with-dependencies.jar";
 fi
-VERSION="1.1.0";                  # keep track of this script's version
+
+if [[ -d "/var/run/realtime-data" && -w "/var/run/realtime-data" ]]; then
+    RUN_DIR="/var/run/realtime-data";
+else
+    RUN_DIR="${REALTIME_DATA}/run";
+    echo -e "${RED}WARN: /var/run/realtime-data does not exist. Create this directory as root.${RESET}";
+    echo -e "${RED}WARN: Using ${REALTIME_DATA}/run to store process ids instead.${RESET}";
+fi
+
 instruments="";                   # the instruments list to be processed
 operation="";                     # operation to perform, either start or stop
 unset option;                     # command line options variable
@@ -67,7 +77,6 @@ OPTIONS:
     -V  Show the version (${VERSION})
 
 EOF
-exit 1;   
 }
 
 # show the version of this convenience script
@@ -86,20 +95,21 @@ start() {
         echo -e "${BLUE}: Starting the instrument driver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSourceApp \
-            ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
+            ${REALTIME_DATA}/conf/"${instrumentName}.xml" > /dev/null 2>&1 &
         pid=$!;
         sleep 2;
-        echo ${pid} > ${REALTIME_DATA}/run/"${instrumentName}-driver.pid";
+        echo ${pid} > "${RUN_DIR}${instrumentName}-driver.pid";
+
 
     # Or start the instrument archiver
     elif [[ "${command}" == "archiver" ]]; then
         echo -e "${BLUE}INFO: Starting the instrument archiver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
-            ${REALTIME_DATA}/conf/"${instrumentName}.xml" 2>&1 &
+            ${REALTIME_DATA}/conf/"${instrumentName}.xml" > /dev/null 2>&1 &
         pid=$!;
         sleep 2;
-        echo ${pid} > ${REALTIME_DATA}/run/"${instrumentName}-archiver.pid";
+        echo ${pid} > "${RUN_DIR}/${instrumentName}-archiver.pid";
     fi
 }
 
@@ -113,7 +123,7 @@ stop() {
     echo -e "${BLUE}INFO: Stopping the instrument ${command} for ${instrumentName}.${RESET}";
     kill -15 "${pidToKill}";
     sleep 1;
-    rm ${REALTIME_DATA}/run/"${instrumentName}-${command}.pid";
+    rm "${RUN_DIR}/${instrumentName}-${command}.pid";
 }
 
 # rebuild an instrument archive from a file or directory
@@ -121,9 +131,9 @@ rebuild() {
     location=${1};
     instrumentName=${2};
     echo -e "\n${BLUE}INFO: Rebuilding ${instrumentName} archive from ${location}\n${RESET}";
-    java -cp ${CLASSPATH} \
+    java -cp ${CLASSPATH} -Xmx24g \
         edu.hawaii.soest.pacioos.text.TextRebuildApp \
-        ${REALTIME_DATA}/conf/"${instrumentName}.xml" "${location}" 2>&1 &
+        ${REALTIME_DATA}/conf/"${instrumentName}.xml" "${location}" &
 }
 
 
@@ -139,7 +149,7 @@ while getopts ":ac:hVi:o:f:d:" OPTION; do
         "f") location="${OPTARG}";;
         "d") location="${OPTARG}";;
         "V") show_version;;
-         \?) echo -e "${RED}ERROR:   Invalid option: -${OPTARG}${RESET}";usage; exit 1;;
+         \?) usage; echo -e "${RED}ERROR:   Invalid option: -${OPTARG}${RESET}"; exit 1;;
     esac
 done
 
@@ -148,12 +158,14 @@ done
 # ensure options are passed
 if [ "${#instruments[@]}" -eq 0 ]; then
     if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
+        usage;
         echo -e "\n${RED}ERROR: Use the -a option to start or stop all instrument drivers or archivers, ";
         echo -e "or optionally use the -i option one or more times.${RESET}";
-        usage;
+        exit 1;
     elif [ "${command}" == "rebuilder" ]; then
-        echo -e "\n${RED}ERROR: The -i option is required to rebuild an instrument archive.${RESET}";
         usage;
+        echo -e "\n${RED}ERROR: The -i option is required to rebuild an instrument archive.${RESET}";
+        exit 1;
     fi
 fi
 
@@ -162,15 +174,17 @@ if [ "${command}" != "driver" ] && \
    [ "${command}" != "archiver" ] && \
    [ "${command}" != "rebuilder" ] && \
    [ "${OPTION}" != "V" ]; then
-    echo -e "\n${RED}ERROR: The -c option value must be driver, archiver, or rebuilder.${RESET}";
     usage;
+    echo -e "\n${RED}ERROR: The -c option value must be driver, archiver, or rebuilder.${RESET}";
+    exit 1;
 fi
 
 # validate the operation for drivers and archivers
 if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
     if [ "${operation}" != "start" ] && [ "${operation}" != "stop" ] && [ "${OPTION}" != "V" ]; then
-        echo -e "${RED}ERROR: The -o option value must be either start or stop.${RESET}";
         usage;
+        echo -e "${RED}ERROR: The -o option value must be either start or stop.${RESET}";
+        exit 1;
     fi
 fi
 
@@ -178,16 +192,18 @@ fi
 if [ "${command}" == "rebuilder" ]; then
     # ensure the file or directory path exists
     if [ ! -e "${location}" ] ; then
+        usage;
         echo -e "\n${RED}ERROR: This location does not exist: ${location}";
         echo -e "Please provide a valid path.\n${RESET}";
-        usage;
+        exit 1;
     fi
 
     # for directories, ensure they are in the raw data archive
     if [ -d "${location}" ]; then
-        if [[ ! ("${location}" =~ "\/data\/raw") ]]; then
-            echo -e "\n${RED}ERROR: The directory to rebuild must be within the /data/raw directory.\n${RESET}";
+        if [[ ! ("${location}" =~ \/data\/raw) ]]; then
             usage;
+            echo -e "\n${RED}ERROR: The directory to rebuild must be within the /data/raw directory.\n${RESET}";
+            exit 1;
         fi
     fi
 fi
@@ -195,8 +211,9 @@ fi
 # validate the instruments array size for the rebuilder
 if [ "${command}" == "rebuilder" ]; then
     if [ ${#instruments[@]} -gt 1 ]; then
-        echo -e "\n${RED}ERROR: For the rebuilder, use just one -i instrument option.${RESET}";
         usage;
+        echo -e "\n${RED}ERROR: For the rebuilder, use just one -i instrument option.${RESET}";
+        exit 1;
     fi
 fi
 
@@ -213,8 +230,8 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
         if [ -e "${REALTIME_DATA}/conf/${instrument}" ]; then
 
             # Stop the running instrument driver or archiver (even on start if needed)
-            if [ -e "${REALTIME_DATA}/run/${instrument%.xml}-${command}.pid" ]; then
-                runningPid=$(pgrep -F ${REALTIME_DATA}/run/"${instrument%.xml}-${command}.pid");
+            if [ -e "${RUN_DIR}/${instrument%.xml}-${command}.pid" ]; then
+                runningPid=$(pgrep -F "${RUN_DIR}/${instrument%.xml}-${command}.pid");
             fi
 
             if [ -n "${runningPid}" ]; then
@@ -237,11 +254,13 @@ if [ "${command}" == "rebuilder" ]; then
 
 
     if [ "${operation}" == "start" ]; then
+        usage;
         echo -e "\n${YELLOW}WARN: The start operation is not used with the rebuilder command.${RESET}";
-        usage;
+        exit 1;
     elif [ "${operation}" == "stop" ]; then
-        echo -e "\n${YELLOW}WARN: The stop operation is not used with the rebuilder command.${RESET}";
         usage;
+        echo -e "\n${YELLOW}WARN: The stop operation is not used with the rebuilder command.${RESET}";
+        exit 1;
     fi
 
     instrument="${instruments[0]}";
