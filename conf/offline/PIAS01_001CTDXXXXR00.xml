@@ -2,20 +2,19 @@
 <!DOCTYPE instrument SYSTEM "instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>WK02XX_001CTDXXXXR00</identifier>
+    <identifier>PIAS01_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
-    <connectionType>socket</connectionType>
+    <connectionType>file</connectionType>
     <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <hostName>24.221.207.27</hostName>
-        <hostPort>5111</hostPort>
+        <filePath>/data/spool/PIAS01_001CTDXXXXR00.log</filePath>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>WK02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>PIAS01_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
