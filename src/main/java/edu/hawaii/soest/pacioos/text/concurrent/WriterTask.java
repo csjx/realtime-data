@@ -39,7 +39,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.StringJoiner;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -116,7 +116,7 @@ public class WriterTask implements Callable<WriteResult> {
         // If there are no data, return with a message
         if ( currentDayTable.rowCount() < 1 ) {
             writeResult.setTable(currentDayTable);
-            // writeResult.setMessage("No data samples for this time period.");
+            writeResult.setMessage("No data samples for this time period.");
             return writeResult;
         }
 
@@ -128,14 +128,24 @@ public class WriterTask implements Callable<WriteResult> {
         DateTimeFormatter processedFormatter = DateTimeFormatter.ISO_INSTANT;
 
         // Get the raw date format from the config
-        StringJoiner pattern = new StringJoiner("");
-        pattern.add(config.getDateFormat(0));
-        pattern.add("'");
-        pattern.add(config.getFieldDelimiter(0));
-        pattern.add(" '");
-        pattern.add(config.getTimeFormat(0));
-        DateTimeFormatter rawFormatter = DateTimeFormatter.ofPattern(pattern.toString());
+        List<String> dateFormats = config.listDateFormats(0);
+        StringBuilder pattern = new StringBuilder();
+        if (dateFormats.size() > 1) {
+            // Handle multi-column date/times
+            pattern.append(config.getDateFormat(0));
+            pattern.append("'");
+            pattern.append(config.getFieldDelimiter(0));
+            pattern.append(" '");
+            pattern.append(config.getTimeFormat(0));
+        } else {
+            // Handle single column date times
+            pattern.append(config.getDateTimeFormat(0));
+        }
+
         try {
+            log.trace("For path " + filePath + " date time format is: " + pattern.toString());
+
+            DateTimeFormatter rawFormatter = DateTimeFormatter.ofPattern(pattern.toString());
 
             // Handle raw and processed files separately
             if ( archiveFormat.equals("raw") ) {
@@ -232,11 +242,19 @@ public class WriterTask implements Callable<WriteResult> {
         } catch (IOException e) {
             log.error(
                 ConsoleColors.RED +
-                e.toString() +
-                ConsoleColors.RESET
+                    e.toString() +
+                    ConsoleColors.RESET
             );
             writeResult.setTable(currentDayTable);
             writeResult.setMessage(e.toString());
+            return writeResult;
+        } catch (IllegalArgumentException iae) {
+            log.error(
+                ConsoleColors.RED +
+                    iae.toString() +
+                    ConsoleColors.RESET
+            );
+            writeResult.setMessage(iae.toString());
             return writeResult;
 
         } finally {
