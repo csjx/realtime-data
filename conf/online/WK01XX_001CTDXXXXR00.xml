@@ -5,7 +5,7 @@
     <identifier>WK01XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>file</connectionType>
-    <!--
+    <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
@@ -58,9 +58,9 @@
                     000a
             0000101
             -->
-            <!--
+            <!-- 
               The regular expression used to match a data sample.
-              Best to keep the data pattern on one line below
+              Best to keep the data pattern on one line below 
             -->
             <dataPattern># *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4}, *\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
@@ -88,7 +88,7 @@
               Use Hex notation for non-printing, whitespace characters (like space)
             -->
             <fieldDelimiter>,</fieldDelimiter>
-            <!--
+            <!-- 
               The character(s) that delimit records (samples) in a stream or file
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
@@ -97,19 +97,19 @@
               missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
             -->
             <missingValueCode>-999</missingValueCode>
-            <!--
+            <!-- 
               The list of date formats for each sample date component in a separate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>dd MMM yyyy</dateFormat>
-                <dateFormat>HH:mm:ss</dateFormat>
+                <dateFormat>dd MMM yyyy</dateFormat> 
+                <dateFormat>HH:mm:ss</dateFormat> 
             </dateFormats>
-            <!--
+            <!-- 
               The list of date fields for each sample date component in a separate variable
-              One or more date fields are required, corresponding to the date/time variable positions in the data
-            -->
+              One or more date fields are required, corresponding to the date/time variable positions in the data 
+            -->        
             <dateFields>
                 <dateField>5</dateField>
                 <dateField>6</dateField>

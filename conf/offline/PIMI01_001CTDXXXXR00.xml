@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE instrument SYSTEM "instrument.dtd">
+<!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
     <identifier>PIMI01_001CTDXXXXR00</identifier>
@@ -11,7 +11,7 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <filePath>/Users/cjones/PIMI01_001CTDXXXXR00.txt</filePath>
+        <filePath>/home/kilonalu/PIMI01_001CTDXXXXR00_latest_data.txt</filePath>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
     <rbnbName>PIMI01_001CTDXXXXR00</rbnbName>
@@ -109,14 +109,13 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/Users/cjones/data/raw/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
-                <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
                     <archiveType>pacioos-2020-format</archiveType>
                     <archiveInterval>daily</archiveInterval>
-                    <archiveBaseDirectory>/Users/cjones/data/processed/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
                 </archiver>
             </archivers>
         </channel>

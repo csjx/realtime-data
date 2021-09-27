@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE instrument SYSTEM "instrument.dtd">
+<!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>AW02XX_001CTDXXXXR00</identifier>
+    <identifier>PIGM01_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
-    <connectionType>socket</connectionType>
+    <connectionType>file</connectionType>
     <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
-    <connectionParams> 
-        <hostName>68.25.32.149</hostName>
-        <hostPort>5111</hostPort>
+    <connectionParams>
+        <filePath>/home/kilonalu/PIGM01_001CTDXXXXR00_latest_data.txt</filePath>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>AW02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>PIGM01_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -33,41 +32,31 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            # 25.0251,  5.16974, 0.3246, 0.1166,  33.9642, 21 Dec 2016 14:02:41
-            # 25.0293,  5.15924, 0.3475, 0.1167,  33.8836, 21 Dec 2016 14:06:41
-            # 25.0298,  5.16234, 0.3426, 0.1165,  33.9061, 21 Dec 2016 14:10:41
-            # 25.0782,  5.17882, 0.3534, 0.1154,  33.9913, 21 Dec 2016 14:14:41
-            # 25.0564,  5.14869, 0.3365, 0.1177,  33.7855, 21 Dec 2016 14:18:41
-            # 25.0551,  5.13498, 0.3414, 0.1166,  33.6855, 21 Dec 2016 14:22:41
-            # 25.0544,  5.11750, 0.3171, 0.1178,  33.5573, 21 Dec 2016 14:26:41
-            # 25.0193,  5.09507, 0.2946, 0.1140,  33.4181, 21 Dec 2016 14:30:41
-            # 25.0694,  5.15218, 0.2641, 0.1227,  33.8015, 21 Dec 2016 14:34:41
-            # 25.0889,  5.14501, 0.3221, 0.1335,  33.7341, 21 Dec 2016 14:38:41
-            -->
-            <!-- example DT sample:
-            curl -s -o - http://realtime.pacioos.hawaii.edu:8080/RBNB/AW02XX_001CTDXXXXR00/DecimalASCIISampleData | od -ax
-            0000000   #  sp   2   4   .   8   8   0   4   ,  sp  sp   5   .   1   7
-                    2023 3432 382e 3038 2c34 2020 2e35 3731
-            0000020   5   7   9   ,  sp   0   .   1   9   0   3   ,  sp   0   .   1
-                    3735 2c39 3020 312e 3039 2c33 3020 312e
-            0000040   1   7   7   ,  sp  sp   3   4   .   1   1   8   1   ,  sp   2
-                    3731 2c37 2020 3433 312e 3831 2c31 3220
-            0000060   2  sp   D   e   c  sp   2   0   1   6  sp   0   9   :   1   4
-                    2032 6544 2063 3032 3631 3020 3a39 3431
-            0000100   :   4   1  cr  nl nul
-                    343a 0d31 000a
-            0000105
+            # 29.3131,  5.70894,    2.980, 0.0787, 1.5317,  34.6337, 20 May 2010 15:03:56
+            # 29.1146,  5.68932,    2.823, 0.0812, 0.2126,  34.6429, 20 May 2010 16:03:56
+            # 29.0868,  5.68644,    2.714, 0.0805, 0.1847,  34.6433, 20 May 2010 17:03:56
+            # 29.0272,  5.68013,    2.708, 0.0809, 0.2448,  34.6432, 20 May 2010 18:03:56
+            # 28.9907,  5.67612,    2.710, 0.0816, 0.1901,  34.6421, 20 May 2010 19:03:56
+            # 28.9503,  5.67194,    2.810, 0.0809, 0.2125,  34.6426, 20 May 2010 20:03:56
+            # 28.9382,  5.67074,    2.877, 0.0823, 0.2200,  34.6431, 20 May 2010 21:03:56
+            # 28.9304,  5.66961,    3.008, 0.0829, 0.2103,  34.6410, 20 May 2010 22:03:56
+            # 28.9110,  5.66778,    3.178, 0.0780, 0.1619,  34.6424, 20 May 2010 23:03:56
+            # 28.8728,  5.66256,    3.261, 0.0806, 0.1578,  34.6342, 21 May 2010 00:03:56
+            # 28.7884,  5.65189,    3.296, 0.0793, 0.2385,  34.6219, 21 May 2010 01:03:56
+            # 28.6984,  5.64143,    3.352, 0.0793, 0.3526,  34.6151, 21 May 2010 02:03:56
+            # 28.5932,  5.63031,    3.347, 0.0783, 0.3920,  34.6148, 21 May 2010 03:03:56
+            # 28.5881,  5.63050,    3.289, 0.0809, 0.4037,  34.6199, 21 May 2010 04:03:56
+            # 28.5096,  5.62160,    3.204, 0.0835, 0.4507,  34.6155, 21 May 2010 05:03:56
             -->
             <!-- 
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern># *\S*, *\S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} *\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
             <dataPrefix>#</dataPrefix>
-
             <!--
                 columnTypes: A list of column types for each variable in the sample. Use STRING
                 for all column types except:
@@ -76,6 +65,7 @@
                 - date-time columns: use LOCAL_DATE_TIME
             -->
             <columnTypes>
+                <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
@@ -93,12 +83,8 @@
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
             <recordDelimiters>0x0D|0x0A</recordDelimiters>
-            <!--
-              missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
-            -->
-            <missingValueCode>-999</missingValueCode>
-            <!--
-              The list of date formats for each sample date component in a separtate variable
+            <!-- 
+              The list of date formats for each sample date component in a separate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
@@ -106,21 +92,29 @@
                 <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
-              The list of date fields for each sample date component in a separtate variable
+              The list of date fields for each sample date component in a separate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-              <dateField>6</dateField>
+                <dateField>7</dateField>
             </dateFields>
-            <!-- The time zone identifier that the data were collected in -->
-            <timeZone>Pacific/Honolulu</timeZone>
+            <!--
+              timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
+              The parsers are strict about zone identifiers, and will fall back to UTC when the
+              now-deprecated zone names are used (in the format of HDT, HST, SST, etc.). They are
+              considered ambiguous due to conflicting global use.  Only use identifiers that follow
+              the <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like
+              GMT+13:00 will also work, it may change over time due to daylight savings,
+              so the long identifier is best.
+            -->
+            <timeZone>Pacific/Guam</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
