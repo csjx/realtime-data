@@ -83,7 +83,7 @@ public class TextRebuildApp {
     private static String path;
 
     /* The filesystem path where old files are moved if recovery is needed */
-    private static String recoveryPath = "/backup/recovery";
+    private static String recoveryBasePath = "/backup/recovery";
 
     /* The instrument configuration */
     private static Configuration config;
@@ -146,6 +146,7 @@ public class TextRebuildApp {
             PropertiesConfiguration propsConfig = new PropertiesConfiguration("archive_rebuild.properties");
             rebuildSuccessFile = propsConfig.getString("rebuild.success.file");
             rebuildErrorFile = propsConfig.getString("rebuild.error.file");
+            recoveryBasePath = propsConfig.getString("rebuild.recovery.path", "/backup/recovery");
 
         } catch (ConfigurationException e) {
             e.printStackTrace();
@@ -178,15 +179,27 @@ public class TextRebuildApp {
             // Deduplicate and sort rows of the merged table
             sortedTable = deduplicateAndSortTable(mergedTable);
 
+            // Is the datetime column first or last?
+            int firstDateField = Integer.parseInt(config.getDateFields(0).get(0));
+            DateTimeColumn dateTimeColumn;
+            InstantColumn instantColumn;
             // Add a table Instant column for filtering by day and hour
-            DateTimeColumn dateTimeColumn =
-                (DateTimeColumn) sortedTable.column(sortedTable.columns().size() - 1);
-            InstantColumn instantColumn =
-                dateTimeColumn.asInstantColumn(ZoneId.of(config.getTimeZoneID(0)));
-            instantColumn.setName("datetimesInUTC");
-            sortedTable.addColumns(instantColumn);
-            // Drop the original date time column since it's no longer needed
-            sortedTable.removeColumns(sortedTable.columnCount() - 2);
+            if ( firstDateField > 1 ) {
+                dateTimeColumn = (DateTimeColumn) sortedTable.column(sortedTable.columns().size() - 1);
+                instantColumn = dateTimeColumn.asInstantColumn(ZoneId.of(config.getTimeZoneID(0)));
+                instantColumn.setName("datetimesInUTC");
+                sortedTable.addColumns(instantColumn);
+                // Drop the original date time column since it's no longer needed
+                sortedTable.removeColumns(sortedTable.columnCount() - 2);
+            } else {
+                dateTimeColumn = (DateTimeColumn) sortedTable.column(0);
+                instantColumn = dateTimeColumn.asInstantColumn(ZoneId.of(config.getTimeZoneID(0)));
+                instantColumn.setName("datetimesInUTC");
+                sortedTable.addColumns(instantColumn);
+                // Drop the original date time column since it's no longer needed
+                sortedTable.removeColumns(0);
+            }
+
             log.info(
                 ConsoleColors.BLUE +
                 "Merged table preview:\n" +
@@ -249,46 +262,58 @@ public class TextRebuildApp {
      * Move the original files to a recovery directory in case of major errors
      */
     private static void moveDirectories() {
-        // Get a relative path of the given data path
-        Path relativePath = Paths.get("/").relativize(Paths.get(path));
 
         String recoveryTimestamp =
             DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")
                 .format(Instant.now().atZone(ZoneOffset.ofHours(0)));
-        // When the default recovery directory is unavailable, use the home directory
-        if (!recoveryPathIsValid(recoveryPath)) {
-            recoveryPath = String.join(
+
+        // Make sure the recovery path is valid
+        if (!recoveryPathIsValid(recoveryBasePath)) {
+            // When the default recovery directory is unavailable, use the home directory
+            recoveryBasePath = String.join(
                 FileSystems.getDefault().getSeparator(),
                 System.getProperty("user.home"),
                 "recovery",
-                recoveryTimestamp,
-                relativePath.toString()
+                recoveryTimestamp
             );
         } else {
-            recoveryPath = Paths.get(recoveryPath, recoveryTimestamp, relativePath.toString()).toString();
+            recoveryBasePath = Paths.get(recoveryBasePath, recoveryTimestamp).toString();
         }
 
-        // Move the original directory with files to the recovery directory
-        Path recoveryDirectory = Paths.get(recoveryPath);
-        try {
-            // Make the recovery directories as needed
-            if ( ! Files.exists(recoveryDirectory) ) {
-                new File(recoveryDirectory.toString()).mkdirs();
-            }
-            Files.move(Paths.get(path),  recoveryDirectory, StandardCopyOption.REPLACE_EXISTING);
-            log.info(
-                ConsoleColors.BLUE +
-                "\nMoved\n" + path +"\nto recovery directory:\n" + recoveryPath +
-                ConsoleColors.RESET);
+        // Move the list of original paths
+        Path recoveryItem;
+        Path relativePath;
+        for (Path path : paths) {
+            // Get a relative path of the given data path
+            relativePath = Paths.get("/").relativize(path);
+            // Set the recovery directory path (or fall back to one in the user's home)
+            recoveryItem = Paths.get(recoveryBasePath.toString(), relativePath.toString());
 
-        } catch (IOException e) {
-            log.error(
-                ConsoleColors.RED +
-                "Couldn't create or write to the recovery directories. " +
-                "Please adjust the permissions. Message: " + e.getMessage() +
-                ConsoleColors.RESET
-            );
-            System.exit(1);
+            // Move the original directory with files to the recovery directory
+            try {
+                // Make the recovery directories as needed
+                if ( ! Files.exists(recoveryItem) ) {
+                    if ( Files.isDirectory(recoveryItem) ) {
+                        new File(recoveryItem.toString()).mkdirs();
+                    } else {
+                        new File(recoveryItem.getParent().toString()).mkdirs();
+                    }
+                }
+                Files.move(path, recoveryItem, StandardCopyOption.REPLACE_EXISTING);
+                log.debug(
+                    ConsoleColors.BLUE +
+                        "\nMoved\n" + path +"\nto recovery directory:\n" + recoveryBasePath +
+                        ConsoleColors.RESET);
+
+            } catch (IOException e) {
+                log.error(
+                    ConsoleColors.RED +
+                        "Couldn't create or write to the recovery directories. " +
+                        "Please adjust the permissions. Message: " + e.getMessage() +
+                        ConsoleColors.RESET
+                );
+                System.exit(1);
+            }
         }
     }
 
@@ -595,7 +620,7 @@ public class TextRebuildApp {
         FileLock errorFileLock = null;
         try {
             Path rebuildErrorFilePath =
-                Paths.get(recoveryPath, timestamp + "_" + rebuildErrorFile);
+                Paths.get(recoveryBasePath, timestamp + "_" + rebuildErrorFile);
             FileChannel errorChannel = FileChannel.open(
                 rebuildErrorFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
             );
@@ -618,7 +643,7 @@ public class TextRebuildApp {
         FileLock successFileLock = null;
         try {
             Path rebuildSuccessFilePath =
-                Paths.get(recoveryPath, timestamp + "_" + rebuildSuccessFile);
+                Paths.get(recoveryBasePath, timestamp + "_" + rebuildSuccessFile);
             FileChannel successChannel = FileChannel.open(
                 rebuildSuccessFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
             );
@@ -650,9 +675,9 @@ public class TextRebuildApp {
         log.info("---------------------------------------------------------");
         log.warn("See the error log for processing error details.");
         if ( readCount > 0 ) {
-            log.info("\nThe data in\n" + path + "\nhave been moved to\n" + recoveryPath);
-            log.info("If there were errors, don't delete the recovery directory so they can be dealt with.");
-            log.info("Review the new files, and if you are satisfied with the rebuild, delete the recovery directory.");
+            log.info(ConsoleColors.BLUE + "\nThe data in\n" + path + "\nhave been moved to\n" + recoveryBasePath + ConsoleColors.RESET);
+            log.info(ConsoleColors.BLUE + "If there were errors, don't delete the recovery directory so they can be dealt with." + ConsoleColors.RESET);
+            log.info(ConsoleColors.BLUE + "Review the new files, and if you are satisfied with the rebuild, delete the recovery directory." + ConsoleColors.RESET);
         }
 
     }
@@ -726,7 +751,7 @@ public class TextRebuildApp {
             configuration = new Configuration(xmlConfiguration);
 
         } catch (ConfigurationException e) {
-            String msg = "The was a problem configuring the rebuilder. The message was: " +
+            String msg = "There was a problem configuring the rebuilder. The message was: " +
                 e.getMessage();
             log.error(msg);
             if (log.isDebugEnabled() ) {
