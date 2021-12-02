@@ -109,7 +109,7 @@ public class WriterTask implements Callable<WriteResult> {
                 PackedInstant.pack(beginDate),
                 PackedInstant.pack(endDate)
             ));
-        currentDayTable.setName(beginDate.toString() + " to " + endDate.toString());
+        currentDayTable.setName(beginDate + " to " + endDate);
 
         WriteResult writeResult = new WriteResult(filePath);
 
@@ -122,10 +122,22 @@ public class WriterTask implements Callable<WriteResult> {
 
         // Write the data to the file path after locking it
         FileLock fileLock = null;
-        Table rawTable = Table.create(currentDayTable.name());
-        Table processedTable = Table.create(currentDayTable.name());
         StringBuilder sample = new StringBuilder();
         DateTimeFormatter processedFormatter = DateTimeFormatter.ISO_INSTANT;
+
+        // Get the field delimiter from the config, and handle whitespace delimiters
+        String fieldDelimiter = config.getFieldDelimiter(0);
+        // handle hex-encoded field delimiters
+        if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" ) ||
+             fieldDelimiter.startsWith("0X") || fieldDelimiter.startsWith("\\X" )) {
+
+            byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+            byte[] delimAsByteArray = new byte[]{delimBytes};
+            fieldDelimiter = new String(
+                delimAsByteArray, 0,
+                delimAsByteArray.length,
+                StandardCharsets.UTF_8);
+        }
 
         // Get the raw date format from the config
         List<String> dateFormats = config.listDateFormats(0);
@@ -134,7 +146,7 @@ public class WriterTask implements Callable<WriteResult> {
             // Handle multi-column date/times
             pattern.append(config.getDateFormat(0));
             pattern.append("'");
-            pattern.append(config.getFieldDelimiter(0));
+            pattern.append(fieldDelimiter);
             pattern.append(" '");
             pattern.append(config.getTimeFormat(0));
         } else {
@@ -143,9 +155,10 @@ public class WriterTask implements Callable<WriteResult> {
         }
 
         try {
-            log.trace("For path " + filePath + " date time format is: " + pattern.toString());
+            log.trace("For path " + filePath + " date time format is: " + pattern);
 
             DateTimeFormatter rawFormatter = DateTimeFormatter.ofPattern(pattern.toString());
+            final String fieldDelim = fieldDelimiter;
 
             // Handle raw and processed files separately
             if ( archiveFormat.equals("raw") ) {
@@ -155,21 +168,48 @@ public class WriterTask implements Callable<WriteResult> {
                     StandardOpenOption.CREATE
                     );
                 fileLock = rawFileChannel.lock();
-                currentDayTable.stream().iterator().forEachRemaining(row -> {
+                currentDayTable.sortOn(currentDayTable.columnCount() - 1)
+                    .stream().iterator().forEachRemaining(row -> {
                     // Append the hashtag
-                    sample.append("#  ");
-                    // Append each measurement column
-                    for (int index = 0; index <= row.columnCount() - 2; index++ ) {
-                        sample.append(row.getString(index));
-                        sample.append(config.getFieldDelimiter(0));
-                        sample.append(" ");
+                    String dataPrefix = config.getDataPrefix(0);
+                    if ( dataPrefix != null ) {
+                        sample.append(dataPrefix);
+                        sample.append("  ");
                     }
-                    // Append the ISO timestamp
+
+                    // Create the sample timestamp
                     String timestamp = rawFormatter.format(
                         row.getInstant(row.columnCount() - 1)
                             .atZone(ZoneId.of(config.getTimeZoneID(0)))
                     );
-                    sample.append(timestamp);
+
+                    // Prepend or append the date and time
+                    List<String> dateFields = config.getDateFields(0);
+                    int lastDateField = Integer.parseInt(dateFields.get(dateFields.size() - 1));
+
+                    // YSI format ...
+                    if ( lastDateField <= 2 ) {
+                        sample.append(timestamp);
+                        sample.append(fieldDelim);
+
+                        // Append each measurement column
+                        for (int index = 0; index <= row.columnCount() - 2; index++ ) {
+                            sample.append(row.getString(index));
+                            sample.append(fieldDelim);
+                            sample.append(" ");
+                        }
+
+                    // Seabird format ...
+                    } else {
+                        // Append each measurement column
+                        for (int index = 0; index <= row.columnCount() - 2; index++ ) {
+                            sample.append(row.getString(index));
+                            sample.append(fieldDelim);
+                            sample.append(" ");
+                        }
+                        // Append the raw timestamp
+                        sample.append(timestamp);
+                    }
                     sample.append("\r\n");
 
                     // Write the sample file
@@ -180,7 +220,7 @@ public class WriterTask implements Callable<WriteResult> {
                     } catch (IOException e) {
                         log.error(
                             ConsoleColors.RED +
-                            e.toString() +
+                            e +
                             ConsoleColors.RESET
                         );
                         writeResult.setTable(currentDayTable);
@@ -197,20 +237,21 @@ public class WriterTask implements Callable<WriteResult> {
                     StandardOpenOption.CREATE
                 );
                 fileLock = processedFileChannel.lock();
-                currentDayTable.stream().iterator().forEachRemaining(row -> {
+                currentDayTable.sortOn(currentDayTable.columnCount() - 1)
+                    .stream().iterator().forEachRemaining(row -> {
                     // Append the ISO timestamp
                     String timestamp = processedFormatter.format(
                         row.getInstant(row.columnCount() - 1)
                     );
                     sample.append(timestamp);
-                    sample.append(config.getFieldDelimiter(0));
+                    sample.append(",");
                     // Append each measurement column
                     for (int index = 0; index <= row.columnCount() - 2; index++ ) {
                         sample.append(row.getString(index));
                         if ( index == row.columnCount() - 2 ) {
                             sample.append("\n");
                         } else {
-                            sample.append(config.getFieldDelimiter(0));
+                            sample.append(",");
                         }
                     }
                     // Write the sample file
@@ -221,7 +262,7 @@ public class WriterTask implements Callable<WriteResult> {
                     } catch (IOException e) {
                         log.error(
                             ConsoleColors.RED +
-                            e.toString() +
+                            e +
                             ConsoleColors.RESET
                         );
                         writeResult.setTable(currentDayTable);
@@ -242,7 +283,7 @@ public class WriterTask implements Callable<WriteResult> {
         } catch (IOException e) {
             log.error(
                 ConsoleColors.RED +
-                    e.toString() +
+                    e +
                     ConsoleColors.RESET
             );
             writeResult.setTable(currentDayTable);
@@ -251,7 +292,7 @@ public class WriterTask implements Callable<WriteResult> {
         } catch (IllegalArgumentException iae) {
             log.error(
                 ConsoleColors.RED +
-                    iae.toString() +
+                    iae +
                     ConsoleColors.RESET
             );
             writeResult.setMessage(iae.toString());
