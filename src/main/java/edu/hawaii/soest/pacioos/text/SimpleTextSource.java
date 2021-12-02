@@ -205,6 +205,7 @@ public abstract class SimpleTextSource extends RBNBSource {
 
                 // set the date fields list
                 List<Integer> dateFields = config.listDateFieldPositions(channelIndex);
+                setDateFields(dateFields);
                 this.setTimezone(config.getTimeZoneID(channelIndex));
                 this.setTz(TimeZone.getTimeZone(getTimezone()));
                 break;
@@ -818,7 +819,7 @@ public abstract class SimpleTextSource extends RBNBSource {
 
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
-            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                 " sample: " + sample.trim() + " sent data to the DataTurbine.");
             rbnbChannelMap.Clear();
             // in the event we just lost the network, sleep, try again
