@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright: 2016 Regents of the University of Hawaii and the
  *             School of Ocean and Earth Science and Technology
  *    Purpose: A test class that exercises the SocketTextSource class.
@@ -21,7 +21,6 @@
  */ 
 package edu.hawaii.soest.pacioos.text;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +47,7 @@ import com.rbnb.api.Server;
  */
 public class SimpleTextSourceTest {
 
-    private static final Log log = LogFactory.getLog(SocketTextSourceTest.class);
+    private static final Log log = LogFactory.getLog(SimpleTextSourceTest.class);
 
     protected Server mockDT;
 	
