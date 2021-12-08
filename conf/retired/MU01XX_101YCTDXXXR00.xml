@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instrument SYSTEM "../instrument.dtd">
+<instrument>
+    <!-- The instrument identifier -->
+    <!-- THIS INSTRUMENT IS THE MAUI MU01 YSI WHEN IT WAS CONFIGURED WITH 11 (NOT 12) DATA COLUMNS -->
+    <identifier>MU01XX_101YCTDXXXR00</identifier>
+    <!-- The connection type: socket, file, or serial -->
+    <connectionType>file</connectionType>
+    <!--
+      Configure connection parameters based on connection type. If connection
+      type is socket, add hostName and hostPort below. If file, add filePath
+      below. If serial, add serialPortParams and sub elements below.
+    -->
+    <connectionParams>
+        <filePath>/home/kilonalu/MU01XX_101YCTDXXXR00_latest_data.txt</filePath>
+    </connectionParams>
+    <!-- The name of the instrument source as it appears in the DataTurbine -->
+    <rbnbName>MU01XX_101YCTDXXXR00</rbnbName>
+    <!-- The IP or host name of the DataTurbine server -->
+    <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
+    <!-- The port number of the DataTurbine server -->
+    <rbnbPort>3333</rbnbPort>
+    <!-- The number of in-memory bytes to request for this instrument source -->
+    <archiveMemory>50000</archiveMemory>
+    <!-- The number of on-disk bytes to request for this instrument source -->
+    <archiveSize>31536000</archiveSize>
+    <!-- The list of data channels to be created in the DataTurbine for this instrument source -->
+    <channels>
+        <!-- The default channel details. This will push ASCII data into the DataTurbine -->
+        <channel default="true">
+            <!-- The name of the channel -->
+            <name>DecimalASCIISampleData</name>
+            <!-- The channel's incoming data type -->
+            <dataType>String</dataType>
+            <!-- data archive example:
+                11/03/2014 13:00:31 26.40 42.18  26.26   1.984  8.08  104.1   7.23    10.5
+                11/03/2014 13:10:31 26.49 42.29  26.29   1.990  8.08  106.2   7.37    10.5
+                11/03/2014 13:20:31 26.54 42.32  26.28   1.994  8.08  109.6   7.59    10.5
+                11/03/2014 13:30:31 26.53 42.25  26.24   1.926  8.08  108.6   7.53    10.5
+                11/03/2014 13:40:31 26.41 42.03  26.15   1.928  8.07  103.1   7.16    10.5
+                11/03/2014 13:50:31 26.58 42.28  26.22   1.906  8.08  111.2   7.70    10.5
+                11/03/2014 02:00:31 26.26 41.47  25.85   1.914  7.98   79.0   5.51    10.5
+                11/03/2014 02:10:31 26.24 41.35  25.78   1.866  7.98   79.1   5.52    10.5
+                11/03/2014 02:20:31 26.25 41.50  25.88   1.899  7.97   76.8   5.36    10.5
+                11/03/2014 02:30:31 26.23 41.53  25.91   1.845  7.98   79.1   5.52    10.5
+                11/03/2014 02:40:31 26.24 41.50  25.88   1.802  7.98   77.8   5.43    10.5
+            -->
+            <!--
+              The regular expression used to match a data sample.
+              Best to keep the data pattern on one line below
+            -->
+            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+\s+</dataPattern>
+            <!--
+                dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
+            -->
+            <!-- Not needed for YSI instruments
+            <dataPrefix></dataPrefix>
+            -->
+            <!--
+                columnTypes: A list of column types for each variable in the sample. Use STRING
+                for all column types except:
+                - date-only columns: use LOCAL_DATE
+                - time-only columns: use LOCAL_TIME
+                - date-time columns: use LOCAL_DATE_TIME
+            -->
+            <columnTypes>
+                <columnType>LOCAL_DATE</columnType>
+                <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+            </columnTypes>
+            <!--
+              The character that delimits variables within the sample
+              Use Hex notation for non-printing, whitespace characters (like space)
+            -->
+            <fieldDelimiter>0x20</fieldDelimiter>
+            <!--
+              The character(s) that delimit records (samples) in a stream or file
+              Use Hex notation for non-printing characters, separate characters with a pipe
+            -->
+            <recordDelimiters>0x0D|0x0A</recordDelimiters>
+            <!--
+              The list of date formats for each sample date component in a separate variable
+              One or more date formats are required, reflecting the date/time variables in the data
+              Note: dateFormat and dateField are used together to locate, then parse the sample date
+              -->
+            <dateFormats>
+                <dateFormat>MM/dd/yyyy</dateFormat>
+                <dateFormat>HH:mm:ss</dateFormat>
+            </dateFormats>
+            <!--
+              The list of date fields for each sample date component in a separate variable
+              One or more date fields are required, corresponding to the date/time variable positions in the data
+            -->
+            <dateFields>
+                <dateField>1</dateField>
+                <dateField>2</dateField>
+            </dateFields>
+            <!--
+              timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
+              The parsers are strict about zone identifiers, and will fall back to UTC when the
+              now-deprecated zone names are used (in the format of HDT, HST, SST, etc.). They are
+              considered ambiguous due to conflicting global use.  Only use identifiers that follow
+              the <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like
+              GMT+13:00 will also work, it may change over time due to daylight savings,
+              so the long identifier is best.
+            -->
+            <timeZone>Pacific/Honolulu</timeZone>
+            <!-- The list of data archivers used to write data to disk -->
+            <archivers>
+                <!-- Write the raw data to /data/raw -->
+                <archiver>
+                    <archiveType>raw</archiveType>
+                    <archiveInterval>hourly</archiveInterval>
+                    <archiveBaseDirectory>/data/raw/maui</archiveBaseDirectory>
+                </archiver>
+                <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
+                <archiver>
+                    <archiveType>pacioos-2020-format</archiveType>
+                    <archiveInterval>daily</archiveInterval>
+                    <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
+                </archiver>
+            </archivers>
+        </channel>
+    </channels>
+</instrument>
