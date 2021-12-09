@@ -2,19 +2,20 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>PIMI01_001CTDXXXXR00</identifier>
+    <identifier>WK02XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
-    <connectionType>file</connectionType>
+    <connectionType>socket</connectionType>
     <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <filePath>/home/kilonalu/PIMI01_001CTDXXXXR00_latest_data.txt</filePath>
+        <hostName>24.221.207.27</hostName>
+        <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>PIMI01_001CTDXXXXR00</rbnbName>
+    <rbnbName>WK02XX_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -32,22 +33,35 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            # 27.9210,  5.506851,  2.801,  0.1129,  0.2686,  34.2450,  23 Jan 2021 12:04:31
-            # 27.8845,  5.504902,  2.780,  0.1143,  1.3475,  34.2580,  23 Jan 2021 12:08:31
-            # 27.8875,  5.504424,  2.827,  0.1095,  0.2309,  34.2524,  23 Jan 2021 12:12:31
-            # 27.8876,  5.504584,  2.836,  0.1119,  0.2309,  34.2535,  23 Jan 2021 12:16:31
-            # 27.8897,  5.504705,  2.869,  0.1121,  0.2318,  34.2528,  23 Jan 2021 12:20:31
-            # 27.8950,  5.505092,  2.863,  0.1094,  0.2331,  34.2516,  23 Jan 2021 12:24:31
-            # 27.9020,  5.505570,  2.861,  0.1122,  0.2332,  34.2499,  23 Jan 2021 12:28:31
-            # 27.9007,  5.505577,  2.838,  0.1045,  0.2392,  34.2509,  23 Jan 2021 12:32:31
-            # 27.8986,  5.505555,  2.863,  0.1072,  0.2355,  34.2522,  23 Jan 2021 12:36:31
-            # 27.8986,  5.505532,  2.870,  0.1057,  0.2416,  34.2521,  23 Jan 2021 12:40:31
+            #  28.3974,  5.06773,    2.331,  30.8817, 18 Sep 2020, 17:49:36
+            #  28.4062,  5.06893,    2.271,  30.8842, 18 Sep 2020, 17:53:36
+            #  28.4225,  5.07127,    2.273,  30.8896, 18 Sep 2020, 17:57:36
+            #  28.4113,  5.06921,    2.245,  30.8828, 18 Sep 2020, 18:01:36
+            #  28.3709,  5.06632,    2.198,  30.8893, 18 Sep 2020, 18:05:36
+            #  28.3933,  5.06851,    2.153,  30.8898, 18 Sep 2020, 18:09:36
+            #  28.4185,  5.07216,    2.098,  30.8983, 18 Sep 2020, 18:13:36
+            #  28.3888,  5.06779,    2.033,  30.8878, 18 Sep 2020, 18:17:36
+            #  28.4525,  5.07596,    2.194,  30.9021, 18 Sep 2020, 18:21:36
+            -->
+            <!-- example DT sample:
+            curl -s -o - "http://bbl.ancl.hawaii.edu:8080/RBNB/WK02XX_001CTDXXXXR00/DecimalASCIISampleData" | od -ax
+            0000000   #  sp  sp   2   8   .   4   5   2   5   ,  sp  sp   5   .   0
+                    2023 3220 2e38 3534 3532 202c 3520 302e
+            0000020   7   5   9   6   ,  sp  sp  sp  sp   2   .   1   9   4   ,  sp
+                    3537 3639 202c 2020 3220 312e 3439 202c
+            0000040  sp   3   0   .   9   0   2   1   ,  sp   1   8  sp   S   e   p
+                    3320 2e30 3039 3132 202c 3831 5320 7065
+            0000060  sp   2   0   2   0   ,  sp   1   8   :   2   1   :   3   6  cr
+                    3220 3230 2c30 3120 3a38 3132 333a 0d36
+            0000100  nl nul
+                    000a
+            0000101
             -->
             <!-- 
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># *\S*, *\S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} *\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern># *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4}, *\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
@@ -64,9 +78,8 @@
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
-                <columnType>STRING</columnType>
-                <columnType>STRING</columnType>
-                <columnType>LOCAL_DATE_TIME</columnType>
+                <columnType>LOCAL_DATE</columnType>
+                <columnType>LOCAL_TIME</columnType>
             </columnTypes>
             <!--
               The character that delimits variables within the sample
@@ -84,14 +97,16 @@
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
+                <dateFormat>dd MMM yyyy</dateFormat> 
+                <dateFormat>HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
               The list of date fields for each sample date component in a separate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-                <dateField>7</dateField>
+                <dateField>5</dateField>
+                <dateField>6</dateField>
             </dateFields>
             <!--
               timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
@@ -102,14 +117,14 @@
               GMT+13:00 will also work, it may change over time due to daylight savings,
               so the long identifier is best.
             -->
-            <timeZone>Pacific/Majuro</timeZone>
+            <timeZone>Pacific/Honolulu</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>

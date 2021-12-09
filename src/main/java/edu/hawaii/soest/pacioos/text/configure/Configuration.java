@@ -317,7 +317,8 @@ public class Configuration {
             }
         } else {
             log.warn("No date format have been configured for this instrument.");
-        }        return dateFormats;
+        }
+        return dateFormats;
     }
 
     /**

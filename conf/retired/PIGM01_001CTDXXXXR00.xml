@@ -2,7 +2,7 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>PIMI01_001CTDXXXXR00</identifier>
+    <identifier>PIGM01_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>file</connectionType>
     <!-- 
@@ -11,10 +11,10 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <filePath>/home/kilonalu/PIMI01_001CTDXXXXR00_latest_data.txt</filePath>
+        <filePath>/home/kilonalu/PIGM01_001CTDXXXXR00_latest_data.txt</filePath>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>PIMI01_001CTDXXXXR00</rbnbName>
+    <rbnbName>PIGM01_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -32,16 +32,21 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            # 27.9210,  5.506851,  2.801,  0.1129,  0.2686,  34.2450,  23 Jan 2021 12:04:31
-            # 27.8845,  5.504902,  2.780,  0.1143,  1.3475,  34.2580,  23 Jan 2021 12:08:31
-            # 27.8875,  5.504424,  2.827,  0.1095,  0.2309,  34.2524,  23 Jan 2021 12:12:31
-            # 27.8876,  5.504584,  2.836,  0.1119,  0.2309,  34.2535,  23 Jan 2021 12:16:31
-            # 27.8897,  5.504705,  2.869,  0.1121,  0.2318,  34.2528,  23 Jan 2021 12:20:31
-            # 27.8950,  5.505092,  2.863,  0.1094,  0.2331,  34.2516,  23 Jan 2021 12:24:31
-            # 27.9020,  5.505570,  2.861,  0.1122,  0.2332,  34.2499,  23 Jan 2021 12:28:31
-            # 27.9007,  5.505577,  2.838,  0.1045,  0.2392,  34.2509,  23 Jan 2021 12:32:31
-            # 27.8986,  5.505555,  2.863,  0.1072,  0.2355,  34.2522,  23 Jan 2021 12:36:31
-            # 27.8986,  5.505532,  2.870,  0.1057,  0.2416,  34.2521,  23 Jan 2021 12:40:31
+            # 29.3131,  5.70894,    2.980, 0.0787, 1.5317,  34.6337, 20 May 2010 15:03:56
+            # 29.1146,  5.68932,    2.823, 0.0812, 0.2126,  34.6429, 20 May 2010 16:03:56
+            # 29.0868,  5.68644,    2.714, 0.0805, 0.1847,  34.6433, 20 May 2010 17:03:56
+            # 29.0272,  5.68013,    2.708, 0.0809, 0.2448,  34.6432, 20 May 2010 18:03:56
+            # 28.9907,  5.67612,    2.710, 0.0816, 0.1901,  34.6421, 20 May 2010 19:03:56
+            # 28.9503,  5.67194,    2.810, 0.0809, 0.2125,  34.6426, 20 May 2010 20:03:56
+            # 28.9382,  5.67074,    2.877, 0.0823, 0.2200,  34.6431, 20 May 2010 21:03:56
+            # 28.9304,  5.66961,    3.008, 0.0829, 0.2103,  34.6410, 20 May 2010 22:03:56
+            # 28.9110,  5.66778,    3.178, 0.0780, 0.1619,  34.6424, 20 May 2010 23:03:56
+            # 28.8728,  5.66256,    3.261, 0.0806, 0.1578,  34.6342, 21 May 2010 00:03:56
+            # 28.7884,  5.65189,    3.296, 0.0793, 0.2385,  34.6219, 21 May 2010 01:03:56
+            # 28.6984,  5.64143,    3.352, 0.0793, 0.3526,  34.6151, 21 May 2010 02:03:56
+            # 28.5932,  5.63031,    3.347, 0.0783, 0.3920,  34.6148, 21 May 2010 03:03:56
+            # 28.5881,  5.63050,    3.289, 0.0809, 0.4037,  34.6199, 21 May 2010 04:03:56
+            # 28.5096,  5.62160,    3.204, 0.0835, 0.4507,  34.6155, 21 May 2010 05:03:56
             -->
             <!-- 
               The regular expression used to match a data sample.
@@ -102,7 +107,7 @@
               GMT+13:00 will also work, it may change over time due to daylight savings,
               so the long identifier is best.
             -->
-            <timeZone>Pacific/Majuro</timeZone>
+            <timeZone>Pacific/Guam</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->

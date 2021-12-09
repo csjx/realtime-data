@@ -79,7 +79,7 @@ public class ReaderTask implements Callable<ReadResult> {
             InputStream samples = new BufferedInputStream(
                 new FileInputStream(path.toString()));
 
-            // Make all dates a single column
+            // Make all dates a single column for SBE-16 like instruments
             String datePattern =
                 "([0-9][0-9]) " +                // day dd
                 "([A-Za-z][A-Za-z][A-Za-z]) " +  // mon MMM
@@ -89,13 +89,24 @@ public class ReaderTask implements Callable<ReadResult> {
                 "([0-9][0-9])";                  // sec ss
             String dateReplacement = "$1 $2 $3 $4:$5:$6"; // note no comma
 
+            String ysiDatePattern =
+                "([0-9][0-9])/" +                // mon MMM
+                "([0-9][0-9])/" +                // day dd
+                "([0-9][0-9][0-9][0-9]) " +      // year yyyy, note space
+                "([0-9][0-9]):" +                // hour HH
+                "([0-9][0-9]):" +                // min mm
+                "([0-9][0-9])";                  // sec ss
+            String ysiDateReplacement = "$1/$2/$3$4:$5:$6"; // note no space
 
             // Coerce the samples to into the correct table format
             String samplesString = new String(samples.readAllBytes(), StandardCharsets.UTF_8);
             samplesString = samplesString
                 .replaceAll("\r", "")
-                .replaceAll(",,", ",")
-                .replaceAll(datePattern, dateReplacement);
+                .replaceAll(",+", ",")
+                .replaceAll(" +", " ")
+                .replaceAll(" +$", "")
+                .replaceAll(datePattern, dateReplacement)
+                .replaceAll(ysiDatePattern, ysiDateReplacement);
 
             if ( samplesString.contains("#")) {
                 samplesString = samplesString
@@ -110,8 +121,12 @@ public class ReaderTask implements Callable<ReadResult> {
             samples = new BufferedInputStream(
                 new ByteArrayInputStream(samplesString.getBytes(StandardCharsets.UTF_8)));
 
-            // Get or build the single datetime format
+            // If the date/time fields are column 1, this is YSI, don't use a space separator
+            int firstDateField = Integer.parseInt(config.getDateFields(0).get(0));
+            String dateTimeSeparator = firstDateField > 1 ? " " : "";
             String datetimeFormat = config.getDateTimeFormat(0);
+
+            // Get or build the single datetime format
             if (datetimeFormat == null) {
                 List<String> dateFormats = config.listDateFormats(0);
                 datetimeFormat = "";
@@ -119,7 +134,7 @@ public class ReaderTask implements Callable<ReadResult> {
                     if (i == dateFormats.size() - 1) {
                         datetimeFormat = datetimeFormat.concat(dateFormats.get(i));
                     } else {
-                        datetimeFormat = datetimeFormat.concat(dateFormats.get(i) + " ");
+                        datetimeFormat = datetimeFormat.concat(dateFormats.get(i) + dateTimeSeparator);
                     }
                 }
             }
@@ -129,11 +144,30 @@ public class ReaderTask implements Callable<ReadResult> {
             ColumnType[] colTypes = config.getColumnTypes(0);
             List<ColumnType> columnTypes =
             Arrays.stream(colTypes).filter(columnType ->
-                columnType.toString().toLowerCase().equals("string")
+                columnType.toString().equalsIgnoreCase("string")
             ).collect(Collectors.toList());
-            columnTypes.add(DateTimeColumnType.instance());
+
+            // For YSI instruments, prepend the datetime. Others, append it.
+            if ( dateTimeSeparator.isEmpty() ) {
+                columnTypes.add(0, DateTimeColumnType.instance());
+            } else {
+                columnTypes.add(DateTimeColumnType.instance());
+            }
+
             colTypes = new ColumnType[columnTypes.size()];
             columnTypes.toArray(colTypes);
+
+            String fieldDelimiter = config.getFieldDelimiter(0);
+            // handle hex-encoded field delimiters
+            if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
+
+                byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+                byte[] delimAsByteArray = new byte[]{delimBytes};
+                fieldDelimiter = new String(
+                    delimAsByteArray, 0,
+                    delimAsByteArray.length,
+                    StandardCharsets.US_ASCII);
+            }
 
             CsvReadOptions.Builder builder =
                 CsvReadOptions.builder(samples)
@@ -142,7 +176,7 @@ public class ReaderTask implements Callable<ReadResult> {
                     .header(false)
                     .missingValueIndicator(config.getMissingValueCode(0))
                     .sample(false)
-                    .separator(config.getFieldDelimiter(0).charAt(0))
+                    .separator(fieldDelimiter.charAt(0))
                     .tableName(getPath().toString())
                     .columnTypes(colTypes);
             builder.dateTimeFormat(DateTimeFormatter.ofPattern(datetimeFormat));
@@ -154,7 +188,7 @@ public class ReaderTask implements Callable<ReadResult> {
             samples.close();
 
             if (log.isDebugEnabled()) {
-                log.debug("Generated table for " + this.path.toString());
+                log.debug("Generated table for " + this.path);
             }
 
         } catch (Exception e) {

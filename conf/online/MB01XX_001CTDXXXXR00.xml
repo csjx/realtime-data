@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE instrument SYSTEM "instrument.dtd">
+<!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
     <identifier>MB01XX_001CTDXXXXR00</identifier>
@@ -120,7 +120,7 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
