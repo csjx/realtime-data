@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instrument SYSTEM "../instrument.dtd">
+<instrument>
+    <!-- The instrument identifier -->
+    <identifier>MU02XX_001YCTDXXXR00</identifier>
+    <!-- The connection type: socket, file, or serial -->
+    <connectionType>file</connectionType>
+    <!--
+      Configure connection parameters based on connection type. If connection
+      type is socket, add hostName and hostPort below. If file, add filePath
+      below. If serial, add serialPortParams and sub elements below.
+    -->
+    <connectionParams>
+        <filePath>/home/kilonalu/MU02XX_001YCTDXXXR00_latest_data.txt</filePath>
+    </connectionParams>
+    <!-- The name of the instrument source as it appears in the DataTurbine -->
+    <rbnbName>MU02XX_001YCTDXXXR00</rbnbName>
+    <!-- The IP or host name of the DataTurbine server -->
+    <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
+    <!-- The port number of the DataTurbine server -->
+    <rbnbPort>3333</rbnbPort>
+    <!-- The number of in-memory bytes to request for this instrument source -->
+    <archiveMemory>50000</archiveMemory>
+    <!-- The number of on-disk bytes to request for this instrument source -->
+    <archiveSize>31536000</archiveSize>
+    <!-- The list of data channels to be created in the DataTurbine for this instrument source -->
+    <channels>
+        <!-- The default channel details. This will push ASCII data into the DataTurbine -->
+        <channel default="true">
+            <!-- The name of the channel -->
+            <name>DecimalASCIISampleData</name>
+            <!-- The channel's incoming data type -->
+            <dataType>String</dataType>
+            <!-- data archive example:
+            02/04/2014 18:01:07 24.62 52.91  35.18   1.918  8.14     0.8   1.0  104.6   7.12    10.9
+            02/04/2014 18:11:07 24.61 52.73  35.05   1.869  8.15     1.4  -0.1  107.5   7.33    10.9
+            02/04/2014 18:21:07 24.62 52.82  35.11   1.888  8.14     1.3   0.8  104.2   7.10    10.9
+            02/04/2014 18:31:07 24.62 52.91  35.18   1.888  8.14     0.8   0.9  102.9   7.01    10.9
+            02/04/2014 18:41:07 24.60 52.84  35.15   1.899  8.12     0.6   1.1   98.6   6.72    10.9
+            02/04/2014 18:51:07 24.57 52.77  35.12   1.877  8.12     0.2   1.2   99.0   6.75    10.9
+            02/04/2014 19:01:07 24.59 53.05  35.31   1.890  8.13     0.4   1.3   98.8   6.73    10.9
+            -->
+            <!--
+              The regular expression used to match a data sample.
+              Best to keep the data pattern on one line below
+            -->
+            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+\s+</dataPattern>
+            <!--
+                dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
+            -->
+            <!-- Not needed for YSI instruments
+            <dataPrefix></dataPrefix>
+            -->
+            <!--
+                columnTypes: A list of column types for each variable in the sample. Use STRING
+                for all column types except:
+                - date-only columns: use LOCAL_DATE
+                - time-only columns: use LOCAL_TIME
+                - date-time columns: use LOCAL_DATE_TIME
+            -->
+            <columnTypes>
+                <columnType>LOCAL_DATE</columnType>
+                <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+            </columnTypes>
+            <!--
+              The character that delimits variables within the sample
+              Use Hex notation for non-printing, whitespace characters (like space)
+            -->
+            <fieldDelimiter>0x20</fieldDelimiter>
+            <!--
+              The character(s) that delimit records (samples) in a stream or file
+              Use Hex notation for non-printing characters, separate characters with a pipe
+            -->
+            <recordDelimiters>0x0D|0x0A</recordDelimiters>
+            <!--
+              The list of date formats for each sample date component in a separate variable
+              One or more date formats are required, reflecting the date/time variables in the data
+              Note: dateFormat and dateField are used together to locate, then parse the sample date
+              -->
+            <dateFormats>
+                <dateFormat>MM/dd/yyyy</dateFormat>
+                <dateFormat>HH:mm:ss</dateFormat>
+            </dateFormats>
+            <!--
+              The list of date fields for each sample date component in a separate variable
+              One or more date fields are required, corresponding to the date/time variable positions in the data
+            -->
+            <dateFields>
+                <dateField>1</dateField>
+                <dateField>2</dateField>
+            </dateFields>
+            <!--
+              timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
+              The parsers are strict about zone identifiers, and will fall back to UTC when the
+              now-deprecated zone names are used (in the format of HDT, HST, SST, etc.). They are
+              considered ambiguous due to conflicting global use.  Only use identifiers that follow
+              the <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like
+              GMT+13:00 will also work, it may change over time due to daylight savings,
+              so the long identifier is best.
+            -->
+            <timeZone>Pacific/Honolulu</timeZone>
+            <!-- The list of data archivers used to write data to disk -->
+            <archivers>
+                <!-- Write the raw data to /data/raw -->
+                <archiver>
+                    <archiveType>raw</archiveType>
+                    <archiveInterval>hourly</archiveInterval>
+                    <archiveBaseDirectory>/data/raw/maui</archiveBaseDirectory>
+                </archiver>
+                <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
+                <archiver>
+                    <archiveType>pacioos-2020-format</archiveType>
+                    <archiveInterval>daily</archiveInterval>
+                    <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
+                </archiver>
+            </archivers>
+        </channel>
+    </channels>
+</instrument>
