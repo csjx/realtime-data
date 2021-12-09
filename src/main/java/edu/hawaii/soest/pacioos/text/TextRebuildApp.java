@@ -179,7 +179,7 @@ public class TextRebuildApp {
             // Is the datetime column first or last?
             int firstDateField = Integer.parseInt(config.getDateFields(0).get(0));
             // Sort the table using the datetime field's corresponding index
-            int sortColumnIndex = firstDateField <= 1 ? 0 : mergedTable.columnCount();
+            int sortColumnIndex = firstDateField <= 1 ? 0 : mergedTable.columnCount() - 1;
 
             // Deduplicate and sort rows of the merged table
             sortedTable = deduplicateAndSortTable(mergedTable, sortColumnIndex);
