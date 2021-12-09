@@ -104,6 +104,7 @@ public class ReaderTask implements Callable<ReadResult> {
                 .replaceAll("\r", "")
                 .replaceAll(",+", ",")
                 .replaceAll(" +", " ")
+                .replaceAll(" +$", "")
                 .replaceAll(datePattern, dateReplacement)
                 .replaceAll(ysiDatePattern, ysiDateReplacement);
 
