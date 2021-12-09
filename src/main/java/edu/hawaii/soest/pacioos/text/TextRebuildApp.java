@@ -176,11 +176,14 @@ public class TextRebuildApp {
 
         if ( mergedTable != null ) {
 
-            // Deduplicate and sort rows of the merged table
-            sortedTable = deduplicateAndSortTable(mergedTable);
-
             // Is the datetime column first or last?
             int firstDateField = Integer.parseInt(config.getDateFields(0).get(0));
+            // Sort the table using the datetime field's corresponding index
+            int sortColumnIndex = firstDateField <= 1 ? 0 : mergedTable.columnCount();
+
+            // Deduplicate and sort rows of the merged table
+            sortedTable = deduplicateAndSortTable(mergedTable, sortColumnIndex);
+
             DateTimeColumn dateTimeColumn;
             InstantColumn instantColumn;
             // Add a table Instant column for filtering by day and hour
@@ -322,14 +325,11 @@ public class TextRebuildApp {
      * @param mergedTable the table to process
      * @return sortedTable the sorted table
      */
-    private static Table deduplicateAndSortTable(Table mergedTable) {
-        Table lastRowOfNames = mergedTable.structure().last(1);
-        String lastColumnName = lastRowOfNames.column(
-            lastRowOfNames.columns().size() - 2).getString(0);
+    private static Table deduplicateAndSortTable(Table mergedTable, int sortColumnIndex) {
         log.info("Removing duplicate samples from the merged table.");
         dedupedTable = mergedTable.dropDuplicateRows();
         log.info("Sorting the merged table.");
-        sortedTable = dedupedTable.sortAscendingOn(lastColumnName);
+        sortedTable = dedupedTable.sortOn(sortColumnIndex);
 
         return sortedTable;
     }
