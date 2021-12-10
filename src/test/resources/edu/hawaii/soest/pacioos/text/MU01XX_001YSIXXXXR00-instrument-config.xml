@@ -28,7 +28,7 @@
             <name>DecimalASCIISampleData</name>
             <dataType>String</dataType>
             <!-- Best to keep data pattern on one line below -->
-            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+\s+</dataPattern>
+            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+\s*</dataPattern>
             <!-- Use Hex notation for non-printing, whitespace characters (like space) -->
             <fieldDelimiter>0x20</fieldDelimiter>
             <!-- Use Hex notation for non-printing characters, separate characters with a pipe -->
