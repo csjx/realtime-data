@@ -6,8 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.log4j.xml" level="info" />
-        <Root level="debug">
+        <Logger name="edu.hawaii.soest" level="info">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="STDOUT" />
         </Root>
     </Loggers>
