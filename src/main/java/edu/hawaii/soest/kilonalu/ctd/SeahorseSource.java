@@ -47,8 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.math.linear.RealMatrix;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -2021,10 +2019,7 @@ public class SeahorseSource extends RBNBSource {
       // line arguments as settings for this instance
       final SeahorseSource seahorseSource = new SeahorseSource();
       
-      // Set up a simple log that logs to the console
-      PropertyConfigurator.configure(seahorseSource.getLogConfigurationFile());
-      
-      // parse the commandline arguments to configure the connection, then 
+      // parse the commandline arguments to configure the connection, then
       // start the streaming connection between the source and the RBNB server.
       if ( seahorseSource.parseArgs(args) ) {
         seahorseSource.start();

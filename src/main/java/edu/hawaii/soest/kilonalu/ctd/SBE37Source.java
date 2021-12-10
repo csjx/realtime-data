@@ -36,7 +36,6 @@ import org.apache.commons.cli.CommandLine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.nees.rbnb.RBNBSource;
 
@@ -651,8 +650,7 @@ public class SBE37Source extends RBNBSource {
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
       if ( sbe37Source.parseArgs(args) ) {
-        // Set up a simple log that logs to the console
-        PropertyConfigurator.configure(sbe37Source.getLogConfigurationFile());
+
         log.info("SBE37Source.main() called.");
         
         sbe37Source.start();

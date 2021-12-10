@@ -45,7 +45,6 @@ import org.apache.commons.codec.binary.Hex;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.nees.rbnb.RBNBSource;
 
@@ -558,7 +557,6 @@ public class FLNTUSource extends RBNBSource {
       if ( tChainSource.parseArgs(args) ) {
 
         // Set up a simple log that logs to the console
-        PropertyConfigurator.configure(tChainSource.getLogConfigurationFile());
         log.info("FLNTUSource.main() called.");
     
         tChainSource.start();

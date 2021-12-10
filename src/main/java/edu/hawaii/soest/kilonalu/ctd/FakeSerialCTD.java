@@ -31,9 +31,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
-import java.util.Calendar;
-
-import org.apache.log4j.Logger;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;

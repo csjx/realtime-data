@@ -141,6 +141,9 @@ public class TextRebuildApp {
      * @param args the arguments array
      */
     public static void main(String[] args) {
+
+        log.debug("Called TextRebuildApp.main().");
+
         // Pull in rebuilder properties
         try {
             PropertiesConfiguration propsConfig = new PropertiesConfiguration("archive_rebuild.properties");

@@ -47,8 +47,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import org.nees.rbnb.RBNBSource;
 
 /**
@@ -1013,9 +1011,6 @@ public class DavisWxSource extends RBNBSource {
       // create a new instance of the DavisWxSource object, and parse the command 
       // line arguments as settings for this instance
       final DavisWxSource davisWxSource = new DavisWxSource();
-      
-      // Set up a simple log that logs to the console
-      PropertyConfigurator.configure(davisWxSource.getLogConfigurationFile());
 
       // parse the commandline arguments to configure the connection, then 
       // start the streaming connection between the source and the RBNB server.
