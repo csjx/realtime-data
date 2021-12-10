@@ -124,13 +124,13 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/Users/cjones/data/raw/alawai</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
                     <archiveType>pacioos-2020-format</archiveType>
                     <archiveInterval>daily</archiveInterval>
-                    <archiveBaseDirectory>/Users/cjones/data/processed/pacioos</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/processed/pacioos</archiveBaseDirectory>
                 </archiver>
             </archivers>
         </channel>
