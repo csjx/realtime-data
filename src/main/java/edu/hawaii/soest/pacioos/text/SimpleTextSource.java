@@ -591,7 +591,8 @@ public abstract class SimpleTextSource extends RBNBSource {
         log.debug(Arrays.toString(columns));
         // build the total date format from the individual fields listed in dateFields
         int index = 0;
-        if ( this.dateFields != null && this.dateFormats != null ) {
+        if ( this.dateFields != null && !this.dateFields.isEmpty() &&
+             this.dateFormats != null && !this.dateFormats.isEmpty()) {
             for (Integer dateField : this.dateFields) {
                 try {
                     dateFormatStr.append(this.dateFormats.get(index)); //zero-based list
@@ -617,7 +618,8 @@ public abstract class SimpleTextSource extends RBNBSource {
                 "Using time zone         : " + this.timezone);
             
             this.tz = TimeZone.getTimeZone(this.timezone);
-            if ( this.dateFormats == null || this.dateFields == null ) {
+            if ( this.dateFormats == null || this.dateFormats.isEmpty() ||
+                 this.dateFields == null || this.dateFields.isEmpty() ) {
                 log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                     "Using the default datetime field for sample data.");
                 dateTimeFormatter = this.defaultDateFormatter;
