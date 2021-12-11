@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration verbose="true" status="trace" name="Production">
+<Configuration verbose="true" status="fatal" monitorInterval="60" name="Production">
     <Properties>
         <Property name="directory">/var/log/realtime-data</Property>
         <Property name="filename">realtime-data</Property>
