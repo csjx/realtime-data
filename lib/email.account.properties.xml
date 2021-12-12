@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!--
+  *  email.sensor.properties.xml
+  *
+  *  Copyright: 2010 Regents of the University of Hawaii and the
+  *         School of Ocean and Earth Science and Technology 
+  *
+  *   '$Author$'
+  *   '$Date$'
+  *   '$Revision$'
+-->
+<!-- 
+  The following DTD and XML structure represent a list of IMAP email accounts with
+  logs and sensor data and their properties.
+-->
+<!-- Definitions for the sensor list properties are as follows: -->
+<!DOCTYPE accounts [
+  <!-- The list of sensors -->
+  <!ELEMENT accounts (account*)>
+  <!-- the email account used to store data -->
+  <!ELEMENT account (accountName, server, username, password, protocol, 
+                     dataMailbox, processedMailbox, prefetch, log*)>
+  <!-- The account name for the email account -->
+  <!ELEMENT accountName (#PCDATA)>
+  <!-- The IP/address of the IMAP mail server -->
+  <!ELEMENT server (#PCDATA)>
+  <!-- The username for the email account -->
+  <!ELEMENT username (#PCDATA)>
+  <!-- The password for the email account -->
+  <!ELEMENT password (#PCDATA)>
+  <!-- The protocol for the email account -->
+  <!ELEMENT protocol (#PCDATA)>
+  <!-- The incoming data mailbox for the email account -->
+  <!ELEMENT dataMailbox (#PCDATA)>
+  <!-- The processed data mailbox for the email account -->
+  <!ELEMENT processedMailbox (#PCDATA)>
+  <!-- The flag indicating whether or not to prefetch mail via imap -->
+  <!ELEMENT prefetch (#PCDATA)>
+  <!-- A log with a logName, logSerialNumber, and one to many sensors -->
+  <!ELEMENT log (logName, logSerialNumber, sensor*)>
+  <!-- The name of the log -->
+  <!ELEMENT logName (#PCDATA)>
+  <!-- The serial number of the log. This must be unique in the xml document -->
+  <!ELEMENT logSerialNumber (#PCDATA)>
+  <!-- An individual sensor with each property as an element -->
+  <!ELEMENT sensor (name, type, serialNumber, description, isImmersed, 
+                    calibrationURL+, cacheSize, archiveSize, archiveChannel)>
+  <!-- The source name of the sensor -->
+  <!ELEMENT name (#PCDATA)>
+  <!-- The source type of the sensor -->
+  <!ELEMENT type (#PCDATA)>
+  <!-- The serial number of the sensor. This must be unique in the xml document -->
+  <!ELEMENT serialNumber (#PCDATA)>
+  <!-- The source description of the sensor -->
+  <!ELEMENT description (#PCDATA)>
+  <!-- A flag stating if the sensor is immersed during sampling (True or False) -->
+  <!ELEMENT isImmersed (#PCDATA)>
+  <!-- The source's URL to the instrument calibration file -->
+  <!ELEMENT calibrationURL (#PCDATA)>
+  <!-- The source's DataTurbine cache size in frames -->
+  <!ELEMENT cacheSize (#PCDATA)>
+  <!-- The source's DataTurbine archive size in frames -->
+  <!ELEMENT archiveSize (#PCDATA)>
+  <!-- The source's channel to be archived to file -->
+  <!ELEMENT archiveChannel (#PCDATA)>
+  <!-- The source type of the sensor (either monitor or control) -->
+]>
+<accounts>
+  <account>
+    <accountName>HIOOS Water Quality Buoy Data</accountName>
+    <server>imap.gmail.com</server>
+    <username>hiooswqb</username>
+    <password>sharedPW4WQB</password>
+    <protocol>imaps</protocol>
+    <dataMailbox>Inbox</dataMailbox>
+    <processedMailbox>processed</processedMailbox>
+    <prefetch>false</prefetch>
+    <log>
+      <logName>WQAW01_XXXSTRX001R00</logName>
+      <logSerialNumber>0062</logSerialNumber>
+      <sensor>
+        <name>WQAW01_XXXSTRX001R00</name>
+        <type>StorXSource</type>
+        <serialNumber>0062</serialNumber>
+        <description>WQB-AW</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-aw/calibration/SATSTX0062a.cal</calibrationURL>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>BinaryStorXFrameData</archiveChannel>
+      </sensor>
+      <sensor>
+        <name>WQAW01_XXXCTDX001R00</name>
+        <type>CTDSource</type>
+        <serialNumber>6058</serialNumber>
+        <description>WQB-AW-CTD</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL/>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>DecimalASCIISampleData</archiveChannel>
+      </sensor>
+      <sensor>
+        <name>WQAW01_XXXISUS001R00</name>
+        <type>ISUSSource</type>
+        <serialNumber>0206</serialNumber>
+        <description>WQB-AW-ISUS</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NLB.TDF</calibrationURL>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0206NDB.TDF</calibrationURL>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>DecimalASCIISampleData</archiveChannel>
+      </sensor>
+    </log>
+    <log>
+      <logName>WQKN01_XXXSTRX001R00</logName>
+      <logSerialNumber>0063</logSerialNumber>
+      <sensor>
+        <name>WQKN01_XXXSTRX001R00</name>
+        <type>StorXSource</type>
+        <serialNumber>0063</serialNumber>
+        <description>WQB-KN-STRX</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/SATSTX0063a.cal</calibrationURL>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>BinaryStorXFrameData</archiveChannel>
+      </sensor>
+      <sensor>
+        <name>WQKN01_XXXCTDX001R00</name>
+        <type>CTDSource</type>
+        <serialNumber>6059</serialNumber>
+        <description>WQB-KN-CTD</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL></calibrationURL>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>DecimalASCIISampleData</archiveChannel>
+      </sensor>
+      <sensor>
+        <name>WQKN01_XXXISUS001R00</name>
+        <type>ISUSSource</type>
+        <serialNumber>0207</serialNumber>
+        <description>WQB-KN-ISUS</description>
+        <isImmersed>True</isImmersed>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NLB.TDF</calibrationURL>
+        <calibrationURL>https://realtime.pacioos.hawaii.edu/hioos/wqb-kn/calibration/ISUS0207NDB.TDF</calibrationURL>
+        <cacheSize>25000</cacheSize>
+        <archiveSize>31536000</archiveSize>
+        <archiveChannel>DecimalASCIISampleData</archiveChannel>
+      </sensor>
+    </log>
+  </account>
+</accounts>
