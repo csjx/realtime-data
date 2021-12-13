@@ -29,7 +29,10 @@
             <AppenderRef ref="FILE" />
         </Logger>
         -->
-        <Logger name="edu.hawaii.soest" level="debug">
+        <Logger name="edu.hawaii.soest" level="info">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+        <Logger name="edu.hawaii.soest" level="info">
             <AppenderRef ref="ROLLINGFILE" />
         </Logger>
         <Root level="error">
@@ -37,40 +40,3 @@
         </Root>
     </Loggers>
 </Configuration>
-
-<!--# rootLogger.level=DEBUG-->
-<!--#-->
-<!--# ### Logging realtime-data to stdout  ####################################################-->
-<!--#-->
-<!--# log4j.category.edu.hawaii.soest.pacioos=INFO, stdout-->
-<!--# log4j.appender.stdout=org.apache.log4j.ConsoleAppender-->
-<!--# log4j.appender.stdout.layout=org.apache.log4j.PatternLayout-->
-<!--# log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd-HH:mm:ss}: [%p]: %m%n-->
-<!--#-->
-<!--# #### Logging realtime-data to logfile ####################################################-->
-<!--# log4j.category.edu.hawaii.soest=DEBUG, realtime-data-->
-<!--# log4j.appender.realtime-data=org.apache.log4j.RollingFileAppender-->
-<!--# log4j.appender.realtime-data.File=/var/log/realtime-data/realtime-data.log-->
-<!--# log4j.appender.realtime-data.MaxFileSize=500MB-->
-<!--# log4j.appender.realtime-data.maxBackupIndex=100-->
-<!--# log4j.appender.realtime-data.layout=org.apache.log4j.PatternLayout-->
-<!--# log4j.appender.realtime-data.layout.ConversionPattern=[%5p] %d (%C{1}:%M:%L) %m%n-->
-
-<!--log4j.rootLogger=ERROR, stdout-->
-
-<!--### Logging realtime-data to stdout  ####################################################-->
-<!--log4j.category.edu.hawaii.soest.pacioos=INFO, stdout-->
-<!--log4j.appender.stdout=org.apache.log4j.ConsoleAppender-->
-<!--log4j.appender.stdout.layout=org.apache.log4j.PatternLayout-->
-<!--log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss}: [%p]: %m%n-->
-
-<!--### Logging realtime-data to logfile ####################################################-->
-<!--log4j.category.edu.hawaii.soest=INFO, realtime-data-->
-<!--log4j.appender.realtime-data=org.apache.log4j.RollingFileAppender-->
-<!--log4j.appender.realtime-data.File=/var/log/realtime-data/realtime-data.log-->
-<!--log4j.appender.realtime-data.MaxFileSize=1000MB-->
-<!--log4j.appender.realtime-data.maxBackupIndex=100-->
-<!--log4j.appender.realtime-data.layout=org.apache.log4j.PatternLayout-->
-<!--log4j.appender.realtime-data.layout.ConversionPattern=[%5p] %d (%C{1}:%M:%L) %m%n-->
-
-<!--log4j.additivity.edu.hawaii.soest=false-->
