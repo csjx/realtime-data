@@ -36,8 +36,8 @@ if [[ -d "/var/run/realtime-data" && -w "/var/run/realtime-data" ]]; then
     RUN_DIR="/var/run/realtime-data";
 else
     RUN_DIR="${REALTIME_DATA}/run";
-    echo -e "${RED}WARN: /var/run/realtime-data does not exist. Create this directory as root.${RESET}";
-    echo -e "${RED}WARN: Using ${REALTIME_DATA}/run to store process ids instead.${RESET}";
+    echo -e "${YELLOW}WARN: /var/run/realtime-data does not exist. Create this directory as root.${RESET}";
+    echo -e "${YELLOW}WARN: Using ${REALTIME_DATA}/run to store process ids instead.${RESET}";
 fi
 
 operation="";                     # operation to perform, either start or stop
@@ -226,7 +226,7 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
         runningPid="";
         # Convert the instrument_path to a path when only given as an instrument name
         if [ ! -f "${instrument_path}" ]; then
-            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}.xml" -print);
+            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
         fi
 
         if [ -f "${instrument_path}" ]; then
