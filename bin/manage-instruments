@@ -97,7 +97,7 @@ start() {
             "${instrument_path}" > /dev/null 2>&1 &
         pid=$!;
         sleep 2;
-        echo ${pid} > "${RUN_DIR}${instrumentName}-driver.pid";
+        echo ${pid} > "${RUN_DIR}/${instrumentName}-driver.pid";
 
 
     # Or start the instrument archiver
