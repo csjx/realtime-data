@@ -120,7 +120,14 @@ stop() {
     instrumentName=${3};
 
     echo -e "${BLUE}INFO: Stopping the instrument ${command} for ${instrumentName}.${RESET}";
-    kill -15 "${pidToKill}";
+    if [[ "$pidToKill" =~ ^[0-9]+$ ]]; then
+        kill -15 "${pidToKill}";
+    else
+         echo -e "${YELLOW}WARN: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
+         echo -e "${YELLOW}WARN: Couldn't identify the process id. Please use 'kill -15 {pid}' if this issue persists.${RESET}";
+
+    fi
+
     sleep 1;
     rm "${RUN_DIR}/${instrumentName}-${command}.pid";
 }
