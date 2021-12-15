@@ -821,12 +821,12 @@ public abstract class SimpleTextSource extends RBNBSource {
 
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                 " sample: " + sample.trim() + " sent data to the DataTurbine.");
             rbnbChannelMap.Clear();
             // in the event we just lost the network, sleep, try again
             while (numberOfChannelsFlushed < 1) {
-                log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                     "No channels flushed, trying again in 10 seconds.");
                 Thread.sleep(10000L);
                 numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
