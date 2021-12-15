@@ -123,9 +123,17 @@ stop() {
     if [[ "$pidToKill" =~ ^[0-9]+$ ]]; then
         kill -15 "${pidToKill}";
     else
-         echo -e "${YELLOW}WARN: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
-         echo -e "${YELLOW}WARN: Couldn't identify the process id. Please use 'kill -15 {pid}' if this issue persists.${RESET}";
-
+        echo -e "${YELLOW}WARN: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
+        echo -e "${YELLOW}WARN: Couldn't identify the process id. ${RESET}";
+        echo -e "${YELLOW}WARN: Trying by the instrument name. ${RESET}";
+        pidToKill=$(pgrep -f "${instrumentName}");
+        if [[ "$pidToKill" =~ ^[0-9]+$ ]]; then
+            kill -15 "${pidToKill}";
+        else
+            echo -e "${RED}ERROR: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
+            echo -e "${RED}ERROR: Couldn't identify the process id. ${RESET}";
+            echo -e "${RED}ERROR: Please manually find the pid and use 'kill -15 {pid}'. ${RESET}";
+        fi
     fi
 
     sleep 1;
