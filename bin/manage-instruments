@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 RESET="\033[0m";
 RED="\033[0;31m";
 YELLOW="\033[0;33m";
@@ -106,15 +105,14 @@ start() {
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" > /dev/null 2>&1 &
-        pid=$!;
         sleep 2;
+        pid=$!;
         echo ${pid} > "${RUN_DIR}/${instrumentName}-archiver.pid";
     fi
 }
 
 # stop the source driver or archiver given a process id, command, and instrument name
 stop() {
-
     pidToKill=${1};
     command=${2}
     instrumentName=${3};
@@ -237,7 +235,6 @@ fi
 # iterate through the list and perform the start or stop operation for drivers and archivers
 if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
     for instrument_path in "${instrument_paths[@]}"; do
-        existingPid="";
         runningPid="";
         # Convert the instrument_path to a path when only given as an instrument name
         if [ ! -f "${instrument_path}" ]; then
@@ -246,13 +243,26 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
 
         if [ -f "${instrument_path}" ]; then
             instrument=$(basename "${instrument_path}");
+
             # Stop the running instrument driver or archiver (even on start if needed)
             if [ -f "${RUN_DIR}/${instrument%.xml}-${command}.pid" ]; then
-                runningPid=$(pgrep -F "${RUN_DIR}/${instrument%.xml}-${command}.pid");
+                runningPid=$(cat "${RUN_DIR}/${instrument%.xml}-${command}.pid");
             fi
 
-            if [ -n "${runningPid}" ]; then
-                stop "${existingPid}" "${command}" "${instrument%.xml}";
+            if [[ "${runningPid}" -gt 0 ]]; then
+                stop "${runningPid}" "${command}" "${instrument%.xml}";
+            else
+                if [ "${command}" == "driver" ]; then
+                    app="TextSourceApp";
+                fi
+                if [ "${command}" == "archiver" ]; then
+                    app="TextSinkApp";
+                fi
+                runningPid=$(pgrep -f "${app}.*${instrument}");
+                if [[ "${runningPid}" =~ [:digit:]+ ]]; then
+                    echo "Calling stop 2: ${runningPid} ${command} ${instrument%.xml}";
+                    stop "${runningPid}" "${command}" "${instrument%.xml}";
+                fi
             fi
 
             # Conditionally start the instrument driver or archiver
