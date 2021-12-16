@@ -2,7 +2,7 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- The instrument identifier -->
-    <identifier>MU02XX_002CTDXXXR00</identifier>
+    <identifier>MU02XX_002CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -15,7 +15,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>MU02XX_002CTDXXXR00</rbnbName>
+    <rbnbName>MU02XX_002CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->

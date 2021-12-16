@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-RESET="\033[0m";
-RED="\033[0;31m";
-YELLOW="\033[0;33m";
-BLUE="\033[0;34m";
+RESET="\e[0m";
+RED="\e[31m";
+YELLOW="\e[33m";
+GREEN="\e[32m";
+BLUE="\e[34m";
 LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
     REALTIME_DATA=".";                 # installed realtime-data software location
 fi
-VERSION="1.2.0";                  # keep track of this script's version
+VERSION="1.3.0";                  # keep track of this script's version
 if [[ -d "/etc/realtime-data" ]]; then
     CLASSPATH="/etc/realtime-data:${REALTIME_DATA}/realtime-data-${VERSION}-jar-with-dependencies.jar";
 else
@@ -36,8 +36,8 @@ if [[ -d "/var/run/realtime-data" && -w "/var/run/realtime-data" ]]; then
     RUN_DIR="/var/run/realtime-data";
 else
     RUN_DIR="${REALTIME_DATA}/run";
-    echo -e "${RED}WARN: /var/run/realtime-data does not exist. Create this directory as root.${RESET}";
-    echo -e "${RED}WARN: Using ${REALTIME_DATA}/run to store process ids instead.${RESET}";
+    echo -e "${YELLOW}WARN: /var/run/realtime-data does not exist. Create this directory as root.${RESET}";
+    echo -e "${YELLOW}WARN: Using ${REALTIME_DATA}/run to store process ids instead.${RESET}";
 fi
 
 operation="";                     # operation to perform, either start or stop
@@ -56,21 +56,24 @@ usage() {
     cat << EOF
 
 Usage:
+$(basename "${0}") -l
 $(basename "${0}") -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
 $(basename "${0}") -c rebuilder -i instr [-d directory]
 
-Start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
+List the status of all instrument drivers and archivers, or
+start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
 
 Alternatively, rebuild an instrument archive by providing the instrument id, and either a file
 with samples to add to the archive, or an existing raw archive directory path.
 
 OPTIONS:
 
-    -a  Start or stop all configured instruments
+    -a  Start, stop or show status for all configured instruments
     -c  The command to run, 'driver', 'archiver', 'rebuilder', to stream, archive, or rebuild data.
     -h  Show this message.
     -i  The instrument id. Use -i multiple times for multiple instruments. Use once for a rebuild.
-    -o  Indicate which operation to perform, start or stop (requires 'driver' or 'archiver' commands).
+    -l List the status of all drivers and archivers.
+    -o  Indicate which operation to perform, start, stop, or status (requires 'driver' or 'archiver' commands).
     -d  The existing instrument archive to rebuild (requires 'rebuilder' command).
     -V  Show the version (${VERSION})
 
@@ -97,7 +100,7 @@ start() {
             "${instrument_path}" > /dev/null 2>&1 &
         pid=$!;
         sleep 2;
-        echo ${pid} > "${RUN_DIR}${instrumentName}-driver.pid";
+        echo ${pid} > "${RUN_DIR}/${instrumentName}-driver.pid";
 
 
     # Or start the instrument archiver
@@ -106,23 +109,65 @@ start() {
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
             ${REALTIME_DATA}/conf/"${instrumentName}.xml" > /dev/null 2>&1 &
-        pid=$!;
         sleep 2;
+        pid=$!;
         echo ${pid} > "${RUN_DIR}/${instrumentName}-archiver.pid";
     fi
 }
 
 # stop the source driver or archiver given a process id, command, and instrument name
 stop() {
-
     pidToKill=${1};
     command=${2}
     instrumentName=${3};
 
     echo -e "${BLUE}INFO: Stopping the instrument ${command} for ${instrumentName}.${RESET}";
-    kill -15 "${pidToKill}";
+    if [[ "$pidToKill" =~ ^[0-9]+$ ]]; then
+        kill -15 "${pidToKill}";
+    else
+        echo -e "${YELLOW}WARN: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
+        echo -e "${YELLOW}WARN: Couldn't identify the process id. ${RESET}";
+        echo -e "${YELLOW}WARN: Trying by the instrument name. ${RESET}";
+        pidToKill=$(pgrep -f "${instrumentName}");
+        if [[ "$pidToKill" =~ ^[0-9]+$ ]]; then
+            kill -15 "${pidToKill}";
+        else
+            echo -e "${RED}ERROR: Couldn't stop the instrument ${command} for ${instrumentName}. ${RESET}";
+            echo -e "${RED}ERROR: Couldn't identify the process id. ${RESET}";
+            echo -e "${RED}ERROR: Please manually find the pid and use 'kill -15 {pid}'. ${RESET}";
+        fi
+    fi
+
     sleep 1;
     rm "${RUN_DIR}/${instrumentName}-${command}.pid";
+}
+
+# Provide the status of the given instrument drivers or archivers
+status() {
+    # Print
+    printf "%20s %15s %15s %15s\n" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
+    instrument_paths=$(find "${REALTIME_DATA}"/conf/** -type f -name "*xml");
+    for path in ${instrument_paths}; do
+        filename=$(basename "${path}");
+        instrument_name=${filename%.xml};
+        deployment=$(rev <<< ${path} | cut -d "/" -f2 | rev); # reverse twice to get second to last column
+        driver_pid=$(pgrep -f "TextSourceApp.*${instrument_name}");
+        archiver_pid=$(pgrep -f "TextSinkApp.*${instrument_name}");
+        driver_status="Not Running";
+        archiver_status="Not Running";
+        if [[ "${driver_pid}" -gt 0 ]]; then driver_status="Running"; fi
+        if [[ "${archiver_pid}" -gt 0 ]]; then archiver_status="Running"; fi
+
+        if [[ "${deployment}" == "online" && ("${driver_status}" == "Not Running" || "${archiver_status}" == "Not Running") ]]; then
+            printf "${RED}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+
+         elif [[ "${deployment}" == "offline" || "${deployment}" == "retired" ]]; then
+            printf "${BLUE}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+
+        else
+            printf "${GREEN}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+        fi
+    done
 }
 
 # rebuild an instrument archive from a file or directory
@@ -139,11 +184,12 @@ rebuild() {
 
 instrument_paths=() # initialize an empty instruments array
 # figure out how we were called
-while getopts ":ac:hVi:o:d:" OPTION; do
+while getopts ":ac:hlVi:o:d:" OPTION; do
     case ${OPTION} in
         "a") instrument_paths=("${REALTIME_DATA}/conf/**/*xml");;
         "c") command="${OPTARG}";;
-        "h") usage;;
+        "h") usage; exit 0;;
+        "l") status; exit 0;;
         "i") instrument_paths+=("${OPTARG}.xml");;
         "o") operation="${OPTARG}";;
         "d") location="${OPTARG}";;
@@ -151,11 +197,6 @@ while getopts ":ac:hVi:o:d:" OPTION; do
          \?) usage; echo -e "${RED}ERROR:   Invalid option: -${OPTARG}${RESET}"; exit 1;;
     esac
 done
-
-# Exit after usage using -h
-if [ ${OPTION} == "h" ]; then
-    exit 0;
-fi
 
 # ensure options are passed
 if [ "${#instrument_paths[@]}" -eq 0 ]; then
@@ -227,22 +268,34 @@ fi
 # iterate through the list and perform the start or stop operation for drivers and archivers
 if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
     for instrument_path in "${instrument_paths[@]}"; do
-        existingPid="";
         runningPid="";
         # Convert the instrument_path to a path when only given as an instrument name
         if [ ! -f "${instrument_path}" ]; then
-            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}.xml" -print);
+            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
         fi
 
         if [ -f "${instrument_path}" ]; then
             instrument=$(basename "${instrument_path}");
+
             # Stop the running instrument driver or archiver (even on start if needed)
             if [ -f "${RUN_DIR}/${instrument%.xml}-${command}.pid" ]; then
-                runningPid=$(pgrep -F "${RUN_DIR}/${instrument%.xml}-${command}.pid");
+                runningPid=$(cat "${RUN_DIR}/${instrument%.xml}-${command}.pid");
             fi
 
-            if [ -n "${runningPid}" ]; then
-                stop "${existingPid}" "${command}" "${instrument%.xml}";
+            if [[ "${runningPid}" -gt 0 ]]; then
+                stop "${runningPid}" "${command}" "${instrument%.xml}";
+            else
+                if [ "${command}" == "driver" ]; then
+                    app="TextSourceApp";
+                fi
+                if [ "${command}" == "archiver" ]; then
+                    app="TextSinkApp";
+                fi
+                runningPid=$(pgrep -f "${app}.*${instrument}");
+                if [[ "${runningPid}" =~ [:digit:]+ ]]; then
+                    echo "Calling stop 2: ${runningPid} ${command} ${instrument%.xml}";
+                    stop "${runningPid}" "${command}" "${instrument%.xml}";
+                fi
             fi
 
             # Conditionally start the instrument driver or archiver
