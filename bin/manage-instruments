@@ -90,7 +90,7 @@ show_version() {
 start() {
     command=${1}
     instrumentName=${2};
-    instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrumentName}.xml" -print)
+    instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrumentName}.xml" -print);
 
     # Start the instrument driver
     if [[ "${command}" == "driver" ]]; then
@@ -108,11 +108,15 @@ start() {
         echo -e "${BLUE}INFO: Starting the instrument archiver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSinkApp \
-            ${REALTIME_DATA}/conf/"${instrumentName}.xml" > /dev/null 2>&1 &
+            "${instrument_path}" > /dev/null 2>&1 &
         sleep 2;
         pid=$!;
         echo ${pid} > "${RUN_DIR}/${instrumentName}-archiver.pid";
     fi
+
+    # Tail the log file
+    echo -e "\n${YELLOW}---- Press Control-c to stop viewing the log file -----\n${RESET}"
+    tail -f "${LOG_DIR}/realtime-data.log";
 }
 
 # stop the source driver or archiver given a process id, command, and instrument name
@@ -145,7 +149,7 @@ stop() {
 # Provide the status of the given instrument drivers or archivers
 status() {
     # Print
-    printf "%20s %15s %15s %15s\n" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
+    printf " %20s %15s %15s %15s\n" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
     instrument_paths=$(find "${REALTIME_DATA}"/conf/** -type f -name "*xml");
     for path in ${instrument_paths}; do
         filename=$(basename "${path}");
@@ -159,13 +163,13 @@ status() {
         if [[ "${archiver_pid}" -gt 0 ]]; then archiver_status="Running"; fi
 
         if [[ "${deployment}" == "online" && ("${driver_status}" == "Not Running" || "${archiver_status}" == "Not Running") ]]; then
-            printf "${RED}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${RED} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
 
          elif [[ "${deployment}" == "offline" || "${deployment}" == "retired" ]]; then
-            printf "${BLUE}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${BLUE} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
 
         else
-            printf "${GREEN}%20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${GREEN} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
         fi
     done
 }
