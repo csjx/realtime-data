@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
+    <!-- the instrument short name -->
+    <shortName>NS13</shortName>
     <!-- The instrument identifier -->
     <!-- THIS INSTRUMENT IS THE MAUI MU01 YSI WHEN IT WAS CONFIGURED WITH 11 (NOT 12) DATA COLUMNS -->
     <identifier>MU01XX_101YCTDXXXR00</identifier>
