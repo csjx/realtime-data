@@ -861,10 +861,13 @@ public abstract class SimpleTextSource extends RBNBSource {
         } else {
             String sampleAsReadableText = sample.replaceAll("\\x0D", "0D");
             sampleAsReadableText = sampleAsReadableText.replaceAll("\\x0A", "0A");
-            
-              log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
-                  "The sample did not validate, and was not sent. The text was: " +
-            sampleAsReadableText);
+
+            // Don't warn for line endings only
+            if ( ! sample.matches("^0D0A$") ) {
+                log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                    "The sample did not validate, and was not sent. The text was: " +
+                    sampleAsReadableText);
+            }
         }
 
         if ( log.isTraceEnabled() ) {
