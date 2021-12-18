@@ -6,7 +6,7 @@
     <!-- The instrument identifier -->
     <identifier>WK01XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
-    <connectionType>file</connectionType>
+    <connectionType>socket</connectionType>
     <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
