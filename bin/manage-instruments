@@ -94,7 +94,7 @@ start() {
 
     # Start the instrument driver
     if [[ "${command}" == "driver" ]]; then
-        echo -e "${BLUE}: Starting the instrument driver for ${instrumentName}.${RESET}";
+        echo -e "${BLUE}INFO: Starting the instrument driver for ${instrumentName}.${RESET}";
         java -cp ${CLASSPATH} \
             edu.hawaii.soest.pacioos.text.TextSourceApp \
             "${instrument_path}" > /dev/null 2>&1 &
