@@ -190,7 +190,7 @@ instrument_paths=() # initialize an empty instruments array
 # figure out how we were called
 while getopts ":ac:hlVi:o:d:" OPTION; do
     case ${OPTION} in
-        "a") instrument_paths=("${REALTIME_DATA}/conf/**/*xml");;
+        "a") instrument_paths=("${REALTIME_DATA}/conf/online/*xml");;
         "c") command="${OPTARG}";;
         "h") usage; exit 0;;
         "l") status; exit 0;;
