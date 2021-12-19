@@ -32,19 +32,26 @@ import tech.tablesaw.api.InstantColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.api.TimeColumn;
+import tech.tablesaw.columns.datetimes.DateTimeColumnType;
 import tech.tablesaw.columns.instant.InstantColumnFormatter;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvWriteOptions;
 import tech.tablesaw.io.csv.CsvWriter;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class RawToPacIOOS2020Converter implements Converter {
 
@@ -90,6 +97,12 @@ public class RawToPacIOOS2020Converter implements Converter {
     /* The record delimiter (line ending) of the samples */
     private String recordDelimiter;
 
+    /* A list of the date field column number positions*/
+    private List<String> dateFields;
+
+    /* The list of date format strings from the instrument configuration */
+    private List<String> dateFormats;
+
     /**
      * Construct a RawToPacIOOS2020Converter
      */
@@ -101,21 +114,111 @@ public class RawToPacIOOS2020Converter implements Converter {
 
         String dateFormat = getDateFormat() != null ? getDateFormat() : "";
         String timeFormat = getTimeFormat() != null ? getTimeFormat() : "";
-        String dateTimeFormat = getDateTimeFormat() != null ? getDateTimeFormat() : "";
         boolean includeHeaderLines = getNumberHeaderLines() > 0;
         String missingValueCode = getMissingValueCode() != null ? getMissingValueCode() : "";
-        char fieldDelimiter = getFieldDelimiter() != null ? getFieldDelimiter().charAt(0) : ",".charAt(0);
+        String fieldDelimiter = getFieldDelimiter() != null ? getFieldDelimiter() : ",";
+
+        // Make all dates a single column for SBE-16 like instruments
+        String datePattern =
+            "([0-9][0-9]) " +                // day dd
+                "([A-Za-z][A-Za-z][A-Za-z]) " +  // mon MMM
+                "([0-9][0-9][0-9][0-9]), " +     // year yyyy, note comma
+                "([0-9][0-9]):" +                // hour HH
+                "([0-9][0-9]):" +                // min mm
+                "([0-9][0-9])";                  // sec ss
+        String dateReplacement = "$1 $2 $3 $4:$5:$6"; // note no comma
+
+        String ysiDatePattern =
+            "([0-9][0-9])/" +                // mon MMM
+                "([0-9][0-9])/" +                // day dd
+                "([0-9][0-9][0-9][0-9]) " +      // year yyyy, note space
+                "([0-9][0-9]):" +                // hour HH
+                "([0-9][0-9]):" +                // min mm
+                "([0-9][0-9])";                  // sec ss
+        String ysiDateReplacement = "$1/$2/$3$4:$5:$6"; // note no space
+
+        // Coerce the samples to into the correct table format
+        String samplesString = new String(samples.readAllBytes(), StandardCharsets.UTF_8);
+        samplesString = samplesString
+            .replaceAll("\r", "")
+            .replaceAll(",+", ",")
+            .replaceAll(" +", " ")
+            .replaceAll(" +$", "")
+            .replaceAll(datePattern, dateReplacement)
+            .replaceAll(ysiDatePattern, ysiDateReplacement);
+
+        if ( samplesString.contains("#")) {
+            samplesString = samplesString
+                .replaceAll(", *", ",")
+                .replaceAll("\n", "")
+                .replaceAll("# ", "\n")
+                .replaceFirst("\n", "");
+        }
+        samples.close();
+
+        // Create a new InputStream for to load the data into tablesaw
+        samples = new BufferedInputStream(
+            new ByteArrayInputStream(samplesString.getBytes(StandardCharsets.UTF_8)));
+
+        // If the date/time fields are column 1, this is YSI, don't use a space separator
+        int firstDateField = Integer.parseInt(getDateFields().get(0));
+        String dateTimeSeparator = firstDateField > 1 ? " " : "";
+        String datetimeFormat = getDateTimeFormat();
+
+        // Get or build the single datetime format
+        if (datetimeFormat == null) {
+            List<String> dateFormats = listDateFormats();
+            datetimeFormat = "";
+            for (int i = 0; i < dateFormats.size(); i++) {
+                if (i == dateFormats.size() - 1) {
+                    datetimeFormat = datetimeFormat.concat(dateFormats.get(i));
+                } else {
+                    datetimeFormat = datetimeFormat.concat(dateFormats.get(i) + dateTimeSeparator);
+                }
+            }
+        }
+
+        // Get the STRING column types, remove any DATE and TIME column types,
+        // and append a single DATETIME column type
+        ColumnType[] colTypes = getColumnTypes();
+        List<ColumnType> columnTypes =
+            Arrays.stream(colTypes).filter(columnType ->
+                columnType.toString().equalsIgnoreCase("string")
+            ).collect(Collectors.toList());
+
+        // For YSI instruments, prepend the datetime. Others, append it.
+        if ( dateTimeSeparator.isEmpty() ) {
+            columnTypes.add(0, DateTimeColumnType.instance());
+        } else {
+            columnTypes.add(DateTimeColumnType.instance());
+        }
+
+        colTypes = new ColumnType[columnTypes.size()];
+        columnTypes.toArray(colTypes);
+        setColumnTypes(colTypes);
+
+        // handle hex-encoded field delimiters
+        if ( fieldDelimiter.startsWith("0x") || fieldDelimiter.startsWith("\\x" )) {
+
+            byte delimBytes = Byte.parseByte(fieldDelimiter.substring(2), 16);
+            byte[] delimAsByteArray = new byte[]{delimBytes};
+            fieldDelimiter = new String(
+                delimAsByteArray, 0,
+                delimAsByteArray.length,
+                StandardCharsets.US_ASCII);
+        }
+
         // TODO: Ensure non-null values here.
         CsvReadOptions.Builder builder =
             CsvReadOptions.builder(samples)
                 .commentPrefix("|".charAt(0))
                 .dateFormat(DateTimeFormatter.ofPattern(dateFormat))
                 .timeFormat(DateTimeFormatter.ofPattern(timeFormat))
-                .dateTimeFormat(DateTimeFormatter.ofPattern(dateTimeFormat))
+                .dateTimeFormat(DateTimeFormatter.ofPattern(datetimeFormat))
                 .header(includeHeaderLines)
                 .missingValueIndicator(missingValueCode)
                 .sample(false)
-                .separator(fieldDelimiter)
+                .separator(getFieldDelimiter().charAt(0))
                 .tableName("Samples")
                 .columnTypes(getColumnTypes());
 
@@ -418,7 +521,21 @@ public class RawToPacIOOS2020Converter implements Converter {
         this.timeZoneId = timeZoneId;
     }
 
+    public List<String> getDateFields() {
+        return this.dateFields;
+    }
 
+    public void setDateFields(List<String> dateFields) {
+        this.dateFields = dateFields;
+    }
+
+    public List<String> listDateFormats() {
+        return this.dateFormats;
+    }
+
+    public void setDateFormats(List<String> dateFormats) {
+        this.dateFormats = dateFormats;
+    }
     public String getDataPrefix() {
         return dataPrefix;
     }
