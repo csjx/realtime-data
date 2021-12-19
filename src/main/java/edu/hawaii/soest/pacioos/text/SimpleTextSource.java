@@ -887,6 +887,9 @@ public abstract class SimpleTextSource extends RBNBSource {
         } else {
             converter.setDateTimeFormat(config.getDateTimeFormat(0));
         }
+        // Also set the dateFields list
+        converter.setDateFields(config.getDateFields(0));
+        converter.setDateFormats(config.getDateFormats(0));
 
         // Set the column types
         converter.setColumnTypes(config.getColumnTypes(0));
