@@ -27,6 +27,7 @@ import com.rbnb.sapi.ChannelMap;
 import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Sink;
 import edu.hawaii.soest.pacioos.text.configure.Configuration;
+import edu.hawaii.soest.pacioos.text.convert.RawToPacIOOS2020Converter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.configuration.ConfigurationException;
@@ -35,10 +36,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nees.rbnb.RBNBSource;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -140,7 +147,10 @@ public abstract class SimpleTextSource extends RBNBSource {
 
     /* The second record delimiter byte */
     protected byte secondDelimiterByte;
-      
+
+    /* A sample converter used to transform samples to a new format */
+    private RawToPacIOOS2020Converter converter;
+
     /**
      * Constructor: create an instance of the SimpleTextSource
      * @param config a configuration instance
@@ -788,6 +798,25 @@ public abstract class SimpleTextSource extends RBNBSource {
         int numberOfChannelsFlushed = 0;
         long sampleTimeAsSecondsSinceEpoch;
 
+        // Set up a PacIOOS 2020 format converter to insert data as a second channel format
+        byte[] sampleAsBytes = sample.getBytes(StandardCharsets.UTF_8);
+        InputStream sampleAsInputStream =
+            new BufferedInputStream(new ByteArrayInputStream(sampleAsBytes));
+        OutputStream sampleAsOutputStream = new ByteArrayOutputStream();
+        String convertedSample = "";
+        try {
+            converter = getConverter();
+            converter.parse(sampleAsInputStream);
+            converter.convert();
+            converter.write(sampleAsOutputStream);
+            convertedSample = sampleAsOutputStream.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sampleAsInputStream.close();
+            sampleAsOutputStream.close();
+        }
+
         // add a channel of data that will be pushed to the server.  
         // Each sample will be sent to the Data Turbine as an rbnb frame.
         ChannelMap rbnbChannelMap = new ChannelMap();
@@ -803,26 +832,24 @@ public abstract class SimpleTextSource extends RBNBSource {
             sampleTimeAsSecondsSinceEpoch = sampleInstant.getEpochSecond();
         }
 
-
         // send the sample to the data turbine
         rbnbChannelMap.PutTime((double) sampleTimeAsSecondsSinceEpoch, 0d);
         int channelIndex = rbnbChannelMap.Add(getChannelName());
+        int convertedChannelIndex = rbnbChannelMap.Add("PacIOOS2020Format");
         rbnbChannelMap.PutMime(channelIndex, "text/plain");
+        rbnbChannelMap.PutMime(convertedChannelIndex, "text/plain");
 
         // Add the delimiters back on to the sample after they were trimmed off
-        StringBuilder sampleBuilder = new StringBuilder(sample);
-        for (int i = 0; i < getRecordDelimiters().length; i++) {
-            sampleBuilder.append(
-                new String(new byte[]{Integer.decode(getRecordDelimiters()[i]).byteValue()})
-            );
-        }
-        sample = sampleBuilder.toString();
+
         rbnbChannelMap.PutDataAsString(channelIndex, sample);
+        rbnbChannelMap.PutDataAsString(convertedChannelIndex, convertedSample);
 
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
             log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
-                " sample: " + sample.trim() + " sent data to the DataTurbine.");
+                "Sample and converted sample sent data to the DataTurbine: ");
+            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " + sample.trim());
+            log.info("[" + getIdentifier() + "/" + "PacIOOS2020Format" + " ] " + convertedSample.trim());
             rbnbChannelMap.Clear();
             // in the event we just lost the network, sleep, try again
             while (numberOfChannelsFlushed < 1) {
@@ -830,18 +857,40 @@ public abstract class SimpleTextSource extends RBNBSource {
                     "No channels flushed, trying again in 10 seconds.");
                 Thread.sleep(10000L);
                 numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
-
             }
-
         } catch (InterruptedException e) {
             log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                 "The call to Source.Flush() was interrupted for " + getSource().GetClientName());
             e.printStackTrace();
+        }
+        return numberOfChannelsFlushed;
+    }
 
+    /**
+     * Return a RawToPacIOOS2020Converter to convert raw samples to the PacIOOS 2020 format
+     * @return converter  the RawToPacIOOS2020Converter converter
+     */
+    private RawToPacIOOS2020Converter getConverter() {
+        converter = new RawToPacIOOS2020Converter();
+        converter.setFieldDelimiter(",");
+        converter.setRecordDelimiter("\n");
+        converter.setMissingValueCode(config.getMissingValueCode(0));
+        converter.setNumberHeaderLines(0);
+        ZoneId timeZoneId = ZoneId.of(config.getTimeZoneID(0));
+        converter.setTimeZoneId(timeZoneId);
+        String dataPrefix = config.getDataPrefix(0);
+        converter.setDataPrefix(dataPrefix);
+        // Set the date and time format strings in the converter depending on the config count
+        if ( config.getTotalDateFields(0) > 1 ) {
+            converter.setDateFormat(config.getDateFormat(0));
+            converter.setTimeFormat(config.getTimeFormat(0));
+        } else {
+            converter.setDateTimeFormat(config.getDateTimeFormat(0));
         }
 
-
-        return numberOfChannelsFlushed;
+        // Set the column types
+        converter.setColumnTypes(config.getColumnTypes(0));
+        return converter;
     }
 
     /**
@@ -863,7 +912,7 @@ public abstract class SimpleTextSource extends RBNBSource {
             sampleAsReadableText = sampleAsReadableText.replaceAll("\\x0A", "0A");
 
             // Don't warn for line endings only
-            if ( ! sample.matches("^0D0A$") ) {
+            if ( ! sampleAsReadableText.matches("^0D0A$") ) {
                 log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
                     "The sample did not validate, and was not sent. The text was: " +
                     sampleAsReadableText);
