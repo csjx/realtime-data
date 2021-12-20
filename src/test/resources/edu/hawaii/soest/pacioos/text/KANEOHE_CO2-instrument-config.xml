@@ -71,7 +71,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern>#[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*[\S]*[ ]*,[ ]*\d{2} [\S]{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\S+,\s*\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!-- 
               The character that delimits variables within the sample
               Use Hex notation for non-printing, whitespace characters (like space)

@@ -31,10 +31,12 @@
             <name>DecimalASCIISampleData</name>
             <dataType>String</dataType>
             <!-- Best to keep data pattern on one line below -->
-            <dataPattern>\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+</dataPattern>
+            <dataPattern>\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s*</dataPattern>
             <columnTypes>
                 <columnType>LOCAL_DATE</columnType>
                 <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
