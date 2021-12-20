@@ -34,6 +34,7 @@ import tech.tablesaw.api.Table;
 import tech.tablesaw.api.TimeColumn;
 import tech.tablesaw.columns.datetimes.DateTimeColumnType;
 import tech.tablesaw.columns.instant.InstantColumnFormatter;
+import tech.tablesaw.columns.strings.StringColumnType;
 import tech.tablesaw.io.csv.CsvReadOptions;
 import tech.tablesaw.io.csv.CsvWriteOptions;
 import tech.tablesaw.io.csv.CsvWriter;
@@ -206,6 +207,7 @@ public class RawToPacIOOS2020Converter implements Converter {
                 delimAsByteArray, 0,
                 delimAsByteArray.length,
                 StandardCharsets.US_ASCII);
+            setFieldDelimiter(fieldDelimiter);
         }
 
         // TODO: Ensure non-null values here.
@@ -269,17 +271,19 @@ public class RawToPacIOOS2020Converter implements Converter {
         }
 
         // Strip the data prefix from the first column if it exists
-        StringColumn firstColumn = (StringColumn) table.column(0);
-        StringColumn firstColumnTrimmed;
-        if (table.column(0).anyMatch(
-            value -> value.toString().startsWith(getDataPrefix()))) {
-            firstColumnTrimmed = firstColumn
-                .trim()
-                .replaceAll(getDataPrefix(), "")
-                .trim();
-            getConvertedTable().addColumns(firstColumnTrimmed);
-        } else {
-            getConvertedTable().addColumns(firstColumn);
+        if ( getColumnTypes()[0] instanceof StringColumnType ) {
+            StringColumn firstColumn = (StringColumn) table.column(0);
+            StringColumn firstColumnTrimmed;
+            if (table.column(0).anyMatch(
+                value -> value.toString().startsWith(getDataPrefix()))) {
+                firstColumnTrimmed = firstColumn
+                    .trim()
+                    .replaceAll(getDataPrefix(), "")
+                    .trim();
+                getConvertedTable().addColumns(firstColumnTrimmed);
+            } else {
+                getConvertedTable().addColumns(firstColumn);
+            }
         }
 
         // Add the rest of the string columns
