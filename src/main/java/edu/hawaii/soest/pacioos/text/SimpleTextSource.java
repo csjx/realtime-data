@@ -872,7 +872,7 @@ public abstract class SimpleTextSource extends RBNBSource {
      */
     private RawToPacIOOS2020Converter getConverter() {
         converter = new RawToPacIOOS2020Converter();
-        converter.setFieldDelimiter(",");
+        converter.setFieldDelimiter(config.getFieldDelimiter(0));
         converter.setRecordDelimiter("\n");
         converter.setMissingValueCode(config.getMissingValueCode(0));
         converter.setNumberHeaderLines(0);
