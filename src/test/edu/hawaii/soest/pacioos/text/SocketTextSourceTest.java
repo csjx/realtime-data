@@ -62,11 +62,11 @@ public class SocketTextSourceTest extends SimpleTextSourceTest {
         testMockInstruments = new ArrayList<String>();
         testMockInstruments.add("AW02XX_001CTDXXXXR00");
         testMockInstruments.add("WK01XX_001CTDXXXXR00");
+        testMockInstruments.add("MU01XX_001YSIXXXXR00");
         // TODO: Non-dated data do not work with the RawToPacIOOS2020Converter. Fix this.
-        // See https://github.com/csjx/realtime-data/issues/37
+        // TODO: See https://github.com/csjx/realtime-data/issues/37
         // testMockInstruments.add("KN0101_010TCHNXXXR00");
-        // testMockInstruments.add("MU01XX_001YSIXXXXR00");
-        
+
         // test each mock instrument file, using file ending naming conventions
         for (String instrument : testMockInstruments) {
             // start up the mock data source
@@ -104,7 +104,6 @@ public class SocketTextSourceTest extends SimpleTextSourceTest {
                             numberOfIntendedSamples++;
                         }
                     }
-                    //numberOfIntendedSamples = lines.size();
                 } catch (IOException e) {
                     fail("Couldn't read data file: " + e.getMessage());
                     
