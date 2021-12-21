@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
+    <!-- the instrument short name -->
+    <shortName>NS17</shortName>
     <!-- The instrument identifier -->
     <identifier>PIGM01_003CTDX002R00</identifier>
     <!-- The connection type: socket, file, or serial -->

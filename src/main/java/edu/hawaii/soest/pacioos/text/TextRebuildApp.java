@@ -79,29 +79,18 @@ import java.util.stream.Collectors;
  */
 public class TextRebuildApp {
 
-    /* The filesystem path to process */
-    private static String path;
+    /**
+     * Construct a new text rebuild application
+     */
+    public TextRebuildApp() {
+
+    }
 
     /* The filesystem path where old files are moved if recovery is needed */
     private static String recoveryBasePath = "/backup/recovery";
 
-    /* The instrument configuration */
-    private static Configuration config;
-
-    /* The initial table */
-    private static Table table;
-
-    /* The merged table */
-    private static Table mergedTable;
-
-    /* The sorted table */
-    private static Table sortedTable;
-
-    /* The de-duplicated table */
-    private static Table dedupedTable;
-
     /* An executor service to process all tasks. Uses all processors except one */
-    private static ExecutorService executor = new ThreadPoolExecutor(
+    private static final ExecutorService executor = new ThreadPoolExecutor(
         Runtime.getRuntime().availableProcessors() - 1,
         Runtime.getRuntime().availableProcessors() - 1,
         0L,
@@ -109,26 +98,8 @@ public class TextRebuildApp {
         new LinkedBlockingQueue<>()
     );
 
-    /* The list of file paths to process */
-    private static List<Path> paths = new ArrayList<>();
-
-    /* A map of read task results for reporting */
-    private static Map<String, String> completedReadTasks = new HashMap<>();
-
-    /* A map of write task results for reporting */
-    private static Map<String, String> completedWriteTasks = new HashMap<>();
-
     /* Set up a log */
     private static final Log log = LogFactory.getLog(TextRebuildApp.class);
-
-    /* The list of date time instants associated with the rebuild */
-    private static List<Instant> rebuildDatesInUTC = new ArrayList<>();
-
-    /* A file processing read queue */
-    private static BlockingQueue<Future<ReadResult>> readQueue = new LinkedBlockingQueue<>();
-
-    /* A file processing write queue */
-    private static BlockingQueue<Future<WriteResult>> writeQueue = new LinkedBlockingQueue<>();
 
     /* The path to the rebuild success log file */
     private static String rebuildSuccessFile = "success.log";
@@ -155,9 +126,11 @@ public class TextRebuildApp {
             e.printStackTrace();
         }
 
-
+        /* The path to the configuration file */
         String xmlConfiguration = null;
-        path = null;
+
+        /* The filesystem path to process */
+        String path = null;
 
 
         if (args.length != 2) {
@@ -170,12 +143,18 @@ public class TextRebuildApp {
         }
 
         // Parse the configuration file
-        config = getConfiguration(xmlConfiguration);
+        Configuration config = getConfiguration(xmlConfiguration);
 
         // Load the data file(s)
-        paths = getDataFilePaths(path);
+        List<Path> paths = getDataFilePaths(path);
 
-        mergedTable = getMergedTable();
+        /* A map of read task results for reporting */
+        Map<String, String> completedReadTasks = new HashMap<>();
+
+        /* A map of write task results for reporting */
+        Map<String, String> completedWriteTasks = new HashMap<>();
+
+        Table mergedTable = getMergedTable(config, paths, completedReadTasks);
 
         if ( mergedTable != null ) {
 
@@ -185,7 +164,7 @@ public class TextRebuildApp {
             int sortColumnIndex = firstDateField <= 1 ? 0 : mergedTable.columnCount() - 1;
 
             // Deduplicate and sort rows of the merged table
-            sortedTable = deduplicateAndSortTable(mergedTable, sortColumnIndex);
+            Table sortedTable = deduplicateAndSortTable(mergedTable, sortColumnIndex);
 
             DateTimeColumn dateTimeColumn;
             InstantColumn instantColumn;
@@ -217,22 +196,25 @@ public class TextRebuildApp {
 
 
             // Build the list of dates for this rebuild
+            List<Instant> rebuildDatesInUTC = new ArrayList<>();
             while (!startDateInUTC.isAfter(endDateInUTC)) {
                 rebuildDatesInUTC.add(startDateInUTC);
                 startDateInUTC = startDateInUTC.plus(1, ChronoUnit.DAYS);
             }
 
             try {
-
                 // Move the existing data directories aside for potential recovery
-                moveDirectories();
+                moveDirectories(paths);
 
                 // Build the new directories
-                buildDirectories();
+                buildDirectories(config, rebuildDatesInUTC);
 
                 // Write the processed and raw data files
-                writeFiles();
+                writeFiles(rebuildDatesInUTC, sortedTable, config, completedWriteTasks);
 
+                // Log the results of the processing
+                reportResults(path, paths.size(), mergedTable.rowCount(),
+                    sortedTable.rowCount(), completedReadTasks, completedWriteTasks);
 
             } catch (IOException e) {
                 log.error("Couldn't create the archive directories. " +
@@ -241,8 +223,6 @@ public class TextRebuildApp {
             }
         }
 
-        // Log the results of the processing
-        reportResults();
 
         // Clean up
         shutdownExecutorService();
@@ -267,7 +247,7 @@ public class TextRebuildApp {
     /*
      * Move the original files to a recovery directory in case of major errors
      */
-    private static void moveDirectories() {
+    private static void moveDirectories(List<Path> paths) {
 
         String recoveryTimestamp =
             DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")
@@ -330,9 +310,9 @@ public class TextRebuildApp {
      */
     private static Table deduplicateAndSortTable(Table mergedTable, int sortColumnIndex) {
         log.info("Removing duplicate samples from the merged table.");
-        dedupedTable = mergedTable.dropDuplicateRows();
+        Table dedupedTable = mergedTable.dropDuplicateRows();
         log.info("Sorting the merged table.");
-        sortedTable = dedupedTable.sortOn(sortColumnIndex);
+        Table sortedTable = dedupedTable.sortOn(sortColumnIndex);
 
         return sortedTable;
     }
@@ -341,7 +321,12 @@ public class TextRebuildApp {
      * Read all of the given file paths and generate a merged table
      * @return mergedTable  the table of all data samples
      */
-    private static Table getMergedTable() {
+    private static Table getMergedTable(Configuration config, List<Path> paths, Map<String, String> completedReadTasks) {
+        /* A file processing read queue */
+        BlockingQueue<Future<ReadResult>> readQueue = new LinkedBlockingQueue<>();
+        /* The initial table */
+        Table table;
+
         // Submit all file paths to the executor to be turned into tables
         for (Path filePath : paths) {
             ReaderTask task = new ReaderTask(filePath, config);
@@ -385,11 +370,14 @@ public class TextRebuildApp {
     /*
      * Write the raw and processed data files based on the rebuildDatesInUTC list
      */
-    private static void writeFiles() {
+    private static void writeFiles(List<Instant> rebuildDatesInUTC, Table sortedTable,
+        Configuration config, Map<String, String> completedWriteTasks) {
         int count = 0;
         Instant previousInstant = null;
         List<Instant> rebuildHoursInUTC = new ArrayList<>();
         ZonedDateTime currentZonedDateTime;
+        /* A file processing write queue */
+        BlockingQueue<Future<WriteResult>> writeQueue = new LinkedBlockingQueue<>();
 
         // Handle the single day scenario
         if ( rebuildDatesInUTC.size() == 1 ) {
@@ -512,7 +500,7 @@ public class TextRebuildApp {
     /*
      * Build the directory structures for the new raw and processed data
      */
-    private static void buildDirectories() throws IOException {
+    private static void buildDirectories(Configuration config, List<Instant> rebuildDatesInUTC) throws IOException {
 
         String rawArchiveBaseDirectory = null;
         String processedArchiveBaseDirectory = null;
@@ -569,7 +557,8 @@ public class TextRebuildApp {
     /**
      * Log the results to file
      */
-    private static void reportResults() {
+    private static void reportResults(String path, int pathsCount, int mergedTableRows,
+        int dedupedTableRows, Map<String, String> completedReadTasks, Map<String, String> completedWriteTasks) {
         // Create a date string prefix for log success and error log files
         String timestamp = DateTimeFormatter
             .ofPattern("yyyy-MM-dd-HH-mm")
@@ -668,13 +657,13 @@ public class TextRebuildApp {
         // And log the final results
         log.info("--------------------- Results ---------------------------");
         log.info("Completed rebuilding          :\t" + path);
-        log.info("Total original files          :\t" + paths.size());
+        log.info("Total original files          :\t" + pathsCount);
         log.info("Total files read              :\t" + readCount);
         log.info("Total files written           :\t" + writeCount);
         log.info("Total files with read errors  :\t" + readErrorCount);
         log.info("Total files with write errors :\t" + writeErrorCount);
-        log.info("Total samples processed       :\t" + (mergedTable != null ? mergedTable.rowCount() : 0));
-        log.info("Total unique samples          :\t" + (dedupedTable != null ? dedupedTable.rowCount() : 0));
+        log.info("Total samples processed       :\t" + mergedTableRows);
+        log.info("Total unique samples          :\t" + dedupedTableRows);
         log.info("---------------------------------------------------------");
         log.warn("See the error log for processing error details.");
         if ( readCount > 0 ) {

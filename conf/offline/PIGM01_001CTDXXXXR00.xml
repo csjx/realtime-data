@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
+    <!-- the instrument short name -->
+    <shortName>NS09</shortName>
     <!-- The instrument identifier -->
     <identifier>WK02XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->

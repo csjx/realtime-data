@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE instrument SYSTEM "../instrument.dtd" -->
+
 <instrument>
+    <shortName>KN0101</shortName>
     <identifier>KN0101_010TCHNXXXR00</identifier>
     <connectionType>socket</connectionType>
     <connectionParams>        
@@ -28,7 +31,17 @@
             <name>DecimalASCIISampleData</name>
             <dataType>String</dataType>
             <!-- Best to keep data pattern on one line below -->
-            <dataPattern>[ ][\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*[ ]*[\S]*\s*</dataPattern>
+            <dataPattern>\s*\S+\s*\S+\s*\S+\s*\S+\s*\S+\s*\S+\s*\S+\s*\S+\s*</dataPattern>
+            <columnTypes>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+            </columnTypes>
             <!-- Use Hex notation for non-printing, whitespace characters (like space) -->
             <fieldDelimiter>0x20</fieldDelimiter>
             <!-- Use Hex notation for non-printing characters, separate characters with a pipe -->

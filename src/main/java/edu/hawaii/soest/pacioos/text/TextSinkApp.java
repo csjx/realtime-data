@@ -209,9 +209,6 @@ public class TextSinkApp {
             // Set the column types
             converter.setColumnTypes(config.getColumnTypes(channelIndex));
 
-            // TODO: set the dateFormats and dateFields in the converter, and use them
-            //       to set the dateFormat, or timeFormat, or dateTimeFormat.
-
             // Set the converter for the archiver
             archiver.setConverter(converter);
         } else {

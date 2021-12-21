@@ -119,15 +119,12 @@ public class MockDataSource implements Runnable {
 			}  else {
 				log.debug("Client is not connected");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 			
 		}
 
-	}
+    }
 	
 
 	/**

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE instrument SYSTEM "../instrument.dtd" -->
+
 <instrument>
+    <shortName>NS13</shortName>
     <identifier>MU01XX_001YSIXXXXR00</identifier>
     <connectionType>socket</connectionType>
     <connectionParams>        
@@ -28,7 +31,21 @@
             <name>DecimalASCIISampleData</name>
             <dataType>String</dataType>
             <!-- Best to keep data pattern on one line below -->
-            <dataPattern>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+ +\S+\s*</dataPattern>
+            <dataPattern>\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s*</dataPattern>
+            <columnTypes>
+                <columnType>LOCAL_DATE</columnType>
+                <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+            </columnTypes>
             <!-- Use Hex notation for non-printing, whitespace characters (like space) -->
             <fieldDelimiter>0x20</fieldDelimiter>
             <!-- Use Hex notation for non-printing characters, separate characters with a pipe -->
