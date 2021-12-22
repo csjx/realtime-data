@@ -60,6 +60,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -215,9 +216,14 @@ public class TextRebuilder {
                 String archiveBaseDirectory = aConfig.getArchiveBaseDirectory();
 
                 // Only delete archive directories like "/data/processed/pacioos/{instrument}"
-                if (archiveBaseDirectory.matches("processed.*pacioos") ) {
-                    Path processedDirectory = Path.of(archiveBaseDirectory, identifier);
-                    Files.deleteIfExists(processedDirectory);
+                Path processedDirectory = Path.of(archiveBaseDirectory, identifier);
+                if (processedDirectory.toString().matches(".*processed.pacioos.*") ) {
+                    // Walk the directory and reverse sort for files-first deletion
+                    Files.walk(processedDirectory)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                    log.info("Deleted " + processedDirectory);
                 }
             }
         } catch (IOException e) {
