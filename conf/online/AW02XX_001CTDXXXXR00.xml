@@ -2,7 +2,7 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NSXX</shortName>
+    <shortName>NS02</shortName>
     <!-- The instrument identifier -->
     <identifier>AW02XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->

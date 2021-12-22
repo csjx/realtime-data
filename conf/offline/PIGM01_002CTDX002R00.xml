@@ -2,9 +2,9 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS015</shortName>
+    <shortName>NS15</shortName>
     <!-- The instrument identifier -->
-    <identifier>WK02XX_001CTDXXXXR00</identifier>
+    <identifier>PIGM01_002CTDX002R00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -17,7 +17,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>WK02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>PIGM01_002CTDX002R00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -126,7 +126,7 @@
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>
