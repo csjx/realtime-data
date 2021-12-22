@@ -18,94 +18,31 @@
  */
 package edu.hawaii.soest.pacioos.text;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.hawaii.soest.helpers.ConsoleColors;
-import edu.hawaii.soest.pacioos.text.concurrent.ReadResult;
-import edu.hawaii.soest.pacioos.text.concurrent.WriteResult;
-import edu.hawaii.soest.pacioos.text.concurrent.WriterTask;
-import edu.hawaii.soest.pacioos.text.configure.ArchiverConfiguration;
-import edu.hawaii.soest.pacioos.text.configure.ChannelConfiguration;
 import edu.hawaii.soest.pacioos.text.configure.Configuration;
-import edu.hawaii.soest.pacioos.text.concurrent.ReaderTask;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import tech.tablesaw.api.BooleanColumn;
-import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateTimeColumn;
-import tech.tablesaw.api.DoubleColumn;
-import tech.tablesaw.api.FloatColumn;
 import tech.tablesaw.api.InstantColumn;
-import tech.tablesaw.api.IntColumn;
-import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * An application that rebuilds raw and processed data files (hourly and daily)
  */
 public class TextRebuildApp {
 
-    /**
-     * Construct a new text rebuild application
-     */
-    public TextRebuildApp() {
-
-    }
-
-    /* The filesystem path where old files are moved if recovery is needed */
-    private static String recoveryBasePath = "/backup/recovery";
-
-    /* An executor service to process all tasks. Uses all processors except one */
-    private static final ExecutorService executor = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() - 1,
-        Runtime.getRuntime().availableProcessors() - 1,
-        0L,
-        TimeUnit.MILLISECONDS,
-        new LinkedBlockingQueue<>()
-    );
-
     /* Set up a log */
     private static final Log log = LogFactory.getLog(TextRebuildApp.class);
-
-    /* The path to the rebuild success log file */
-    private static String rebuildSuccessFile = "success.log";
-
-    /* The path to the rebuild errors log file */
-    private static String rebuildErrorFile = "errors.log";
 
     /**
      * The main entrypoint
@@ -115,23 +52,16 @@ public class TextRebuildApp {
 
         log.debug("Called TextRebuildApp.main().");
 
-        // Pull in rebuilder properties
-        try {
-            PropertiesConfiguration propsConfig = new PropertiesConfiguration("archive_rebuild.properties");
-            rebuildSuccessFile = propsConfig.getString("rebuild.success.file");
-            rebuildErrorFile = propsConfig.getString("rebuild.error.file");
-            recoveryBasePath = propsConfig.getString("rebuild.recovery.path", "/backup/recovery");
-
-        } catch (ConfigurationException e) {
-            e.printStackTrace();
-        }
-
         /* The path to the configuration file */
         String xmlConfiguration = null;
-
         /* The filesystem path to process */
-        String path = null;
-
+        String dataDirectoryPath = null;
+        /* The path to the rebuild success log file */
+        String rebuildSuccessFile = "success.log";
+        /* The path to the rebuild errors log file */
+        String rebuildErrorFile = "errors.log";
+        /* The filesystem path where old files are moved if recovery is needed */
+        String recoveryBasePath = "/backup/recovery";
 
         if (args.length != 2) {
             log.error("Please provide the path to the instrument's XML configuration file " +
@@ -139,22 +69,41 @@ public class TextRebuildApp {
             System.exit(1);
         } else {
             xmlConfiguration = args[0];
-            path = args[1];
+            dataDirectoryPath = args[1];
         }
 
+        // Pull in the archiver rebuilder properties
+        try {
+            PropertiesConfiguration propsConfig = new PropertiesConfiguration("archive_rebuild.properties");
+            rebuildSuccessFile = propsConfig.getString("rebuild.success.file");
+            rebuildErrorFile = propsConfig.getString("rebuild.error.file");
+            recoveryBasePath = propsConfig.getString("rebuild.recovery.path", "/backup/recovery");
+
+        } catch (ConfigurationException e) {
+            log.info("Couldn't get the archive_rebuild.properties correctly. " +
+                "The message was: " + e.getMessage());
+            if (log.isDebugEnabled() ) {
+                e.printStackTrace();
+            }
+        }
+
+        // Create a TextRebuilder instance
+        TextRebuilder.Builder builder =
+            TextRebuilder.builder(xmlConfiguration)
+                .dataDirectory(dataDirectoryPath)
+                .rebuildErrorFile(rebuildErrorFile)
+                .rebuildSuccessFile(rebuildSuccessFile)
+                .recoveryBasePath(recoveryBasePath);
+
+        TextRebuilder rebuilder = builder.build();
+
         // Parse the configuration file
-        Configuration config = getConfiguration(xmlConfiguration);
+        Configuration config = rebuilder.getConfiguration(xmlConfiguration);
 
         // Load the data file(s)
-        List<Path> paths = getDataFilePaths(path);
+        List<Path> paths = rebuilder.getDataFilePaths();
 
-        /* A map of read task results for reporting */
-        Map<String, String> completedReadTasks = new HashMap<>();
-
-        /* A map of write task results for reporting */
-        Map<String, String> completedWriteTasks = new HashMap<>();
-
-        Table mergedTable = getMergedTable(config, paths, completedReadTasks);
+        Table mergedTable = rebuilder.getMergedTable();
 
         if ( mergedTable != null ) {
 
@@ -164,7 +113,7 @@ public class TextRebuildApp {
             int sortColumnIndex = firstDateField <= 1 ? 0 : mergedTable.columnCount() - 1;
 
             // Deduplicate and sort rows of the merged table
-            Table sortedTable = deduplicateAndSortTable(mergedTable, sortColumnIndex);
+            Table sortedTable = rebuilder.deduplicateAndSortTable(mergedTable, sortColumnIndex);
 
             DateTimeColumn dateTimeColumn;
             InstantColumn instantColumn;
@@ -204,17 +153,17 @@ public class TextRebuildApp {
 
             try {
                 // Move the existing data directories aside for potential recovery
-                moveDirectories(paths);
+                rebuilder.moveDirectories();
 
                 // Build the new directories
-                buildDirectories(config, rebuildDatesInUTC);
+                rebuilder.buildDirectories(rebuildDatesInUTC);
 
                 // Write the processed and raw data files
-                writeFiles(rebuildDatesInUTC, sortedTable, config, completedWriteTasks);
+                rebuilder.writeFiles(rebuildDatesInUTC, sortedTable);
 
                 // Log the results of the processing
-                reportResults(path, paths.size(), mergedTable.rowCount(),
-                    sortedTable.rowCount(), completedReadTasks, completedWriteTasks);
+                rebuilder.reportResults(dataDirectoryPath, paths.size(), mergedTable.rowCount(),
+                    sortedTable.rowCount());
 
             } catch (IOException e) {
                 log.error("Couldn't create the archive directories. " +
@@ -222,574 +171,7 @@ public class TextRebuildApp {
                 System.exit(1);
             }
         }
-
-
         // Clean up
-        shutdownExecutorService();
-
-    }
-
-    /**
-     * Check that the given recovery path exists and is writable
-     * @param path the recovery path to move existing data to
-     * @return true if the path is valid
-     */
-    private static boolean recoveryPathIsValid(String path) {
-        boolean valid = false;
-        Path recoveryPath = Paths.get(path);
-        valid = Files.exists(recoveryPath);
-        valid = Files.isReadable(recoveryPath);
-        valid = Files.isWritable(recoveryPath);
-
-        return valid;
-    }
-
-    /*
-     * Move the original files to a recovery directory in case of major errors
-     */
-    private static void moveDirectories(List<Path> paths) {
-
-        String recoveryTimestamp =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")
-                .format(Instant.now().atZone(ZoneOffset.ofHours(0)));
-
-        // Make sure the recovery path is valid
-        if (!recoveryPathIsValid(recoveryBasePath)) {
-            // When the default recovery directory is unavailable, use the home directory
-            recoveryBasePath = String.join(
-                FileSystems.getDefault().getSeparator(),
-                System.getProperty("user.home"),
-                "recovery",
-                recoveryTimestamp
-            );
-        } else {
-            recoveryBasePath = Paths.get(recoveryBasePath, recoveryTimestamp).toString();
-        }
-
-        // Move the list of original paths
-        Path recoveryItem;
-        Path relativePath;
-        for (Path path : paths) {
-            // Get a relative path of the given data path
-            relativePath = Paths.get("/").relativize(path);
-            // Set the recovery directory path (or fall back to one in the user's home)
-            recoveryItem = Paths.get(recoveryBasePath.toString(), relativePath.toString());
-
-            // Move the original directory with files to the recovery directory
-            try {
-                // Make the recovery directories as needed
-                if ( ! Files.exists(recoveryItem) ) {
-                    if ( Files.isDirectory(recoveryItem) ) {
-                        new File(recoveryItem.toString()).mkdirs();
-                    } else {
-                        new File(recoveryItem.getParent().toString()).mkdirs();
-                    }
-                }
-                Files.move(path, recoveryItem, StandardCopyOption.REPLACE_EXISTING);
-                log.debug(
-                    ConsoleColors.BLUE +
-                        "\nMoved\n" + path +"\nto recovery directory:\n" + recoveryBasePath +
-                        ConsoleColors.RESET);
-
-            } catch (IOException e) {
-                log.error(
-                    ConsoleColors.RED +
-                        "Couldn't create or write to the recovery directories. " +
-                        "Please adjust the permissions. Message: " + e.getMessage() +
-                        ConsoleColors.RESET
-                );
-                System.exit(1);
-            }
-        }
-    }
-
-    /*
-     * Deduplicate and sort the merged table
-     * @param mergedTable the table to process
-     * @return sortedTable the sorted table
-     */
-    private static Table deduplicateAndSortTable(Table mergedTable, int sortColumnIndex) {
-        log.info("Removing duplicate samples from the merged table.");
-        Table dedupedTable = mergedTable.dropDuplicateRows();
-        log.info("Sorting the merged table.");
-        Table sortedTable = dedupedTable.sortOn(sortColumnIndex);
-
-        return sortedTable;
-    }
-
-    /*
-     * Read all of the given file paths and generate a merged table
-     * @return mergedTable  the table of all data samples
-     */
-    private static Table getMergedTable(Configuration config, List<Path> paths, Map<String, String> completedReadTasks) {
-        /* A file processing read queue */
-        BlockingQueue<Future<ReadResult>> readQueue = new LinkedBlockingQueue<>();
-        /* The initial table */
-        Table table;
-
-        // Submit all file paths to the executor to be turned into tables
-        for (Path filePath : paths) {
-            ReaderTask task = new ReaderTask(filePath, config);
-            Future<ReadResult> tableResult = executor.submit(task);
-            readQueue.add(tableResult);
-        }
-        // Create the final merged table
-        table = createTable(config);
-
-        Table mergedTable = null;
-        ReadResult readResult = null;
-
-        while ( readQueue.size() - 1 >= 0 ) {
-            try {
-                // Poll the readQueue as table results are generated
-                Future<ReadResult> tableResultFuture = readQueue.poll(10, TimeUnit.MINUTES);
-                // Get each TableResult. If this throws, report the exception
-                if ( tableResultFuture != null ) {
-                    readResult = tableResultFuture.get();
-                    Table tableToMerge = readResult.getTable();
-                    mergedTable = table.append(tableToMerge);
-                    log.debug("Merged table: " + tableToMerge.name());
-                    completedReadTasks.put(readResult.getPath().toString(), "COMPLETE");
-                }
-
-            } catch (Exception e) {
-                // The table creation failed. Store the status.
-                if (readResult != null) {
-                    completedReadTasks.put(readResult.getPath().toString(), e.toString());
-                }
-            }
-            if (log.isInfoEnabled()) {
-                if (completedReadTasks.size() != 0 && completedReadTasks.size() % 1000 == 0) {
-                    log.info("Read " + completedReadTasks.size() + " files.");
-                }
-            }
-        }
-        return mergedTable;
-    }
-
-    /*
-     * Write the raw and processed data files based on the rebuildDatesInUTC list
-     */
-    private static void writeFiles(List<Instant> rebuildDatesInUTC, Table sortedTable,
-        Configuration config, Map<String, String> completedWriteTasks) {
-        int count = 0;
-        Instant previousInstant = null;
-        List<Instant> rebuildHoursInUTC = new ArrayList<>();
-        ZonedDateTime currentZonedDateTime;
-        /* A file processing write queue */
-        BlockingQueue<Future<WriteResult>> writeQueue = new LinkedBlockingQueue<>();
-
-        // Handle the single day scenario
-        if ( rebuildDatesInUTC.size() == 1 ) {
-            previousInstant = rebuildDatesInUTC.get(0);
-            count = 1;
-        }
-
-        // Iterate through all dates and create writer tasks
-        for (Instant currentInstant : rebuildDatesInUTC) {
-            if (count == 0) {
-                previousInstant = currentInstant;
-            } else {
-                if ( previousInstant == currentInstant) {
-                    // When working within a single day, add a day and roll back a millisecond
-                    currentInstant = currentInstant
-                        .plus(1L, ChronoUnit.DAYS)
-                        .truncatedTo(ChronoUnit.DAYS);
-                    currentInstant = currentInstant.minus(1L, ChronoUnit.MILLIS);
-
-                } else {
-                    // Just roll the current back into the day by a millisecond
-                    currentInstant = currentInstant.minus(1L, ChronoUnit.MILLIS);
-                }
-                currentZonedDateTime = currentInstant.atZone(ZoneOffset.ofHours(0));
-
-                // Write the PacIOOS 2020 format converted file
-                Path basePath = Paths.get(
-                    config.getArchiveBaseDirectory(0, 1), // TODO: Fix this
-                    config.getIdentifier(),
-                    String.format("%4d", currentZonedDateTime.getYear()),
-                    String.format("%02d", currentZonedDateTime.getMonthValue()),
-                    String.format("%02d", currentZonedDateTime.getDayOfMonth())
-                );
-                WriterTask dailyWriterTask =
-                    new WriterTask(previousInstant, currentInstant, basePath,
-                        sortedTable, config, "pacioos-2020-format");
-                // Submit the writer task for execution
-                Future<WriteResult> dailyWriteResult = executor.submit(dailyWriterTask);
-                writeQueue.add(dailyWriteResult);
-
-                // Build a list of hourly raw files to write
-
-                while (!previousInstant.isAfter(currentInstant)) {
-                    rebuildHoursInUTC.add(previousInstant);
-                    previousInstant = previousInstant.plus(1, ChronoUnit.HOURS);
-                }
-
-                // For each hourly duration, submit a write task
-                int hourlydateCount = 0;
-                Instant previousHourlyInstant = null;
-                ZonedDateTime currentHourlyZonedDateTime;
-                for (Instant currentHourlyInstant : rebuildHoursInUTC) {
-                    if (hourlydateCount == 0) {
-                        previousHourlyInstant = currentHourlyInstant;
-                    } else {
-                        currentHourlyInstant =
-                            currentHourlyInstant.minus(1L, ChronoUnit.MILLIS);
-                        currentHourlyZonedDateTime =
-                            currentHourlyInstant.atZone(ZoneOffset.ofHours(0));
-
-                        // Write the raw format files
-                        basePath = Paths.get(
-                            config.getArchiveBaseDirectory(0, 0), // TODO Fix this
-                            config.getIdentifier(),
-                            config.getChannelName(0), // TODO: Fix this
-                            String.format("%4d", currentHourlyZonedDateTime.getYear()),
-                            String.format("%02d", currentHourlyZonedDateTime.getMonthValue()),
-                            String.format("%02d", currentHourlyZonedDateTime.getDayOfMonth())
-                        );
-                        WriterTask hourlyWriterTask = new WriterTask(
-                            previousHourlyInstant,
-                            currentHourlyInstant,
-                            basePath,
-                            sortedTable,
-                            config, "raw");
-                        Future<WriteResult> hourlyWriteResult = executor.submit(hourlyWriterTask);
-                        writeQueue.add(hourlyWriteResult);
-                    }
-                    currentHourlyInstant = currentHourlyInstant.plus(1L, ChronoUnit.MILLIS);
-                    previousHourlyInstant = currentHourlyInstant;
-                    hourlydateCount++;
-                }
-
-                currentInstant = currentInstant.plus(1L, ChronoUnit.MILLIS);
-                previousInstant = currentInstant;
-                rebuildHoursInUTC.clear();
-            }
-            count++;
-        }
-
-        WriteResult writeResult = null;
-        while (writeQueue.size() - 1 > 0) {
-            try {
-                // Poll the writeQueue as write results are generated
-                Future<WriteResult> writeResultFuture = writeQueue.poll(10, TimeUnit.MINUTES);
-                // Get each WriteResult. If this throws, report the exception
-                if (writeResultFuture != null) {
-                    writeResult = writeResultFuture.get();
-                    // Table tableToMerge = readResult.getTable();
-                    // mergedTable = table.append(tableToMerge);
-                    // log.debug("Merged table: " + tableToMerge.name());
-                    completedWriteTasks.put(writeResult.getPath().toString(), writeResult.getMessage());
-                }
-
-            } catch (Exception e) {
-                // The file write failed. Store the status.
-                if (writeResult != null) {
-                    completedWriteTasks.put(writeResult.getPath().toString(), e.getMessage());
-                }
-            }
-            if (log.isInfoEnabled()) {
-                if (completedWriteTasks.size() != 0 && completedWriteTasks.size() % 1000 == 0) {
-                    log.info("Wrote " + completedWriteTasks.size() + " files.");
-                }
-            }
-        }
-    }
-
-
-    /*
-     * Build the directory structures for the new raw and processed data
-     */
-    private static void buildDirectories(Configuration config, List<Instant> rebuildDatesInUTC) throws IOException {
-
-        String rawArchiveBaseDirectory = null;
-        String processedArchiveBaseDirectory = null;
-        // Get the base directories
-        int channelCount = 0;
-        for (ChannelConfiguration channelConfig : config.getChannelConfigurations()) {
-            for (ArchiverConfiguration archiverConfig : channelConfig.getArchiverConfigurations()) {
-                if (archiverConfig.getArchiveType().equals("raw")) {
-                    rawArchiveBaseDirectory = archiverConfig.getArchiveBaseDirectory();
-                } else if (archiverConfig.getArchiveType().equals("pacioos-2020-format")) {
-                    processedArchiveBaseDirectory = archiverConfig.getArchiveBaseDirectory();
-                } else {
-                    log.debug("Didn't recognize the archive type. Skipping directory creation.");
-                }
-            }
-            String instrumentName = config.getIdentifier();
-            String channelName = config.getChannelName(channelCount);
-
-            // Make the daily base directories if they don't exist
-            if (rawArchiveBaseDirectory != null) {
-                // Create raw directories, e.g. /data/raw/alawai/{instrument}/{channel}/{year}/{month}/{day}
-                for (Instant instant : rebuildDatesInUTC) {
-                    ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.ofHours(0));
-                    String year = String.format("%4d", zonedDateTime.getYear());
-                    String month = String.format("%02d", zonedDateTime.getMonthValue());
-                    String day = String.format("%02d", zonedDateTime.getDayOfMonth());
-                    Path rawPath = Paths.get(
-                        rawArchiveBaseDirectory, instrumentName, channelName, year, month, day
-                    );
-                    if (!Files.exists(rawPath)) {
-                        Files.createDirectories(rawPath);
-                    }
-                }
-            }
-            if (processedArchiveBaseDirectory != null) {
-                // Create processed directories, e.g. /data/processed/pacioos/{instrument}/{year}/{month}/{day}
-                for (Instant instant : rebuildDatesInUTC) {
-                    ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.ofHours(0));
-                    String year = String.format("%4d", zonedDateTime.getYear());
-                    String month = String.format("%02d", zonedDateTime.getMonthValue());
-                    String day = String.format("%02d", zonedDateTime.getDayOfMonth());
-                    Path processedPath = Paths.get(
-                        processedArchiveBaseDirectory, instrumentName, year, month, day
-                    );
-                    if (!Files.exists(processedPath)) {
-                        Files.createDirectories(processedPath);
-                    }
-                }
-            }
-            channelCount++;
-        }
-    }
-
-    /**
-     * Log the results to file
-     */
-    private static void reportResults(String path, int pathsCount, int mergedTableRows,
-        int dedupedTableRows, Map<String, String> completedReadTasks, Map<String, String> completedWriteTasks) {
-        // Create a date string prefix for log success and error log files
-        String timestamp = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd-HH-mm")
-            .withZone(ZoneOffset.ofHours(0))
-            .format(Instant.now());
-
-        int readCount = 0;
-        int writeCount = 0;
-        int readErrorCount = 0;
-        int writeErrorCount = 0;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-
-        // Add paths and messages to an error JSON object
-        ArrayNode errorArrayNode = mapper.getNodeFactory().arrayNode();
-        for (String key : completedReadTasks.keySet()) {
-            String value = completedReadTasks.get(key);
-            if ( value != null && ! value.matches("COMPLETE")) {
-                log.debug(key + ": " + value);
-                ObjectNode errorTasksNode = mapper.getNodeFactory().objectNode();
-                errorTasksNode.put("path", key);
-                errorTasksNode.put("message", value);
-                errorArrayNode.add(errorTasksNode);
-                readErrorCount++;
-            } else {
-                readCount++;
-            }
-        }
-
-        // Add paths and messages to a success JSON object
-        ArrayNode successArrayNode = mapper.getNodeFactory().arrayNode();
-        for (String key : completedWriteTasks.keySet()) {
-            String value = completedWriteTasks.get(key);
-            if ( value != null && ! value.matches("COMPLETE")) {
-                log.debug(key + ": " + value);
-                ObjectNode errorTasksNode = mapper.getNodeFactory().objectNode();
-                errorTasksNode.put("path", key);
-                errorTasksNode.put("message", value);
-                errorArrayNode.add(errorTasksNode);
-                writeErrorCount++;
-            } else {
-                ObjectNode successTasksNode = mapper.getNodeFactory().objectNode();
-                successTasksNode.put("path", key);
-                successTasksNode.put("message", value);
-                successArrayNode.add(successTasksNode);
-                writeCount++;
-            }
-        }
-
-        // Log any errors to the error log file
-        FileLock errorFileLock = null;
-        try {
-            Path rebuildErrorFilePath =
-                Paths.get(recoveryBasePath, timestamp + "_" + rebuildErrorFile);
-            FileChannel errorChannel = FileChannel.open(
-                rebuildErrorFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
-            );
-            errorFileLock = errorChannel.lock();
-            mapper.writeValue(rebuildErrorFilePath.toFile(), errorArrayNode);
-
-        } catch (IOException e) {
-            log.warn("Couldn't write to the error log file: " + e.toString());
-        } finally {
-            if (errorFileLock != null) {
-                try {
-                    errorFileLock.close();
-                } catch (IOException e) {
-                    log.warn("Couldn't close the error log file: " + e.toString());
-                }
-            }
-        }
-
-        // Log all successes to the success log file
-        FileLock successFileLock = null;
-        try {
-            Path rebuildSuccessFilePath =
-                Paths.get(recoveryBasePath, timestamp + "_" + rebuildSuccessFile);
-            FileChannel successChannel = FileChannel.open(
-                rebuildSuccessFilePath, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW
-            );
-            successFileLock = successChannel.lock();
-            mapper.writeValue(rebuildSuccessFilePath.toFile(), successArrayNode);
-
-        } catch (IOException e) {
-            log.warn("Couldn't write to the success log file: " + e.toString());
-        } finally {
-            if (successFileLock != null) {
-                try {
-                    successFileLock.close();
-                } catch (IOException e) {
-                    log.warn("Couldn't close the success log file: " + e.toString());
-                }
-            }
-        }
-
-        // And log the final results
-        log.info("--------------------- Results ---------------------------");
-        log.info("Completed rebuilding          :\t" + path);
-        log.info("Total original files          :\t" + pathsCount);
-        log.info("Total files read              :\t" + readCount);
-        log.info("Total files written           :\t" + writeCount);
-        log.info("Total files with read errors  :\t" + readErrorCount);
-        log.info("Total files with write errors :\t" + writeErrorCount);
-        log.info("Total samples processed       :\t" + mergedTableRows);
-        log.info("Total unique samples          :\t" + dedupedTableRows);
-        log.info("---------------------------------------------------------");
-        log.warn("See the error log for processing error details.");
-        if ( readCount > 0 ) {
-            log.info(ConsoleColors.BLUE + "\nThe data in\n" + path + "\nhave been moved to\n" + recoveryBasePath + ConsoleColors.RESET);
-            log.info(ConsoleColors.BLUE + "If there were errors, don't delete the recovery directory so they can be dealt with." + ConsoleColors.RESET);
-            log.info(ConsoleColors.BLUE + "Review the new files, and if you are satisfied with the rebuild, delete the recovery directory." + ConsoleColors.RESET);
-        }
-
-    }
-
-    /**
-     * Shuts down the executor service when all tasks are processed
-     */
-    private static void shutdownExecutorService() {
-        // When all tasks are complete, shut down the executor
-        if (log.isDebugEnabled()) {
-            log.debug("Shutting down the executor service.");
-        }
-
-        // Shut down the executor
-        executor.shutdown();
-        try {
-            // After 10 minutes, abort execution
-            if (!executor.awaitTermination(10L, TimeUnit.MINUTES)) {
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-        }
-    }
-
-    /*
-     * Get a list of data files to process given a path
-     * @param path  the path to the data file(s)
-     * @return paths  the list of data file paths
-     */
-    private static List<Path> getDataFilePaths(String path) {
-
-        Path givenPath = Paths.get(path);
-        List<Path> paths = new ArrayList<>();
-        boolean exists = Files.exists(FileSystems.getDefault().getPath(path));
-        boolean isDirectory = Files.isDirectory(FileSystems.getDefault().getPath(path));
-
-        // Return a single file if it is not a directory
-        if ( exists && ! isDirectory ) {
-            paths.add(givenPath);
-            return paths;
-        }
-
-        // If the path is a directory, get all files within it
-        if ( exists ) {
-            try {
-                List<Path> filePaths = Files.walk(givenPath)
-                    .filter(Files::isRegularFile)
-                    .filter(Files::isReadable)
-                    .filter(currentPath -> ! currentPath.toFile().isHidden())
-                    .collect(Collectors.toList());
-                paths.addAll(filePaths);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return paths;
-    }
-
-    /*
-     * Get a Configuration object from the XML configuration file path
-     * @param xmlConfiguration the path to the XML configuration file
-     * @return configuration  the configuration object
-     */
-    private static Configuration getConfiguration(String xmlConfiguration) {
-        Configuration configuration = null;
-
-        // Get a configuration based on the XML configuration
-        try {
-            configuration = new Configuration(xmlConfiguration);
-
-        } catch (ConfigurationException e) {
-            String msg = "There was a problem configuring the rebuilder. The message was: " +
-                e.getMessage();
-            log.error(msg);
-            if (log.isDebugEnabled() ) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        }
-        return configuration;
-    }
-
-    /*
-     * Create the table of samples to rebuild in the archive directory
-     * @param config the instrument configuration
-     * @return table  a blank table
-     */
-    private static Table createTable(Configuration config) {
-        Table table = Table.create("table");
-
-        int count = 0;
-        for (Iterator<ColumnType> it =
-             Arrays.stream(config.getColumnTypes(0)).iterator(); it.hasNext(); ) {
-            ColumnType columnType = it.next();
-            String columnPrefix = "C";
-            if (columnType == ColumnType.BOOLEAN ) {
-                table.addColumns(BooleanColumn.create(columnPrefix + count));
-            } else if (columnType == ColumnType.DOUBLE) {
-                table.addColumns(DoubleColumn.create(columnPrefix + count));
-            } else if (columnType == ColumnType.FLOAT) {
-                table.addColumns(FloatColumn.create(columnPrefix + count));
-            } else if (columnType == ColumnType.INSTANT) {
-                table.addColumns(InstantColumn.create(columnPrefix + count));
-            } else if (columnType == ColumnType.INTEGER) {
-                table.addColumns(IntColumn.create(columnPrefix + count));
-            // Force date and time columns to a single datetime column
-            } else if (columnType == ColumnType.LOCAL_DATE) {
-                table.addColumns(DateTimeColumn.create(columnPrefix + count));
-            } else if (columnType == ColumnType.LOCAL_TIME) {
-                continue;
-            } else if (columnType == ColumnType.LOCAL_DATE_TIME) {
-                table.addColumns(DateTimeColumn.create(columnPrefix + count));
-            } else {
-                table.addColumns(StringColumn.create(columnPrefix + count));
-            }
-            count++;
-        }
-        log.debug(table.structure());
-        return table;
+        rebuilder.shutdownExecutorService();
     }
 }
