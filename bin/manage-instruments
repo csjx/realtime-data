@@ -148,13 +148,18 @@ stop() {
 
 # Provide the status of the given instrument drivers or archivers
 status() {
-    # Print
-    printf " %20s %15s %15s %15s\n" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
+    status_file="/tmp/instrument_status.txt";
+    touch ${status_file};
+    cat /dev/null > ${status_file};
+    chmod ugo+rw ${status_file};
+    # Print the header line
+    printf " %10s %20s %15s %15s %15s\n" "Name" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
     instrument_paths=$(find "${REALTIME_DATA}"/conf/** -type f -name "*xml");
     for path in ${instrument_paths}; do
         filename=$(basename "${path}");
         instrument_name=${filename%.xml};
         deployment=$(rev <<< ${path} | cut -d "/" -f2 | rev); # reverse twice to get second to last column
+        short_name=$(xmlstarlet sel -t -v "//shortName" ${path});
         driver_pid=$(pgrep -f "TextSourceApp.*${instrument_name}");
         archiver_pid=$(pgrep -f "TextSinkApp.*${instrument_name}");
         driver_status="Not Running";
@@ -163,15 +168,19 @@ status() {
         if [[ "${archiver_pid}" -gt 0 ]]; then archiver_status="Running"; fi
 
         if [[ "${deployment}" == "online" && ("${driver_status}" == "Not Running" || "${archiver_status}" == "Not Running") ]]; then
-            printf "${RED} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${RED} %10s %20s %15s %15s %15s${RESET}\n" "${short_name}" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}" \
+                >> ${status_file};
 
          elif [[ "${deployment}" == "offline" || "${deployment}" == "retired" ]]; then
-            printf "${BLUE} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${BLUE} %10s %20s %15s %15s %15s${RESET}\n" "${short_name}" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}" \
+                >> ${status_file};
 
         else
-            printf "${GREEN} %20s %15s %15s %15s${RESET}\n" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}";
+            printf "${GREEN} %10s %20s %15s %15s %15s${RESET}\n" "${short_name}" "${instrument_name}" "${driver_status}" "${archiver_status}" "${deployment}" \
+                >> ${status_file};
         fi
     done
+    sort -k2 ${status_file};
 }
 
 # rebuild an instrument archive from a file or directory
