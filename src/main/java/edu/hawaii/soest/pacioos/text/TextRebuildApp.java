@@ -98,7 +98,7 @@ public class TextRebuildApp {
         TextRebuilder rebuilder = builder.build();
 
         // Parse the configuration file
-        Configuration config = rebuilder.getConfiguration(xmlConfiguration);
+        Configuration config = rebuilder.getConfiguration();
 
         // Load the data file(s)
         List<Path> paths = rebuilder.getDataFilePaths();
@@ -154,6 +154,9 @@ public class TextRebuildApp {
             try {
                 // Move the existing data directories aside for potential recovery
                 rebuilder.moveDirectories();
+
+                // Remove the processed directory for the given instrument
+                rebuilder.removeProcessedDirectory();
 
                 // Build the new directories
                 rebuilder.buildDirectories(rebuildDatesInUTC);

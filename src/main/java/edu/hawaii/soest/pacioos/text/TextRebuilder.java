@@ -204,6 +204,31 @@ public class TextRebuilder {
         }
     }
 
+    /**
+     * Remove the processed directory for a given instrument when rebuilding to avoid
+     * creation of duplicate files.
+     */
+    protected void removeProcessedDirectory() {
+        try {
+            String identifier = getConfiguration().getIdentifier();
+            for (ArchiverConfiguration aConfig : getConfiguration().getArchiverConfigurations(0) ) {
+                String archiveBaseDirectory = aConfig.getArchiveBaseDirectory();
+
+                // Only delete archive directories like "/data/processed/pacioos/{instrument}"
+                if (archiveBaseDirectory.matches("processed.*pacioos") ) {
+                    Path processedDirectory = Path.of(archiveBaseDirectory, identifier);
+                    Files.deleteIfExists(processedDirectory);
+                }
+            }
+        } catch (IOException e) {
+            log.info("Couldn't delete the processed directory. " +
+                "The message was: " + e.getMessage());
+            if ( log.isDebugEnabled() ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /*
      * Deduplicate and sort the merged table
      * @param mergedTable the table to process
@@ -591,7 +616,7 @@ public class TextRebuilder {
      * @param xmlConfiguration the path to the XML configuration file
      * @return configuration  the configuration object
      */
-    protected Configuration getConfiguration(String xmlConfiguration) {
+    protected Configuration getConfiguration() {
         return this.configuration;
     }
 
@@ -767,14 +792,6 @@ public class TextRebuilder {
             return this;
         }
 
-    }
-
-    /**
-     * Get the Rebuilder configuration 
-     * @return configuration  the rebuilder configuration instance
-     */
-    public Configuration getConfiguration() {
-        return configuration;
     }
 
     /**
