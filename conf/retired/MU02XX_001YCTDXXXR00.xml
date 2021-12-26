@@ -90,7 +90,7 @@
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>MM/dd/yyyy</dateFormat>
+                <dateFormat>dd/MM/yyyy</dateFormat>
                 <dateFormat>HH:mm:ss</dateFormat>
             </dateFormats>
             <!--
