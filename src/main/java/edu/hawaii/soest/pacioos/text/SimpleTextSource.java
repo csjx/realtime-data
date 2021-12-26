@@ -805,7 +805,7 @@ public abstract class SimpleTextSource extends RBNBSource {
         OutputStream sampleAsOutputStream = new ByteArrayOutputStream();
         String convertedSample = "";
         try {
-            converter = getConverter();
+            converter = getConverter(getConfiguration());
             converter.parse(sampleAsInputStream);
             converter.convert();
             converter.write(sampleAsOutputStream);
@@ -870,7 +870,7 @@ public abstract class SimpleTextSource extends RBNBSource {
      * Return a RawToPacIOOS2020Converter to convert raw samples to the PacIOOS 2020 format
      * @return converter  the RawToPacIOOS2020Converter converter
      */
-    private RawToPacIOOS2020Converter getConverter() {
+    private RawToPacIOOS2020Converter getConverter(Configuration config) {
         converter = new RawToPacIOOS2020Converter();
         converter.setFieldDelimiter(config.getFieldDelimiter(0));
         converter.setRecordDelimiter("\n");
