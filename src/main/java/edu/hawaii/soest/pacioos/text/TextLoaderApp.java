@@ -23,14 +23,14 @@ import com.rbnb.sapi.SAPIException;
 import com.rbnb.sapi.Source;
 import edu.hawaii.soest.helpers.ConsoleColors;
 import edu.hawaii.soest.pacioos.text.configure.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateTimeColumn;
 import tech.tablesaw.api.InstantColumn;
 import tech.tablesaw.api.Row;
-import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -91,19 +91,22 @@ public class TextLoaderApp {
             // Deduplicate and sort rows of the merged table
             Table sortedTable = rebuilder.deduplicateAndSortTable(mergedTable, sortColumnIndex);
 
+            // Get the last year of data based on the latest data in the archive
             Table filteredTable = getFilteredTable(config, firstDateField, sortedTable);
 
             log.info(
                 ConsoleColors.BLUE +
-                    "Loading filtered table into the Data Turbine:\n" +
+                    "Reloading the latest year of data into the Data Turbine:\n" +
                     filteredTable +
                     ConsoleColors.RESET
             );
-            log.info("Filtered table count: " + filteredTable.rowCount());
+            log.debug("Filtered table count: " + filteredTable.rowCount());
 
             try {
+                // Remove existing instrument data from the Data Turbine
                 clearInstrumentData(config);
 
+                // Reload the instrument data into the Data Turbine
                 sendSamples(config, filteredTable);
 
             } catch (SAPIException e) {
@@ -141,9 +144,8 @@ public class TextLoaderApp {
         return filteredTable;
     }
 
-
     private static void sendSamples(Configuration config, Table filteredTable) throws SAPIException {
-        Source rbnbSource = new Source(config.getArchiveMemory(), "create", config.getArchiveSize());
+        Source rbnbSource = new Source(config.getArchiveMemory(), "append", config.getArchiveSize());
          rbnbSource.OpenRBNBConnection(
              config.getServerName() + ":" + config.getServerPort(),
              config.getIdentifier()
@@ -193,15 +195,15 @@ public class TextLoaderApp {
         }
 
         ChannelMap rbnbChannelMap = new ChannelMap();
-        int channelIndex = rbnbChannelMap.Add(config.getChannelName(0));
+        int rawChannelIndex = rbnbChannelMap.Add(config.getChannelName(0));
         int convertedChannelIndex = rbnbChannelMap.Add("PacIOOS2020Format");
-        rbnbChannelMap.PutMime(channelIndex, "text/plain");
+        rbnbChannelMap.PutMime(rawChannelIndex, "text/plain");
         rbnbChannelMap.PutMime(convertedChannelIndex, "text/plain");
 
         for (Row row : filteredTable) {
             StringBuilder rawSample = new StringBuilder(); // Most performant inside loop per SO article
             StringBuilder processedSample = new StringBuilder();
-            StringColumn[] stringColumns =  filteredTable.stringColumns();
+            List<Column<?>> columns = filteredTable.columns();
             if ( dataPrefix != null && ! dataPrefix.isEmpty() ) {
                 rawSample.append(dataPrefix);
                 rawSample.append(" ");
@@ -218,62 +220,73 @@ public class TextLoaderApp {
                 processedSample.append(processedFormatter.format(sampleInstant));
                 processedSample.append(processedFieldDelimiter);
 
-                // Append each raw data column value after the datetime column
+                // Append each raw string data column value after the datetime column
                 int index = 0;
-                for (StringColumn column : stringColumns) {
-                    rawSample.append(column.get(0));
-                    processedSample.append(column.get(0));
+                for (Column<?> column : columns) {
+                    if ( column.type() == ColumnType.STRING ) {
+                        rawSample.append(row.getString(column.name()));
+                        processedSample.append(row.getString(column.name()));
 
-                    if ( index < stringColumns.length - 1) {
-                        rawSample.append(rawFieldDelimiter);
-                        rawSample.append(" ");
-                        processedSample.append(processedFieldDelimiter);
+                        // Add the field delimiter to all but the last column, adjust for the datetime column
+                        if ( index < columns.size() - 2 ) {
+                            rawSample.append(rawFieldDelimiter);
+                            rawSample.append(" ");
+                            processedSample.append(processedFieldDelimiter);
+                        }
+                        index++;
                     }
-                    index++;
                 }
                 rawSample.append(recordDelimiter);
                 processedSample.append("\n");
 
-                log.info(rawSample.toString().trim());
-                log.info(processedSample.toString());
+                log.trace(rawSample.toString().trim());
+                log.trace(processedSample.toString());
+                // Add the raw and processed sample to the channel map
+                rbnbChannelMap.PutDataAsString(rawChannelIndex, rawSample.toString());
+                rbnbChannelMap.PutDataAsString(convertedChannelIndex, processedSample.toString());
+
             } else {
                 // Append each raw data column before the date time for raw data only
                 processedSample.append(processedFormatter.format(sampleInstant));
                 processedSample.append(processedFieldDelimiter);
 
                 int index = 0;
-                for (StringColumn column : stringColumns) {
-                    rawSample.append(column.get(0));
-                    processedSample.append(column.get(0));
-                    rawSample.append(rawFieldDelimiter);
-                    rawSample.append(" ");
+                for (Column<?> column : columns) {
+                    if ( column.type() == ColumnType.STRING ) {
+                        rawSample.append(row.getString(column.name()));
+                        processedSample.append(row.getString(column.name()));
 
-                    if ( index < stringColumns.length - 1) {
-                        processedSample.append(processedFieldDelimiter);
+                        // Add the field delimiter to all but the last column, adjust for the datetime column
+                        if ( index < columns.size() - 2 ) {
+                            rawSample.append(rawFieldDelimiter);
+                            rawSample.append(" ");
+                            processedSample.append(processedFieldDelimiter);
+                        } else if ( index < columns.size() - 1) {
+                            rawSample.append(rawFieldDelimiter);
+                            rawSample.append(" ");
+                        }
+                        index++;
                     }
-                    index++;
                 }
                 rawSample.append(rawFormatter.format(sampleInstant));
                 rawSample.append(recordDelimiter);
                 processedSample.append("\n");
 
-                log.info(rawSample.toString().trim());
-                log.info(processedSample.toString());
-
+                log.trace(rawSample.toString().trim());
+                log.trace(processedSample.toString());
+                // Add the raw and processed sample to the channel map
+                rbnbChannelMap.PutDataAsString(rawChannelIndex, rawSample.toString());
+                rbnbChannelMap.PutDataAsString(convertedChannelIndex, processedSample.toString());
             }
-            // Build raw sample based on position, add raw data plus date, use formatter
-
-            // Build converted sample, use formatter
-
-            // Add to each channel
-
         }
 
-        // Connect
-
         // Flush channelmap
-
+        log.info("Sending " + config.getIdentifier() + " data to " + config.getServerName());
+        int sent = rbnbSource.Flush(rbnbChannelMap, true);
         // Disconnect
+        rbnbSource.Detach();
+        log.info("Reloaded the latest year of " + config.getIdentifier() +
+            " data to the Data Turbine at " + config.getServerName());
     }
 
     /**
@@ -282,12 +295,12 @@ public class TextLoaderApp {
      * @throws SAPIException a Data Turbine exception
      */
     private static void clearInstrumentData(Configuration config) throws SAPIException {
+        log.info("Clearing instrument data in the Data Turbine for " + config.getIdentifier());
         Source rbnbSource = new Source(config.getArchiveMemory(), "create", config.getArchiveSize());
         rbnbSource.OpenRBNBConnection(
             config.getServerName() + ":" + config.getServerPort(),
             config.getIdentifier()
         );
-        rbnbSource.Detach();
         rbnbSource.CloseRBNBConnection();
     }
 }
