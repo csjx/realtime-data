@@ -1,5 +1,5 @@
 #!/bin/bash
-export CLASSPATH=$REALTIME_DATA/realtime-data-1.3.0-jar-with-dependencies.jar;
+export CLASSPATH=$REALTIME_DATA/realtime-data-1.4.0-jar-with-dependencies.jar;
 
 export SOURCE="TEST01_001CTDXXXXR00";
 

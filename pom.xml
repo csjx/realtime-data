@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.hawaii.soest</groupId>
     <artifactId>realtime-data</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <name>Realtime Data Streaming Software</name>
     <description>Software for streaming and managing scientific instrument data. See
         https://csjx.github.io/realtime-data.
