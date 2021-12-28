@@ -45,9 +45,9 @@ unset option;                     # command line options variable
 
 # ensure the logging file is writable
 if [[ ! -d $LOG_DIR ]]; then
-    echo -e "${YELLOW}WARN: The logging directory does not exist. Please issue:";
-    echo -e "sudo mkdir -p $LOG_DIR";
-    echo -e "sudo chown -R $USER $LOG_DIR${RESET}";
+    echo -e "${YELLOW}WARN: The logging directory does not exist. Please issue:${RESET}";
+    echo -e "${YELLOW}sudo mkdir -p $LOG_DIR${RESET}";
+    echo -e "${YELLOW}sudo chown -R $USER $LOG_DIR${RESET}";
     exit 1;
 fi
 
@@ -58,23 +58,25 @@ usage() {
 Usage:
 $(basename "${0}") -l
 $(basename "${0}") -c driver|archiver -o start|stop [-a] [-h] [-i instr1] [-i instr2] [-i instrN]
-$(basename "${0}") -c rebuilder -i instr [-d directory]
+$(basename "${0}") -c rebuilder -i instr -d directory
+$(basename "${0}") -c reloader -i instr -d directory
 
 List the status of all instrument drivers and archivers, or
 start or stop one or more instrument source drivers or archivers by optionally providing the instrument id.
 
-Alternatively, rebuild an instrument archive by providing the instrument id, and either a file
-with samples to add to the archive, or an existing raw archive directory path.
+Alternatively, rebuild an instrument archive by providing the instrument id, and an existing raw archive directory path.
+
+Lastly, reload an instrument's data into the Data Turbine by providing an instrument id and raw data directory.
 
 OPTIONS:
 
     -a  Start, stop or show status for all configured instruments
-    -c  The command to run, 'driver', 'archiver', 'rebuilder', to stream, archive, or rebuild data.
+    -c  The command to run, 'driver', 'archiver', 'rebuilder', 'reloader', to stream, archive, rebuild or reload data.
     -h  Show this message.
-    -i  The instrument id. Use -i multiple times for multiple instruments. Use once for a rebuild.
-    -l List the status of all drivers and archivers.
+    -i  The instrument id. Use -i multiple times for multiple instruments. Use once for a rebuild or reload.
+    -l  List the status of all drivers and archivers.
     -o  Indicate which operation to perform, start, stop, or status (requires 'driver' or 'archiver' commands).
-    -d  The existing instrument archive to rebuild (requires 'rebuilder' command).
+    -d  The existing raw instrument archive to rebuild (requires 'rebuilder' or 'reloader' command).
     -V  Show the version (${VERSION})
 
 EOF
@@ -194,6 +196,16 @@ rebuild() {
         "${instrument_path}" "${location}"
 }
 
+# reload an instrument archive from a file or directory
+reload() {
+    instrumentName=${1};
+    location=${2};
+    instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrumentName}.xml" -print);
+    echo -e "\n${BLUE}INFO: Reloading ${instrumentName} data to the Data Turbine\n${RESET}";
+    java -cp ${CLASSPATH} -Xmx24g \
+        edu.hawaii.soest.pacioos.text.TextLoaderApp \
+        "${instrument_path}" "${location}"
+}
 
 instrument_paths=() # initialize an empty instruments array
 # figure out how we were called
@@ -222,6 +234,10 @@ if [ "${#instrument_paths[@]}" -eq 0 ]; then
         usage;
         echo -e "\n${RED}ERROR: The -i option is required to rebuild an instrument archive.${RESET}";
         exit 1;
+    elif [ "${command}" == "reloader" ]; then
+        usage;
+        echo -e "\n${RED}ERROR: The -i option is required to reload an instrument archive.${RESET}";
+        exit 1;
     fi
 fi
 
@@ -229,9 +245,10 @@ fi
 # validate the command
 if [ "${command}" != "driver" ] && \
    [ "${command}" != "archiver" ] && \
-   [ "${command}" != "rebuilder" ]; then
+   [ "${command}" != "rebuilder" ] && \
+   [ "${command}" != "reloader" ]; then
     usage;
-    echo -e "\n${RED}ERROR: The -c option value must be driver, archiver, or rebuilder.${RESET}";
+    echo -e "\n${RED}ERROR: The -c option value must be driver, archiver, rebuilder, or reloader.${RESET}";
     exit 1;
 fi
 
@@ -245,7 +262,7 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
 fi
 
 # validate the location for the rebuilder
-if [ "${command}" == "rebuilder" ]; then
+if [ "${command}" == "rebuilder" ] || [ "${command}" == "reloader" ]; then
     # ensure the file or directory path exists
     if [ ! -e "${location}" ] ; then
         usage;
@@ -258,17 +275,17 @@ if [ "${command}" == "rebuilder" ]; then
     if [ -d "${location}" ]; then
         if [[ ! ("${location}" =~ \/data\/raw) ]]; then
             usage;
-            echo -e "\n${RED}ERROR: The directory to rebuild must be within the /data/raw directory.\n${RESET}";
+            echo -e "\n${RED}ERROR: The directory to rebuild or reload must be within the /data/raw directory.\n${RESET}";
             exit 1;
         fi
     fi
 fi
 
 # validate the instruments array size for the rebuilder
-if [ "${command}" == "rebuilder" ]; then
+if [ "${command}" == "rebuilder" ] || [ "${command}" == "reloader" ]; then
     if [ ${#instrument_paths[@]} -gt 1 ]; then
         usage;
-        echo -e "\n${RED}ERROR: For the rebuilder, use just one -i instrument option.${RESET}";
+        echo -e "\n${RED}ERROR: For the rebuilder or reloader, use just one -i instrument option.${RESET}";
         exit 1;
     fi
 fi
@@ -322,7 +339,7 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
     done
 fi
 
-# rebuild the archive given the file or directory location
+# rebuild the archive given the directory location
 if [ "${command}" == "rebuilder" ]; then
 
     if [ "${operation}" == "start" ]; then
@@ -349,4 +366,30 @@ if [ "${command}" == "rebuilder" ]; then
     fi
 fi
 
+# reload the archive given the directory location
+if [ "${command}" == "reloader" ]; then
+
+    if [ "${operation}" == "start" ]; then
+        usage;
+        echo -e "\n${YELLOW}WARN: The start operation is not used with the rebuilder command.${RESET}";
+        exit 1;
+    elif [ "${operation}" == "stop" ]; then
+        usage;
+        echo -e "\n${YELLOW}WARN: The stop operation is not used with the rebuilder command.${RESET}";
+        exit 1;
+    fi
+
+    instrument_path="${instrument_paths[0]}";
+    # Convert the instrument_path to a path when only given as an instrument name
+    if [ ! -f "${instrument_path}" ]; then
+        instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
+    fi
+
+    if [ -f "${instrument_path}" ]; then
+        instrument=$(basename "${instrument_path}");
+        reload "${instrument%.xml}" "${location}";
+    else
+        echo -e "${YELLOW}WARN: Couldn't find config file ${instrument_path}.xml. Skipping it.${RESET}";
+    fi
+fi
 exit 0;
