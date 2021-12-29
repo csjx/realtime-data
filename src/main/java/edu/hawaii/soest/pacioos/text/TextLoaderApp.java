@@ -217,7 +217,7 @@ public class TextLoaderApp {
                 rawSample.append(rawFormatter.format(sampleInstant.atZone(ZoneOffset.ofHours(0))));
                 rawSample.append(rawFieldDelimiter);
                 rawSample.append(" ");
-                processedSample.append(processedFormatter.format(sampleInstant));
+                processedSample.append(processedFormatter.format(sampleInstant.atZone(ZoneOffset.ofHours(0))));
                 processedSample.append(processedFieldDelimiter);
 
                 // Append each raw string data column value after the datetime column
@@ -247,7 +247,7 @@ public class TextLoaderApp {
 
             } else {
                 // Append each raw data column before the date time for raw data only
-                processedSample.append(processedFormatter.format(sampleInstant));
+                processedSample.append(processedFormatter.format(sampleInstant.atZone(ZoneOffset.ofHours(0))));
                 processedSample.append(processedFieldDelimiter);
 
                 int index = 0;
@@ -268,7 +268,7 @@ public class TextLoaderApp {
                         index++;
                     }
                 }
-                rawSample.append(rawFormatter.format(sampleInstant));
+                rawSample.append(rawFormatter.format(sampleInstant.atZone(ZoneOffset.ofHours(0))));
                 rawSample.append(recordDelimiter);
                 processedSample.append("\n");
 

@@ -242,6 +242,7 @@ public class WriterTask implements Callable<WriteResult> {
                     // Append the ISO timestamp
                     String timestamp = processedFormatter.format(
                         row.getInstant(row.columnCount() - 1)
+                            .atZone(ZoneId.of(config.getTimeZoneID(0)))
                     );
                     sample.append(timestamp);
                     sample.append(",");
