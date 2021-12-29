@@ -32,7 +32,7 @@ LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
     REALTIME_DATA=".";                 # installed realtime-data software location
 fi
-VERSION="1.4.0";                  # keep track of this script's version
+VERSION="1.4.1";                  # keep track of this script's version
 if [[ -d "/etc/realtime-data" ]]; then
     CLASSPATH="/etc/realtime-data:${REALTIME_DATA}/realtime-data-${VERSION}-jar-with-dependencies.jar";
 else
@@ -122,10 +122,6 @@ start() {
         pid=$!;
         echo ${pid} > "${RUN_DIR}/${instrumentName}-archiver.pid";
     fi
-
-    # Tail the log file
-    echo -e "\n${YELLOW}---- Press Control-c to stop viewing the log file -----\n${RESET}"
-    tail -f "${LOG_DIR}/realtime-data.log";
 }
 
 # stop the source driver or archiver given a process id, command, and instrument name
@@ -344,6 +340,12 @@ if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
           echo -e "${YELLOW}WARN: Couldn't find config file ${instrument}. Skipping it.${RESET}";
         fi
     done
+
+    # Tail the log file after starting drivers
+    if [ "${command}" == "driver" ] && [ "${operation}" == "start" ]; then
+        echo -e "\n${YELLOW}---- Press Control-c to stop viewing the log file -----\n${RESET}"
+        tail -f "${LOG_DIR}/realtime-data.log";
+    fi
 fi
 
 # rebuild the archive given the directory location
