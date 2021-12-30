@@ -300,11 +300,11 @@ fi
 
 # iterate through the list and perform the start or stop operation for drivers and archivers
 if [ "${command}" == "driver" ] || [ "${command}" == "archiver" ]; then
-    for instrument_path in "${instrument_paths[@]}"; do
+    for instrument_path in ${instrument_paths[@]}; do
         runningPid="";
         # Convert the instrument_path to a path when only given as an instrument name
         if [ ! -f "${instrument_path}" ]; then
-            instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
+            instrument_path=$(find ${REALTIME_DATA}/conf -path "${instrument_path}" -print);
         fi
 
         if [ -f "${instrument_path}" ]; then
