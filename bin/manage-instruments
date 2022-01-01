@@ -32,7 +32,7 @@ LOG_DIR="/var/log/realtime-data";      # log files location
 if [[ -z ${REALTIME_DATA} ]]; then
     REALTIME_DATA=".";                 # installed realtime-data software location
 fi
-VERSION="1.4.1";                  # keep track of this script's version
+VERSION="1.4.1";                       # keep track of this script's version
 if [[ -d "/etc/realtime-data" ]]; then
     CLASSPATH="/etc/realtime-data:${REALTIME_DATA}/realtime-data-${VERSION}-jar-with-dependencies.jar";
 else
@@ -156,7 +156,7 @@ status() {
     status_file="/tmp/instrument_status.txt";
     touch ${status_file};
     cat /dev/null > ${status_file};
-    chmod ugo+rw ${status_file};
+    chmod ugo+rw ${status_file} > /dev/null 2>&1;
     # Print the header line
     printf " %10s %20s %15s %15s %15s\n" "Name" "Instrument" "Driver Status" "Archiver Status" "Deployment Type";
     instrument_paths=$(find "${REALTIME_DATA}"/conf/** -type f -name "*xml");
@@ -190,9 +190,10 @@ status() {
 
 # rebuild an instrument archive from a file or directory
 rebuild() {
-    location=${1};
-    instrumentName=${2};
-    instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrumentName}.xml" -print);
+    instrument_path=${1};
+    location=${2};
+    instrumentName=$(basename "${instrument_path}");
+    instrumentName=${instrument%.xml};
     echo -e "\n${BLUE}INFO: Rebuilding ${instrumentName} archive from ${location}\n${RESET}";
     java -cp ${CLASSPATH} -Xmx24g \
         edu.hawaii.soest.pacioos.text.TextRebuildApp \
@@ -201,9 +202,10 @@ rebuild() {
 
 # reload an instrument archive from a file or directory
 reload() {
-    instrumentName=${1};
+    instrument_path=${1};
     location=${2};
-    instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrumentName}.xml" -print);
+    instrumentName=$(basename "${instrument_path}");
+    instrumentName=${instrument%.xml};
     echo -e "\n${BLUE}INFO: Reloading ${instrumentName} data to the Data Turbine\n${RESET}";
     java -cp ${CLASSPATH} -Xmx24g \
         edu.hawaii.soest.pacioos.text.TextLoaderApp \
@@ -364,12 +366,12 @@ if [ "${command}" == "rebuilder" ]; then
     instrument_path="${instrument_paths[0]}";
     # Convert the instrument_path to a path when only given as an instrument name
     if [ ! -f "${instrument_path}" ]; then
-        instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
+        instrument_path=$(find ${REALTIME_DATA}/conf -path "${instrument_path}" -print);
     fi
 
     if [ -f "${instrument_path}" ]; then
         instrument=$(basename "${instrument_path}");
-        rebuild "${location}" "${instrument%.xml}";
+        rebuild "${instrument_path}" "${location}";
     else
         echo -e "${YELLOW}WARN: Couldn't find config file ${instrument_path}.xml. Skipping it.${RESET}";
     fi
@@ -391,12 +393,12 @@ if [ "${command}" == "reloader" ]; then
     instrument_path="${instrument_paths[0]}";
     # Convert the instrument_path to a path when only given as an instrument name
     if [ ! -f "${instrument_path}" ]; then
-        instrument_path=$(find ${REALTIME_DATA}/conf -name "${instrument_path}" -print);
+        instrument_path=$(find ${REALTIME_DATA}/conf -path "${instrument_path}" -print);
     fi
 
     if [ -f "${instrument_path}" ]; then
         instrument=$(basename "${instrument_path}");
-        reload "${instrument%.xml}" "${location}";
+        reload "${instrument_path}" "${location}";
     else
         echo -e "${YELLOW}WARN: Couldn't find config file ${instrument_path}.xml. Skipping it.${RESET}";
     fi
