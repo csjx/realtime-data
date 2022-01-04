@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
+<!-- This is the NS10 instrument with 6 variables, not the standard 7 variables -->
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS06</shortName>
+    <shortName>NS10</shortName>
     <!-- The instrument identifier -->
-    <identifier>WK02XX_001CTDXXXXR00</identifier>
+    <identifier>MB01XX_101CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -12,12 +13,12 @@
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
-    <connectionParams>
-        <hostName>24.221.207.27</hostName>
+    <connectionParams> 
+        <hostName>24.221.193.197</hostName>
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>WK02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>MB01XX_101CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -35,35 +36,22 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            #  28.3974,  5.06773,    2.331,  30.8817, 18 Sep 2020, 17:49:36
-            #  28.4062,  5.06893,    2.271,  30.8842, 18 Sep 2020, 17:53:36
-            #  28.4225,  5.07127,    2.273,  30.8896, 18 Sep 2020, 17:57:36
-            #  28.4113,  5.06921,    2.245,  30.8828, 18 Sep 2020, 18:01:36
-            #  28.3709,  5.06632,    2.198,  30.8893, 18 Sep 2020, 18:05:36
-            #  28.3933,  5.06851,    2.153,  30.8898, 18 Sep 2020, 18:09:36
-            #  28.4185,  5.07216,    2.098,  30.8983, 18 Sep 2020, 18:13:36
-            #  28.3888,  5.06779,    2.033,  30.8878, 18 Sep 2020, 18:17:36
-            #  28.4525,  5.07596,    2.194,  30.9021, 18 Sep 2020, 18:21:36
-            -->
-            <!-- example DT sample:
-            curl -s -o - "http://bbl.ancl.hawaii.edu:8080/RBNB/WK02XX_001CTDXXXXR00/DecimalASCIISampleData" | od -ax
-            0000000   #  sp  sp   2   8   .   4   5   2   5   ,  sp  sp   5   .   0
-                    2023 3220 2e38 3534 3532 202c 3520 302e
-            0000020   7   5   9   6   ,  sp  sp  sp  sp   2   .   1   9   4   ,  sp
-                    3537 3639 202c 2020 3220 312e 3439 202c
-            0000040  sp   3   0   .   9   0   2   1   ,  sp   1   8  sp   S   e   p
-                    3320 2e30 3039 3132 202c 3831 5320 7065
-            0000060  sp   2   0   2   0   ,  sp   1   8   :   2   1   :   3   6  cr
-                    3220 3230 2c30 3120 3a38 3132 333a 0d36
-            0000100  nl nul
-                    000a
-            0000101
+            # 25.6047,  5.37376, 0.0855, 0.9265,  35.0249, 31 May 2011 14:03:37
+            # 25.6111,  5.37349, 0.0855, 0.8497,  35.0180, 31 May 2011 14:07:37
+            # 25.6308,  5.37549, 0.0978, 0.9687,  35.0176, 31 May 2011 14:11:37
+            # 25.6576,  5.37891, 0.0917, 0.9000,  35.0220, 31 May 2011 14:15:37
+            # 25.6884,  5.38204, 0.0991, 0.9240,  35.0213, 31 May 2011 14:19:37
+            # 25.7054,  5.38435, 0.0880, 0.8122,  35.0251, 31 May 2011 14:23:37
+            # 25.7369,  5.38793, 0.0890, 0.7777,  35.0272, 31 May 2011 14:27:37
+            # 25.7310,  5.38572, 0.0952, 0.7776,  35.0155, 31 May 2011 14:31:37
+            # 25.6963,  5.37877, 0.0844, 0.6568,  34.9912, 31 May 2011 14:35:37
+            # 25.7110,  5.37907, 0.0892, 0.7715,  34.9822, 31 May 2011 14:39:37
             -->
             <!-- 
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4}, *\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
@@ -80,8 +68,8 @@
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
-                <columnType>LOCAL_DATE</columnType>
-                <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>LOCAL_DATE_TIME</columnType>
             </columnTypes>
             <!--
               The character that delimits variables within the sample
@@ -93,32 +81,26 @@
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
             <recordDelimiters>0x0D|0x0A</recordDelimiters>
-            <!-- 
+            <!--
+              missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
+            -->
+            <missingValueCode>-999</missingValueCode>
+            <!--
               The list of date formats for each sample date component in a separate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>dd MMM yyyy</dateFormat> 
-                <dateFormat>HH:mm:ss</dateFormat> 
+                <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
               The list of date fields for each sample date component in a separate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-                <dateField>5</dateField>
-                <dateField>6</dateField>
+              <dateField>7</dateField>
             </dateFields>
-            <!--
-              timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
-              The parsers are strict about zone identifiers, and will fall back to UTC when the
-              now-deprecated zone names are used (in the format of HDT, HST, SST, etc.). They are
-              considered ambiguous due to conflicting global use.  Only use identifiers that follow
-              the <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like
-              GMT+13:00 will also work, it may change over time due to daylight savings,
-              so the long identifier is best.
-            -->
+            <!-- The time zone identifier that the data were collected in -->
             <timeZone>Pacific/Honolulu</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>

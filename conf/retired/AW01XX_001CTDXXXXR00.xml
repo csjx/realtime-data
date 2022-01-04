@@ -4,7 +4,7 @@
     <!-- the instrument short name -->
     <shortName>NS01</shortName>
     <!-- The instrument identifier -->
-    <identifier>AW02XX_001CTDXXXXR00</identifier>
+    <identifier>AW01XX_001CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -17,7 +17,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>AW02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>AW01XX_001CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -64,7 +64,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern># \S*, *\S*, *\S*, *\S*, *\S*, *\d{2} \S{3} \d{4} \d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\d{2}\s+\S{3}+d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->

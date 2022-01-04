@@ -13,7 +13,7 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <hostName>127.0.0.1</hostName>
+        <hostName>realtime.pacioos.hawaii.edu</hostName>
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
