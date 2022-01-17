@@ -141,7 +141,7 @@ public class TextRebuildApp {
                 ConsoleColors.RESET
             );
             Instant startDateInUTC = instantColumn.min().truncatedTo(ChronoUnit.DAYS);
-            Instant endDateInUTC = instantColumn.max().truncatedTo(ChronoUnit.DAYS);
+            Instant endDateInUTC = instantColumn.max().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS );
 
 
             // Build the list of dates for this rebuild
@@ -150,6 +150,9 @@ public class TextRebuildApp {
                 rebuildDatesInUTC.add(startDateInUTC);
                 startDateInUTC = startDateInUTC.plus(1, ChronoUnit.DAYS);
             }
+
+            log.debug("Rebuild start date in UTC: " + rebuildDatesInUTC.get(0).toString());
+            log.debug("Rebuild end date in UTC  : " + rebuildDatesInUTC.get(rebuildDatesInUTC.size() - 1).toString());
 
             try {
                 // Move the existing data directories aside for potential recovery
