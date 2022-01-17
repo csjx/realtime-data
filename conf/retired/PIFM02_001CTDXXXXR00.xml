@@ -63,7 +63,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern>#\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\d{2}\s+\S{3}\s+\d{4},\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
@@ -80,8 +80,8 @@
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
-                <columnType>LOCAL_DATE</columnType>
-                <columnType>LOCAL_TIME</columnType>
+                <columnType>STRING</columnType>
+                <columnType>LOCAL_DATE_TIME</columnType>
             </columnTypes>
             <!--
               The character that delimits variables within the sample
@@ -99,15 +99,13 @@
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>dd MMM yyyy</dateFormat> 
-                <dateFormat>HH:mm:ss</dateFormat> 
+                <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
               The list of date fields for each sample date component in a separate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-                <dateField>5</dateField>
                 <dateField>6</dateField>
             </dateFields>
             <!--
@@ -119,7 +117,7 @@
               GMT+13:00 will also work, it may change over time due to daylight savings,
               so the long identifier is best.
             -->
-            <timeZone>Pacific/Honolulu</timeZone>
+            <timeZone>Pacific/Pohnpei</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->

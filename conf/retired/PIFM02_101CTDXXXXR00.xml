@@ -14,7 +14,7 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams>
-        <filePath>/home/kilonalu/PIFM02_001CTDXXXXR00_latest_data.txt</filePath>
+        <filePath>/home/kilonalu/PIFM02_101CTDXXXXR00_latest_data.txt</filePath>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
     <rbnbName>PIFM02_101CTDXXXXR00</rbnbName>
@@ -50,7 +50,7 @@
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern>#\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\S*,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
