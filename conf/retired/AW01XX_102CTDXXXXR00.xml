@@ -2,9 +2,9 @@
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS16</shortName>
+    <shortName>NS01</shortName>
     <!-- The instrument identifier -->
-    <identifier>MB02XX_001CTDXXXXR00</identifier>
+    <identifier>AW01XX_102CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -13,11 +13,11 @@
       below. If serial, add serialPortParams and sub elements below.
     -->
     <connectionParams> 
-        <hostName>24.221.193.197</hostName>
+        <hostName>68.25.32.149</hostName>
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>MB02XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>AW01XX_102CTDXXXXR00</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -34,41 +34,16 @@
             <name>DecimalASCIISampleData</name>
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
-            <!-- data archive example:
-            # 24.3613,  5.25591,    1.752, 0.1265, 0.4915,  35.1153, 22 Dec 2016 08:00:53
-            # 24.3607,  5.25586,    1.733, 0.1228, 0.4904,  35.1153, 22 Dec 2016 08:04:53
-            # 24.3596,  5.25568,    1.753, 0.1266, 0.4903,  35.1149, 22 Dec 2016 08:08:53
-            # 24.3520,  5.25498,    1.738, 0.1290, 0.4914,  35.1155, 22 Dec 2016 08:12:53
-            # 24.3448,  5.25434,    1.758, 0.1288, 0.5001,  35.1164, 22 Dec 2016 08:16:53
-            # 24.3416,  5.25393,    1.761, 0.1279, 0.4877,  35.1158, 22 Dec 2016 08:20:53
-            # 24.3415,  5.25377,    1.744, 0.1279, 0.4843,  35.1147, 22 Dec 2016 08:24:53
-            # 24.3426,  5.25378,    1.781, 0.1276, 0.4866,  35.1139, 22 Dec 2016 08:28:53
-            # 24.3439,  5.25391,    1.790, 0.1285, 0.4952,  35.1138, 22 Dec 2016 08:32:53
-            # 24.3394,  5.25347,    1.766, 0.1279, 0.4829,  35.1140, 22 Dec 2016 08:36:53
-            -->
-            <!-- example DT sample:
-            curl -s -o - http://realtime.pacioos.hawaii.edu:8080/RBNB/MB02XX_001CTDXXXXR00/DecimalASCIISampleData | od -ax
-            0000000   #  sp   2   4   .   3   3   9   3   ,  sp  sp   5   .   2   5
-                    2023 3432 332e 3933 2c33 2020 2e35 3532
-            0000020   3   7   0   ,  sp  sp  sp  sp   1   .   7   6   1   ,  sp   0
-                    3733 2c30 2020 2020 2e31 3637 2c31 3020
-            0000040   .   1   3   1   5   ,  sp   0   .   4   8   3   9   ,  sp  sp
-                    312e 3133 2c35 3020 342e 3338 2c39 2020
-            0000060   3   5   .   1   1   5   9   ,  sp   2   2  sp   D   e   c  sp
-                    3533 312e 3531 2c39 3220 2032 6544 2063
-            0000100   2   0   1   6  sp   0   9   :   2   8   :   5   3  cr  nl nul
-                    3032 3631 3020 3a39 3832 353a 0d33 000a
-            0000117
-            -->
             <!-- 
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}+d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
             <dataPrefix>#</dataPrefix>
+
             <!--
                 columnTypes: A list of column types for each variable in the sample. Use STRING
                 for all column types except:
@@ -100,7 +75,7 @@
             -->
             <missingValueCode>-999</missingValueCode>
             <!--
-              The list of date formats for each sample date component in a separate variable
+              The list of date formats for each sample date component in a separtate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
@@ -108,11 +83,11 @@
                 <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
-              The list of date fields for each sample date component in a separate variable
+              The list of date fields for each sample date component in a separtate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-              <dateField>7</dateField>
+              <dateField>6</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
             <timeZone>Pacific/Honolulu</timeZone>

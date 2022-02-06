@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
-<!-- This is the NS02 instrument with 6 variables, not the standard 5 variables -->
+<!-- This is the PP03 instrument with 6 variables, not the standard 5 variables -->
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS02</shortName>
+    <shortName>PP03</shortName>
     <!-- The instrument identifier -->
-    <identifier>AW02XX_201CTDXXXXR00</identifier>
+    <identifier>pp3_palmyra</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -18,7 +18,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>AW02XX_201CTDXXXXR00</rbnbName>
+    <rbnbName>pp3_palmyra</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->

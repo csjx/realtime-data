@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
+<!-- This is the PP06 instrument with 6 variables, not the standard 5 variables -->
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS01</shortName>
+    <shortName>PP06</shortName>
     <!-- The instrument identifier -->
-    <identifier>AW01XX_001CTDXXXXR00</identifier>
+    <identifier>pp6_fsm_pohnpei</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -17,7 +18,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>AW01XX_001CTDXXXXR00</rbnbName>
+    <rbnbName>pp6_fsm_pohnpei</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -35,36 +36,22 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            # 25.0251,  5.16974, 0.3246, 0.1166,  33.9642, 21 Dec 2016 14:02:41
-            # 25.0293,  5.15924, 0.3475, 0.1167,  33.8836, 21 Dec 2016 14:06:41
-            # 25.0298,  5.16234, 0.3426, 0.1165,  33.9061, 21 Dec 2016 14:10:41
-            # 25.0782,  5.17882, 0.3534, 0.1154,  33.9913, 21 Dec 2016 14:14:41
-            # 25.0564,  5.14869, 0.3365, 0.1177,  33.7855, 21 Dec 2016 14:18:41
-            # 25.0551,  5.13498, 0.3414, 0.1166,  33.6855, 21 Dec 2016 14:22:41
-            # 25.0544,  5.11750, 0.3171, 0.1178,  33.5573, 21 Dec 2016 14:26:41
-            # 25.0193,  5.09507, 0.2946, 0.1140,  33.4181, 21 Dec 2016 14:30:41
-            # 25.0694,  5.15218, 0.2641, 0.1227,  33.8015, 21 Dec 2016 14:34:41
-            # 25.0889,  5.14501, 0.3221, 0.1335,  33.7341, 21 Dec 2016 14:38:41
-            -->
-            <!-- example DT sample:
-            curl -s -o - http://realtime.pacioos.hawaii.edu:8080/RBNB/AW02XX_001CTDXXXXR00/DecimalASCIISampleData | od -ax
-            0000000   #  sp   2   4   .   8   8   0   4   ,  sp  sp   5   .   1   7
-                    2023 3432 382e 3038 2c34 2020 2e35 3731
-            0000020   5   7   9   ,  sp   0   .   1   9   0   3   ,  sp   0   .   1
-                    3735 2c39 3020 312e 3039 2c33 3020 312e
-            0000040   1   7   7   ,  sp  sp   3   4   .   1   1   8   1   ,  sp   2
-                    3731 2c37 2020 3433 312e 3831 2c31 3220
-            0000060   2  sp   D   e   c  sp   2   0   1   6  sp   0   9   :   1   4
-                    2032 6544 2063 3032 3631 3020 3a39 3431
-            0000100   :   4   1  cr  nl nul
-                    343a 0d31 000a
-            0000105
+            # 24.2982,  5.09687,    1.054, 0.3200, 0.2580,  33.9712, 25 Mar 2013 13:01:01
+            # 24.2976,  5.11083,    1.054, 0.3168, 0.2737,  34.0762, 25 Mar 2013 13:05:01
+            # 24.3831,  5.09101,    1.051, 0.3119, 0.2471,  33.8631, 25 Mar 2013 13:09:01
+            # 24.2737,  5.09288,    1.053, 0.3321, 0.2749,  33.9599, 25 Mar 2013 13:13:01
+            # 24.3366,  5.09151,    1.053, 0.3223, 0.2543,  33.9019, 25 Mar 2013 13:17:01
+            # 24.2162,  5.09727,    1.051, 0.3037, 0.2497,  34.0366, 25 Mar 2013 13:21:01
+            # 24.2798,  5.06800,    1.051, 0.3023, 0.2545,  33.7691, 25 Mar 2013 13:25:01
+            # 24.2317,  5.10403,    1.050, 0.2876, 0.2376,  34.0755, 25 Mar 2013 13:29:01
+            # 24.2113,  5.08875,    1.049, 0.3014, 0.2568,  33.9764, 25 Mar 2013 13:33:01
+            # 24.2002,  5.10407,    1.048, 0.2950, 0.2326,  34.0998, 25 Mar 2013 13:37:01
             -->
             <!-- 
               The regular expression used to match a data sample.
               Best to keep the data pattern on one line below 
             -->
-            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}+d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
@@ -78,6 +65,7 @@
                 - date-time columns: use LOCAL_DATE_TIME
             -->
             <columnTypes>
+                <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
@@ -115,7 +103,7 @@
               <dateField>6</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
-            <timeZone>Pacific/Honolulu</timeZone>
+            <timeZone>Pacific/Pohnpei</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
-<!-- This is the NS02 instrument with 4 variables, not the standard 5 variables -->
+<!-- This is the NS02 instrument with 6 variables plus date, not the standard 5 variables plus date-->
 <instrument>
     <!-- the instrument short name -->
     <shortName>NS02</shortName>
@@ -8,12 +8,12 @@
     <identifier>AW02XX_101CTDXXXXR00</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
-    <!-- 
+    <!--
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
-    <connectionParams> 
+    <connectionParams>
         <hostName>68.25.32.149</hostName>
         <hostPort>5111</hostPort>
     </connectionParams>
@@ -36,22 +36,22 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            #  24.1614, 5.06179, 0.4151, 0.2294, 25 Mar 2013 21:01:01
-            #  24.1438, 5.05869, 0.4491, 0.2314, 25 Mar 2013 21:05:01
-            #  24.1321, 5.06589, 0.4076, 0.2533, 25 Mar 2013 21:09:01
-            #  24.1229, 5.06480, 0.4419, 0.2313, 25 Mar 2013 21:13:01
-            #  24.0914, 5.08453, 0.4479, 0.2224, 25 Mar 2013 21:17:01
-            #  24.0707, 5.07468, 0.4163, 0.2672, 25 Mar 2013 21:21:01
-            #  24.0442, 5.07751, 0.4151, 0.2448, 25 Mar 2013 21:25:01
-            #  24.0800, 5.07186, 0.3970, 0.2295, 25 Mar 2013 21:29:01
-            #  24.0530, 5.07770, 0.3742, 0.2361, 25 Mar 2013 21:33:01
-            #  24.1339, 5.05091, 0.3826, 0.2328, 25 Mar 2013 21:37:01
+            # 24.2982,  5.09687,    1.054, 0.3200, 0.2580,  33.9712, 25 Mar 2013 13:01:01
+            # 24.2976,  5.11083,    1.054, 0.3168, 0.2737,  34.0762, 25 Mar 2013 13:05:01
+            # 24.3831,  5.09101,    1.051, 0.3119, 0.2471,  33.8631, 25 Mar 2013 13:09:01
+            # 24.2737,  5.09288,    1.053, 0.3321, 0.2749,  33.9599, 25 Mar 2013 13:13:01
+            # 24.3366,  5.09151,    1.053, 0.3223, 0.2543,  33.9019, 25 Mar 2013 13:17:01
+            # 24.2162,  5.09727,    1.051, 0.3037, 0.2497,  34.0366, 25 Mar 2013 13:21:01
+            # 24.2798,  5.06800,    1.051, 0.3023, 0.2545,  33.7691, 25 Mar 2013 13:25:01
+            # 24.2317,  5.10403,    1.050, 0.2876, 0.2376,  34.0755, 25 Mar 2013 13:29:01
+            # 24.2113,  5.08875,    1.049, 0.3014, 0.2568,  33.9764, 25 Mar 2013 13:33:01
+            # 24.2002,  5.10407,    1.048, 0.2950, 0.2326,  34.0998, 25 Mar 2013 13:37:01
             -->
-            <!-- 
+            <!--
               The regular expression used to match a data sample.
-              Best to keep the data pattern on one line below 
+              Best to keep the data pattern on one line below
             -->
-            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
+            <dataPattern>#\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\S+,\s+\d{2}\s+\S{3}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s*</dataPattern>
             <!--
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
@@ -69,6 +69,8 @@
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
                 <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
+                <columnType>STRING</columnType>
                 <columnType>LOCAL_DATE_TIME</columnType>
             </columnTypes>
             <!--
@@ -76,7 +78,7 @@
               Use Hex notation for non-printing, whitespace characters (like space)
             -->
             <fieldDelimiter>,</fieldDelimiter>
-            <!-- 
+            <!--
               The character(s) that delimit records (samples) in a stream or file
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
@@ -91,12 +93,12 @@
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
             <dateFormats>
-                <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
+                <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat>
             </dateFormats>
-            <!-- 
+            <!--
               The list of date fields for each sample date component in a separtate variable
-              One or more date fields are required, corresponding to the date/time variable positions in the data 
-            -->        
+              One or more date fields are required, corresponding to the date/time variable positions in the data
+            -->
             <dateFields>
               <dateField>6</dateField>
             </dateFields>
