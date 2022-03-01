@@ -346,46 +346,38 @@ public class TextRebuilder {
                 writeQueue.add(dailyWriteResult);
 
                 // Build a list of hourly raw files to write
-
                 while (!previousInstant.isAfter(currentInstant)) {
                     rebuildHoursInUTC.add(previousInstant);
                     previousInstant = previousInstant.plus(1, ChronoUnit.HOURS);
                 }
 
                 // For each hourly duration, submit a write task
-                int hourlydateCount = 0;
-                Instant previousHourlyInstant = null;
+                Instant nextHourlyInstant = null;
                 ZonedDateTime currentHourlyZonedDateTime;
                 for (Instant currentHourlyInstant : rebuildHoursInUTC) {
-                    if (hourlydateCount == 0) {
-                        previousHourlyInstant = currentHourlyInstant;
-                    } else {
-                        currentHourlyInstant =
-                            currentHourlyInstant.minus(1L, ChronoUnit.MILLIS);
-                        currentHourlyZonedDateTime =
-                            currentHourlyInstant.atZone(ZoneOffset.ofHours(0));
+                    currentHourlyZonedDateTime = currentHourlyInstant.atZone(ZoneOffset.ofHours(0));
 
-                        // Write the raw format files
-                        basePath = Paths.get(
-                            configuration.getArchiveBaseDirectory(0, 0), // TODO Fix this
-                            configuration.getIdentifier(),
-                            configuration.getChannelName(0), // TODO: Fix this
-                            String.format("%4d", currentHourlyZonedDateTime.getYear()),
-                            String.format("%02d", currentHourlyZonedDateTime.getMonthValue()),
-                            String.format("%02d", currentHourlyZonedDateTime.getDayOfMonth())
-                        );
-                        WriterTask hourlyWriterTask = new WriterTask(
-                            previousHourlyInstant,
-                            currentHourlyInstant,
-                            basePath,
-                            sortedTable,
-                            configuration, "raw");
-                        Future<WriteResult> hourlyWriteResult = executor.submit(hourlyWriterTask);
-                        writeQueue.add(hourlyWriteResult);
-                    }
-                    currentHourlyInstant = currentHourlyInstant.plus(1L, ChronoUnit.MILLIS);
-                    previousHourlyInstant = currentHourlyInstant;
-                    hourlydateCount++;
+                    nextHourlyInstant = currentHourlyInstant
+                        .plus(1L, ChronoUnit.HOURS)
+                        .minus(1L, ChronoUnit.MILLIS);
+
+                    // Write the raw format files
+                    basePath = Paths.get(
+                        configuration.getArchiveBaseDirectory(0, 0), // TODO Fix this
+                        configuration.getIdentifier(),
+                        configuration.getChannelName(0), // TODO: Fix this
+                        String.format("%4d", currentHourlyZonedDateTime.getYear()),
+                        String.format("%02d", currentHourlyZonedDateTime.getMonthValue()),
+                        String.format("%02d", currentHourlyZonedDateTime.getDayOfMonth())
+                    );
+                    WriterTask hourlyWriterTask = new WriterTask(
+                        currentHourlyInstant,
+                        nextHourlyInstant,
+                        basePath,
+                        sortedTable,
+                        configuration, "raw");
+                    Future<WriteResult> hourlyWriteResult = executor.submit(hourlyWriterTask);
+                    writeQueue.add(hourlyWriteResult);
                 }
 
                 currentInstant = currentInstant.plus(1L, ChronoUnit.MILLIS);
