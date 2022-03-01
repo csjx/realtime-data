@@ -1,0 +1,3 @@
+{
+    "plugins": ["gitbook-plugin-auto-scroll-table"]
+}
