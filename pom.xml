@@ -113,7 +113,7 @@
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>com.rbnb</groupId>
+            <groupId>org.dataturbine</groupId>
             <artifactId>rbnb</artifactId>
             <version>3.4b</version>
         </dependency>
