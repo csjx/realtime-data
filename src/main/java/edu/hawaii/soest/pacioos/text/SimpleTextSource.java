@@ -320,12 +320,12 @@ public abstract class SimpleTextSource extends RBNBSource {
 
             if (retry) {
                 try {
-                    log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                    log.debug("[" + getIdentifier() + " ] " +
                         "Sleeping " + retryInterval + " while retrying the connection.");
                     Thread.sleep(retryInterval);
 
                 } catch (Exception e) {
-                    log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                    log.info("[" + getIdentifier() + " ] " +
                         "There was an execution problem. Retrying. Message is: " + e.getMessage());
                     if (log.isDebugEnabled()) {
                         e.printStackTrace();
@@ -596,7 +596,7 @@ public abstract class SimpleTextSource extends RBNBSource {
         StringBuilder dateFormatStr = new StringBuilder();
         StringBuilder dateString = new StringBuilder();
         String[] columns     = line.trim().split(this.delimiter);
-        log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+        log.debug("[" + getIdentifier() + " ] " +
             "Delimiter is: " + this.delimiter);
         log.debug(Arrays.toString(columns));
         // build the total date format from the individual fields listed in dateFields
@@ -608,7 +608,7 @@ public abstract class SimpleTextSource extends RBNBSource {
                     dateFormatStr.append(this.dateFormats.get(index)); //zero-based list
                     dateString.append(columns[dateField - 1].trim()); //zero-based list
                 } catch (IndexOutOfBoundsException e) {
-                    String msg = "[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                    String msg = "[" + getIdentifier() + " ] " +
                         "There was an error parsing the date from the sample using the date format '"
                             + dateFormatStr
                             + "' and the date field index of "
@@ -620,17 +620,17 @@ public abstract class SimpleTextSource extends RBNBSource {
                 }
                 index++;
             }
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "Using date format string: " + dateFormatStr);
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "Using date string       : " + dateString);
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "Using time zone         : " + this.timezone);
             
             this.tz = TimeZone.getTimeZone(this.timezone);
             if ( this.dateFormats == null || this.dateFormats.isEmpty() ||
                  this.dateFields == null || this.dateFields.isEmpty() ) {
-                log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                log.warn("[" + getIdentifier() + " ] " +
                     "Using the default datetime field for sample data.");
                 dateTimeFormatter = this.defaultDateFormatter;
             }
@@ -641,11 +641,11 @@ public abstract class SimpleTextSource extends RBNBSource {
             // parse the date string
             sampleDateTime = ZonedDateTime.parse(
                 dateString.toString().trim(), dateTimeFormatter);
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "Using sample instant    : " + sampleDateTime.toInstant().toString());
             return sampleDateTime.toInstant();
         } else {
-            log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.warn("[" + getIdentifier() + " ] " +
                 "No date formats or date fields were configured. Using the current local " +
                 "date for this sample.");
         }
@@ -762,15 +762,15 @@ public abstract class SimpleTextSource extends RBNBSource {
             sink.Request(requestMap, 0., 1., "newest");
             ChannelMap responseMap = sink.Fetch(5000); // get data within 5 seconds 
             // initialize the last sample date 
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "Initialized the last sample date to: " + Instant.ofEpochSecond(lastSampleTimeAsSecondsSinceEpoch));
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "The last sample date as a long is: " + lastSampleTimeAsSecondsSinceEpoch);
             
             if ( responseMap.NumberOfChannels() == 0 )    {
                 // set the last sample time to 0 since there are no channels yet
                 lastSampleTimeAsSecondsSinceEpoch = 0L;
-                log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                log.debug("[" + getIdentifier() + " ] " +
                     "Resetting the last sample date to the epoch: " + Instant.ofEpochSecond(0));
             
             } else if ( responseMap.NumberOfChannels() > 0 )    {
@@ -825,7 +825,7 @@ public abstract class SimpleTextSource extends RBNBSource {
             sampleTimeAsSecondsSinceEpoch = sampleInstant.getEpochSecond();
 
         } catch (ParseException e) {
-            log.warn("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.warn("[" + getIdentifier() + " ] " +
                 "A sample date couldn't be parsed from the sample.  Using the current local date." +
                 " the error message was: " + e.getMessage());
             Instant sampleInstant = Instant.now();
@@ -846,20 +846,20 @@ public abstract class SimpleTextSource extends RBNBSource {
 
         try {
             numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap);
-            log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
-                "Sample and converted sample sent data to the DataTurbine: ");
+            log.info("[" + getIdentifier() + "] " +
+                "Sample and converted sample sent to the DataTurbine: ");
             log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " + sample.trim());
             log.info("[" + getIdentifier() + "/" + "PacIOOS2020Format" + " ] " + convertedSample.trim());
             rbnbChannelMap.Clear();
             // in the event we just lost the network, sleep, try again
             while (numberOfChannelsFlushed < 1) {
-                log.info("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+                log.info("[" + getIdentifier() + " ] " +
                     "No channels flushed, trying again in 10 seconds.");
                 Thread.sleep(10000L);
                 numberOfChannelsFlushed = getSource().Flush(rbnbChannelMap, true);
             }
         } catch (InterruptedException e) {
-            log.debug("[" + getIdentifier() + "/" + getChannelName() + " ] " +
+            log.debug("[" + getIdentifier() + " ] " +
                 "The call to Source.Flush() was interrupted for " + getSource().GetClientName());
             e.printStackTrace();
         }
