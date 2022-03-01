@@ -329,9 +329,9 @@ public final class RBNBUtilities {
   
   /**
    * A date format for IS8601 date and time representation. This representation
-   * is to the millisecond in UTC time.
+   * is to the second in UTC time.
    */
-  private static final SimpleDateFormat ISO8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  private static final SimpleDateFormat ISO8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   static {
     ISO8601_DATE_FORMAT.setTimeZone(new SimpleTimeZone(0, "UTC"));
   }

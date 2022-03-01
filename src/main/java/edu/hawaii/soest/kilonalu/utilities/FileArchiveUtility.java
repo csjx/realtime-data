@@ -53,7 +53,7 @@ public class FileArchiveUtility {
   private static Log log = LogFactory.getLog(FileArchiveUtility.class);
   
   /** The date format for the command **/
-  private static final SimpleDateFormat COMMAND = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  private static final SimpleDateFormat COMMAND = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   /** The date format for the file being created **/
   private static final SimpleDateFormat FILE = new SimpleDateFormat("yyyyMMddHHmmss");
   /** The date format for the year of the data **/
@@ -96,7 +96,7 @@ public class FileArchiveUtility {
    */
   public static File makePathFromTime(File base, long time, String filePrefix,
                                       SimpleDateFormat format, String extension) {
-    log.debug("FileArchiveUtility.makePathFromTime() called.");
+    log.trace("FileArchiveUtility.makePathFromTime() called.");
     Date t = new Date(time);
     String path;
     

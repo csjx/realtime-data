@@ -132,7 +132,7 @@ public class FileArchiverSink extends RBNBBase {
     /** the end time for data export */
     private double endTime = Double.MAX_VALUE;
 
-    /** the Calendar representation of the FileArchiver start time **/
+    /** the Calendar representation of the FileArchiver end time **/
     private static Calendar endArchiveCal;
 
     /** the Calendar representation of the FileArchiver start time **/
@@ -203,8 +203,7 @@ public class FileArchiverSink extends RBNBBase {
 
                 TimerTask archiveData = new TimerTask() {
                     public void run() {
-                        log.debug("TimerTask.run() called.");
-
+                        log.trace("TimerTask.run() called.");
                         if ( fileArchiverSink.validateSetup() ) {
                             fileArchiverSink.export();
                             fileArchiverSink.setupArchiveTime();
@@ -233,7 +232,7 @@ public class FileArchiverSink extends RBNBBase {
      * on the hour or daily files written on the day.
      */
     public void setupArchiveTime() {
-        log.debug("FileArchiverSink.setupArchiveTime() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.setupArchiveTime() called.");
 
         // remove the time ranges assumed from the command line args
         getTimeRanges().clear();
@@ -262,8 +261,8 @@ public class FileArchiverSink extends RBNBBase {
             sDate = beginArchiveCal.getTime();
             sTime = sDate.getTime();
             startTime = ((double) sTime) / 1000.0;
-            log.debug("Next archive time will be " + endArchiveCal.getTime().toString());
-            log.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Next archive time will be " + endArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Archive begin time will be " + beginArchiveCal.getTime().toString());
 
         // schedule hourly on the hour
         } else if ( getArchiveInterval() == 3600 ) {
@@ -288,8 +287,8 @@ public class FileArchiverSink extends RBNBBase {
             sDate = beginArchiveCal.getTime();
             sTime = sDate.getTime();
             startTime = ((double) sTime) / 1000.0;
-            log.debug("Next archive time will be " + endArchiveCal.getTime().toString());
-            log.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Next archive time will be " + endArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Archive begin time will be " + beginArchiveCal.getTime().toString());
 
         // else schedule daily on the day
         } else if ( getArchiveInterval() == 86400 ) {
@@ -314,36 +313,35 @@ public class FileArchiverSink extends RBNBBase {
             sDate = beginArchiveCal.getTime();
             sTime = sDate.getTime();
             startTime = ((double) sTime) / 1000.0;
-            log.debug("Next archive time will be " + endArchiveCal.getTime().toString());
-            log.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Next archive time will be " + endArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Archive begin time will be " + beginArchiveCal.getTime().toString());
 
             // else schedule weekly on the day
-            } else if ( getArchiveInterval() == 604800 ) {
-                // set the execution time to be on the upcoming hour
-                endArchiveCal = Calendar.getInstance();
-                endArchiveCal.add(Calendar.MINUTE, 1);
-                endArchiveCal.clear(Calendar.MILLISECOND);
-                endArchiveCal.clear(Calendar.SECOND);
-                endArchiveCal.clear(Calendar.MINUTE);
-                endArchiveCal.set(Calendar.HOUR_OF_DAY, 0);
-                endArchiveCal.add(Calendar.DATE, 7);
+        } else if ( getArchiveInterval() == 604800 ) {
+            // set the execution time to be on the upcoming hour
+            endArchiveCal = Calendar.getInstance();
+            endArchiveCal.add(Calendar.MINUTE, 1);
+            endArchiveCal.clear(Calendar.MILLISECOND);
+            endArchiveCal.clear(Calendar.SECOND);
+            endArchiveCal.clear(Calendar.MINUTE);
+            endArchiveCal.set(Calendar.HOUR_OF_DAY, 0);
+            endArchiveCal.add(Calendar.DATE, 7);
 
-                eTime = (endArchiveCal.getTime()).getTime();
-                endTime = ((double) eTime) / 1000.0;
+            eTime = (endArchiveCal.getTime()).getTime();
+            endTime = ((double) eTime) / 1000.0;
 
-                /* the Calendar representation of the FileArchiver begin time **/
-                beginArchiveCal = (Calendar) endArchiveCal.clone();
+            /* the Calendar representation of the FileArchiver begin time **/
+            beginArchiveCal = (Calendar) endArchiveCal.clone();
 
-                // set the begin time of the duration 1 day prior to the execution time
-                beginArchiveCal.add(Calendar.DATE, -7);
-                endArchiveCal.add(Calendar.SECOND, -1);
-                sDate = beginArchiveCal.getTime();
-                sTime = sDate.getTime();
-                startTime = ((double) sTime) / 1000.0;
-                log.debug("Next archive time will be " + endArchiveCal.getTime().toString());
-                log.debug("Archive begin time will be " + beginArchiveCal.getTime().toString());
-
-            }
+            // set the begin time of the duration 1 day prior to the execution time
+            beginArchiveCal.add(Calendar.DATE, -7);
+            endArchiveCal.add(Calendar.SECOND, -1);
+            sDate = beginArchiveCal.getTime();
+            sTime = sDate.getTime();
+            startTime = ((double) sTime) / 1000.0;
+            log.debug("[" + getSourceName() + "] " + "Next archive time will be " + endArchiveCal.getTime().toString());
+            log.debug("[" + getSourceName() + "] " + "Archive begin time will be " + beginArchiveCal.getTime().toString());
+        }
     }
 
     /**
@@ -352,7 +350,7 @@ public class FileArchiverSink extends RBNBBase {
      * @param fileArchiverSink the FileArchiverSink to stop
      */
     private static void setupShutdownHook(final FileArchiverSink fileArchiverSink) {
-        log.debug("FileArchiverSink.setupShutdownHook() called.");
+        log.trace("FileArchiverSink.setupShutdownHook() called.");
         final Thread workerThread = Thread.currentThread();
 
         Runtime.getRuntime ().addShutdownHook (new Thread () {
@@ -369,7 +367,7 @@ public class FileArchiverSink extends RBNBBase {
      * @param fileArchiverSink the FileArchiverSink to monitor
      */
     private static void setupProgressListener(FileArchiverSink fileArchiverSink) {
-        log.debug("FileArchiverSink.setupProgressListener() called.");
+        log.trace("FileArchiverSink.setupProgressListener() called.");
         fileArchiverSink.addTimeProgressListener(new TimeProgressListener() {
             public void progressUpdate(double estimatedDuration, double consumedTime) {
                 if (estimatedDuration == Double.MAX_VALUE) {
@@ -428,7 +426,7 @@ public class FileArchiverSink extends RBNBBase {
      * of the various command line arguments
      */
     protected boolean setArgs(CommandLine cmd) {
-        log.debug("FileArchiverSink.setArgs() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.setArgs() called.");
 
         if (!setBaseArgs(cmd))
             return false;
@@ -466,7 +464,7 @@ public class FileArchiverSink extends RBNBBase {
                     long t = d.getTime();
                     startTime = ((double) t) / 1000.0;
                 } catch (Exception e) {
-                    log.debug("Parse of start time failed " + a + e.getMessage());
+                    log.debug("[" + getSourceName() + "] " + "Parse of start time failed " + a + e.getMessage());
                     printUsage();
                     return false;
                 }
@@ -483,7 +481,7 @@ public class FileArchiverSink extends RBNBBase {
                     long t = d.getTime();
                     endTime = ((double) t) / 1000.0;
                 } catch (Exception e) {
-                    log.debug("Parse of end time failed " + a);
+                    log.debug("[" + getSourceName() + "] " + "Parse of end time failed " + a);
                     printUsage();
                     return false;
                 }
@@ -500,13 +498,13 @@ public class FileArchiverSink extends RBNBBase {
                     endArchiveCal = Calendar.getInstance();
 
                 } catch (NumberFormatException nf) {
-                    log.debug("Please enter a number for seconds to reset the start to.");
+                    log.debug("[" + getSourceName() + "] " + "Please enter a number for seconds to reset the start to.");
                     return false;
                 }
             }
         }
         if (startTime >= endTime) {
-            log.debug("The start time must come before the end time.");
+            log.debug("[" + getSourceName() + "] " + "The start time must come before the end time.");
             return false;
         }
 
@@ -537,7 +535,7 @@ public class FileArchiverSink extends RBNBBase {
                         setArchiveInterval(120);
 
                     } else {
-                        log.debug("Please enter either hourly, daily, or weekly for the archiving interval.");
+                        log.debug("[" + getSourceName() + "] " + "Please enter either hourly, daily, or weekly for the archiving interval.");
 
                     }
                 } catch (NumberFormatException nf) {
@@ -634,7 +632,7 @@ public class FileArchiverSink extends RBNBBase {
         double endTime, String eventMarkerFilter) {
 
         if (startTime >= endTime) {
-            log.debug("The start time must come before the end time.");
+            log.debug("[" + getSourceName() + "] " + "The start time must come before the end time.");
             return false;
         }
 
@@ -658,7 +656,7 @@ public class FileArchiverSink extends RBNBBase {
      * @return true if the setup is valid, false otherwise
      */
     public boolean validateSetup() {
-        log.debug("FileArchiverSink.validateSetup() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.validateSetup() called.");
         printSetup();
 
         if (!connect()) {
@@ -680,20 +678,20 @@ public class FileArchiverSink extends RBNBBase {
      * Prints the setup parameters.
      */
     private void printSetup() {
-        log.debug("FileArchiverSink.printSetup() called.");
-        log.debug("Starting FileArchiverSink on " + getServer() + " as " + sinkName);
-        log.debug("    Archiving channel " + channelPath);
-        log.debug("    to directory " + archiveDirectory);
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.printSetup() called.");
+        log.debug("[" + getSourceName() + "] " + "Starting FileArchiverSink on " + getServer() + " as " + sinkName);
+        log.debug("[" + getSourceName() + "] " + "    Archiving channel " + channelPath);
+        log.debug("[" + getSourceName() + "] " + "    to directory " + archiveDirectory);
 
         if (endTime != Double.MAX_VALUE) {
-            log.debug("    from " + RBNBUtilities.secondsToISO8601(startTime) +
+            log.debug("[" + getSourceName() + "] " + "    from " + RBNBUtilities.secondsToISO8601(startTime) +
                     " to " + RBNBUtilities.secondsToISO8601(endTime));
         } else if (startTime != 0) {
-            log.debug("    from " + RBNBUtilities.secondsToISO8601(startTime));
+            log.debug("[" + getSourceName() + "] " + "    from " + RBNBUtilities.secondsToISO8601(startTime));
         }
 
         if (eventMarkerFilter != null) {
-            log.debug("    using event marker filter " + eventMarkerFilter);
+            log.debug("[" + getSourceName() + "] " + "    using event marker filter " + eventMarkerFilter);
         }
     }
 
@@ -704,7 +702,7 @@ public class FileArchiverSink extends RBNBBase {
      * @return true if the time ranges are setup
      */
     private boolean setupTimeRanges() {
-        log.debug("FileArchiverSink.setupTimeRanges() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.setupTimeRanges() called.");
         if (eventMarkerFilter == null) {
             timeRanges = new ArrayList<TimeRange>();
             timeRanges.add(new TimeRange(startTime, endTime));
@@ -712,10 +710,10 @@ public class FileArchiverSink extends RBNBBase {
             try {
                 timeRanges = MarkerUtilities.getTimeRanges(sink, eventMarkerFilter, startTime, endTime);
             } catch (SAPIException e) {
-                log.error("Error retrieving event markers from server.");
+                log.error("[" + getSourceName() + "] " + "Error retrieving event markers from server.");
                 return false;
             } catch (IllegalArgumentException e) {
-                log.error("Error: The event marker filter format is invalid.");
+                log.error("[" + getSourceName() + "] " + "Error: The event marker filter format is invalid.");
                 return false;
             }
         }
@@ -745,17 +743,17 @@ public class FileArchiverSink extends RBNBBase {
      * @return true if the time ranges are valid
      */
     private boolean checkTimeRanges() {
-        log.debug("FileArchiverSink.checkTimeRanges() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.checkTimeRanges() called.");
         Node channelMetadata;
         try {
             channelMetadata = RBNBUtilities.getMetadata(getServer(), channelPath);
         } catch (SAPIException e) {
-            log.debug("Error retrieving channel metadata from the server.");
+            log.debug("[" + getSourceName() + "] " + "Error retrieving channel metadata from the server.");
             return false;
         }
 
         if (channelMetadata == null) {
-            log.error("Error: Channel " + channelPath + " not found.");
+            log.error("[" + getSourceName() + "] " + "Error: Channel " + channelPath + " not found.");
             return false;
         }
 
@@ -775,7 +773,7 @@ public class FileArchiverSink extends RBNBBase {
 
             // skip time ranges in the past where there is no data
             if (!timeRange.intersects(channelTimeRange)) {
-                log.debug("Warning: Skipping the time range from " +
+                log.debug("[" + getSourceName() + "] " + "Warning: Skipping the time range from " +
                     RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                     " to " +
                     RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
@@ -785,8 +783,8 @@ public class FileArchiverSink extends RBNBBase {
         }
 
         if (timeRanges.size() == 0) {
-            log.error("Error: There are no data for the specified time ranges.");
-            log.debug("There are data from " +
+            log.error("[" + getSourceName() + "] " + "Error: There are no data for the specified time ranges.");
+            log.debug("[" + getSourceName() + "] " + "There are data from " +
                 RBNBUtilities.secondsToISO8601(channelStartTime) +
                 " to " +
                 RBNBUtilities.secondsToISO8601(channelEndTime) +
@@ -798,7 +796,7 @@ public class FileArchiverSink extends RBNBBase {
         // move up start time to first data point
         TimeRange firstTimeRange = timeRanges.get(0);
         if (firstTimeRange.getStartTime() < channelTimeRange.getStartTime()) {
-            log.debug("Warning: Setting start time to " +
+            log.debug("[" + getSourceName() + "] " + "Warning: Setting start time to " +
                 RBNBUtilities.secondsToISO8601(channelTimeRange.getStartTime()) +
                 " since there is no data before it.");
             firstTimeRange.setStartTime(channelTimeRange.getStartTime());
@@ -896,7 +894,7 @@ public class FileArchiverSink extends RBNBBase {
      * Export data to disk.
      */
     public boolean export() {
-        log.debug("FileArchiverSink.export() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.export() called.");
         doExport = true;
 
         if (!runWork()) {
@@ -912,7 +910,7 @@ public class FileArchiverSink extends RBNBBase {
      * Stop exporting data to disk. This will return immediately.
      */
     public void stopExport() {
-        log.debug("FileArchiverSink.stopExport() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.stopExport() called.");
         doExport = false;
     }
 
@@ -929,7 +927,7 @@ public class FileArchiverSink extends RBNBBase {
      * Exports the data.
      */
     private boolean runWork() {
-        log.debug("FileArchiverSink.runWork() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.runWork() called.");
         int dataFramesExported = 0;
 
         try {
@@ -950,13 +948,13 @@ public class FileArchiverSink extends RBNBBase {
             double elapsedTime = 0;
             for (TimeRange timeRange : timeRanges) {
                 if (timeRange.getEndTime() != Double.MAX_VALUE) {
-                    log.debug("Exporting data from " +
+                    log.debug("[" + getSourceName() + "] " + "Exporting data from " +
                         RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                          " to " +
                           RBNBUtilities.secondsToISO8601(timeRange.getEndTime()) +
                           ".");
                 } else {
-                    log.debug("Exporting data from " +
+                    log.debug("[" + getSourceName() + "] " + "Exporting data from " +
                         RBNBUtilities.secondsToISO8601(timeRange.getStartTime()) +
                         ".");
                 }
@@ -981,19 +979,19 @@ public class FileArchiverSink extends RBNBBase {
                 }
             }
         } catch (SAPIException e) {
-            log.debug("Error getting data from server: " + e.getMessage() + ".");
+            log.debug("[" + getSourceName() + "] " + "Error getting data from server: " + e.getMessage() + ".");
             return false;
         } catch (IOException e) {
-            log.debug("Error writing data to file: " + e.getMessage() + ".");
+            log.debug("[" + getSourceName() + "] " + "Error writing data to file: " + e.getMessage() + ".");
             return false;
         } finally {
             disconnect();
         }
 
         if (doExport) {
-            log.debug("Export complete. Wrote " + dataFramesExported + " data frames.");
+            log.debug("[" + getSourceName() + "] " + "Export complete. Wrote " + dataFramesExported + " data frames.");
         } else {
-            log.debug("Export stopped. Wrote " + dataFramesExported + " data frames.");
+            log.debug("[" + getSourceName() + "] " + "Export stopped. Wrote " + dataFramesExported + " data frames.");
         }
 
         return true;
@@ -1012,39 +1010,37 @@ public class FileArchiverSink extends RBNBBase {
      */
     private int exportData(ChannelMap map, double startTime, double endTime,
         double duration, double baseTime) throws SAPIException, IOException {
-        log.debug("FileArchiverSink.exportData() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.exportData() called.");
 
         // sink.Subscribe(map, startTime, duration, "absolute");
         sink.Request(map, startTime, duration, "absolute");
         int frameCount = 0;
         int fetchRetryCount = 0;
 
-        log.debug("doExport is: " + doExport);
+        log.debug("[" + getSourceName() + "] " + "doExport is: " + doExport);
 
         while (doExport) {
-            log.debug("Get the channel map.");
+            log.debug("[" + getSourceName() + "] " + "Get the channel map.");
             ChannelMap m = sink.Fetch(180000); // fetch with 3 min timeout
 
             if (m.GetIfFetchTimedOut()) {
                 if (++fetchRetryCount < 10) {
-                    log.warn("Warning: Request for data timed out, retrying.");
+                    log.warn("[" + getSourceName() + "] " + "Warning: Request for data timed out, retrying.");
                     continue;
                 } else {
-                    log.error("Error: Unable to get data from server.");
+                    log.error("[" + getSourceName() + "] " + "Error: Unable to get data from server.");
                     fetchRetryCount = 0;
                     break;
                 }
             } else {
-                log.debug("Fetch has not timed out.");
+                log.debug("[" + getSourceName() + "] " + "Fetch has not timed out.");
                 fetchRetryCount = 0;
             }
 
             int index = m.GetIndex(channelPath);
-
-            log.debug("Channel index is: " + index);
-
+            log.debug("[" + getSourceName() + "] " + "Channel index is: " + index);
             if (index < 0) {
-                log.error("Error: The channel index was < 0.");
+                log.error("[" + getSourceName() + "] " + "Error: The channel index was < 0.");
                 break;
             }
 
@@ -1055,7 +1051,7 @@ public class FileArchiverSink extends RBNBBase {
             FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
                 filePrefix, filePathDepth, fileExtension);
 
-            log.debug("Writing data to: " + output.getPath());
+            log.debug("[" + getSourceName() + "] " + "Writing data to: " + output.getPath());
 
             if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
 
@@ -1090,22 +1086,19 @@ public class FileArchiverSink extends RBNBBase {
                 File latestDataFile = new File(newFileName);
 
                 if ( latestDataFile.length() > 0L ) {
-                    log.info("Successful export to " + latestDataFile.getPath());
+                    log.info("[" + getSourceName() + "] " + "Successful export to " + latestDataFile.getPath());
 
                 } else {
-                    log.info("Unsuccessful export. File " +
+                    log.info("[" + getSourceName() + "] " + "Unsuccessful export. File " +
                         latestDataFile.getPath() +
                         " was " + latestDataFile.length() + " bytes.");
-
                 }
 
             } else {
-                log.error("Couldn't confirm path was created to :" + output.getParentFile().getPath());
-
+                log.error("[" + getSourceName() + "] " + "Couldn't confirm path was created to :" + output.getParentFile().getPath());
             }
-
         }
-        log.debug("Frame count is: " + frameCount);
+        log.debug("[" + getSourceName() + "] " + "Frame count is: " + frameCount);
         return frameCount;
     }
 
@@ -1115,7 +1108,7 @@ public class FileArchiverSink extends RBNBBase {
      * @return true if connected, false otherwise
      */
     private boolean connect() {
-        log.debug("FileArchiverSink.connect() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.connect() called.");
         if (isConnected()) {
             return true;
         }
@@ -1123,7 +1116,7 @@ public class FileArchiverSink extends RBNBBase {
         try {
             sink.OpenRBNBConnection(getServer(), sinkName);
         } catch (SAPIException e) {
-            log.error("Error: Unable to connect to server.");
+            log.error("[" + getSourceName() + "] " + "Error: Unable to connect to server.");
             disconnect();
             return false;
         }
@@ -1137,7 +1130,7 @@ public class FileArchiverSink extends RBNBBase {
      * Disconnects from the RBNB server.
      */
     private void disconnect() {
-        log.debug("FileArchiverSink.disconnect() called.");
+        log.trace("[" + getSourceName() + "] " + "FileArchiverSink.disconnect() called.");
         if (!isConnected()) {
             return;
         }
