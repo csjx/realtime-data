@@ -74,7 +74,7 @@ public class TextSinkApp {
         int totalArchivers = Objects.requireNonNull(config).getTotalArchivers();
 
         if (totalArchivers == 0) {
-            log.info("No archivers are configured for this instrument. Exiting.");
+            log.info("[" + config.getIdentifier() + "] " + "No archivers are configured for this instrument. Exiting.");
             System.exit(0);
         }
 
@@ -95,7 +95,7 @@ public class TextSinkApp {
 
                         TimerTask archiveDataTask = new TimerTask() {
                             public void run() {
-                                log.debug("TimerTask.run() called.");
+                                log.trace("TimerTask.run() called.");
 
                                 if (archiver.validateSetup()) {
                                     archiver.export();
@@ -118,8 +118,9 @@ public class TextSinkApp {
                     }
 
                 } else {
-                    log.info("Archivers must have either an archiveInterval or " +
-                        "archiveDateRange configured. Skipping this archiver.");
+                    log.info("[" + config.getIdentifier() + "/" + config.getChannelName(channelIndex) + "/" + "] " +
+                            "Archivers must have either an archiveInterval or " +
+                            "archiveDateRange configured. Skipping this archiver.");
                 }
             }
 
@@ -165,7 +166,8 @@ public class TextSinkApp {
                     throw new ConfigurationException(msg);
                 }
             } catch (ConfigurationException e) {
-                log.error("Could not get an archiver: " + e.getMessage());
+                log.error("[" + config.getIdentifier() + "/" + config.getChannelName(channelIndex) + "] " +
+                        "Could not get an archiver: " + e.getMessage());
                 if (log.isDebugEnabled()) {
                     e.printStackTrace();
                     System.exit(0);
@@ -215,7 +217,6 @@ public class TextSinkApp {
             log.error("Please use an archiveType of raw or pacioos-2020-format");
             System.exit(0);
         }
-
         return archiver;
     }
 }
