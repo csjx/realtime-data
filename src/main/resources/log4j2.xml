@@ -1,42 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration verbose="true" status="fatal" monitorInterval="60" name="Production">
+<Configuration verbose="true" status="error" name="Production" monitorInterval="60" packages="edu.hawaii,org.dataturbine,com.rbnb">
     <Properties>
         <Property name="directory">/var/log/realtime-data</Property>
         <Property name="filename">realtime-data</Property>
+        <Property name="debugfile">realtime-data-debug</Property>
     </Properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyyMMdd-HH:mm:ss}: [%p]: %m%n" />
         </Console>
-        <!--
-        <File name="FILE" fileName="${directory}/${filename}.log" append="true">
+        <File name="FILE" fileName="${directory}/${debugfile}.log" append="true">
             <PatternLayout pattern="[%5p] %d (%C{1}:%M:%L) %m%n" />
         </File>
-        -->
         <RollingFile name="ROLLINGFILE" fileName="${directory}/${filename}.log"
-                     filePattern="${directory}/${filename}-%d{MM-dd-yyyy}-%i.log.gz">
+                         filePattern="${directory}/${filename}-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout pattern="[%5p] %d (%C{1}:%M:%L) %m%n" />
             <Policies>
-                <TimeBasedTriggeringPolicy />
+                <!--TimeBasedTriggeringPolicy /-->
                 <SizeBasedTriggeringPolicy size="1024 MB"/>
             </Policies>
             <DefaultRolloverStrategy max="100"/>
         </RollingFile>
     </Appenders>
     <Loggers>
-        <!--
-        <Logger name="file" level="debug">
-            <AppenderRef ref="FILE" />
+        <Logger name="edu.hawaii.soest" level="debug" additivity="false">
+            <AppenderRef ref="ROLLINGFILE" level="info" />
+            <AppenderRef ref="STDOUT" level="info" />
         </Logger>
-        -->
-        <Logger name="edu.hawaii.soest" level="info">
-            <AppenderRef ref="STDOUT" />
+        <Logger name="edu.hawaii.soest.kilonalu.utilities.FileArchiverSink" level="debug" additivity="false">
+            <AppenderRef ref="ROLLINGFILE" level="debug" />
         </Logger>
-        <Logger name="edu.hawaii.soest" level="info">
-            <AppenderRef ref="ROLLINGFILE" />
-        </Logger>
-        <Root level="error">
-            <AppenderRef ref="STDOUT" />
+        <Root level="debug">
+            <AppenderRef ref="STDOUT" level="info" />
+            <AppenderRef ref="ROLLINGFILE" level="info" />
         </Root>
     </Loggers>
 </Configuration>
