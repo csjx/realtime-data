@@ -150,7 +150,7 @@ public class StorXParser {
      */
     public void parse(ByteBuffer fileBuffer) throws Exception {
 
-        log.debug("StorXParser.parse() called.");
+        log.trace("StorXParser.parse() called.");
 
         this.fileBuffer = fileBuffer;
         //log.debug(this.fileBuffer.toString());

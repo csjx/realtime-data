@@ -361,7 +361,7 @@ public class CTDSource extends RBNBSource {
    */
   public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
     
-    log.debug("CTDSource.process() called.");
+    log.trace("CTDSource.process() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     
@@ -475,7 +475,7 @@ public class CTDSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    log.debug("CTDSource.execute() called.");
+    log.trace("CTDSource.execute() called.");
     
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
@@ -1810,7 +1810,7 @@ public class CTDSource extends RBNBSource {
    * A method used to get a serial connection for communication
    */
   protected ByteChannel getSerialConnection() {
-    log.debug("CTDSource.getSerialConnection() called.");
+    log.trace("CTDSource.getSerialConnection() called.");
     
     ByteChannel serialChannel = (ByteChannel) new SerialChannel(getSerialPort());  
     return serialChannel;
@@ -2007,7 +2007,7 @@ public class CTDSource extends RBNBSource {
    */
   public boolean queryInstrument(String command) {
     
-    log.debug("CTDSource.queryInstrument() called.");
+    log.trace("CTDSource.queryInstrument() called.");
 
     // the result of the query
     boolean result = false;

@@ -248,7 +248,7 @@ public class SBE37Source extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    log.debug("SBE37Source.execute() called.");
+    log.trace("SBE37Source.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     

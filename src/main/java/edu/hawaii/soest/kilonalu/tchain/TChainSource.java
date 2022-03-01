@@ -271,7 +271,7 @@ public class TChainSource extends RBNBSource {
    * streaming the data and interpreting the stream.
    */
   protected boolean execute() {
-    log.debug("TChainSource.execute() called.");
+    log.trace("TChainSource.execute() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     

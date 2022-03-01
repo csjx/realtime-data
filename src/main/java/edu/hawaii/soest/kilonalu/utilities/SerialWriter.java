@@ -76,7 +76,7 @@ public class SerialWriter implements Runnable {
    * OutputStream.
    */
   public void run() {
-    log.debug("SerialWriter.run() called.");
+    log.trace("SerialWriter.run() called.");
     try {
 
       while ( this.writeBuffer.position() != -1 ) {
@@ -106,7 +106,7 @@ public class SerialWriter implements Runnable {
    */
   public int write(ByteBuffer writeBuffer) throws IOException {
 
-    log.debug("SerialWriter.write() called.");
+    log.trace("SerialWriter.write() called.");
     try {
  
       // duplicate the incoming writeBuffer when it is not locked

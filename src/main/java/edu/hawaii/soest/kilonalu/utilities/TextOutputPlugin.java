@@ -172,7 +172,7 @@ public class TextOutputPlugin extends RBNBBase {
    * on the hour.
    */
   private void setupArchiveTime(final TextOutputPlugin textOutputPlugin) {
-    log.debug("TextOutputPlugin.setupArchiveTime() called.");
+    log.trace("TextOutputPlugin.setupArchiveTime() called.");
     
     // remove the time ranges assumed from the command line args
     timeRanges.clear();
@@ -203,7 +203,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @param textOutputPlugin  the TextOutputPlugin to stop
    */
   private static void setupShutdownHook(final TextOutputPlugin textOutputPlugin) {
-    log.debug("TextOutputPlugin.setupShutdownHook() called.");
+    log.trace("TextOutputPlugin.setupShutdownHook() called.");
     final Thread workerThread = Thread.currentThread();
     
     Runtime.getRuntime ().addShutdownHook (new Thread () {
@@ -220,7 +220,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @param textOutputPlugin  the TextOutputPlugin to monitor
    */
   private static void setupProgressListener(TextOutputPlugin textOutputPlugin) {
-    log.debug("TextOutputPlugin.setupProgressListener() called.");
+    log.trace("TextOutputPlugin.setupProgressListener() called.");
     textOutputPlugin.addTimeProgressListener(new TimeProgressListener() {
       public void progressUpdate(double estimatedDuration, double consumedTime) {
         if (estimatedDuration == Double.MAX_VALUE) {
@@ -259,7 +259,7 @@ public class TextOutputPlugin extends RBNBBase {
    * of the various command line arguments
    */
   protected boolean setArgs(CommandLine cmd) {
-    log.debug("TextOutputPlugin.setArgs() called.");
+    log.trace("TextOutputPlugin.setArgs() called.");
 
     if (!setBaseArgs(cmd))
       return false;
@@ -389,7 +389,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the setup is valid, false otherwise
    */
   private boolean validateSetup() {
-    log.debug("TextOutputPlugin.validateSetup() called.");
+    log.trace("TextOutputPlugin.validateSetup() called.");
     printSetup();
     
     if (!connect()) {
@@ -411,7 +411,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Prints the setup parameters.
    */
   private void printSetup() {
-    log.debug("TextOutputPlugin.printSetup() called.");
+    log.trace("TextOutputPlugin.printSetup() called.");
     log.debug("Starting TextOutputPlugin on " + getServer() +
                  " as " + sinkName);
     log.debug("  Archiving channel " + channelPath);
@@ -435,7 +435,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the time ranges are setup
    */
   private boolean setupTimeRanges() {
-    log.debug("TextOutputPlugin.setupTimeRanges() called.");
+    log.trace("TextOutputPlugin.setupTimeRanges() called.");
     if (eventMarkerFilter == null) {
       timeRanges = new ArrayList<TimeRange>();
       timeRanges.add(new TimeRange(startTime, endTime));
@@ -460,7 +460,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if the time ranges are valid
    */
   private boolean checkTimeRanges() {
-    log.debug("TextOutputPlugin.checkTimeRanges() called.");
+    log.trace("TextOutputPlugin.checkTimeRanges() called.");
     Node channelMetadata;
     try {
       channelMetadata = RBNBUtilities.getMetadata(getServer(), channelPath);
@@ -553,7 +553,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Convert data to ASCII streams.
    */
   public boolean convert() {
-    log.debug("TextOutputPlugin.convert() called.");
+    log.trace("TextOutputPlugin.convert() called.");
     doTextConversion = true;
     
     if (!runWork()) {
@@ -569,7 +569,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Stop converting data to disk. This will return immediately.
    */
   public void stopConversion() {
-    log.debug("TextOutputPlugin.stopConversion() called.");
+    log.trace("TextOutputPlugin.stopConversion() called.");
     doTextConversion = false;
   }
   
@@ -586,7 +586,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Converts the data.
    */
   private boolean runWork() {
-    log.debug("TextOutputPlugin.runWork() called.");
+    log.trace("TextOutputPlugin.runWork() called.");
     int dataFramesConverted = 0;
 
     try {
@@ -678,7 +678,7 @@ public class TextOutputPlugin extends RBNBBase {
    */
   private int convertData(ChannelMap map, ChannelMap cmap, double startTime, double endTime, 
     double duration, double baseTime) throws SAPIException, IOException {
-    log.debug("TextOutputPlugin.convertData() called.");
+    log.trace("TextOutputPlugin.convertData() called.");
 
     sink.Subscribe(map, startTime, 0.0, "absolute");
     //sink.Subscribe(map, startTime, duration, "absolute");
@@ -783,7 +783,7 @@ public class TextOutputPlugin extends RBNBBase {
    * @return  true if connected, false otherwise
    */
   private boolean connect() {
-    log.debug("TextOutputPlugin.connect() called.");
+    log.trace("TextOutputPlugin.connect() called.");
     if (isConnected()) {
       return true;
     }
@@ -808,7 +808,7 @@ public class TextOutputPlugin extends RBNBBase {
    * Disconnects from the RBNB server.
    */
   private void disconnect() {
-    log.debug("TextOutputPlugin.disconnect() called.");
+    log.trace("TextOutputPlugin.disconnect() called.");
     if (!isConnected()) {
       return;
     }

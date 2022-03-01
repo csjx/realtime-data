@@ -182,7 +182,7 @@ public class AdamSource extends RBNBSource {
   protected boolean process(String datagramAddress, XMLConfiguration xmlConfig,
                             ByteBuffer sampleBuffer) {
     
-    log.debug("AdamSource.process() called.");
+    log.trace("AdamSource.process() called.");
     // do not execute the stream if there is no connection
     if (  !isConnected() ) return false;
     

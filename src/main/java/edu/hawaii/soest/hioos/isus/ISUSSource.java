@@ -152,7 +152,7 @@ public class ISUSSource extends RBNBSource {
      */
     public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
 
-        log.debug("ISUSSource.process() called.");
+        log.trace("ISUSSource.process() called.");
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 

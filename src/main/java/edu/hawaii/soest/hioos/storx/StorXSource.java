@@ -152,7 +152,7 @@ public class StorXSource extends RBNBSource {
      */
     public boolean process(XMLConfiguration xmlConfig, HierarchicalMap frameMap) {
 
-        log.debug("StorXSource.process() called.");
+        log.trace("StorXSource.process() called.");
         // do not execute the stream if there is no connection
         if (!isConnected()) return false;
 

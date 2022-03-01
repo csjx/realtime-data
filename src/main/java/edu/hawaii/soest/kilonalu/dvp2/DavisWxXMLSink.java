@@ -112,7 +112,7 @@ public class DavisWxXMLSink extends RBNBBase {
 
         TimerTask exportXML = new TimerTask() {
           public void run() {
-            log.debug("TimerTask.run() called.");
+            log.trace("TimerTask.run() called.");
               davisWxXMLSink.export();      
           }
         };
@@ -141,7 +141,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * of the various command line arguments
    */
   protected boolean setArgs(CommandLine cmd) {
-    log.debug("DavisWxXMLSink.setArgs() called.");
+    log.trace("DavisWxXMLSink.setArgs() called.");
     
     if (cmd.hasOption('f')) {
       String a = cmd.getOptionValue('f');
@@ -162,7 +162,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * @return                   true if the setup succeeded, false otherwise
    */
   public boolean setup(String serverName, int serverPort, String sinkName) {
-    log.debug("DavisWxXMLSink.setup() called.");
+    log.trace("DavisWxXMLSink.setup() called.");
     
     setServerName(serverName);
     setServerPort(serverPort);
@@ -176,7 +176,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * Export data to disk.
    */
   public boolean export() {
-    log.debug("DavisWxXMLSink.export() called.");
+    log.trace("DavisWxXMLSink.export() called.");
 
     if ( setup(this.getServerName(), 
                this.getServerPort(), 
@@ -317,7 +317,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * @return  true if connected, false otherwise
    */
   private boolean connect() {
-    log.debug("DavisWxXMLSink.connect() called.");
+    log.trace("DavisWxXMLSink.connect() called.");
     if (isConnected()) {
       return true;
     }
@@ -340,7 +340,7 @@ public class DavisWxXMLSink extends RBNBBase {
    * Disconnects from the RBNB server.
    */
   private void disconnect() {
-    log.debug("DavisWxXMLSink.disconnect() called.");
+    log.trace("DavisWxXMLSink.disconnect() called.");
     if (!isConnected()) {
       return;
     }

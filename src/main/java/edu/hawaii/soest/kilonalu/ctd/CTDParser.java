@@ -991,7 +991,7 @@ public class CTDParser {
    *  observations, based on the presence/absence of certain data or voltages.
    */
   public void parse() throws ParseException {
-    log.debug("CTDParser.parse() called.");
+    log.trace("CTDParser.parse() called.");
         
     if ( ! this.metadataAndDataString.equals("") ) {
       
@@ -1104,7 +1104,7 @@ public class CTDParser {
    *  data output format, and pertinent metadata fields.
    */
   public void setData(String dataString) throws ParseException {
-    log.debug("CTDParser.setData() called.");
+    log.trace("CTDParser.setData() called.");
     
     // make the observations available to the class
     this.observationsString = dataString;
@@ -1410,7 +1410,7 @@ public class CTDParser {
    *  modes, and builds metadata fields based on the data output format.
    */
   public void setMetadata() throws ParseException {
-    log.debug("CTDParser.setMetadata() called.");
+    log.trace("CTDParser.setMetadata() called.");
     
     // Are we in profile or moored mode?
     if ( this.SAMPLING_MODE != null ) {
@@ -2100,7 +2100,7 @@ public class CTDParser {
    * @param xmlString - the CTD's XML output string containing the metadata values
    */
   public void setMetadata(String xmlString) throws ParseException {
-    log.debug("CTDParser.setMetadata(xmlString) called.");
+    log.trace("CTDParser.setMetadata(xmlString) called.");
     
     try {
       // create an XML Document object from the instrument XML string

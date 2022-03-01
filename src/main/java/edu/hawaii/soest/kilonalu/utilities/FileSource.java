@@ -178,7 +178,7 @@ public class FileSource extends RBNBSource {
    * reading the data and interpreting the data files.
    */
   protected boolean execute() {
-    log.debug("FileSource.execute() called.");
+    log.trace("FileSource.execute() called.");
     boolean failed = true; // indicates overall success of execute()
     
     // do not execute the stream if there is no connection

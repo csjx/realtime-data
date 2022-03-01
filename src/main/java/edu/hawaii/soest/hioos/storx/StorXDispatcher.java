@@ -245,7 +245,7 @@ public class StorXDispatcher extends RBNBSource {
      * @return failed True if the execution failed
      */
     protected boolean execute() {
-        log.debug("StorXDispatcher.execute() called.");
+        log.trace("StorXDispatcher.execute() called.");
         boolean failed = true; // indicates overall success of execute()
         boolean messageProcessed = false; // indicates per message success
 
@@ -618,7 +618,7 @@ public class StorXDispatcher extends RBNBSource {
      * serial number.
      */
     protected boolean connect() {
-        log.debug("StorXDispatcher.execute() called.");
+        log.trace("StorXDispatcher.execute() called.");
 
         if (isConnected()) {
             return true;
@@ -861,7 +861,7 @@ public class StorXDispatcher extends RBNBSource {
                     // fetch data on a schedule
                     TimerTask fetchData = new TimerTask() {
                         public void run() {
-                            log.debug("TimerTask.run() called.");
+                            log.trace("TimerTask.run() called.");
                             storXDispatcher.execute();
                         }
                     };
