@@ -2,6 +2,8 @@
 
 Each instrument deployment gets documented in an XML configuration file in the ``${REALTIME_DATA}/conf`` directory with the same name as the instrument name.  For instance, the Waikiki Beach CTD is named ``WK01XX_001CTDXXXXR00``, and the corresponding XML file is ``WK01XX_001CTDXXXXR00.xml``.
 
+To create a new instrument configuration, it's easiest to just copy an existing XML configuration document and add/replace values as need.  Here's an [example document](https://github.com/csjx/realtime-data/blob/master/conf/online/WK01XX_001CTDXXXXR00.xml).
+
 This XML structure provides the necessary metadata for parsing, validating, archiving, and converting the data samples coming from the instrument.  The XML file has can have the following elements as children of the root ``instrument`` element:
 
 
@@ -34,5 +36,3 @@ This XML structure provides the necessary metadata for parsing, validating, arch
 | channels/channel/archivers/<br>archiver/archiveType          | The type of the archiver. Must be "`raw`" or "`pacioos-2020-format`". | no         |
 | channels/channel/archivers/<br>archiver/archiveInterval      | The interval used for archiving data files to disk from the DataTurbine channel. Must be either "`hourly`" or "`daily`". | no         |
 | channels/channel/archivers/<br>archiver/archiveBaseDirectory | The base directory to archive channel data files created from the channel. Must be writable. The sourceName will be appended, and optionally the channelName (for raw data archiving).         | no         |
-
-It's easiest to just copy an existing XML configuration document and add/replace values as need.  Here's an [example document](https://github.com/csjx/realtime-data/blob/master/conf/online/WK01XX_001CTDXXXXR00.xml).

@@ -1,5 +1,7 @@
 # Managing Nearshore Realtime Instruments
 
+![](data-flow.png)
+
 The PacIOOS nearshore instruments fall into three categories:
 
 * `online`
