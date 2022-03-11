@@ -3,6 +3,8 @@
 * [Managing Realtime Instruments](README.md)
 
 * [Configuring instruments](configuration/configure.md)
+    * [Adding an instrument by example](configuration/configure.md#adding-an-instrument-by-example)
+    * [XML Configuration field definitions](configuration/configure.md#xml-configuration-field-definitions)
 
 * [The `manage-instruments` command](manage-instruments/command.md)
     * [Command Usage](manage-instruments/command.md#command-usage)

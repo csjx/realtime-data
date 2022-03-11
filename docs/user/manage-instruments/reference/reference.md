@@ -19,7 +19,7 @@ In an effort to simplify the file names, we adopted a `pacioos-2020-format` conv
 
 Some of the fields in the file formats are less pertinent for the Nearshore instruments than they were for the Kilo Nalu Array when it was deployed.  Likewise, while instrument `Site IDs` get changed when the instrument is physically relocated, there are times when an instrument is located at the same site, but the measurements being collected have changed and produce data files with differing numbers of data columns.  To accommodate this after 2020, we adopted a convention that reuses the `Water Depth` field to indicate an instrument `variation` exists at the site so that post-processing software can handle the differing column counts.
 
-An example of this is at the NS02/AW02XX site, where the `Water Depth` field has two variations, `001` and `101`:
+An example of this is at the NS02/AW02XX site, where the `Instrument Depth` field has two variations, `001` and `101`:
 
 | Site ID | Instrument Depth |Instrument Type | Water Depth (m) | Replicate # | Begin Timestamp | Ext |
 |:-------:|:----------------:|:--------------:|:---------------:|:-----------:|:---------------:|:---:|
