@@ -1047,51 +1047,60 @@ public class FileArchiverSink extends RBNBBase {
             // convert sec to millisec
             double timestamp = m.GetTimes(index)[0];
             long unixTime = (long) (timestamp * 1000.0);
-            File output =
-            FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
+            File output = FileArchiveUtility.makePathFromTime(archiveDirectory, unixTime,
                 filePrefix, filePathDepth, fileExtension);
 
             log.debug("[" + getSourceName() + "] " + "Writing data to: " + output.getPath());
 
             if (FileArchiveUtility.confirmCreateDirPath(output.getParentFile())) {
 
-                byte[] data = m.GetData(index);
-                int numberOfFrames = (m.GetTimes(index)).length;
+                FileOutputStream out = null;
+                try {
+                    byte[] data = m.GetData(index);
+                    int numberOfFrames = (m.GetTimes(index)).length;
+                    out = new FileOutputStream(output);
 
-                FileOutputStream out = new FileOutputStream(output);
+                    // Convert the data to a new format or write the raw data to file
+                    InputStream samples;
+                    if ( convertSamples ) {
+                        log.trace("[" + getSourceName() + "] " + "Converting raw samples.");
+                        samples = new BufferedInputStream(new ByteArrayInputStream(data));
+                        converter.parse(samples);
+                        log.trace("[" + getSourceName() + "] " + "Parsed raw samples.");
+                        converter.convert();
+                        log.trace("[" + getSourceName() + "] " + "Converted raw samples.");
+                        frameCount = converter.write(out);
+                        log.trace("[" + getSourceName() + "] " + "Wrote processed samples.");
 
-                // Convert the data to a new format or write the raw data to file
-                InputStream samples;
-                if ( convertSamples ) {
-                    samples = new BufferedInputStream(new ByteArrayInputStream(data));
-                    converter.parse(samples);
-                    converter.convert();
-                    frameCount = converter.write(out);
 
-                } else {
-                    // Just write the raw bytes directly
-                    for ( int i = 0; i < data.length; i++ ) {
-
-                        out.write(data[i]);
-                        if ( i % data.length/numberOfFrames == 0 ) {
-                            frameCount++;
+                    } else {
+                        // Just write the raw bytes directly
+                        for ( int i = 0; i < data.length; i++ ) {
+    
+                            out.write(data[i]);
+                            if ( i % data.length/numberOfFrames == 0 ) {
+                                frameCount++;
+                            }
                         }
                     }
-                }
-                out.close();
-                doExport = false;
+                    doExport = false;
 
-                // test the file write success
-                String newFileName = output.getPath();
-                File latestDataFile = new File(newFileName);
+                    // test the file write success
+                    String newFileName = output.getPath();
+                    File latestDataFile = new File(newFileName);
 
-                if ( latestDataFile.length() > 0L ) {
-                    log.info("[" + getSourceName() + "] " + "Successful export to " + latestDataFile.getPath());
-
-                } else {
-                    log.info("[" + getSourceName() + "] " + "Unsuccessful export. File " +
-                        latestDataFile.getPath() +
-                        " was " + latestDataFile.length() + " bytes.");
+                    if ( latestDataFile.length() > 0L ) {
+                        log.info("[" + getSourceName() + "] " + "Successful export to " + latestDataFile.getPath());
+    
+                    } else {
+                        log.info("[" + getSourceName() + "] " + "Unsuccessful export. File " +
+                            latestDataFile.getPath() +
+                            " was " + latestDataFile.length() + " bytes.");
+                    }
+                } finally {
+                    if (out != null){
+                        out.close();
+                    }
                 }
 
             } else {
