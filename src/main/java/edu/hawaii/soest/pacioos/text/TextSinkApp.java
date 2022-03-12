@@ -46,7 +46,9 @@ public class TextSinkApp {
      * @param args the main arguments
      */
     public static void main(String[] args) {
-        
+
+        log.trace("TextSinkApp.main() called.");
+
         String xmlConfiguration = null;
         Configuration config = null;
         if (args.length != 1) {
@@ -100,6 +102,8 @@ public class TextSinkApp {
                                 if (archiver.validateSetup()) {
                                     archiver.export();
                                     archiver.setupArchiveTime();
+                                } else {
+                                    log.error("FileArchiverSink.validateSetup() returned false. Export skipped.");
                                 }
                             }
                         };
@@ -199,6 +203,10 @@ public class TextSinkApp {
             converter.setNumberHeaderLines(0);
             converter.setTimeZoneId(timeZoneId);
             converter.setDataPrefix(dataPrefix);
+
+            // Also set the dateFields list
+            converter.setDateFields(config.getDateFields(channelIndex));
+            converter.setDateFormats(config.getDateFormats(channelIndex));
 
             // Set the date and time format strings in the converter depending on the config count
             if ( config.getTotalDateFields(channelIndex) > 1 ) {
