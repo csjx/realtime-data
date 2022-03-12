@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
-<!-- This is the PP06 instrument with 6 variables, not the standard 5 variables -->
 <instrument>
     <!-- the instrument short name -->
     <shortName>PP06</shortName>
     <!-- The instrument identifier -->
-    <identifier>pp6_fsm_pohnpei</identifier>
+    <identifier>pp6_palau</identifier>
     <!-- The connection type: socket, file, or serial -->
     <connectionType>socket</connectionType>
     <!-- 
@@ -18,7 +17,7 @@
         <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>pp6_fsm_pohnpei</rbnbName>
+    <rbnbName>pp6_palau</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -100,17 +99,17 @@
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-              <dateField>6</dateField>
+              <dateField>7</dateField>
             </dateFields>
             <!-- The time zone identifier that the data were collected in -->
-            <timeZone>Pacific/Pohnpei</timeZone>
+            <timeZone>Pacific/Palau</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
                 <archiver>
                     <archiveType>raw</archiveType>
                     <archiveInterval>hourly</archiveInterval>
-                    <archiveBaseDirectory>/data/raw/alawai</archiveBaseDirectory>
+                    <archiveBaseDirectory>/data/raw/pacioos</archiveBaseDirectory>
                 </archiver>
                 <!-- Write the PacIOOS 2020 formatted data to /data/processed -->
                 <archiver>

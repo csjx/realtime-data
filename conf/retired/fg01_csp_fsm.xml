@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE instrument SYSTEM "../instrument.dtd">
-<!-- This is the NS06 instrument with 6 variables, not the standard 5 variables -->
+<!-- This is the PP06 instrument with 6 variables, not the standard 5 variables -->
 <instrument>
     <!-- the instrument short name -->
-    <shortName>NS06</shortName>
+    <shortName>fg01</shortName>
     <!-- The instrument identifier -->
-    <identifier>PIFM02_101CTDXXXXR00</identifier>
+    <identifier>fg01_csp_fsm</identifier>
     <!-- The connection type: socket, file, or serial -->
-    <connectionType>file</connectionType>
+    <connectionType>socket</connectionType>
     <!-- 
       Configure connection parameters based on connection type. If connection
       type is socket, add hostName and hostPort below. If file, add filePath
       below. If serial, add serialPortParams and sub elements below.
     -->
-    <connectionParams>
-        <filePath>/home/kilonalu/PIFM02_101CTDXXXXR00_latest_data.txt</filePath>
+    <connectionParams> 
+        <hostName>68.25.32.149</hostName>
+        <hostPort>5111</hostPort>
     </connectionParams>
     <!-- The name of the instrument source as it appears in the DataTurbine -->
-    <rbnbName>PIFM02_101CTDXXXXR00</rbnbName>
+    <rbnbName>fg01_csp_fsm</rbnbName>
     <!-- The IP or host name of the DataTurbine server -->
     <rbnbServer>realtime.pacioos.hawaii.edu</rbnbServer>
     <!-- The port number of the DataTurbine server -->
@@ -35,16 +36,16 @@
             <!-- The channel's incoming data type -->
             <dataType>String</dataType>
             <!-- data archive example:
-            # 25.1348,  0.18310,    0.694, 0.0798, 0.1467,   0.9242, 03 Nov 2011 11:00:08
-            # 25.1331,  0.17391,    0.690, 0.0810, 0.1541,   0.8757, 03 Nov 2011 11:04:08
-            # 25.1403,  0.15252,    0.687, 0.0816, 0.1516,   0.7631, 03 Nov 2011 11:12:08
-            # 25.1368,  0.17757,    0.687, 0.0818, 0.1527,   0.8949, 03 Nov 2011 11:16:08
-            # 25.0928,  0.19572,    0.680, 0.0834, 0.1598,   0.9921, 03 Nov 2011 11:20:08
-            # 25.1926,  0.20432,    0.681, 0.0818, 0.1552,   1.0357, 03 Nov 2011 11:24:08
-            # 25.2439,  0.20370,    0.681, 0.0830, 0.1540,   1.0312, 03 Nov 2011 11:28:08
-            # 25.2812,  0.20757,    0.681, 0.0833, 0.1495,   1.0510, 03 Nov 2011 11:32:08
-            # 25.4033,  0.25756,    0.680, 0.0832, 0.1566,   1.3155, 03 Nov 2011 11:36:08
-            # 25.2270,  0.21109,    0.681, 0.0831, 0.1540,   1.0710, 03 Nov 2011 11:40:08
+            # 24.2982,  5.09687,    1.054, 0.3200, 0.2580,  33.9712, 25 Mar 2013 13:01:01
+            # 24.2976,  5.11083,    1.054, 0.3168, 0.2737,  34.0762, 25 Mar 2013 13:05:01
+            # 24.3831,  5.09101,    1.051, 0.3119, 0.2471,  33.8631, 25 Mar 2013 13:09:01
+            # 24.2737,  5.09288,    1.053, 0.3321, 0.2749,  33.9599, 25 Mar 2013 13:13:01
+            # 24.3366,  5.09151,    1.053, 0.3223, 0.2543,  33.9019, 25 Mar 2013 13:17:01
+            # 24.2162,  5.09727,    1.051, 0.3037, 0.2497,  34.0366, 25 Mar 2013 13:21:01
+            # 24.2798,  5.06800,    1.051, 0.3023, 0.2545,  33.7691, 25 Mar 2013 13:25:01
+            # 24.2317,  5.10403,    1.050, 0.2876, 0.2376,  34.0755, 25 Mar 2013 13:29:01
+            # 24.2113,  5.08875,    1.049, 0.3014, 0.2568,  33.9764, 25 Mar 2013 13:33:01
+            # 24.2002,  5.10407,    1.048, 0.2950, 0.2326,  34.0998, 25 Mar 2013 13:37:01
             -->
             <!-- 
               The regular expression used to match a data sample.
@@ -55,6 +56,7 @@
                 dataPrefix: A string of characters that prefix the data in a sample (e.g. '#')
             -->
             <dataPrefix>#</dataPrefix>
+
             <!--
                 columnTypes: A list of column types for each variable in the sample. Use STRING
                 for all column types except:
@@ -81,8 +83,12 @@
               Use Hex notation for non-printing characters, separate characters with a pipe
             -->
             <recordDelimiters>0x0D|0x0A</recordDelimiters>
-            <!-- 
-              The list of date formats for each sample date component in a separate variable
+            <!--
+              missingValueCode: A code indicating that a value is missing in the sample (NaN, -999, etc.)
+            -->
+            <missingValueCode>-999</missingValueCode>
+            <!--
+              The list of date formats for each sample date component in a separtate variable
               One or more date formats are required, reflecting the date/time variables in the data
               Note: dateFormat and dateField are used together to locate, then parse the sample date
               -->
@@ -90,21 +96,13 @@
                 <dateFormat>dd MMM yyyy HH:mm:ss</dateFormat> 
             </dateFormats>
             <!-- 
-              The list of date fields for each sample date component in a separate variable
+              The list of date fields for each sample date component in a separtate variable
               One or more date fields are required, corresponding to the date/time variable positions in the data 
             -->        
             <dateFields>
-                <dateField>7</dateField>
+              <dateField>6</dateField>
             </dateFields>
-            <!--
-              timeZone: The time zone identifier that the data were collected in (e.g. Pacific/Honolulu).
-              The parsers are strict about zone identifiers, and will fall back to UTC when the
-              now-deprecated zone names are used (in the format of HDT, HST, SST, etc.). They are
-              considered ambiguous due to conflicting global use.  Only use identifiers that follow
-              the <region>/<locality> pattern (like Pacific/Samoa). While an exact offset like
-              GMT+13:00 will also work, it may change over time due to daylight savings,
-              so the long identifier is best.
-            -->
+            <!-- The time zone identifier that the data were collected in -->
             <timeZone>Pacific/Pohnpei</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>

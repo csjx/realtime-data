@@ -104,7 +104,7 @@
               GMT+13:00 will also work, it may change over time due to daylight savings,
               so the long identifier is best.
             -->
-            <timeZone>Pacific/Majuro</timeZone>
+            <timeZone>Pacific/Samoa</timeZone>
             <!-- The list of data archivers used to write data to disk -->
             <archivers>
                 <!-- Write the raw data to /data/raw -->
