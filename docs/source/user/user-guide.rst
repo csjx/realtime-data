@@ -174,8 +174,8 @@ This XML structure provides the necessary metadata for parsing, validating, arch
 
 It's easiest to just copy an existing XML configuration document and add/replace values as need.  Here's an `example document`_.
 
-.. _example document: https://github.com/csjx/realtime-data/blob/master/conf/WK01XX_001CTDXXXXR00.xml
-.. _`data management plan`: https://github.com/csjx/realtime-data/raw/master/docs/dev/BBL-requirements-document-and-management-plan.pdf
+.. _example document: https://github.com/csjx/realtime-data/blob/main/conf/WK01XX_001CTDXXXXR00.xml
+.. _`data management plan`: https://github.com/csjx/realtime-data/raw/main/docs/dev/BBL-requirements-document-and-management-plan.pdf
 
 Starting Instrument Drivers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

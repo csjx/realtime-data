@@ -2,7 +2,7 @@
 
 Each instrument deployment gets documented in an XML configuration file in the ``${REALTIME_DATA}/conf`` directory with the same name as the instrument name.  For instance, the Waikiki Beach CTD is named ``WK01XX_001CTDXXXXR00``, and the corresponding XML file is ``WK01XX_001CTDXXXXR00.xml``.
 
-To create a new instrument configuration, it's easiest to just copy an existing XML configuration document and add/replace values as need.  Here's an [example document](https://github.com/csjx/realtime-data/blob/master/conf/online/WK01XX_001CTDXXXXR00.xml).
+To create a new instrument configuration, it's easiest to just copy an existing XML configuration document and add/replace values as need.  Here's an [example document](https://github.com/csjx/realtime-data/blob/main/conf/online/WK01XX_001CTDXXXXR00.xml).
 
 ## Adding an instrument by example
 
