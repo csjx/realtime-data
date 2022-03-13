@@ -55,8 +55,8 @@ Quick Start
 Set up the software by unpacking the zip file, setting environment variables, and creating the log directory:
     
     $ cd /usr/local
-    $ sudo curl -L -O https://github.com/csjx/realtime-data/raw/1.4.2/realtime-data-1.4.2-bin.zip
-    $ sudo unzip realtime-data-1.4.2-bin.zip
+    $ sudo curl -L -O https://github.com/csjx/realtime-data/raw/1.4.3/realtime-data-1.4.3-bin.zip
+    $ sudo unzip realtime-data-1.4.3-bin.zip
     $ sudo chown -R ${USER} /usr/local/realtime-data
     $ export REALTIME_DATA=/usr/local/realtime-data
     $ export PATH=${PATH}:${REALTIME_DATA}/scripts/shell
