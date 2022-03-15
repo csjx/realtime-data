@@ -31,6 +31,8 @@ import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * A simple class used to start a FileArchiverSink archiver.  Configure the archiver by changing
@@ -109,9 +111,48 @@ public class TextSinkApp {
                         };
 
                         Timer archiveTimer = new Timer();
+                        // Execution times are local time zones
+                        Calendar executeCal = Calendar.getInstance(TimeZone.getTimeZone(config.getTimeZoneID(channelIndex)));
+                        int interval = archiver.getArchiveInterval();
+
+                        switch (interval) {
+
+                            // For debug mode, execute every 2 minutes
+                            case 120: {
+                                executeCal.clear(Calendar.MILLISECOND);
+                                executeCal.clear(Calendar.SECOND);
+                                executeCal.add(Calendar.MINUTE, 2);
+                                break;
+                            }
+                            // Execute every hour
+                            case 3600: {
+                                executeCal.add(Calendar.MINUTE, 1);
+                                executeCal.clear(Calendar.MILLISECOND);
+                                executeCal.clear(Calendar.SECOND);
+                                executeCal.clear(Calendar.MINUTE);
+                                executeCal.add(Calendar.HOUR_OF_DAY, 1);
+                                executeCal.add(Calendar.SECOND, -1);
+                                break;
+                            }
+                            // Execute daily
+                            case 86400: {
+                                executeCal.add(Calendar.MINUTE, 1);
+                                executeCal.clear(Calendar.MILLISECOND);
+                                executeCal.clear(Calendar.SECOND);
+                                executeCal.clear(Calendar.MINUTE);
+                                executeCal.set(Calendar.HOUR_OF_DAY, 0);
+                                executeCal.add(Calendar.DATE, 1);
+                                executeCal.add(Calendar.SECOND, -1);
+                                break;
+                            }
+                            default: {
+                                log.error("Specify 'hourly' or 'daily' for the archiveInterval.");
+                                System.exit(1);
+                            }
+                        }
                         // run the archiveData timer task on the hour, every hour (or every day)
                         archiveTimer.scheduleAtFixedRate(archiveDataTask,
-                            archiver.getEndArchiveCal().getTime(),
+                            executeCal.getTime(),
                             archiver.getArchiveInterval() * 1000L);
 
                     } else {
@@ -127,7 +168,6 @@ public class TextSinkApp {
                             "archiveDateRange configured. Skipping this archiver.");
                 }
             }
-
         }
     }
 
