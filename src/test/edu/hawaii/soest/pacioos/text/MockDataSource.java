@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class MockDataSource implements Runnable {
 	    File ctdData = new File(mockCTDData);
 	    List<String> lines = new ArrayList<String>();
 		try {
-			lines = FileUtils.readLines(ctdData);
+			lines = FileUtils.readLines(ctdData, StandardCharsets.UTF_8);
 			
 		} catch (IOException e) {
 			log.error("Couldn't read data file: " + e.getMessage());
