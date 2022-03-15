@@ -33,12 +33,14 @@ import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.time.ZoneOffset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TimeZone;
 
 import edu.hawaii.soest.pacioos.text.convert.Converter;
 import org.apache.commons.cli.CommandLine;
@@ -264,7 +266,7 @@ public class FileArchiverSink extends RBNBBase {
             log.debug("[" + getSourceName() + "] " + "Next archive time will be " + endArchiveCal.getTime().toString());
             log.debug("[" + getSourceName() + "] " + "Archive begin time will be " + beginArchiveCal.getTime().toString());
 
-        // schedule hourly on the hour
+        // schedule hourly on the local hour
         } else if ( getArchiveInterval() == 3600 ) {
             // set the execution time to be on the upcoming hour.  Add a minute to
             // now() to be sure the next interval is in the next hour
@@ -293,7 +295,7 @@ public class FileArchiverSink extends RBNBBase {
         // else schedule daily on the day
         } else if ( getArchiveInterval() == 86400 ) {
             // set the execution time to be on the upcoming day
-            endArchiveCal = Calendar.getInstance();
+            endArchiveCal = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC.getId()));
             endArchiveCal.add(Calendar.MINUTE, 1);
             endArchiveCal.clear(Calendar.MILLISECOND);
             endArchiveCal.clear(Calendar.SECOND);
