@@ -248,20 +248,18 @@ public class RawToPacIOOS2020Converter implements Converter {
         TimeColumn[] timeColumns = table.timeColumns();
         DateColumn[] dateColumns = table.dateColumns();
         InstantColumn instantColumn = InstantColumn.create("instantColumn", table.rowCount());
-        instantColumn.setPrintFormatter(new InstantColumnFormatter(
-            DateTimeFormatter
-                .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                .withZone(ZoneOffset.ofHours(0)))
-        );
+
         BooleanColumn uniqueValues = BooleanColumn.create("isUnique", table.rowCount());
 
         // Create an instant column from the datetime
         if ( dateTimeColumns.length > 0 ) {
             instantColumn = dateTimeColumns[0].asInstantColumn(getTimeZoneId());
+            instantColumn.setPrintFormatter(new InstantColumnFormatter(DateTimeFormatter.ISO_INSTANT));
             getConvertedTable().addColumns(instantColumn);
         // Or create it from the date and time columns
         } else if ( dateColumns.length > 0 && timeColumns.length > 0 ) {
             instantColumn = dateColumns[0].atTime(timeColumns[0]).asInstantColumn(getTimeZoneId());
+            instantColumn.setPrintFormatter(new InstantColumnFormatter(DateTimeFormatter.ISO_INSTANT));
             getConvertedTable().addColumns(instantColumn);
 
         } else {
@@ -327,6 +325,8 @@ public class RawToPacIOOS2020Converter implements Converter {
     @Override
     public int write(OutputStream outputStream) throws IOException {
 
+        int rowCount = 0;
+
         CsvWriteOptions options = CsvWriteOptions.builder(outputStream)
             .ignoreLeadingWhitespaces(true)
             .ignoreTrailingWhitespaces(true)
@@ -334,19 +334,21 @@ public class RawToPacIOOS2020Converter implements Converter {
             .lineEnd(getRecordDelimiter())
             .quoteAllFields(false)
             .separator(",".charAt(0))
+            .usePrintFormatters(true)
             .build();
 
         try {
             CsvWriter csvWriter = new CsvWriter();
             csvWriter.write(getConvertedTable(), options);
             // Reset the converted table for the next converter task run
+            rowCount = getConvertedTable().rowCount();
             setConvertedTable(Table.create("convertedTable"));
         } catch (Exception e) {
             log.error("Couldn't write the converted table: " + e.getMessage());
             log.error(convertedTable.print());
             throw(e);
         }
-        return getConvertedTable().rowCount();
+        return rowCount;
     }
 
     /**
