@@ -19,10 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package edu.hawaii.soest.pacioos.text;
+package edu.hawaii.soest.pacioos.text.convert;
 
 import edu.hawaii.soest.pacioos.text.configure.Configuration;
-import edu.hawaii.soest.pacioos.text.convert.RawToPacIOOS2020Converter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
