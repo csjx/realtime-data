@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -151,6 +152,9 @@ public class TextSinkApp {
                             }
                         }
                         // run the archiveData timer task on the hour, every hour (or every day)
+                        String intervalStr = config.getArchiveInterval(channelIndex, archiverIndex) == 3600 ? "hourly" : "daily";
+                        log.debug("[" +  config.getIdentifier() + "] " + "Scheduling " + intervalStr +
+                            " archiver at " + DateTimeFormatter.ISO_INSTANT.format(executeCal.getTime().toInstant()));
                         archiveTimer.scheduleAtFixedRate(archiveDataTask,
                             executeCal.getTime(),
                             archiver.getArchiveInterval() * 1000L);
