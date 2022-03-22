@@ -1,6 +1,6 @@
 #!/bin/bash
 export REALTIME_DATA=/usr/local/realtime-data;
-export CLASSPATH=$REALTIME_DATA/realtime-data-1.4.3-jar-with-dependencies.jar;
+export CLASSPATH=$REALTIME_DATA/realtime-data-1.4.4-jar-with-dependencies.jar;
 $REALTIME_DATA/build/classes/:\
 $REALTIME_DATA/lib/rbnb.jar:\
 $REALTIME_DATA/lib/commons-codec-1.3.jar:\
