@@ -321,7 +321,7 @@ public class FileArchiverSink extends RBNBBase {
             // else schedule weekly on the day
         } else if ( getArchiveInterval() == 604800 ) {
             // set the execution time to be on the upcoming hour
-            endArchiveCal = Calendar.getInstance();
+            endArchiveCal = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC.getId()));
             endArchiveCal.add(Calendar.MINUTE, 1);
             endArchiveCal.clear(Calendar.MILLISECOND);
             endArchiveCal.clear(Calendar.SECOND);
