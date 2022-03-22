@@ -54,6 +54,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -242,10 +243,38 @@ public class TextRebuilder {
      */
     protected Table deduplicateAndSortTable(Table mergedTable, int sortColumnIndex) {
         log.info("Removing duplicate samples from the merged table.");
+
+        // Remove exact full-row duplicates
         Table dedupedTable = mergedTable.dropDuplicateRows();
+        log.info("Removed " + (mergedTable.rowCount() - dedupedTable.rowCount()) + " duplicate samples.");
+        // Find the date, time, or datetime columns, and create an instant column
+        DateTimeColumn[] dateTimeColumns = dedupedTable.dateTimeColumns();
+        InstantColumn instantColumn = dateTimeColumns[0].asInstantColumn(ZoneId.of("UTC"));
+
+        // Also remove duplicates based on datetime only
+        BooleanColumn uniqueValues = BooleanColumn.create("isUnique", dedupedTable.rowCount());
+        uniqueValues.set(0, true); // The first row is always unique
+
+        // Flag duplicate rows with false
+        for (int row = 0; row < dedupedTable.rowCount(); row++) {
+            int nextRow = row + 1;
+            if (nextRow < dedupedTable.rowCount()) {
+                Instant nextDateTime = instantColumn.get(nextRow);
+                if (nextDateTime.equals(instantColumn.get(row))) {
+                    uniqueValues.set(nextRow, false);
+                } else {
+                    uniqueValues.set(nextRow, true);
+                }
+            }
+        }
+        // Filter duplicates by-date out of the table
+        dedupedTable.addColumns(uniqueValues);
+        Table dedupedUniqueDatesTable = dedupedTable.where(uniqueValues.asSelection());
+        dedupedUniqueDatesTable.removeColumns("isUnique");
+        log.info("Removed " + (dedupedTable.rowCount() - dedupedUniqueDatesTable.rowCount()) + " samples with duplicate dates.");
         log.info("Sorting the merged table.");
 
-        return dedupedTable.sortOn(sortColumnIndex);
+        return dedupedUniqueDatesTable.sortOn(sortColumnIndex);
     }
 
     /*
