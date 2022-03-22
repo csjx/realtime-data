@@ -111,7 +111,12 @@ public class TextSinkApp {
                             }
                         };
 
-                        Timer archiveTimer = new Timer();
+                        Timer archiveTimer = new Timer(
+                            config.getIdentifier() +
+                            "-" +
+                            config.getArchiveType(channelIndex, archiverIndex) +
+                            "-archiver-timer"
+                        );
                         // Execution times are local time zones
                         Calendar executeCal = Calendar.getInstance(TimeZone.getTimeZone(config.getTimeZoneID(channelIndex)));
                         int interval = archiver.getArchiveInterval();
