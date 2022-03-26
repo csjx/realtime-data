@@ -246,19 +246,21 @@ public class TextRebuilder {
 
         // Remove exact full-row duplicates
         Table dedupedTable = mergedTable.dropDuplicateRows();
+        Table sortedTable = dedupedTable.sortOn(sortColumnIndex);
         log.info("Removed " + (mergedTable.rowCount() - dedupedTable.rowCount()) + " duplicate samples.");
         // Find the date, time, or datetime columns, and create an instant column
-        DateTimeColumn[] dateTimeColumns = dedupedTable.dateTimeColumns();
+        DateTimeColumn[] dateTimeColumns = sortedTable.dateTimeColumns();
         InstantColumn instantColumn = dateTimeColumns[0].asInstantColumn(ZoneId.of("UTC"));
 
         // Also remove duplicates based on datetime only
-        BooleanColumn uniqueValues = BooleanColumn.create("isUnique", dedupedTable.rowCount());
+        BooleanColumn uniqueValues = BooleanColumn.create("isUnique", sortedTable.rowCount());
         uniqueValues.set(0, true); // The first row is always unique
 
         // Flag duplicate rows with false
-        for (int row = 0; row < dedupedTable.rowCount(); row++) {
+        for (int row = 0; row < sortedTable.rowCount(); row++) {
             int nextRow = row + 1;
-            if (nextRow < dedupedTable.rowCount()) {
+
+            if (nextRow < sortedTable.rowCount()) {
                 Instant nextDateTime = instantColumn.get(nextRow);
                 if (nextDateTime.equals(instantColumn.get(row))) {
                     uniqueValues.set(nextRow, false);
@@ -268,8 +270,8 @@ public class TextRebuilder {
             }
         }
         // Filter duplicates by-date out of the table
-        dedupedTable.addColumns(uniqueValues);
-        Table dedupedUniqueDatesTable = dedupedTable.where(uniqueValues.asSelection());
+        sortedTable.addColumns(uniqueValues);
+        Table dedupedUniqueDatesTable = sortedTable.where(uniqueValues.asSelection());
         dedupedUniqueDatesTable.removeColumns("isUnique");
         log.info("Removed " + (dedupedTable.rowCount() - dedupedUniqueDatesTable.rowCount()) + " samples with duplicate dates.");
         log.info("Sorting the merged table.");
