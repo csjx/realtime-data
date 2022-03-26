@@ -31,7 +31,7 @@ OPTIONS:
     -l  List the status of all drivers and archivers.
     -o  Indicate which operation to perform, start, stop, or status (requires 'driver' or 'archiver' commands).
     -d  The existing raw instrument archive to rebuild (requires 'rebuilder' or 'reloader' command).
-    -V  Show the version (1.4.4)
+    -V  Show the version (1.4.5)
 
 ```
 

@@ -197,7 +197,7 @@ Instrument drivers are managed with a ``manage-instruments`` script in ``${REALT
         -h  Show this message
         -i  The instrument id. Use -i multiple times for multiple instruments.
         -o  Indicate which operation to perform, start or stop.
-        -V  Show the version (1.4.4)
+        -V  Show the version (1.4.5)
 
 
 The ``manage-instruments`` script is used to start one or many instrument drivers by setting the ``-c`` command option to ``driver``, the ``-o`` operation option to ``start``, and by using one or more ``-i`` options followed by the instrument identifier.  In lieu of the individual ``-i`` option, you can use the ``-a`` option to start all instruments configured in the ``${REALTIME_DATA}/conf`` directory.  For example, to start a single instrument driver:
@@ -532,7 +532,7 @@ Instrument archivers are managed with a ``manage-instruments`` script in ``${REA
         -h  Show this message
         -i  The instrument id. Use -i multiple times for multiple instruments.
         -o  Indicate which operation to perform, start or stop.
-        -V  Show the version (1.4.4)
+        -V  Show the version (1.4.5)
 
 
 The ``manage-instruments`` script is used to start one or many instrument archivers by setting the ``-c`` command option to ``archiver``, the ``-o`` operation option to ``start``, and by using one or more ``-i`` options followed by the instrument identifier.  In lieu of the individual ``-i`` option, you can use the ``-a`` option to start all instrument archivers configured in the ``${REALTIME_DATA}/conf`` directory.  For example, to start a single instrument archiver:
